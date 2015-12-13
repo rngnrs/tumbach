@@ -57,7 +57,7 @@ controller = function(req, templateName, modelData) {
         modelData = {};
     var template = templates[templateName];
     if (!template)
-        return Promise.reject("Invalid template");
+        return Promise.reject(Tools.translate("Invalid template"));
     modelData = merge.recursive(baseModelData, modelData);
     modelData.req = req;
     return Promise.resolve(template(modelData));
@@ -212,7 +212,7 @@ controller.baseModel = function(req) {
                 name: (langNames.hasOwnProperty(lang) ? langNames[lang] : lang)
             };
         }),
-        maxSearchQueryLength: 100,
+        maxSearchQueryLength: config("site.maxSearchQueryLength", 50),
         markupModes: [
             {
                 name: "NONE",
@@ -352,8 +352,6 @@ controller.translationsModel = function() {
     translate("Find source...", "findSourceText");
     translate("Edit audio file tags", "editAudioTagsText");
     translate("Add to playlist", "addToPlaylistText");
-    translate("Answer in this thread", "answerInThreadText");
-    translate("Create thread", "createThreadText");
     translate("Borad rules", "boardRulesLinkText");
     translate("Threads catalog", "boardCatalogLinkText");
     translate("RSS feed", "boardRssLinkText");
@@ -425,6 +423,7 @@ controller.translationsModel = function() {
     translate("Play sound", "playAutoUpdateSoundLabelText");
     translate("Mark OP post links", "signOpPostLinksLabelText");
     translate("Mark own post links", "signOwnPostLinksLabelText");
+    translate("Post preview appearance delay (ms):", "viewPostPreviewDelayLabelText");
     translate("Show file leaf buttons", "showLeafButtonsLabelText");
     translate("Leaf through images only", "leafThroughImagesOnlyLabelText");
     translate("Image zoom sensitivity:", "imageZoomSensitivityLabelText");
@@ -576,6 +575,7 @@ controller.translationsModel = function() {
     translate("Delete this chat", "deleteChatButtonText");
     translate("Loading threads...", "loadingThreadsMessage");
     translate("Loading posts...", "loadingPostsMessage");
+    translate("Searching for posts...", "searchingMessage");
     translate("Close voting", "closeVotingText");
     translate("Open voting", "openVotingText");
     translate("Tripcode activated for THIS THREAD only", "threadTripcodeActivatedText");
@@ -607,6 +607,30 @@ controller.translationsModel = function() {
     translate("logged in as user", "loginMessageUserText");
     translate("not registered", "loginMessageNoneText");
     translate("Boards", "boardsText");
+    translate("Nothing found", "nothingFoundMessage");
+    translate("Search results", "searchResultsMessage");
+    translate("Unknown error", "errorUnknownText");
+    translate("No connection with server", "error0Text");
+    translate("Bad request", "error400Text");
+    translate("Not found", "error404Text");
+    translate("Request timeout", "error408Text");
+    translate("Request entity too large", "error413Text");
+    translate("Temporarily banned (DDoS detected)", "error429Text");
+    translate("Temporarily banned (DDoS detected) or internal server error", "error500Text"); //TODO
+    translate("Bad gateway", "error502Text");
+    translate("Service unavailable", "error503Text");
+    translate("Gateway timeout", "error504Text");
+    translate("CloudFlare: server is unreachable", "error523Text");
+    translate("Unexpected end of token list", "unexpectedEndOfTokenListErrorText");
+    translate("Failed to generate hash", "failedToGenerateHashErrorText");
+    translate("The thread is already in favorites", "alreadyInFavoritesErrorText");
+    translate("Invalid arguments", "invalidArgumentsErrorText");
+    translate("Failed to get post", "faliedToGetPostErrorText");
+    translate("No such token in the table", "noTokenInTableErrorText");
+    translate("The thread was deleted", "threadDeletedErrorText");
+    translate("Invalid data", "invalidDataErrorText");
+    translate("No such post", "noSuchPostErrorText");
+    translate("Internal error", "internalErrorText");
     Board.boardNames().forEach(function(boardName) {
         Board.board(boardName).addTranslations(translate);
     });

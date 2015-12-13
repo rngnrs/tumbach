@@ -75,7 +75,7 @@ module.exports.getFileInfos = function(list, hashpass) {
 
 module.exports.getBoardPage = function(board, page, json) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     page = +(page || 0);
     if (isNaN(page) || page < 0 || page >= pageCounts[board.name])
         return Promise.reject(404);
@@ -94,7 +94,7 @@ module.exports.getBoardPage = function(board, page, json) {
 
 var getPage = function(board, page) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     page = +(page || 0);
     if (isNaN(page) || page < 0 || page >= pageCounts[board.name])
         return Promise.reject(404);
@@ -177,19 +177,13 @@ var getPage = function(board, page) {
 
 module.exports.getThreadPage = function(board, number, json) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     number = +(number || 0);
     if (isNaN(number) || number < 1)
-        return Promise.reject("Invalid thread");
+        return Promise.reject(Tools.translate("Invalid thread"));
     var c = {};
-    if (json) {
-        return Tools.readFile(cachePath("thread", board.name, number)).then(function(data) {
-            c.data = data;
-            return Tools.readFile(cachePath("thread-posts", board.name, number));
-        }).then(function(data) {
-            return Promise.resolve("{\"thread\":{\"lastPosts\":" + data + "," + c.data.substr(11));
-        });
-    }
+    if (json)
+        return Tools.readFile(cachePath("thread", board.name, number));
     return Database.getThread(board.name, number).then(function(thread) {
         if (!thread)
             return Promise.reject(404);
@@ -224,10 +218,10 @@ module.exports.getThreadPage = function(board, number, json) {
 
 var getThread = function(board, number) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     number = +(number || 0);
     if (isNaN(number) || number < 1)
-        return Promise.reject("Invalid thread");
+        return Promise.reject(Tools.translate("Invalid thread"));
     var c = {};
     return Database.getThreads(board.name, {
         limit: 1,
@@ -277,10 +271,10 @@ var getThread = function(board, number) {
 
 module.exports.getLastPosts = function(board, hashpass, threadNumber, lastPostNumber) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     threadNumber = +(threadNumber || 0);
     if (isNaN(threadNumber) || threadNumber < 1)
-        return Promise.reject("Invalid thread");
+        return Promise.reject(Tools.translate("Invalid thread"));
     lastPostNumber = +(lastPostNumber || 0);
     if (isNaN(lastPostNumber) || lastPostNumber < 0)
         lastPostNumber = 0;
@@ -334,10 +328,10 @@ module.exports.getThreadLastPostNumber = function(boardName, threadNumber) {
 
 module.exports.getThreadInfo = function(board, hashpass, number) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     number = +(number || 0);
     if (isNaN(number) || number < 1)
-        return Promise.reject("Invalid thread");
+        return Promise.reject(Tools.translate("Invalid thread"));
     var c = {};
     return Database.registeredUserLevel(hashpass).then(function(level) {
         c.level = level;
@@ -370,7 +364,7 @@ module.exports.getThreadInfo = function(board, hashpass, number) {
 
 module.exports.getCatalogPage = function(board, sortMode, json) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     if (json) {
         sortMode = (sortMode || "date").toLowerCase();
         if (["recent", "bumps"].indexOf(sortMode) < 0)
@@ -384,7 +378,7 @@ module.exports.getCatalogPage = function(board, sortMode, json) {
 
 var getCatalog = function(board, sortMode) {
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     var c = {};
     return Database.getThreads(board.name).then(function(threads) {
         c.threads = threads;
@@ -446,7 +440,7 @@ var getCatalog = function(board, sortMode) {
 module.exports.pageCount = function(boardName) {
     var board = Board.board(boardName);
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     var c = {};
     return Database.getThreads(boardName).then(function(threads) {
         return Promise.resolve(Math.ceil(threads.length / board.threadsPerPage) || 1);
@@ -471,16 +465,13 @@ var renderThread = function(board, thread) {
 var generateThread = function(boardName, threadNumber, nowrite) {
     var board = Board.board(boardName);
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     var c = {};
     var threadPath = cachePath("thread", boardName, threadNumber);
-    var postsPath = cachePath("thread-posts", boardName, threadNumber);
     return getThread(board, threadNumber).then(function(json) {
         c.json = json;
         return renderThread(board, c.json.thread);
     }).then(function() {
-        c.posts = c.json.thread.lastPosts;
-        delete c.json.thread.lastPosts;
         if (nowrite)
             return Promise.resolve();
         return Tools.writeFile(threadPath, JSON.stringify(c.json));
@@ -488,19 +479,17 @@ var generateThread = function(boardName, threadNumber, nowrite) {
         if (nowrite) {
             return Promise.resolve({
                 threadPath: threadPath,
-                postsPath: postsPath,
                 threadData: JSON.stringify(c.json),
-                postsData: JSON.stringify(c.posts)
             });
         }
-        return Tools.writeFile(postsPath, JSON.stringify(c.posts));
+        return Promise.resolve();
     });
 };
 
 var generateThreads = function(boardName) {
     var board = Board.board(boardName);
     if (!(board instanceof Board))
-        return Promise.reject("Invalid board instance");
+        return Promise.reject(Tools.translate("Invalid board"));
     var c = {};
     return Database.getThreads(boardName).then(function(threads) {
         var p = (threads.length > 0) ? generateThread(boardName, threads[0].number) : Promise.resolve();
@@ -715,7 +704,8 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
             p = Promise.resolve();
         } else if (creatingThread) {
             p = generateThread(boardName, threadNumber, true);
-        } else if ((scheduled.delete && scheduled.delete.length) > 0 || (scheduled.edit && scheduled.edit.length)) {
+        } else if ((scheduled.delete && scheduled.delete.length) > 0 || (scheduled.edit && scheduled.edit.length)
+            || (scheduled.create && scheduled.create.length > 0)) {
             if (scheduled.delete) {
                 scheduled.delete.forEach(function(pn) {
                     deletedPosts[boardName + ":" + pn] = {};
@@ -742,7 +732,7 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
                 });
                 c.board = Board.board(boardName);
                 if (!c.board)
-                    return Promise.reject("Invalid board instance");
+                    return Promise.reject(Tools.translate("Invalid board"));
                 return Database.getPost(boardName, threadNumber);
             }).then(function(opPost) {
                 if (c.posts.length < 1)
@@ -760,45 +750,6 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
                     deleted: scheduled.delete || []
                 });
             });
-        } else if (scheduled.create && scheduled.create.length > 0) {
-            var posts = scheduled.create.sort(function(pn1, pn2) {
-                pn1 = +pn1;
-                pn2 = +pn2;
-                if (pn1 < pn2)
-                    return -1;
-                else if (pn1 > pn2)
-                    return 1;
-                else
-                    return 0;
-            }).reduce(function(posts, postNumber) {
-                return posts.concat({
-                    boardName: boardName,
-                    postNumber: postNumber
-                });
-            }, []);
-            p = module.exports.getPosts(posts).then(function(posts) {
-                c.posts = posts.filter(function(post) {
-                    return post;
-                });
-                c.board = Board.board(boardName);
-                if (!c.board)
-                    return Promise.reject("Invalid board instance");
-                return Database.getPost(boardName, threadNumber);
-            }).then(function(opPost) {
-                if (c.posts.length < 1)
-                    return Promise.resolve([]);
-                var pp = board.renderPost(c.posts[0], null, opPost);
-                c.posts.slice(1).forEach(function(post) {
-                    pp = pp.then(function() {
-                        return board.renderPost(post, null, opPost);
-                    })
-                })
-                return pp;
-            }).then(function() {
-                return Promise.resolve(c.posts.reduce(function(data, post) {
-                    return data + "," + JSON.stringify(post);
-                }, ""));
-            });
         } else {
             p = Promise.resolve();
         }
@@ -809,24 +760,22 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
         if (deletingThread) {
             p = p.then(function() {
                 return Tools.removeFile(cachePath("thread", boardName, threadNumber));
-            }).then(function() {
-                return Tools.removeFile(cachePath("thread-posts", boardName, threadNumber));
             });
         } else if (creatingThread) {
             p = p.then(function() {
                 return Tools.writeFile(c.data.threadPath, c.data.threadData);
-            }).then(function() {
-                return Tools.writeFile(c.data.postsPath, c.data.postsData);
             });
-        } else if ((scheduled.delete && scheduled.delete.length) > 0 || (scheduled.edit && scheduled.edit.length)) {
-            var postsPath = cachePath("thread-posts", boardName, threadNumber);
+        } else if ((scheduled.delete && scheduled.delete.length) > 0 || (scheduled.edit && scheduled.edit.length)
+            || (scheduled.create && scheduled.create.length > 0)) {
+            var threadPath = cachePath("thread", boardName, threadNumber);
             p = p.then(function() {
-                return Tools.readFile(postsPath);
+                return Tools.readFile(threadPath);
             }).then(function(data) {
                 data = JSON.parse(data);
+                var lastPosts = data.thread.lastPosts;
                 var indexOfPost = function(post) {
-                    for (var i = 0; i < data.length; ++i) {
-                        if (data[i].number == (post.number || post))
+                    for (var i = 0; i < lastPosts.length; ++i) {
+                        if (lastPosts[i].number == (post.number || post))
                             return i;
                     }
                     return -1;
@@ -834,25 +783,16 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
                 c.data.edited.forEach(function(post) {
                     var ind = indexOfPost(post);
                     if (ind >= 0)
-                        data[ind] = post;
+                        lastPosts[ind] = post;
                     else
-                        data.push(post);
+                        lastPosts.push(post);
                 });
                 c.data.deleted.forEach(function(postNumber) {
                     var ind = indexOfPost(postNumber);
                     if (ind >= 0)
-                        data.splice(ind, 1);
+                        lastPosts.splice(ind, 1);
                 });
-                return Tools.writeFile(postsPath, JSON.stringify(data));
-            });
-        } else if (scheduled.create && scheduled.create.length > 0) {
-            var postsPath = cachePath("thread-posts", boardName, threadNumber);
-            p = p.then(function() {
-                return Tools.readFile(postsPath);
-            }).then(function(data) {
-                if (data.length < 3) //Empty list
-                    c.data = c.data.substr(1);
-                return Tools.writeFile(postsPath, data.substr(0, data.length - 1) + c.data + "]");
+                return Tools.writeFile(threadPath, JSON.stringify(data));
             });
         } else {
             p = p.then(function() {

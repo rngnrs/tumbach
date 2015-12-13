@@ -21,14 +21,10 @@ if (count <= 0)
 
 var spawnCluster = function() {
     expressCluster(function(worker) {
-        console.log("[" + process.pid + "] Initializing...");
-
+        console.log("[" + process.pid + "] Инициализация...");
         var express = require("express");
-
         var controller = require("./helpers/controller");
-
         var app = express();
-
         app.use(require("./middlewares"));
         app.use(require("./controllers"));
         app.use("*", function(req, res) {
@@ -47,14 +43,14 @@ var spawnCluster = function() {
             var sockets = {};
             var nextSocketId = 0;
             var server = app.listen(config("server.port", 8080), function() {
-                console.log("[" + process.pid + "] Listening on port " + config("server.port", 8080) + "...");
+                console.log("[PID:" + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
                 Global.IPC.installHandler("exit", function(status) {
                     process.exit(status);
                 });
                 Global.IPC.installHandler("stop", function() {
                     return new Promise(function(resolve, reject) {
                         server.close(function() {
-                            console.log("[" + process.pid + "] Closed");
+                            console.log("[PID:" + process.pid + "] Закрыт!");
                             resolve();
                         });
                         Tools.forIn(sockets, function(socket, socketId) {
@@ -66,8 +62,7 @@ var spawnCluster = function() {
                 Global.IPC.installHandler("start", function() {
                     return new Promise(function(resolve, reject) {
                         server.listen(config("server.port", 8080), function() {
-                            console.log("[" + process.pid + "] Listening on port " + config("server.port", 8080)
-                                + "...");
+                            console.log("[PID:" + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
                             resolve();
                         });
                     });
@@ -99,13 +94,13 @@ var spawnCluster = function() {
 };
 
 if (cluster.isMaster) {
-    console.log("Generating cache, please, wait...");
+    console.log("Генерация кэша...");
     Database.initialize().then(function() {
         return controller.initialize();
     }).then(function() {
         return BoardModel.generate();
     }).then(function() {
-        console.log("Spawning workers, please, wait...");
+        console.log("Создание воркеров...");
         spawnCluster();
         var ready = 0;
         Global.IPC.installHandler("ready", function() {
