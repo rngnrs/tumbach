@@ -1,3 +1,3 @@
-Imageboard engine in JavaScript to rule them all.
+Just another imageboard engine in JavaScript to rule them all.
 
-Please, refer to [Wiki](https://github.com/ololoepepe/ololord.js/wiki) for full documentation.
+Пожалуйста, ознакомьтесь с [полной документацией](https://github.com/ololoepepe/ololord.js/wiki), прежде, чем Вы приступите к установке/модификации.
