@@ -1,0 +1,82 @@
+<div id="file{{=fileInfo.name}}" class="postFile"
+    data-href="{{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=post.boardName}}/src/{{=fileInfo.name}}"
+    data-file-name="{{=fileInfo.name}}"
+    data-mime-type="{{=fileInfo.mimeType}}"
+    data-size-k-b="{{=fileInfo.sizeKB}}"
+    data-size-text="{{=fileInfo.sizeText}}"
+    data-width="{{ out += fileInfo.dimensions ? fileInfo.dimensions.width : 0; }}"
+    data-height="{{ out += fileInfo.dimensions ? fileInfo.dimensions.height : 0; }}"
+    {{? fileInfo.mimeType.substr(0, 6) == "audio/" && fileInfo.extraData}}
+        {{? fileInfo.extraData.duration}}data-duration="{{=fileInfo.extraData.duration}}"{{?}}
+        {{? fileInfo.extraData.bitrate}}data-bitrate="{{=fileInfo.extraData.bitrate}}"{{?}}
+        {{? fileInfo.extraData.album}}data-audio-tag-album="{{=fileInfo.extraData.album}}"{{?}}
+        {{? fileInfo.extraData.artist}}data-audio-tag-artist="{{=fileInfo.extraData.artist}}"{{?}}
+        {{? fileInfo.extraData.title}}data-audio-tag-title="{{=fileInfo.extraData.title}}"{{?}}
+        {{? fileInfo.extraData.year}}data-audio-tag-year="{{=fileInfo.extraData.year}}"{{?}}
+    {{?? fileInfo.mimeType.substr(0, 6) == "video/" && fileInfo.extraData}}
+        {{? fileInfo.extraData.duration}}data-duration="{{=fileInfo.extraData.duration}}"{{?}}
+        {{? fileInfo.extraData.bitrate}}data-bitrate="{{=fileInfo.extraData.bitrate}}"{{?}}
+    {{?}}>
+    <div class="postFileName">
+        <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}" target="_blank">{{=fileInfo.name}}</a>
+    </div>
+    <div class="postFileSize {{=it.deviceType}}" {{? fileInfo.sizeTooltip}}title="{{=fileInfo.sizeTooltip}}"{{?}}>
+        ({{=fileInfo.sizeText}})
+    </div>
+    <div class="postFileSearch">
+        <a href="javascript:void(0);" name="deleteFileButton" target="_blank"
+           onclick="lord.deleteFile(this); return false;">
+           <img src="/{{=it.site.pathPrefix}}img/delete.png" title="{{=it.tr.deleteFileText}}"
+                class="buttonImage" /></a>
+        <a name="hideByImageButton" onclick="lord.hideByImage(this); return false;">
+            <img src="/{{=it.site.pathPrefix}}img/hide.png" title="{{=it.tr.hideByImageText}}"
+                 class="buttonImage" /></a>
+        {{? fileInfo.mimeType.substr(0, 6) == "image/"}}
+            <span tabindex="0" class="{{=it.deviceType}} popupActions">
+                <img src="/{{=it.site.pathPrefix}}img/search.png" class="buttonImage"
+                     title="{{=it.tr.findSourceText}}">
+                <ul class="popupActionsMenu fileActionsMenu {{=it.deviceType}}">
+                    <li class="nowrap">
+                        <a href="//www.google.com/searchbyimage?image_url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+                           target="_blank">
+                            <img src="//www.google.com/favicon.ico" width="16" height="16" class="signImage noInvert" /> Google</a>
+                    </li>
+                    <li class="nowrap">
+                        <a href="//yandex.ru/images/search?rpt=imageview&img_url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+                           target="_blank">
+                            <img src="//www.yandex.ru/favicon.ico" width="16" height="16" class="signImage noInvert" /> Yandex</a>
+                    </li>
+                    <li class="nowrap">
+                        <a href="//tineye.com/search/?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+                           target="_blank">
+                            <img src="//tineye.com/favicon.ico" width="16" height="16" class="signImage noInvert" /> TinEye</a>
+                    </li>
+                    <li class="nowrap">
+                        <a href="//saucenao.com/search.php?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+                           target="_blank">
+                            <img src="//saucenao.com/favicon.ico" width="16" height="16" class="signImage noInvert"/> SauceNAO</a>
+                    </li>
+                    <li class="nowrap">
+                        <a href="http://iqdb.org/?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+                           target="_blank">
+                            <img src="//iqdb.org/favicon.ico" width="16" height="16" class="signImage noInvert" /> Iqdb</a>
+                    </li>
+                </ul>
+            </span>
+        {{?}}
+        {{? fileInfo.mimeType.substr(0, 6) == "audio/"}}
+            <a href="javascript:void(0);" onclick="lord.editAudioTags(this); return false"
+               title="{{=it.tr.editAudioTagsText}}">
+                <img src="/{{=it.site.pathPrefix}}img/audio_edit_tags.png" class="buttonImage"></a>
+            <a href="javascript:void(0);" onclick="lord.addToPlaylist(this); return false;"
+               title="{{=it.tr.addToPlaylistText}}">
+                <img src="/{{=it.site.pathPrefix}}img/playlist.png" class="buttonImage"></a>
+        {{?}}
+    </div>
+    <div class="postFileFile {{=it.deviceType}}">
+        <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+           onclick="lord.showImage(this); return false;">
+            {{#def.postFileThumb}}
+        </a>
+    </div>
+</div>
