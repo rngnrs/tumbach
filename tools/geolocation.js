@@ -9,7 +9,7 @@ var SQLite3 = require("sqlite3");
 var path = process.argv[2];
 
 if (!FS.existsSync(path)) {
-    console.log("Invalid path");
+    console.log("Неверный путь");
     process.exit(0);
 }
 
@@ -22,10 +22,10 @@ db.pexec = promisify(db.exec);
 db.prun = promisify(db.run);
 var stream = FS.createReadStream(path, "utf8");
 
-console.log("Beginning transaction...");
+console.log("Начало транзакции...");
 
 db.pexec("BEGIN").then(function () {
-    console.log("Creating table...");
+    console.log("Создание таблицы...");
     return db.prun("CREATE TABLE IF NOT EXISTS ip2location(ipFrom INTEGER, "
         + "ipTo INTEGER, "
         + "countryCode TEXT, "
@@ -33,10 +33,10 @@ db.pexec("BEGIN").then(function () {
         + "regionName TEXT, "
         + "cityName TEXT)");
 }).then(function() {
-    console.log("Creating index...");
+    console.log("Создание индекса...");
     return db.prun("CREATE INDEX indexIpTo ON ip2location(ipTo)");
 }).then(function() {
-    console.log("Populating database...");
+    console.log("Заполнение базы данных...");
     return new Promise(function(resolve, reject) {
         CSV.fromStream(stream, {
             headers: ["ipFrom", "ipTo", "countryCode", "countryName", "regionName", "cityName", "_", "_", "_", "_",
@@ -62,10 +62,10 @@ db.pexec("BEGIN").then(function () {
         });
     });
 }).then(function() {
-    console.log("Committing the transaction...");
+    console.log("Подтверждение транзакции...");
     return db.pexec("COMMIT");
 }).then(function() {
-    console.log("Done!");
+    console.log("Готово!");
     process.exit(0);
 }).catch(function(err) {
     console.log(err);
