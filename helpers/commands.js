@@ -58,7 +58,7 @@ _installHandler("set", function(args) {
     var path = args.split(/\s+/)[0];
     var value = args.split(/\s+/).slice(1).join(" ");
     if (!path)
-        return Promise.reject("Invalid command. Type 'help' for commands");
+        return Promise.reject("Неверная команда. Введите 'help' для справки");
     if (value) {
         config.set(path, JSON.parse(value));
         return Promise.resolve("OK");
@@ -71,7 +71,7 @@ _installHandler("set", function(args) {
 
 _installHandler("get", function(args) {
     if (!args)
-        return Promise.reject(console.log("Invalid command. Type 'help' for commands"));
+        return Promise.reject(console.log("Неверная команда. Введите 'help' для справки"));
     var v = config(args);
     if (undefined == v)
         return Promise.reject("No such value");
@@ -80,7 +80,7 @@ _installHandler("get", function(args) {
 
 _installHandler("remove", function(args) {
     if (!args)
-        Promise.reject("Invalid command. Type 'help' for commands");
+        Promise.reject("Неверная команда. Введите 'help' для справки");
     config.remove(args);
     return Promise.resolve("OK");
 });
@@ -185,7 +185,7 @@ _installHandler("rebuild-search-index", function(args) {
 });
 
 var init = function() {
-    console.log("Type 'help' for commands");
+    console.log("Движок запущен! Введите 'help' для справки");
     rl.prompt();
     rl.on("line", function(line, lineCount, byteCount) {
         if ("" == line)
@@ -198,7 +198,7 @@ var init = function() {
             cmd += line[i];
         }
         if (!handlers.hasOwnProperty(cmd)) {
-            console.log("Invalid command. Type 'help' for commands");
+            console.log("Неверная команда. Введите 'help' для справки");
             return rl.prompt();
         }
         rl.pause();

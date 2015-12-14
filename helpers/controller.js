@@ -1,4 +1,4 @@
-var Crypto = require("crypto");
+//var Crypto = require("crypto");
 var dot = require("dot");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
@@ -6,8 +6,8 @@ var Highlight = require("highlight.js");
 var merge = require("merge");
 var mkpath = require("mkpath");
 var moment = require("moment");
-var Path = require("path");
-var random = require("random-js")();
+//var Path = require("path");
+//var random = require("random-js")();
 var Util = require("util");
 
 var config = require("./config");
@@ -610,7 +610,7 @@ controller.translationsModel = function() {
     translate("Request timeout", "error408Text");
     translate("Request entity too large", "error413Text");
     translate("Temporarily banned (DDoS detected)", "error429Text");
-    translate("Temporarily banned (DDoS detected) or internal server error", "error500Text"); //TODO
+    translate("Internal server error", "error500Text");
     translate("Bad gateway", "error502Text");
     translate("Service unavailable", "error503Text");
     translate("Gateway timeout", "error504Text");
@@ -820,7 +820,7 @@ module.exports = controller;
 
 var Board = require("../boards/board");
 var Captcha = require("../captchas");
-var config = require("./config");
+//var config = require("./config");
 var Database = require("./database");
 var markup = require("./markup");
 var Tools = require("./tools");
