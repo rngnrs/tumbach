@@ -1705,10 +1705,6 @@ module.exports.setThreadFixed = function(req, fields) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         thread = JSON.parse(thread);
-        if ((!req.hashpass || req.hashpass != thread.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, thread.user.level) <= 0)) {
-            return Promise.reject(Tools.translate("Not enough rights"));
-        }
         var fixed = (fields.fixed == "true");
         if (thread.fixed == fixed)
             return Promise.resolve();
@@ -1739,10 +1735,6 @@ module.exports.setThreadClosed = function(req, fields) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         thread = JSON.parse(thread);
-        if ((!req.hashpass || req.hashpass != thread.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, thread.user.level) <= 0)) {
-            return Promise.reject(Tools.translate("Not enough rights"));
-        }
         var closed = (fields.closed == "true");
         if (thread.closed == closed)
             return Promise.resolve();
@@ -2065,8 +2057,9 @@ module.exports.userBans = function(ip, boardNames) {
         return db.keys("userBans:*").then(function(keys) {
             var ips = {};
             keys.forEach(function(key) {
-                var boardName = key.split(":").pop();
-                var ip = key.replace(":" + boardName, "").split(":").slice(1).join(":");
+                var sl = key.split(":");
+                var boardName = sl.pop();
+                var ip = sl.slice(1, sl.length).join(":");
                 if (!ips.hasOwnProperty(ip))
                     ips[ip] = {};
             });

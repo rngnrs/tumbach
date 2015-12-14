@@ -1246,6 +1246,7 @@ lord.template = function(templateName, model, noparse) {
         return null;
     lord.query("script", node).forEach(function(script) {
         var nscript = lord.node("script");
+        nscript.type = script.type;
         if (script.src)
             nscript.src = script.src;
         else if (script.innerHTML)
@@ -1261,6 +1262,15 @@ lord.createStylesheetLink = function(href, prefix) {
     link.rel = "stylesheet";
     link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
     lord.queryOne("head").appendChild(link);
+    return link;
+};
+
+lord.createScript = function(src, prefix) {
+    var script = lord.node("script");
+    script.type = "text/javascript";
+    script.src = (prefix ? ("/" + lord.models.base.site.pathPrefix + "js/") : "") + src;
+    lord.queryOne("head").appendChild(script);
+    return script;
 };
 
 lord.compareRegisteredUserLevels = function(l1, l2) {
@@ -1499,7 +1509,7 @@ lord.handleError = function(error) {
             case 503:
             case 504:
             case 523: //CloudFlare
-            text = lord.text("error" + error.status + "Text");
+            text = lord.text("error" + error.status + "Text") + " (" + error.status + ")";
                 break;
             default:
                 if (0 == error.readyState)
