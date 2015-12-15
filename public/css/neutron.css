@@ -18,7 +18,7 @@ a {
 }
 
 a.expandCollapse {
-    color: #444444;
+    color: #444;
     cursor: pointer;
 }
 
@@ -27,7 +27,7 @@ a:hover {
 }
 
 a.expandCollapse:hover {
-    color: #666666;
+    color: #666;
     cursor: pointer
 }
 
@@ -37,21 +37,21 @@ audio {
 
 hr {
     height: 3px;
-    border-width: 0px;
+    border-width: 0;
     background: url("../img/neutron_line.png") center no-repeat;
     background-size: 100% 100%;
     -moz-background-size: 100% 100%;
 }
 
 .select {
-    background-color: #111111;
-    color: #EEEEEE;
+    background-color: #111;
+    color: #EEE;
     cursor: pointer;
 }
 
 .selectOption {
-    background-color: #111111;
-    color: #EEEEEE;
+    background-color: #111;
+    color: #EEE;
     -webkit-filter: invert(0);
     -moz-filter: invert(0);
     -ms-filter: invert(0);
@@ -59,25 +59,12 @@ hr {
     filter: invert(0);
 }
 
-textarea {
-    background-color: #111111;
-    color: #EEEEEE;
+textarea, input, .button, .checkbox {
+    background-color: #111;
+    color: #EEE;
 }
 
-input {
-    background-color: #111111;
-    color: #EEEEEE;
-}
-
-.button {
-    background-color: #111111;
-    color: #EEEEEE;
-    cursor: pointer;
-}
-
-.checkbox {
-    background-color: #111111;
-    color: #EEEEEE;
+.button, .checkbox {
     cursor: pointer;
 }
 
@@ -89,7 +76,7 @@ input {
     z-index: 9950;
     vertical-align: middle;
     text-align: center;
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
     cursor: pointer;
 }
 
@@ -111,12 +98,12 @@ input {
     max-width: 90%;
     max-height: 90%;
     z-index: 9980;
-    padding: 2px 2px 2px 2px;
+    padding: 2px;
 }
 
 .favorites > div {
-    background-color: #111111;
-    padding: 2px 2px 2px 2px;
+    background-color: #111;
+    padding: 2px;
 }
 
 .favorites > span {
@@ -142,7 +129,7 @@ input {
 .hidePostformRulesButton {
     display: block;
     text-decoration: none;
-    font-size: 0.7em;
+    font-size: .7em;
     margin-left: 30px;
     cursor: pointer;
 }
@@ -151,7 +138,7 @@ input {
     display: block;
     text-decoration: none;
     text-align: right;
-    font-size: 0.7em;
+    font-size: .7em;
     margin-left: auto;
     margin-right: 5px;
     cursor: pointer;
@@ -210,10 +197,7 @@ input {
 }
 
 blockquote {
-    margin-top: 14.4px;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 14.4px;
+    margin: 15px 25px;
     padding-top: 10px;
     overflow-y: auto;
     overflow-x: auto;
@@ -222,7 +206,7 @@ blockquote {
     max-width: 1200px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    word-break: break-all;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
@@ -298,13 +282,13 @@ span.newPostCount {
 
 .postformMarkup {
     text-align: left;
-	font-size: 0.7em;
+	font-size: .7em;
 	white-space: normal;
 }
 
 .postformRules {
     text-align: left;
-	font-size: 0.7em;
+	font-size: .7em;
 	max-width: 400px;
 	white-space: normal;
 }
@@ -333,10 +317,7 @@ span.newPostCount {
 .catalogContainer {
     box-sizing: border-box;
     color: #698CC0;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 0px;
+    padding: 0;
     text-align: center;
 }
 
@@ -347,15 +328,9 @@ span.newPostCount {
     display: inline-block;
     height: 450px;
     min-height: 450px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
+    margin: 10px;
     overflow: hidden;
-    padding-bottom: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 5px;
+    padding: 5px;
     position: relative;
     text-align: center;
     vertical-align: top;
@@ -368,32 +343,10 @@ span.newPostCount {
 }
 
 /*
-    Board image
+    Board image Board video Board /mlp/
 */
 
-.theImage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-/*
-    Board video
-*/
-
-.theVideo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-/*
-    Board /mlp/
-*/
-
-.theButton {
+.theImage, .theVideo, .theButton {
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -447,12 +400,12 @@ span.newPostCount {
 }
 
 .symbolCounter {
-    font-size: 0.8em;
+    font-size: .8em;
     position: absolute;
     right: 12px;
     bottom: 7px;
-    color: #333333;
-    opacity: 0.6;
+    color: #333;
+    opacity: .6;
 }
 
 .symbolCounterContainer {
@@ -582,7 +535,6 @@ span.newPostCount {
     margin-bottom: 4px;
     padding-top: 10px;
     padding-left: 10px;
-    width: 100%
     overflow-x: auto;
     display: table;
 }
@@ -594,7 +546,6 @@ span.newPostCount {
     margin-bottom: 4px;
     padding-top: 10px;
     padding-left: 10px;
-    width: 100%
     overflow-x: auto;
     display: table;
 }

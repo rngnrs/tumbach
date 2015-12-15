@@ -701,15 +701,15 @@ lord.initializeOnLoadSettings = function() {
         else
             model.loginMessageText = lord.text("loginMessageNoneText");
     }
-    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
+    /**
+    * @deprecated Тулбар не нужен.
+    */
+/*    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
     if (toolbarPlaceholder)
-        toolbarPlaceholder.parentNode.replaceChild(lord.template("toolbar", model), toolbarPlaceholder);
+        toolbarPlaceholder.parentNode.replaceChild(lord.template("toolbar", model), toolbarPlaceholder);*/
     var navbarPlaceholder = lord.id("navbarPlaceholder");
     if (navbarPlaceholder)
         navbarPlaceholder.parentNode.replaceChild(lord.template("navbar", model), navbarPlaceholder);
-    var searchPlaceholder = lord.id("searchPlaceholder");
-    if (searchPlaceholder)
-        searchPlaceholder.parentNode.replaceChild(lord.template("searchAction", model), searchPlaceholder);
     var customHeaderPlaceholder = lord.id("customHeaderPlaceholder");
     if (customHeaderPlaceholder) {
         var data = lord.template("custom-header", model);
@@ -728,6 +728,9 @@ lord.initializeOnLoadSettings = function() {
             customFooterPlaceholder.parentNode.replaceChild(footer, customFooterPlaceholder);
         }
     }
+    var searchPlaceholder = lord.id("searchPlaceholder");
+    if (searchPlaceholder)
+        searchPlaceholder.parentNode.replaceChild(lord.template("searchAction", model), searchPlaceholder);
     if (lord.getLocalObject("hotkeysEnabled", true) && !lord.deviceType("mobile")) {
         document.body.addEventListener("keyup", lord.interceptHotkey, false);
         var hotkeys = lord.getLocalObject("hotkeys", {}).dir;
