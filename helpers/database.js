@@ -962,7 +962,7 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
         if (!leaveFileInfos) {
             c.paths.forEach(function(path) {
                 return FS.remove(path).catch(function(err) {
-                    console.log(err);
+                    Global.error(err.stack || err);
                 });
             });
         }
@@ -995,7 +995,7 @@ var removeThread = function(boardName, threadNumber, archived, leaveFileInfos) {
             }).then(function() {
                 return db.srem("threadsPlannedForDeletion", boardName + ":" + threadNumber);
             }).catch(function(err) {
-                console.log(err);
+                Global.error(err.stack || err);
             });
         }, 5000);
         return Promise.resolve();
@@ -1173,7 +1173,7 @@ Transaction.prototype.rollback = function() {
             if (!exists)
                 return;
             FS.remove(path).catch(function(err) {
-                console.log(err);
+                Global.error(err.stack || err);
             });
         });
     });
@@ -1315,52 +1315,53 @@ var findPhrase = function(phrase, boardName) {
         p = p.then(function() {
             return db.smembers("postSearchIndex:" + word.word);
         }).then(function(result) {
-            results.push(result);
+            results.push(result.map(function(post) {
+                return JSON.parse(post);
+            }).filter(function(post) {
+                return !boardName || (post.boardName == boardName);
+            }));
             return Promise.resolve();
         });
     });
+    var f = function(chain, ind) {
+        if (!Util.isArray(chain))
+            chain = [chain];
+        ind = ind || 0;
+        var lastPost = chain[chain.length - 1];
+        if (ind > 0) {
+            var nextChain = [];
+            for (var i = 0; i < results[ind].length; ++i) {
+                var post = results[ind][i];
+                if (post.boardName != lastPost.boardName || post.number != lastPost.number
+                    || post.source != lastPost.source || post.position != (lastPost.position + 1)) {
+                    continue;
+                }
+                if (ind < (results.length - 1))
+                    nextChain = f(chain.concat(post), ind + 1);
+                else
+                    nextChain = chain.concat(post);
+                if (nextChain.length > 0)
+                    break;
+            }
+            return nextChain;
+        } else {
+            if (1 == results.length)
+                return [lastPost];
+            return f(chain, ind + 1);
+        }
+    };
     return p.then(function() {
         if (results.length < 1)
             return {};
-        var first = toMap(results[0], boardName);
-        if (results.length < 2) {
-            Tools.forIn(first, function(arr, key) {
-                first[key] = arr[0];
-            });
-        }
-        for (var i = 1; i < results.length; ++i) {
-            var next = toMap(results[i]);
-            for (var key in first) {
-                if (!first.hasOwnProperty(key))
-                    continue;
-                if (!next.hasOwnProperty(key)) {
-                    delete first[key];
-                    continue;
-                }
-                var firstPosts = first[key];
-                var nextPosts = next[key];
-                var outerMatch = -1;
-                for (var j = 0; j < firstPosts.length; ++j) {
-                    var pos = firstPosts[j].position + 1;
-                    var innerMatch = false;
-                    for (var k = 0; k < nextPosts.length; ++k) {
-                        if (pos == nextPosts[k].position) {
-                            innerMatch = true;
-                            break;
-                        }
-                    }
-                    if (innerMatch) {
-                        outerMatch = j;
-                        break;
-                    }
-                }
-                if (outerMatch < 0)
-                    delete first[key];
-                else
-                    first[key] = first[key][outerMatch];
-            }
-        }
-        return first;
+        return results[0].map(function(result) {
+            return f(result);
+        }).filter(function(chain) {
+            return chain.length > 0;
+        }).reduce(function(map, chain) {
+            var post = chain[0];
+            map[post.boardName + ":" + post.postNumber] = post;
+            return map;
+        }, {});
     });
 };
 
@@ -2039,7 +2040,7 @@ module.exports.deleteFile = function(req, res, fields) {
         paths.push(__dirname + "/../public/" + c.post.boardName + "/thumb/" + c.fileInfo.thumb.name);
         paths.forEach(function(path) {
             FS.remove(path).catch(function(err) {
-                console.log(err);
+                Global.error(err);
             });
         });
         Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
@@ -2203,7 +2204,7 @@ module.exports.banUser = function(req, ip, bans) {
                     if (ban.postNumber) {
                         setTimeout(function() {
                             updatePostBanInfo(boardName, ban).catch(function(err) {
-                                console.log(err.stack || err);
+                                Global.error(err.stack || err);
                             });
                         }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
                     }
@@ -2277,7 +2278,7 @@ module.exports.initialize = function() {
                         return Promise.resolve();
                     setTimeout(function() {
                         updatePostBanInfo(boardName, ban).catch(function(err) {
-                            console.log(err.stack || err);
+                            Global.error(err.stack || err);
                         });
                     }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
                     return Promise.resolve();
