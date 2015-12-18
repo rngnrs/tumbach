@@ -1,5 +1,4 @@
 *
-#!custom
 !partials
 !addFilesDialog.jst
 !banner.jst
@@ -44,6 +43,7 @@
 !rpgPostBodyPart.jst
 !rpgPostFormField.jst
 !searchAction.jst
+!searchResults.jst
 !settingsDialog.jst
 !setVotingOpenedDialog.jst
 !socPostHeaderPart.jst

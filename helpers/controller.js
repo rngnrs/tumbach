@@ -83,14 +83,14 @@ controller.error = function(res, error, ajax) {
         model.title = Tools.translate("Error", "pageTitle");
         if (Util.isError(error)) {
             if (Tools.contains(process.argv.slice(2), "--dev-mode")) {
-                console.log(error);
-                console.log(error.stack);
+                Global.error(error);
+                Global.error(error.stack);
             }
             model.errorMessage = Tools.translate("Internal error", "errorMessage");
             model.errorDescription = error.message;
         } else if (Util.isObject(error) && (error.error || error.ban)) {
             if (Tools.contains(process.argv.slice(2), "--dev-mode"))
-                console.log(error);
+                Global.error(error);
             if (error.ban) {
                 model.ban = error.ban;
             } else {
@@ -99,9 +99,10 @@ controller.error = function(res, error, ajax) {
             }
         } else {
             if (Tools.contains(process.argv.slice(2), "--dev-mode"))
-                console.log(error);
+                Global.error(error);
             model.errorMessage = Tools.translate("Error", "errorMessage");
-            model.errorDescription = (error && Util.isString(error)) ? error : "";
+            model.errorDescription = (error && Util.isString(error)) ? error
+                : ((404 == error) ? Tools.translate("404 (not found)", "errorMessage") : "");
         }
         return model;
     };
@@ -136,6 +137,7 @@ controller.error = function(res, error, ajax) {
 };
 
 controller.notFound = function(res) {
+    Global.error(404);
     var f = function() {
         var model = {};
         model.title = Tools.translate("Error 404", "pageTitle");
@@ -149,8 +151,8 @@ controller.notFound = function(res) {
             return controller("notFound", model);
         });
     };
-    controller.html(f.bind(null), "notFound").then(function(data) {
-        res.status(404).send(data);
+    controller.html(f.bind(null), null, "notFound").then(function(data) {
+        res.status(404).send(data.data);
     }).catch(function(err) {
         controller.error(res, err);
     });
@@ -472,6 +474,9 @@ controller.translationsModel = function() {
     translate("Subscript", "markupSubscript");
     translate("Superscript", "markupSuperscript");
     translate("URL (external link)", "markupUrl");
+    translate("Unordered list", "markupUnorderedList");
+    translate("Ordered list", "markupOrderedList");
+    translate("List item", "markupListItem");
     translate("Markup mode:", "postFormLabelMarkupMode");
     translate("Options:", "postFormLabelOptions");
     translate("Raw HTML", "postFormLabelRaw");
@@ -614,12 +619,17 @@ controller.translationsModel = function() {
     translate("Bad gateway", "error502Text");
     translate("Service unavailable", "error503Text");
     translate("Gateway timeout", "error504Text");
+    translate("CloudFlare: server is returning an unknown error", "error520Text");
+    translate("CloudFlare: server is down", "error521Text");
+    translate("CloudFlare: connection timed out", "error522Text");
     translate("CloudFlare: server is unreachable", "error523Text");
+    translate("CloudFlare: a timeout occured", "error524Text");
+    translate("CloudFlare: SSL handshake failed", "error525Text");
+    translate("CloudFlare: invalid SSL certificate", "error526Text");
     translate("Unexpected end of token list", "unexpectedEndOfTokenListErrorText");
     translate("Failed to generate hash", "failedToGenerateHashErrorText");
     translate("The thread is already in favorites", "alreadyInFavoritesErrorText");
     translate("Invalid arguments", "invalidArgumentsErrorText");
-    translate("Failed to get post", "faliedToGetPostErrorText");
     translate("No such token in the table", "noTokenInTableErrorText");
     translate("The thread was deleted", "threadDeletedErrorText");
     translate("Invalid data", "invalidDataErrorText");
@@ -779,12 +789,12 @@ var cachePath = function() {
     return config("system.tmpPath", __dirname + "/../tmp") + "/cache-html" + (path ? ("/" + path + ".html") : "");
 };
 
-controller.html = function(f) {
-    var args = Array.prototype.slice.call(arguments, 1);
+controller.html = function(f, ifModifiedSince) {
+    var args = Array.prototype.slice.call(arguments, 2);
     var path = cachePath(args);
     var key = args.join(":");
     if (cachedHtml.hasOwnProperty(key))
-        return Tools.readFile(path);
+        return Tools.readFile(path, ifModifiedSince);
     var c = {};
     return f().then(function(data) {
         c.data = data;
@@ -792,10 +802,14 @@ controller.html = function(f) {
             return Promise.resolve();
         return Tools.writeFile(path, c.data);
     }).then(function() {
+        c.lastModified = Tools.now();
         cachedHtml[key] = {};
         return Global.addToCached(args);
     }).then(function() {
-        return Promise.resolve(c.data);
+        return Promise.resolve({
+            data: c.data,
+            lastModified: c.lastModified
+        });
     });
 };
 

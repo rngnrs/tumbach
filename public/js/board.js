@@ -316,10 +316,7 @@ lord.createPostNode = function(post, permanent, threadInfo) {
         c.model.includeThreadScripts = !!lord.data("threadNumber");
         lord.appendExtrasToModel(c.model);
         c.node = lord.template("post", c.model);
-        var d = 90;
-        if ("mobile" == lord.model("base").deviceType)
-            d += 10;
-        $(".codeBlock", c.node).css("maxWidth", ($(window).width() - d + "px"));
+        $(".codeBlock", c.node).css("maxWidth", ($(window).width() - 100 + "px"));
         if (lord.getLocalObject("strikeOutHiddenPostLinks", true))
             lord.strikeOutHiddenPostLinks(c.node);
         if (lord.getLocalObject("signOpPostLinks", true))
@@ -1067,7 +1064,7 @@ lord.hideByImage = function(a) {
         });
     }).then(function(result) {
         if (!result)
-            return Promise.reolve();
+            return Promise.resolve();
         return lord.doWork("processPosts", {
             posts: c.list,
             spells: lord.spells
@@ -1170,8 +1167,6 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
             boardName: boardName,
             postNumber: postNumber
         }).then(function(post) {
-            if (!post)
-                return Promise.reject("faliedToGetPostErrorText");
             return lord.createPostNode(post, false);
         });
     }
@@ -1673,10 +1668,45 @@ lord.markup = function(tag) {
     case "s":
     case "u":
     case "spoiler":
+    case "ul":
+    case "ol":
+    case "li":
     case "sup":
     case "sub":
     case "url": {
         wrap("[" + tag + "]", "[/" + tag + "]");
+        break;
+    }
+    case "uld": {
+        wrap("[ul type=disc]", "[/ul]");
+        break;
+    }
+    case "ulc": {
+        wrap("[ul type=circle]", "[/ul]");
+        break;
+    }
+    case "uls": {
+        wrap("[ul type=square]", "[/ul]");
+        break;
+    }
+    case "ol1": {
+        wrap("[ol type=1]", "[/ol]");
+        break;
+    }
+    case "olI": {
+        wrap("[ol type=I]", "[/ol]");
+        break;
+    }
+    case "oli": {
+        wrap("[ol type=i]", "[/ol]");
+        break;
+    }
+    case "olA": {
+        wrap("[ol type=A]", "[/ol]");
+        break;
+    }
+    case "ola": {
+        wrap("[ol type=a]", "[/ol]");
         break;
     }
     case ">": {
@@ -1938,8 +1968,6 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
         boardName: boardName,
         postNumber: threadNumber
     }).then(function(opPost) {
-        if (!opPost)
-            return Promise.reject("threadDeletedErrorText");
         c.opPost = opPost;
         return lord.api("threadLastPostNumber", {
             boardName: boardName,
@@ -1947,7 +1975,7 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
         });
     }).then(function(result) {
         if (!result || !result.lastPostNumber)
-            return Promise.reject("threadDeletedErrorText");
+            return Promise.reject("threadDeletedErrorText"); //TODO: remove
         var favoriteThreads = lord.getLocalObject("favoriteThreads", {});
         if (favoriteThreads.hasOwnProperty(boardName + "/" + threadNumber))
             return Promise.reject("alreadyInFavoritesErrorText");
@@ -2822,10 +2850,7 @@ lord.initializeOnLoadBaseBoard = function() {
             threads.appendChild(lord.template(c.notCatalog ? ("thread") : "catalogThread", c.model));
         });
     }).then(function() {
-        var d = 90;
-        if ("mobile" == lord.model("base").deviceType)
-            d += 10;
-        $(".codeBlock").css("maxWidth", ($(window).width() - d + "px"));
+        $(".codeBlock").css("maxWidth", ($(window).width() - 100 + "px"));
         setTimeout(function() {
             var hash = lord.hash();
             if (hash && "#" != hash) {

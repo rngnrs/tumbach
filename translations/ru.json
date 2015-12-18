@@ -1480,6 +1480,21 @@
             "value": "URL (внешняя ссылка)"
         }
     },
+    "Unordered list": {
+        "markupUnorderedList": {
+            "value": "Маркированный список"
+        }
+    },
+    "Ordered list": {
+        "markupOrderedList": {
+            "value": "Нумерованный список"
+        }
+    },
+    "List item": {
+        "markupListItem": {
+            "value": "Элемент списка"
+        }
+    },
     "Code block syntax": {
         "markupCodeLang": {
             "value": "Синтаксис блока кода"
@@ -2002,9 +2017,39 @@
             "value": "Шлюз не дождался ответа от сервера"
         }
     },
+    "CloudFlare: server is returning an unknown error": {
+        "error520Text": {
+            "value": "CloudFlare: сервер возвращает неизвестную ошибку"
+        }
+    },
+    "CloudFlare: server is down": {
+        "error521Text": {
+            "value": "CloudFlare: сервер упал"
+        }
+    },
+    "CloudFlare: connection timed out": {
+        "error522Text": {
+            "value": "CloudFlare: время ожидания соединения истекло"
+        }
+    },
     "CloudFlare: server is unreachable": {
         "error523Text": {
             "value": "CloudFlare: сервер недоступен"
+        }
+    },
+    "CloudFlare: a timeout occured": {
+        "error524Text": {
+            "value": "CloudFlare: время ожидания ответа от сервера истекло"
+        }
+    },
+    "CloudFlare: SSL handshake failed": {
+        "error525Text": {
+            "value": "CloudFlare: не удалось осуществить рукопожатие SSL"
+        }
+    },
+    "CloudFlare: invalid SSL certificate": {
+        "error526Text": {
+            "value": "CloudFlare: недействительный SSL-сертификат"
         }
     },
     "Unsupported file type": {
@@ -2190,11 +2235,6 @@
             "value": "На этой доске постинг запрещен"
         }
     },
-    "No such thread or no access to thread": {
-        "_default": {
-            "value": "Нет такого тред или нет доступа к треду"
-        }
-    },
     "Invalid captcha engine": {
         "_default": {
             "value": "Недействительный движок капчи"
@@ -2315,11 +2355,6 @@
             "value": "Недействительные аргументы"
         }
     },
-    "Failed to get post": {
-        "faliedToGetPostErrorText": {
-            "value": "Не удалось получить пост"
-        }
-    },
     "No such token in the table": {
         "noTokenInTableErrorText": {
             "value": "В таблице нет такого токена"
@@ -2343,6 +2378,16 @@
     "Search query is too long": {
         "_default": {
             "value": "Поисковый запрос слишком длинный"
+        }
+    },
+    "404 (not found)": {
+        "errorMessage": {
+            "value": "404 (не найдено)"
+        }
+    },
+    "Invalid page number": {
+        "_default": {
+            "value": "Недействительный номер страницы"
         }
     }
 }

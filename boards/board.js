@@ -123,6 +123,9 @@ var Board = function(name, title, options) {
         Board.MarkupElements.UnderlinedMarkupElement,
         Board.MarkupElements.SpoilerMarkupElement,
         Board.MarkupElements.QuotationMarkupElement,
+        Board.MarkupElements.UnorderedList,
+        Board.MarkupElements.OrderedList,
+        Board.MarkupElements.ListItem,
         Board.MarkupElements.SubscriptMarkupElement,
         Board.MarkupElements.SuperscriptMarkupElement,
         Board.MarkupElements.UrlMarkupElement
@@ -206,10 +209,6 @@ var Board = function(name, title, options) {
 };
 
 /*public*/ Board.prototype.apiRoutes = function() {
-    return []; //[ { method, path, handler }, ... ]
-};
-
-/*public*/ Board.prototype.routes = function() {
     return []; //[ { method, path, handler }, ... ]
 };
 
@@ -374,7 +373,7 @@ var getRules = function(boardName) {
                 file.extraData.year = metadata.year || "";
                 return Promise.resolve(metadata);
             }).catch(function(err) {
-                console.log(err.stack ? err.stack : err);
+                Global.error(err.stack || err);
                 file.extraData.album = "";
                 file.extraData.artist = "";
                 file.extraData.title = "";
@@ -424,7 +423,7 @@ var getRules = function(boardName) {
                     ffmpeg(file.path).frames(1).on("error", reject).on("end", resolve).save(file.thumbPath);
                 })
             }).catch(function(err) {
-                console.log(err.stack ? err.stack : err);
+                Global.error(err.stack || err);
                 file.thumbPath = thumbPath;
                 return generateRandomImage(file.hash, file.mimeType, thumbPath);
             }).then(function() {
@@ -503,6 +502,9 @@ Board.MarkupElements = {
     UnderlinedMarkupElement: "UNDERLINED",
     SpoilerMarkupElement: "SPOILER",
     QuotationMarkupElement: "QUOTATION",
+    UnorderedList: "UNORDERED_LIST",
+    OrderedList: "ORDERED_LIST",
+    ListItem: "LIST_ITEM",
     SubscriptMarkupElement: "SUBSCRIPT",
     SuperscriptMarkupElement: "SUPERSCRIPT",
     UrlMarkupElement: "URL",

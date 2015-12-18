@@ -1,12 +1,12 @@
 /*Photon*/
 
 body {
-    background-color: #EEEEEE;
+    background-color: #EEE;
     font-family: Verdana,sans-serif;
 }
 
 body.desktop {
-    font-size: 14.4px;
+    font-size: 15px;
 }
 
 body.mobile {
@@ -17,20 +17,20 @@ body.mobile {
 }
 
 a {
-    color: #FF6600;
+    color: #F60;
 }
 
 a.expandCollapse {
-    color: #444444;
+    color: #444;
     cursor: pointer;
 }
 
 a:hover {
-    color: #0066FF;
+    color: #06F;
 }
 
 a.expandCollapse:hover {
-    color: #666666;
+    color: #666;
     cursor: pointer
 }
 
@@ -39,16 +39,16 @@ audio {
 }
 
 hr {
-    color: #CCCCCC; /*IE*/
-    background-color: #CCCCCC; /*Firefox, Opera, Safari*/
-    border: 0px none;
+    color: #CCC; /*IE*/
+    background-color: #CCC; /*Firefox, Opera, Safari*/
+    border: none;
     height: 1px;
     clear: both;
 }
 
 .select {
     background: #EAEAEA;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
     cursor: pointer;
 }
 
@@ -57,31 +57,31 @@ hr {
 }
 
 .input {
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
 }
 
 .button {
     background: #EAEAEA;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
     cursor: pointer;
 }
 
 .checkbox {
     background: #EAEAEA;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
     cursor: pointer;
 }
 
 .popup {
-    background-color: #DDDDDD;
-    border: 1px solid #BBBBBB;
+    background-color: #DDD;
+    border: 1px solid #BBB;
     position: fixed;
     top: 35px;
     right: 5px;
     z-index: 9950;
     vertical-align: middle;
     text-align: center;
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
     cursor: pointer;
 }
 
@@ -96,21 +96,21 @@ hr {
 }
 
 .favorites {
-    background-color: #CCCCCC;
-    border: 1px solid #AAAAAA;
+    background-color: #CCC;
+    border: 1px solid #AAA;
     position: fixed;
     width: 600px;
     height: 600px;
     max-width: 90%;
     max-height: 90%;
     z-index: 9980;
-    padding: 2px 2px 2px 2px;
+    padding: 2px;
 }
 
 .favorites > div {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
-    padding: 2px 2px 2px 2px;
+    background-color: #DDD;
+    border: 1px solid #CCC;
+    padding: 2px;
 }
 
 .favorites > span {
@@ -130,13 +130,13 @@ hr {
 .scrollAreaH60 {
     overflow: auto;
     max-height: 60px;
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
 }
 
 .hidePostformRulesButton {
     display: block;
     text-decoration: none;
-    font-size: 0.7em;
+    font-size: .7em;
     margin-left: 30px;
     cursor: pointer;
 }
@@ -145,7 +145,7 @@ hr {
     display: block;
     text-decoration: none;
     text-align: right;
-    font-size: 0.7em;
+    font-size: .7em;
     margin-left: auto;
     margin-right: 5px;
     cursor: pointer;
@@ -169,7 +169,7 @@ hr {
 }
 
 .hiddenPostList > div:nth-child(even) {
-    background-color: #EEEEEE;
+    background-color: #EEE;
     margin-top: 3px;
     margin-bottom: 3px;
 }
@@ -179,7 +179,7 @@ hr {
 */
 
 .ban {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     margin-left: 80px;
     margin-right: 80px;
 }
@@ -204,10 +204,7 @@ hr {
 }
 
 blockquote {
-    margin-top: 14.4px;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 14.4px;
+    margin: 15px 25px;
     padding-top: 10px;
     overflow-y: auto;
     overflow-x: auto;
@@ -216,7 +213,7 @@ blockquote {
     max-width: 1200px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    word-break: break-all; /* tumb check */
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
@@ -232,16 +229,16 @@ blockquote.expand {
 }
 
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
-    background: #BBBBBB;
-    color: #BBBBBB;
+    background: #BBB;
+    color: #BBB;
 }
 
 span.spoiler:hover {
-    color: #333333;
+    color: #333;
 }
 
 span.spoiler:hover a {
-    color: #FF6600;
+    color: #F60;
 }
 
 span.spoiler:hover .cspoilerTitle {
@@ -292,13 +289,13 @@ span.newPostCount {
 
 .postformMarkup {
     text-align: left;
-	font-size: 0.7em;
+	font-size: .7em;
 	white-space: normal;
 }
 
 .postformRules {
     text-align: left;
-	font-size: 0.7em;
+	font-size: .7em;
 	max-width: 400px;
 	white-space: normal;
 }
@@ -317,8 +314,8 @@ span.newPostCount {
 }
 
 .cspoilerBody {
-    background-color: #BBBBBB;
-    border: 1px solid #CCCCCC;
+    background-color: #BBB;
+    border: 1px solid #CCC;
 }
 
 /*
@@ -327,30 +324,21 @@ span.newPostCount {
 
 .catalogContainer {
     box-sizing: border-box;
-    color: #333333;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 0px;
+    color: #333;
+    padding: 0;
     text-align: center;
 }
 
 .catalogItem {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     box-sizing: border-box;
-    color: #333333;
+    color: #333;
     display: inline-block;
     height: 450px;
     min-height: 450px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
+    margin: 10px;
     overflow: hidden;
-    padding-bottom: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 5px;
+    padding: 5px;
     position: relative;
     text-align: center;
     vertical-align:top;
@@ -363,32 +351,10 @@ span.newPostCount {
 }
 
 /*
-    Board image
+    Board image Board video Board /mlp/
 */
 
-.theImage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-/*
-    Board video
-*/
-
-.theVideo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-/*
-    Board /mlp/
-*/
-
-.theButton {
+.theImage, .theVideo, .theButton {
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -442,12 +408,12 @@ span.newPostCount {
 }
 
 .symbolCounter {
-    font-size: 0.8em;
+    font-size: .8em;
     position: absolute;
     right: 12px;
     bottom: 7px;
-    color: #333333;
-    opacity: 0.6;
+    color: #333;
+    opacity: .6;
 }
 
 .symbolCounterContainer {
@@ -472,7 +438,7 @@ span.newPostCount {
 */
 
 .error {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     margin-left: 80px;
     margin-right: 80px;
     text-align: center;
@@ -483,8 +449,8 @@ span.newPostCount {
 */
 
 .rules {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    border: 1px solid #CCC;
     margin-left: 5%;
     margin-right: 5%;
     padding-top: 10px;
@@ -492,7 +458,7 @@ span.newPostCount {
 }
 
 .news {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     margin-left: 5%;
     margin-right: 5%;
 }
@@ -510,7 +476,7 @@ span.newPostCount {
 */
 
 .ipBan {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     margin-left: 80px;
     margin-right: 80px;
 }
@@ -571,8 +537,8 @@ span.newPostCount {
 */
 
 .post {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    border: 1px solid #CCC;
     margin-top: 4px;
     margin-bottom: 4px;
     padding-top: 10px;
@@ -582,8 +548,8 @@ span.newPostCount {
 }
 
 .draft {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    border: 1px solid #CCC;
     margin-top: 4px;
     margin-bottom: 4px;
     padding-top: 10px;
@@ -614,14 +580,10 @@ span.newPostCount {
 }
 
 .post.temporary {
-    border: 1px solid #000000;
+    border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts {
-    display: none;
-}
-
-.thread.hidden > .threadPosts {
+.thread.hidden > .omittedPosts, .thread.hidden > .threadPosts {
     display: none;
 }
 
@@ -630,16 +592,16 @@ span.newPostCount {
 }
 
 .postFileSize {
-    font-size: 0.8em;
-    color: #444444;
+    font-size: .8em;
+    color: #444;
 }
 
 .postFileSize.mobile {
-    font-size: 0.6em;
+    font-size: .6em;
 }
 
 .postFileFile > a > img.mumWatching:not(:hover) {
-    opacity: 0.05;
+    opacity: .05;
 }
 
 .postFileSearch {
@@ -664,23 +626,23 @@ span.newPostCount {
 }
 
 .popupActions, .popupActions:active, .popupActions:visited {
-    color: #000000;
+    color: #000;
 }
 
 .popupActionsMenu {
     list-style-type: none;
-    margin-left: 0px;
-    padding: 4px 4px 4px 4px;
+    margin-left: 0;
+    padding: 4px;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s linear 0.2s,opacity 0.2s linear;
+    transition: visibility 0s linear .2s,opacity .2s linear;
     position: absolute;
     z-index: 9999;
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
-    margin-top: 0px;
+    background-color: #DDD;
+    border: 1px solid #CCC;
+    margin-top: 0;
     top: 100%;
-    left: 0%;
+    left: 0;
 }
 
 .postActionsMenu.mobile {
@@ -698,13 +660,13 @@ span.newPostCount {
 
 .popupActionsMenu > li > a {
     text-decoration: none;
-    color: #000000;
+    color: #000;
 }
 
 .popupActionsMenu > li > a:hover {
     display: block;
-    color: #FFFFFF;
-    background-color: #666666;
+    color: #FFF;
+    background-color: #666;
 }
 
 .postBody {
@@ -745,7 +707,7 @@ span.newPostCount {
 }
 
 .postSubject.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
     display: block;
 }
 
@@ -754,11 +716,11 @@ span.newPostCount {
 }
 
 .tripcode.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
 }
 
 .postDateTime.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
 }
 
 .moderName {
@@ -767,7 +729,7 @@ span.newPostCount {
 }
 
 .someName.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
     display: block;
 }
 
@@ -775,7 +737,7 @@ span.newPostCount {
     position: fixed;
     right: 20px;
     z-index: 9910;
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .navigationButton:hover {
@@ -794,7 +756,7 @@ span.newPostCount {
     position: fixed;
     top: 50%;
     z-index: 9910;
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .leafButton:hover {
@@ -812,19 +774,19 @@ span.newPostCount {
 .movableImage {
     position: fixed;
     z-index: 9905;
-    border: 5px solid #777777;
+    border: 5px solid #777;
     padding: 0;
     line-height: 0;
 }
 
 .postformFile {
-    border: 1px dashed #777777;
+    border: 1px dashed #777;
     text-align: justify;
 }
 
 .postformFile.drag {
-    background-color: #DDDDDD;
-    border: 1px dashed #555555;
+    background-color: #DDD;
+    border: 1px dashed #555;
 }
 
 .postformFile ~ .postformFile {
@@ -848,12 +810,7 @@ span.newPostCount {
     opacity: 0;
 }
 
-.postformFileText {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.postformFileRemoveButton {
+.postformFileText, .postformFileRemoveButton {
     display: inline-block;
     vertical-align: top;
 }
@@ -864,15 +821,15 @@ span.newPostCount {
 }
 
 .referencedBy {
-    font-size: 0.8em;
-    color: #555555;
+    font-size: .8em;
+    color: #555;
 }
 
 ul.tabWidget > li {
     display: inline;
-    background-color: #DDDDDD;
-    padding: 5px 10px 5px 10px;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    padding: 5px 10px;
+    border: 1px solid #CCC;
     border-left: none;
 }
 
@@ -883,7 +840,7 @@ ul.tabWidget > li > a {
 }
 
 ul.tabWidget > li.activated {
-    background-color: #AAAAAA;
+    background-color: #AAA;
 }
 
 /*
@@ -914,9 +871,8 @@ ul.tabWidget > li.activated {
 */
 
 .toolbar {
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCC;
     display: block;
-    font-size: 0.9em;
     padding-bottom: 5px;
     text-align: center;
     overflow-x: auto;
@@ -928,8 +884,8 @@ ul.tabWidget > li.activated {
 
 .toolbar.sticky {
     position: fixed;
-    top: 0px;
-    background-color: #EEEEEE;
+    top: 0;
+    background-color: #EEE;
     width: 100%;
 }
 
@@ -954,7 +910,7 @@ blockquote.blockquoteThread.expand {
     word-wrap: normal;
     overflow-wrap: normal;
     padding-left: 20px !important;
-    border: 1px solid #AAAAAA;
+    border: 1px solid #AAA;
     overflow-x: auto;
     max-width: 800px;
 }
@@ -996,7 +952,7 @@ blockquote.blockquoteThread.expand {
     float: right;
     position: fixed;
     top: 200px;
-    right: 0px;
+    right: 0;
     z-index: 9920;
 }
 
@@ -1008,7 +964,7 @@ blockquote.blockquoteThread.expand {
 .externalThreadFrame:hover {
     width: 90%;
     height: 100%;
-    top: 0px;
+    top: 0;
 }
 
 /*
@@ -1028,8 +984,8 @@ blockquote.blockquoteThread.expand {
 
 .vote {
     display: table;
-    background-color: #CCCCCC;
-    border: 1px solid #BBBBBB;
+    background-color: #CCC;
+    border: 1px solid #BBB;
 }
 
 .voteText {
@@ -1049,9 +1005,9 @@ blockquote.blockquoteThread.expand {
 /* Playlist */
 
 .track {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
-    padding: 2px 2px 2px 2px;
+    background-color: #DDD;
+    border: 1px solid #CCC;
+    padding: 2px;
     display: table;
 }
 
@@ -1092,11 +1048,11 @@ blockquote.blockquoteThread.expand {
 
 .buttonImage {
     vertical-align: middle;
-    opacity: 0.65;
+    opacity: .65;
 }
 
 .buttonImage:disabled {
-    opacity: 0.4;
+    opacity: .4;
 }
 
 .buttonImage:hover {
@@ -1104,7 +1060,7 @@ blockquote.blockquoteThread.expand {
 }
 
 .buttonImage:disabled:hover {
-    opacity: 0.4;
+    opacity: .4;
 }
 
 input.buttonImage {
@@ -1140,11 +1096,11 @@ input.buttonImage {
     height: 24px;
     width: 24px;
     display: inline-block;
-    padding: 0 0 0 0px;
+    padding: 0;
 }
 
 .imageCheckBox:checked + label {
-    box-shadow: inset 0 1px 5px #555555;
+    box-shadow: inset 0 1px 5px #555;
 }
 
 #checkboxRawHtml + label, #checkboxRawHtmlEdit + label {
@@ -1169,24 +1125,24 @@ input.buttonImage {
 
 .temporaryPostOverlayMask {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 9000;
-    background-color: #000000;
-    opacity: 0.6;
+    background-color: #000;
+    opacity: .6;
 }
 
 .overlayMask {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 100500;
-    background-color: #000000;
-    opacity: 0.6;
+    background-color: #000;
+    opacity: .6;
 }
 
 .overlayProgressBar {
@@ -1243,13 +1199,13 @@ input.buttonImage {
 }
 
 .chatContact:hover {
-    color: #FFFFFF;
-    background-color: #666666;
+    color: #FFF;
+    background-color: #666;
 }
 
 .chatContact.selected {
-    color: #FFFFFF;
-    background-color: #666666;
+    color: #FFF;
+    background-color: #666;
 }
 
 .chatContactNewMessages {
@@ -1257,7 +1213,7 @@ input.buttonImage {
 }
 
 .chatTarget {
-    background-color: #DDDDDD;
+    background-color: #DDD;
     white-space: nowrap;
 }
 
@@ -1284,7 +1240,7 @@ input.buttonImage {
 }
 
 [id^="vk_post_"] {
-    padding: 4px 5px 4px 5px;
+    padding: 4px 5px;
 }
 
 .overflowContainer {

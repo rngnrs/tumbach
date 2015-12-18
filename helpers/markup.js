@@ -150,7 +150,7 @@ var getTwitterEmbeddedHtml = function(href, defaultHtml) {
             return Promise.reject(err);
         }
     }).catch(function(err) {
-        console.log(err.stack || err);
+        Global.error(err.stack || err);
         return Promise.resolve(defaultHtml);
     }).then(function(html) {
         return Promise.resolve(html);
@@ -191,7 +191,7 @@ var getYoutubeEmbeddedHtml = function(href, defaultHtml) {
             return Promise.reject(err);
         }
     }).catch(function(err) {
-        console.log(err.stack || err);
+        Global.error(err.stack || err);
         return Promise.resolve(defaultHtml);
     }).then(function(html) {
         return Promise.resolve(html);
@@ -235,7 +235,7 @@ var getCoubEmbeddedHtml = function(href, defaultHtml) {
             return Promise.reject(err);
         }
     }).catch(function(err) {
-        console.log(err.stack || err);
+        Global.error(err.stack || err);
         return Promise.resolve(defaultHtml);
     }).then(function(html) {
         return Promise.resolve(html);
@@ -542,7 +542,7 @@ var checkLangsMatch = function(info, matchs, matche) {
 };
 
 var checkExternalLink = function(info, matchs) {
-    return matchs[2].split(".").length == 3 || Tools.externalLinkRootZoneExists(matchs[4]);
+    return /^\d+\.\d+\.\d+\.\d+$/.test(matchs[2]) || Tools.externalLinkRootZoneExists(matchs[4]);
 };
 
 var checkQuotationNotInterrupted = function(info, matchs, matche) {
@@ -719,20 +719,25 @@ var convertTooltip = function(_, text, matchs, _, options) {
 };
 
 var convertUnorderedList = function(_, text, matchs, _, options) {
-    var t = matchs[1];
-    if (t.length == 1)
+    var t = matchs[2];
+    if (!t)
+        t = "disc";
+    else if (t.length == 1)
         t = ListTypes[t];
     if (!t)
         return Promise.resolve("");
     options.type = SkipTypes.NoSkip;
-    options.op = "<ul type=\"" + t + "\">";
+    options.op = `<ul type="${t}">`;
     options.cl = "</ul>";
     return Promise.resolve(text);
 };
 
-var convertOrderedList = function(_, text, _, _, options) {
+var convertOrderedList = function(_, text, matchs, _, options) {
+    var t = matchs[2];
+    if (!t)
+        t = "1";
     options.type = SkipTypes.NoSkip;
-    options.op = "<ol>";
+    options.op = `<ol type="${t}">`;
     options.cl = "</ol>";
     return Promise.resolve(text);
 };
@@ -972,12 +977,12 @@ var processPostText = function(boardName, text, options) {
             }, { nestable: true });
         }).then(function() {
             return process(info, convertUnorderedList, {
-                op: /\[ul\s+type\="?(disc|circle|square|d|c|s)"?\s*\]/gi,
+                op: /\[ul(\s+type\="?(disc|circle|square|d|c|s)"?)?\s*\]/gi,
                 cl: "[/ul]"
             }, { nestable: true });
         }).then(function() {
             return process(info, convertOrderedList, {
-                op: "[ol]",
+                op: /\[ol(\s+type\="?(A|a|I|i|1)"?)?\s*\]/gi,
                 cl: "[/ol]"
             }, { nestable: true });
         }).then(function() {

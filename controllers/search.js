@@ -10,12 +10,10 @@ router.get("/search.html", function(req, res) {
         var model = {};
         model.title = Tools.translate("Search", "pageTitle");
         model.extraScripts = [ { fileName: "search.js" } ];
-        return controller(null, "search", model);
+        return controller("search", model);
     };
-    controller.html(f.bind(null), "search").then(function(data) {
-        res.send(data);
-    }).catch(function(err) {
-        controller.error(req, res, err);
+    Tools.controllerHtml(req, res, f.bind(null), "search").catch(function(err) {
+        controller.error(res, err);
     });
 });
 

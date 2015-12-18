@@ -97,13 +97,6 @@ lord.switchShowLogin = function() {
         inp.type = "password";
 };
 
-lord.searchKeyPress = function(e) {
-    e = e || window.event;
-    if (e.keyCode != 13)
-        return;
-    lord.doSearch();
-};
-
 lord.preventOnclick = function(event) {
     if (event) {
         event.stopPropagation();
@@ -500,6 +493,8 @@ lord.updateChat = function(keys) {
         div.appendChild(a);
         div.appendChild(lord.node("text", " " + lord.text("newChatMessageText") + " [" + lastKey + "]"));
         lord.showPopup(div, { type: "node" });
+        if (lord.soundEnabled())
+            lord.playSound();
     } else {
         keys.forEach(function(key) {
             var div = lord.nameOne(key, lord.chatDialog);
@@ -682,6 +677,11 @@ lord.checkNotificationQueue = function() {
 lord.initializeOnLoadSettings = function() {
     var settings = lord.settings();
     var model = lord.model(["base", "tr", "boards"], true);
+    if ("desktop" == model.deviceType) {
+        lord.removeClass(document.body, "mobile");
+        lord.addClass(document.body, "desktop");
+        document.head.removeChild(lord.nameOne("viewport", document.head));
+    }
     if (lord.data("boardName"))
         model.board = lord.model("board/" + lord.data("boardName")).board;
     model.settings = settings;
@@ -696,15 +696,15 @@ lord.initializeOnLoadSettings = function() {
         else
             model.loginMessageText = lord.text("loginMessageNoneText");
     }
-    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
+    /**
+    * @deprecated Тулбар не нужен.
+    */
+/*    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
     if (toolbarPlaceholder)
-        toolbarPlaceholder.parentNode.replaceChild(lord.template("toolbar", model), toolbarPlaceholder);
+        toolbarPlaceholder.parentNode.replaceChild(lord.template("toolbar", model), toolbarPlaceholder);*/
     var navbarPlaceholder = lord.id("navbarPlaceholder");
     if (navbarPlaceholder)
         navbarPlaceholder.parentNode.replaceChild(lord.template("navbar", model), navbarPlaceholder);
-    var searchPlaceholder = lord.id("searchPlaceholder");
-    if (searchPlaceholder)
-        searchPlaceholder.parentNode.replaceChild(lord.template("searchAction", model), searchPlaceholder);
     var customHeaderPlaceholder = lord.id("customHeaderPlaceholder");
     if (customHeaderPlaceholder) {
         var data = lord.template("custom-header", model);
@@ -723,6 +723,9 @@ lord.initializeOnLoadSettings = function() {
             customFooterPlaceholder.parentNode.replaceChild(footer, customFooterPlaceholder);
         }
     }
+    var searchPlaceholder = lord.id("searchPlaceholder");
+    if (searchPlaceholder)
+        searchPlaceholder.parentNode.replaceChild(lord.template("searchAction", model), searchPlaceholder);
     if (lord.getLocalObject("hotkeysEnabled", true) && !lord.deviceType("mobile")) {
         document.body.addEventListener("keyup", lord.interceptHotkey, false);
         var hotkeys = lord.getLocalObject("hotkeys", {}).dir;

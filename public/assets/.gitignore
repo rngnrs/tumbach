@@ -1,4 +1,5 @@
 *
+!fonts
 !android-chrome-36x36.png
 !android-chrome-48x48.png
 !android-chrome-72x72.png
@@ -18,6 +19,7 @@
 !favicon-32x32.png
 !favicon-96x96.png
 !favicon.ico
+!icon.png
 !manifest.json
 !mstile-70x70.png
 !mstile-144x144.png

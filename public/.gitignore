@@ -1,7 +1,10 @@
 *
+!assets
 !audio
 !css
 !img
 !js
 !templates
+!favicon.ico
+!favicon_newmessage.ico
 !.gitignore

@@ -73,14 +73,14 @@ module.exports.getFileInfos = function(list, hashpass) {
     return Promise.all(promises);
 };
 
-module.exports.getBoardPage = function(board, page, json) {
+module.exports.getBoardPage = function(board, page, json, ifModifiedSince) {
     if (!(board instanceof Board))
         return Promise.reject(Tools.translate("Invalid board"));
     page = +(page || 0);
     if (isNaN(page) || page < 0 || page >= pageCounts[board.name])
-        return Promise.reject(404);
+        return Promise.reject(Tools.translate("Invalid page number"));
     if (json)
-        return Tools.readFile(cachePath("page", board.name, page));
+        return Tools.readFile(cachePath("page", board.name, page), ifModifiedSince);
     var model = {
         pageCount: pageCounts[board.name],
         currentPage: page,
@@ -97,14 +97,14 @@ var getPage = function(board, page) {
         return Promise.reject(Tools.translate("Invalid board"));
     page = +(page || 0);
     if (isNaN(page) || page < 0 || page >= pageCounts[board.name])
-        return Promise.reject(404);
+        return Promise.reject(Tools.translate("Invalid page number"));
     var c = {};
     return Database.getThreads(board.name).then(function(threads) {
         c.threads = threads;
         c.threads.sort(Board.sortThreadsByDate);
         c.pageCount = pageCounts[board.name];
         if (page >= c.pageCount)
-            return Promise.reject(404);
+            return Promise.reject(Tools.translate("Invalid page number"));
         var start = page * board.threadsPerPage;
         c.threads = c.threads.slice(start, start + board.threadsPerPage);
         var promises = c.threads.map(function(thread) {
@@ -175,7 +175,7 @@ var getPage = function(board, page) {
     });
 };
 
-module.exports.getThreadPage = function(board, number, json) {
+module.exports.getThreadPage = function(board, number, json, ifModifiedSince) {
     if (!(board instanceof Board))
         return Promise.reject(Tools.translate("Invalid board"));
     number = +(number || 0);
@@ -183,10 +183,10 @@ module.exports.getThreadPage = function(board, number, json) {
         return Promise.reject(Tools.translate("Invalid thread"));
     var c = {};
     if (json)
-        return Tools.readFile(cachePath("thread", board.name, number));
+        return Tools.readFile(cachePath("thread", board.name, number), ifModifiedSince);
     return Database.getThread(board.name, number).then(function(thread) {
         if (!thread)
-            return Promise.reject(404);
+            return Promise.reject(Tools.translate("No such thread"));
         c.thread = thread;
         return Database.getPost(board.name, c.thread.number);
     }).then(function(post) {
@@ -231,7 +231,7 @@ var getThread = function(board, number) {
         }
     }).then(function(threads) {
         if (threads.length != 1)
-            return Promise.reject(404);
+            return Promise.reject(Tools.translate("No such thread"));
         c.thread = threads[0];
         return Database.threadPosts(board.name, c.thread.number, {
             withFileInfos: true,
@@ -290,7 +290,7 @@ module.exports.getLastPosts = function(board, hashpass, threadNumber, lastPostNu
         });
     }).then(function(threads) {
         if (threads.length != 1)
-            return Promise.reject(404);
+            return Promise.reject(Tools.translate("No such thread"));
         c.thread = threads[0];
         return Database.threadPosts(board.name, c.thread.number, {
             withFileInfos: true,
@@ -343,7 +343,7 @@ module.exports.getThreadInfo = function(board, hashpass, number) {
         });
     }).then(function(threads) {
         if (threads.length != 1)
-            return Promise.reject(404);
+            return Promise.reject(Tools.translate("No such thread"));
         c.thread = threads[0];
         return Database.threadPostCount(board.name, c.thread.number);
     }).then(function(postCount) {
@@ -362,14 +362,14 @@ module.exports.getThreadInfo = function(board, hashpass, number) {
     });
 };
 
-module.exports.getCatalogPage = function(board, sortMode, json) {
+module.exports.getCatalogPage = function(board, sortMode, json, ifModifiedSince) {
     if (!(board instanceof Board))
         return Promise.reject(Tools.translate("Invalid board"));
     if (json) {
         sortMode = (sortMode || "date").toLowerCase();
         if (["recent", "bumps"].indexOf(sortMode) < 0)
             sortMode = "date";
-        return Tools.readFile(cachePath("catalog", sortMode, board.name));
+        return Tools.readFile(cachePath("catalog", sortMode, board.name), ifModifiedSince);
     }
     return Database.lastPostNumber(board.name).then(function(lastPostNumber) {
         return Promise.resolve({ lastPostNumber: lastPostNumber });
@@ -631,7 +631,7 @@ var addTask = function(map, key, f, data) {
     } else {
         map[key] = {};
         return f(key, data).catch(function(err) {
-            console.log(err.stack || err);
+            Global.error(err.stack || err);
         }).then(function() {
             var g = function() {
                 var scheduled = map[key];
@@ -645,7 +645,7 @@ var addTask = function(map, key, f, data) {
                     return n.data;
                 });
                 f(key, data).catch(function(err) {
-                    console.log(err.stack || err);
+                    Global.error(err.stack || err);
                 }).then(function() {
                     g();
                     next.forEach(function(n) {
@@ -771,7 +771,7 @@ module.exports.scheduleGenerateThread = function(boardName, threadNumber, postNu
             p = p.then(function() {
                 return Tools.readFile(threadPath);
             }).then(function(data) {
-                data = JSON.parse(data);
+                data = JSON.parse(data.data);
                 var lastPosts = data.thread.lastPosts;
                 var indexOfPost = function(post) {
                     for (var i = 0; i < lastPosts.length; ++i) {

@@ -40,6 +40,11 @@ db.sadd = function(key, members) {
     return db.tmp_sadd.apply(db, [key].concat(members));
 };
 
+db.tmp_srem = db.srem;
+db.srem = function(key, members) {
+    return db.tmp_srem.apply(db, [key].concat(members));
+};
+
 var rss = {};
 
 Object.defineProperty(module.exports, "rss", {
@@ -87,6 +92,30 @@ var sortedReferensces = function(references) {
         delete ref.createdAt;
         return ref;
     });
+};
+
+var addPostToIndex = function(post) {
+    var p = Promise.resolve();
+    Tools.forIn(Tools.indexPost(post), function(index, word) {
+        p = p.then(function() {
+            return db.sadd("postSearchIndex:" + word, index.map(function(item) {
+                return JSON.stringify(item);
+            }));
+        });
+    });
+    return p;
+};
+
+var removePostFromIndex = function(post) {
+    var p = Promise.resolve();
+    Tools.forIn(Tools.indexPost(post), function(index, word) {
+        p = p.then(function() {
+            return db.srem("postSearchIndex:" + word, index.map(function(item) {
+                return JSON.stringify(item);
+            }));
+        });
+    });
+    return p;
 };
 
 var threadPostNumbers = function(boardName, threadNumber) {
@@ -181,17 +210,13 @@ module.exports.getThread = function(boardName, threadNumber) {
     var c = {};
     return db.hget("threads:" + boardName, threadNumber).then(function(thread) {
         if (!thread)
-            return Promise.resolve(null);
+            return Promise.reject(Tools.translate("No such thread"));
         c.thread = JSON.parse(thread);
         return db.hget("threadUpdateTimes:" + boardName, thread.number);
     }).then(function(time) {
-        if (!c.thread)
-            return Promise.resolve(null);
         c.thread.updatedAt = time;
         return threadPostNumbers(boardName, c.thread.number);
     }).then(function(postNumbers) {
-        if (!c.thread)
-            return Promise.resolve(null);
         c.thread.postNumbers = postNumbers;
         return Promise.resolve(c.thread);
     });
@@ -311,30 +336,24 @@ var getPost = function(boardName, postNumber, options) {
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
     if (isNaN(postNumber) || postNumber <= 0)
-        return Promise.reject(Tools.translate("Invalid post"));
+        return Promise.reject(Tools.translate("Invalid post number"));
     var opts = (typeof options == "object");
     var c = {};
     var key = boardName + ":" + postNumber;
     var p = db.hget("posts", key).then(function(post) {
-        c.post = post ? JSON.parse(post) : null;
-        return c.post;
-    }).then(function(post) {
         if (!post)
-            return Promise.resolve(post);
-        return bannedFor(boardName, post.number, post.user.ip).then(function(banned) {
-            post.bannedFor = banned;
-            return Promise.resolve(c.post);
-        });
-    });
+            return Promise.reject(Tools.translate("No such post"));
+        c.post = JSON.parse(post);
+        return bannedFor(boardName, c.post.number, c.post.user.ip);
+    }).then(function(banned) {
+        c.post.bannedFor = banned;
+        return Promise.resolve(c.post);
+    });;
     if (!opts || (!options.withFileInfos && !options.withReferences && !options.withExtraData))
         return p;
     return p.then(function() {
-        if (!c.post)
-            return Promise.resolve();
         return threadPostNumbers(c.post.boardName, c.post.threadNumber);
     }).then(function(postNumbers) {
-        if (!c.post)
-            return Promise.resolve();
         c.post.sequenceNumber = postNumbers.indexOf(c.post.number) + 1;
         var promises = [];
         if (options.withFileInfos) {
@@ -379,14 +398,16 @@ var getFileInfo = function(file) {
     } else {
         p = db.hget("fileHashes", file.fileHash).then(function(fileInfo) {
             if (!fileInfo)
-                return Promise.resolve(null);
+                return Promise.reject(Tools.translate("No such file"));
             return Promise.resolve(JSON.parse(fileInfo).name);
         });
     }
     return p.then(function(fileName) {
         return db.hget("fileInfos", fileName);
     }).then(function(fileInfo) {
-        return Promise.resolve(fileInfo ? JSON.parse(fileInfo) : null);
+        if (!fileInfo)
+            return Promise.reject(Tools.translate("No such file"));
+        return Promise.resolve(JSON.parse(fileInfo));
     });
 };
 
@@ -625,7 +646,7 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
         }
     }).then(function(threads) {
         if (!threads || threads.length != 1)
-            return Promise.reject(Tools.translate("No such thread or no access to thread"));
+            return Promise.reject(Tools.translate("No such thread"));
         if (threads[0].closed)
             return Promise.reject(Tools.translate("Posting is disabled in this thread"));
         c.level = req.level || null;
@@ -725,16 +746,12 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
         });
         return Promise.all(promises);
     }).then(function() {
-        var promises = [];
-        Tools.forIn(Tools.indexPost({
+        return addPostToIndex({
             boardName: board.name,
             number: c.postNumber,
             rawText: rawText,
             subject: (fields.subject || null)
-        }), function(index, word) {
-            promises.push(db.sadd("postSearchIndex:" + word, JSON.stringify(index[0])));
         });
-        return Promise.all(promises);
     }).then(function() {
         return db.sadd("threadPostNumbers:" + board.name + ":" + threadNumber, c.postNumber);
     }).then(function() {
@@ -927,21 +944,17 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
     }).then(function() {
         return board.removeExtraData(postNumber);
     }).then(function() {
-        var promises = [];
-        Tools.forIn(Tools.indexPost({
+        return removePostFromIndex({
             boardName: boardName,
             number: postNumber,
             rawText: c.post.rawText,
             subject: c.post.subject
-        }), function(index, word) {
-            promises.push(db.srem("postSearchIndex:" + word, JSON.stringify(index[0])));
         });
-        return Promise.all(promises);
     }).then(function() {
         if (!leaveFileInfos) {
             c.paths.forEach(function(path) {
                 return FS.remove(path).catch(function(err) {
-                    console.log(err);
+                    Global.error(err.stack || err);
                 });
             });
         }
@@ -974,7 +987,7 @@ var removeThread = function(boardName, threadNumber, archived, leaveFileInfos) {
             }).then(function() {
                 return db.srem("threadsPlannedForDeletion", boardName + ":" + threadNumber);
             }).catch(function(err) {
-                console.log(err);
+                Global.error(err.stack || err);
             });
         }, 5000);
         return Promise.resolve();
@@ -1152,7 +1165,7 @@ Transaction.prototype.rollback = function() {
             if (!exists)
                 return;
             FS.remove(path).catch(function(err) {
-                console.log(err);
+                Global.error(err.stack || err);
             });
         });
     });
@@ -1279,36 +1292,68 @@ var toMap = function(index, boardName) {
         post = JSON.parse(post);
         if (boardName && post.boardName != boardName)
             return;
-        map[post.boardName + ":" + post.postNumber + ":" + post.source] = post;
+        var key = post.boardName + ":" + post.postNumber + ":" + post.source;
+        if (!map.hasOwnProperty(key))
+            map[key] = [];
+        map[key].push(post);
     });
     return map;
 };
 
 var findPhrase = function(phrase, boardName) {
-    var promises = Tools.getWords(phrase).map(function(word) {
-        return db.smembers("postSearchIndex:" + word.word);
+    var results = [];
+    var p = Promise.resolve();
+    Tools.getWords(phrase).forEach(function(word) {
+        p = p.then(function() {
+            return db.smembers("postSearchIndex:" + word.word);
+        }).then(function(result) {
+            results.push(result.map(function(post) {
+                return JSON.parse(post);
+            }).filter(function(post) {
+                return !boardName || (post.boardName == boardName);
+            }));
+            return Promise.resolve();
+        });
     });
-    return Promise.all(promises).then(function(results) {
-        if (results.length < 1)
-            return {};
-        var first = toMap(results[0], boardName);
-        for (var i = 1; i < results.length; ++i) {
-            var next = toMap(results[i]);
-            for (var key in first) {
-                if (!first.hasOwnProperty(key))
-                    continue;
-                if (!next.hasOwnProperty(key)) {
-                    delete first[key];
+    var f = function(chain, ind) {
+        if (!Util.isArray(chain))
+            chain = [chain];
+        ind = ind || 0;
+        var lastPost = chain[chain.length - 1];
+        if (ind > 0) {
+            var nextChain = [];
+            for (var i = 0; i < results[ind].length; ++i) {
+                var post = results[ind][i];
+                if (post.boardName != lastPost.boardName || post.number != lastPost.number
+                    || post.source != lastPost.source || post.position != (lastPost.position + 1)) {
                     continue;
                 }
-                var firstPost = first[key];
-                var nextPost = next[key];
-                ++firstPost.position;
-                if (nextPost.position != firstPost.position)
-                    delete first[key];
+                if (ind < (results.length - 1))
+                    nextChain = f(chain.concat(post), ind + 1);
+                else
+                    nextChain = chain.concat(post);
+                if (nextChain.length > 0)
+                    break;
             }
+            return nextChain;
+        } else {
+            if (1 == results.length)
+                return [lastPost];
+            return f(chain, ind + 1);
         }
-        return first;
+    };
+    return p.then(function() {
+        if (results.length < 1)
+            return {};
+        return results[0].map(function(result) {
+            return f(result);
+        }).filter(function(chain) {
+            return chain.length > 0;
+        }).reduce(function(map, chain) {
+            var post = chain[0];
+            map[post.boardName + ":" + post.postNumber] = post;
+            return map;
+        }, {});
     });
 };
 
@@ -1443,16 +1488,12 @@ var rebuildPostSearchIndex = function(boardName, postNumber) {
     var key = boardName + ":" + postNumber;
     console.log(`Rebuilding post search index: [${boardName}] ${postNumber}`);
     return getPost(boardName, postNumber).then(function(post) {
-        var promises = [];
-        Tools.forIn(Tools.indexPost({
+        return addPostToIndex({
             boardName: boardName,
             number: postNumber,
             rawText: post.rawText,
             subject: (post.subject || null)
-        }), function(index, word) {
-            promises.push(db.sadd("postSearchIndex:" + word, JSON.stringify(index[0])));
         });
-        return Promise.all(promises);
     });
 };
 
@@ -1591,6 +1632,7 @@ module.exports.addFiles = function(req, fields, files, transaction) {
         });
         return Promise.all(promises);
     }).then(function() {
+        Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
         return Promise.resolve(c.post);
     });
 };
@@ -1616,6 +1658,8 @@ module.exports.editPost = function(req, fields) {
             markupModes.push(val);
     });
     return getPost(board.name, postNumber, { withExtraData: true }).then(function(post) {
+        if (!post)
+            return Promise.reject(Tools.translate("Invalid post"));
         if ((!req.hashpass || req.hashpass != post.user.hashpass)
             && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
             return Promise.reject(Tools.translate("Not enough rights"));
@@ -1644,16 +1688,12 @@ module.exports.editPost = function(req, fields) {
         return board.postExtraData(req, fields, null, c.post)
     }).then(function(extraData) {
         c.extraData = extraData;
-        var promises = [];
-        Tools.forIn(Tools.indexPost({
+        return removePostFromIndex({
             boardName: c.post.boardName,
             number: c.post.number,
             rawText: c.post.rawText,
             subject: c.post.subject
-        }), function(index, word) {
-            promises.push(db.srem("postSearchIndex:" + word, JSON.stringify(index[0])));
         });
-        return Promise.all(promises);
     }).then(function() {
         c.post.email = email || null;
         c.post.markup = markupModes;
@@ -1674,16 +1714,12 @@ module.exports.editPost = function(req, fields) {
     }).then(function() {
         return addReferencedPosts(c.post, referencedPosts);
     }).then(function() {
-        var promises = [];
-        Tools.forIn(Tools.indexPost({
+        return addPostToIndex({
             boardName: board.name,
             number: c.post.number,
             rawText: rawText,
             subject: subject
-        }), function(index, word) {
-            promises.push(db.sadd("postSearchIndex:" + word, JSON.stringify(index[0])));
         });
-        return Promise.all(promises);
     }).then(function() {
         Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
         return Promise.resolve();
@@ -1762,6 +1798,8 @@ module.exports.deletePost = function(req, res, fields) {
     return controller.checkBan(req, res, board.name, true).then(function() {
         return getPost(board.name, postNumber);
     }).then(function(post) {
+        if (!post)
+            return Promise.reject(Tools.translate("Invalid post"));
         c.post = post;
         if ((!password || password != post.user.password)
             && (!req.hashpass || req.hashpass != post.user.hashpass)
@@ -1918,16 +1956,12 @@ module.exports.moveThread = function(req, fields) {
                 });
                 return Promise.all(promises);
             }).then(function() {
-                var promises = [];
-                Tools.forIn(Tools.indexPost({
+                return addPostToIndex({
                     boardName: targetBoard.name,
                     number: post.number,
                     rawText: post.rawText,
                     subject: (post.subject || null)
-                }), function(index, word) {
-                    promises.push(db.sadd("postSearchIndex:" + word, JSON.stringify(index[0])));
                 });
-                return Promise.all(promises);
             });
         });
         return Promise.all(promises);
@@ -2002,7 +2036,7 @@ module.exports.deleteFile = function(req, res, fields) {
         paths.push(__dirname + "/../public/" + c.post.boardName + "/thumb/" + c.fileInfo.thumb.name);
         paths.forEach(function(path) {
             FS.remove(path).catch(function(err) {
-                console.log(err);
+                Global.error(err);
             });
         });
         Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
@@ -2018,8 +2052,6 @@ module.exports.editAudioTags = function(req, res, fields) {
     var c = {};
     var password = Tools.password(fields.password);
     return getFileInfo({ fileName: fields.fileName }).then(function(fileInfo) {
-        if (!fileInfo)
-            return Promise.reject(Tools.translate("No such file"));
         if (fileInfo.mimeType.substr(0, 6) != "audio/")
             return Promise.reject(Tools.translate("Not an audio file"));
         c.fileInfo = fileInfo;
@@ -2027,6 +2059,8 @@ module.exports.editAudioTags = function(req, res, fields) {
     }).then(function() {
         return getPost(c.fileInfo.boardName, c.fileInfo.postNumber);
     }).then(function(post) {
+        if (!post)
+            return Promise.reject(Tools.translate("Invalid post"));
         c.post = post;
         if ((!password || password != post.user.password)
             && (!req.hashpass || req.hashpass != post.user.hashpass)
@@ -2166,7 +2200,7 @@ module.exports.banUser = function(req, ip, bans) {
                     if (ban.postNumber) {
                         setTimeout(function() {
                             updatePostBanInfo(boardName, ban).catch(function(err) {
-                                console.log(err.stack || err);
+                                Global.error(err.stack || err);
                             });
                         }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
                     }
@@ -2240,7 +2274,7 @@ module.exports.initialize = function() {
                         return Promise.resolve();
                     setTimeout(function() {
                         updatePostBanInfo(boardName, ban).catch(function(err) {
-                            console.log(err.stack || err);
+                            Global.error(err.stack || err);
                         });
                     }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
                     return Promise.resolve();
