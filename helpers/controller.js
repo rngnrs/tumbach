@@ -101,7 +101,8 @@ controller.error = function(res, error, ajax) {
             if (Tools.contains(process.argv.slice(2), "--dev-mode"))
                 Global.error(error);
             model.errorMessage = Tools.translate("Error", "errorMessage");
-            model.errorDescription = (error && Util.isString(error)) ? error : "";
+            model.errorDescription = (error && Util.isString(error)) ? error
+                : ((404 == error) ? Tools.translate("404 (not found)", "errorMessage") : "");
         }
         return model;
     };
@@ -150,8 +151,8 @@ controller.notFound = function(res) {
             return controller("notFound", model);
         });
     };
-    controller.html(f.bind(null), "notFound").then(function(data) {
-        res.status(404).send(data);
+    controller.html(f.bind(null), null, "notFound").then(function(data) {
+        res.status(404).send(data.data);
     }).catch(function(err) {
         controller.error(res, err);
     });
@@ -626,7 +627,6 @@ controller.translationsModel = function() {
     translate("Failed to generate hash", "failedToGenerateHashErrorText");
     translate("The thread is already in favorites", "alreadyInFavoritesErrorText");
     translate("Invalid arguments", "invalidArgumentsErrorText");
-    translate("Failed to get post", "faliedToGetPostErrorText");
     translate("No such token in the table", "noTokenInTableErrorText");
     translate("The thread was deleted", "threadDeletedErrorText");
     translate("Invalid data", "invalidDataErrorText");
@@ -786,12 +786,12 @@ var cachePath = function() {
     return config("system.tmpPath", __dirname + "/../tmp") + "/cache-html" + (path ? ("/" + path + ".html") : "");
 };
 
-controller.html = function(f) {
-    var args = Array.prototype.slice.call(arguments, 1);
+controller.html = function(f, ifModifiedSince) {
+    var args = Array.prototype.slice.call(arguments, 2);
     var path = cachePath(args);
     var key = args.join(":");
     if (cachedHtml.hasOwnProperty(key))
-        return Tools.readFile(path);
+        return Tools.readFile(path, ifModifiedSince);
     var c = {};
     return f().then(function(data) {
         c.data = data;
@@ -799,10 +799,14 @@ controller.html = function(f) {
             return Promise.resolve();
         return Tools.writeFile(path, c.data);
     }).then(function() {
+        c.lastModified = Tools.now();
         cachedHtml[key] = {};
         return Global.addToCached(args);
     }).then(function() {
-        return Promise.resolve(c.data);
+        return Promise.resolve({
+            data: c.data,
+            lastModified: c.lastModified
+        });
     });
 };
 
