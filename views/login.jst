@@ -2,48 +2,53 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body class="mobile" {{#def.baseData}}>
-<div id="customHeaderPlaceholder" style="display: none;"></div>
-<div class="theTitle">
-    <h1>
-        {{=it.title}}
-    </h1>
-</div>
 {{? it.site.vkontakte.integrationEnabled}}
-    <style type="text/css">
-        #vkontakteLoginButton {
-            text-align: center;
-            margin-top: 8px;
-        }
-
-        #vkontakteLoginButton > table {
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-    <script type="text/javascript">
-        VK.init({ apiId: {{=it.site.vkontakte.appId}} });
-    </script>
+<style type="text/css">
+    #vkontakteLoginButton {
+        text-align: center;
+        margin-top: 8px;
+    }
+    #vkontakteLoginButton > table {
+        margin: 0 auto;
+    }
+</style>
+<script type="text/javascript">
+    VK.init({ apiId: {{=it.site.vkontakte.appId}} });
+</script>
 {{?}}
-<div class="login">
-    <form id="loginForm" method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/login"
-          enctype="application/x-www-form-urlencoded" class="inlineForm"
-          onsubmit="lord.doLogin(event, this); return false;">
-        <input type="password" class="input" name="hashpass" placeholder="{{=it.tr.loginPlaceholderText}}"
-               size="30" autofocus="true" />
-        <input type="submit" class="button" name="submit" value="{{=it.tr.loginText}}" />
-    </form>
-    {{? it.site.vkontakte.integrationEnabled}}
-        <div id="vkontakteLoginButton" onclick="lord.vkAuth();"></div>
-    {{?}}
-</div>
-<div class="loginDescription">
-    {{=it.tr.loginSystemDescriptionText}}
-</div>
-{{? it.site.vkontakte.integrationEnabled}}
-    <div class="loginDescription">
-        {{=it.tr.loginSystemVkontakteDescriptionText}}
+<div class="wrap">
+    <div id="customHeaderPlaceholder" style="display: none;"></div>
+    <div id="toolbarPlaceholder" style="display: none;"></div>
+    <div class="wrappie">
+        <div class="main">
+            <div class="theTitle">
+                <h1>
+                    {{=it.title}}
+                </h1>
+            </div>
+            <div class="login">
+                <form id="loginForm" method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/login"
+                      enctype="application/x-www-form-urlencoded" class="inlineForm"
+                      onsubmit="lord.doLogin(event, this); return false;">
+                    <input type="password" class="input" name="hashpass" placeholder="{{=it.tr.loginPlaceholderText}}"
+                           size="30" autofocus="true" />
+                    <input type="submit" class="button" name="submit" value="{{=it.tr.loginText}}" />
+                </form>
+                {{? it.site.vkontakte.integrationEnabled}}
+                <div id="vkontakteLoginButton" onclick="lord.vkAuth();"></div>
+                {{?}}
+            </div>
+            <div class="loginDescription">
+                {{=it.tr.loginSystemDescriptionText}}
+            </div>
+            {{? it.site.vkontakte.integrationEnabled}}
+            <div class="loginDescription">
+                {{=it.tr.loginSystemVkontakteDescriptionText}}
+            </div>
+            {{?}}
+        </div>
     </div>
-{{?}}
-<div id="customFooterPlaceholder" style="display: none;"></div>
+    <div id="customFooterPlaceholder" style="display: none;"></div>
+</div>
 </body>
 </html>

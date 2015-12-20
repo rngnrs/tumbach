@@ -2,7 +2,7 @@
 !codemirror
 !doT.min.js
 !FileSaver.min.js
-!jquery-1.11.3.min.js
+!jquery-2.1.4.min.js
 !jquery.datetimepicker.js
 !jquery.knob.min.js
 !jszip.min.js

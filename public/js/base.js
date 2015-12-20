@@ -253,8 +253,8 @@ lord.showNewPosts = function() {
     var lastPostNumbers = lord.getLocalObject("lastPostNumbers", {});
     var currentBoardName = lord.data("boardName");
     lord.api("lastPostNumbers").then(function(result) {
-        lastPostNumbers[currentBoardName]
-        lord.query(".navbar, .toolbar").forEach(function(navbar) {
+        //lastPostNumbers[currentBoardName]
+        lord.query(".tumb-menu, .navbar, .toolbar").forEach(function(navbar) {
             lord.query(".navbarItem", navbar).forEach(function(item) {
                 var a = lord.queryOne("a", item);
                 if (!a)
@@ -271,9 +271,10 @@ lord.showNewPosts = function() {
                 var span = lord.node("span");
                 lord.addClass(span, "newPostCount");
                 span.appendChild(lord.node("text", "+" + newPostCount));
-                var parent = a.parentNode;
-                parent.insertBefore(span, a);
-                parent.insertBefore(lord.node("text", " "), a);
+                //var parent = a.parentNode;
+                //parent.insertBefore(span, a);
+                a.appendChild(span);
+                //parent.insertBefore(lord.node("text", " "), a);
             });
         });
         if (typeof result[currentBoardName] == "number") {
@@ -696,12 +697,9 @@ lord.initializeOnLoadSettings = function() {
         else
             model.loginMessageText = lord.text("loginMessageNoneText");
     }
-    /**
-    * @deprecated Тулбар не нужен.
-    */
-/*    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
+    var toolbarPlaceholder = lord.id("toolbarPlaceholder");
     if (toolbarPlaceholder)
-        toolbarPlaceholder.parentNode.replaceChild(lord.template("toolbar", model), toolbarPlaceholder);*/
+        toolbarPlaceholder.parentNode.replaceChild(lord.template("tumb_toolbar", model), toolbarPlaceholder);
     var navbarPlaceholder = lord.id("navbarPlaceholder");
     if (navbarPlaceholder)
         navbarPlaceholder.parentNode.replaceChild(lord.template("navbar", model), navbarPlaceholder);
@@ -709,18 +707,18 @@ lord.initializeOnLoadSettings = function() {
     if (customHeaderPlaceholder) {
         var data = lord.template("custom-header", model);
         if (data) {
-            var header = lord.node("header");
-            header.appendChild(data);
-            customHeaderPlaceholder.parentNode.replaceChild(header, customHeaderPlaceholder);
+            /*var header = lord.node("header");
+            header.appendChild(data);*/
+            customHeaderPlaceholder.parentNode.replaceChild(data, customHeaderPlaceholder);
         }
     }
     var customFooterPlaceholder = lord.id("customFooterPlaceholder");
     if (customFooterPlaceholder) {
         var data = lord.template("custom-footer", model);
         if (data) {
-            var footer = lord.node("footer");
-            footer.appendChild(data);
-            customFooterPlaceholder.parentNode.replaceChild(footer, customFooterPlaceholder);
+            /*var footer = lord.node("footer");
+            footer.appendChild(data);*/
+            customFooterPlaceholder.parentNode.replaceChild(data, customFooterPlaceholder);
         }
     }
     var searchPlaceholder = lord.id("searchPlaceholder");
@@ -791,6 +789,7 @@ lord.initializeOnLoadSettings = function() {
             $("html, body").animate({ scrollTop: scrollto }, 0);
         }, false);
     }
+    tumb.onLoad();
 };
 
 window.addEventListener("load", function load() {

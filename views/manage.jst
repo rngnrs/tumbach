@@ -2,32 +2,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body class="mobile" {{#def.baseData}}>
-<div id="customHeaderPlaceholder" style="display: none;"></div>
-<div id="toolbarPlaceholder" style="display: none;"></div>
-<br />
-<div id="searchPlaceholder" style="display: none;"></div>
-<div class="theTitle">
-    <h1>
-        {{=it.title}}
-    </h1>
-</div>
-<div id="bannedUsers">
-    {{ for (var ip in it.bannedUsers) { }}
-        {{ if (!it.bannedUsers.hasOwnProperty(ip)) continue; }}
-        {{ var user = { ip: ip, bans: it.bannedUsers[ip] }; }}
-        <div id="user{{=user.ip}}">
-            {{#def.userBan}}
-            <br />
+<div class="wrap">
+    <div id="customHeaderPlaceholder" style="display: none;"></div>
+    <div id="toolbarPlaceholder" style="display: none;"></div>
+    <div class="wrappie">
+        <div class="main">
+            <div class="theTitle">
+                <h1>
+                    {{=it.title}}
+                </h1>
+            </div>
+            <div id="bannedUsers">
+                {{ for (var ip in it.bannedUsers) { }}
+                {{ if (!it.bannedUsers.hasOwnProperty(ip)) continue; }}
+                {{ var user = { ip: ip, bans: it.bannedUsers[ip] }; }}
+                <div id="user{{=user.ip}}">
+                    {{#def.userBan}}
+                    <br />
+                </div>
+                {{ } }}
+            </div>
+            <hr />
+            <div>
+                {{? typeof user != "undefined"}}
+                {{ user = undefined; }}
+                {{?}}
+                {{#def.userBan}}
+            </div>
         </div>
-    {{ } }}
-</div>    
-<hr />
-<div>
-    {{? typeof user != "undefined"}}
-        {{ user = undefined; }}
-    {{?}}
-    {{#def.userBan}}
+    </div>
+    <div id="customFooterPlaceholder" style="display: none;"></div>
 </div>
-<div id="customFooterPlaceholder" style="display: none;"></div>
 </body>
 </html>

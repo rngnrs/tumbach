@@ -1,9 +1,20 @@
 /*Neutron*/
+/* tumb rewrite */
+.color-def {
+    background-color: #2C2C2C !important;
+    color: #698CC0 !important;
+}
+
+.buttonImage, .logo {
+    filter: invert(1);
+    -webkit-filter: invert(1);
+}
+/* /tumb rewrite */
 
 body {
     background-color: #212121;
     color: #698CC0;
-    font-family: "Trebuchet MS",Trebuchet,tahoma,serif;
+    /*font-family: "Trebuchet MS",Trebuchet,tahoma,serif;*/
 }
 
 body.mobile {
@@ -23,12 +34,12 @@ a.expandCollapse {
 }
 
 a:hover {
-    color: #EEFEBB
+    color: #EEFEBB;
 }
 
 a.expandCollapse:hover {
     color: #666;
-    cursor: pointer
+    cursor: pointer;
 }
 
 audio {
@@ -80,16 +91,6 @@ textarea, input, .button, .checkbox {
     cursor: pointer;
 }
 
-.critical {
-    color: red;
-    border: 1px dotted red;
-}
-
-.warning {
-    color: orange;
-    border: 1px dotted orange;
-}
-
 .favorites {
     background-color: #DDEDAA;
     position: fixed;
@@ -120,12 +121,6 @@ textarea, input, .button, .checkbox {
     display: inline;
 }
 
-.scrollAreaH60 {
-    overflow: auto;
-    max-height: 60px;
-    border: 1px solid #698CC0;
-}
-
 .hidePostformRulesButton {
     display: block;
     text-decoration: none;
@@ -142,18 +137,6 @@ textarea, input, .button, .checkbox {
     margin-left: auto;
     margin-right: 5px;
     cursor: pointer;
-}
-
-.hiddenPostLink {
-    text-decoration: line-through;
-}
-
-.nowrap {
-    white-space: nowrap;
-}
-
-.wrap {
-    white-space: normal;
 }
 
 .postSequenceNumber {
@@ -196,31 +179,6 @@ textarea, input, .button, .checkbox {
     overflow-x: auto;
 }
 
-blockquote {
-    margin: 15px 25px;
-    padding-top: 10px;
-    overflow-y: auto;
-    overflow-x: auto;
-    max-height: 300px;
-    box-sizing: border-box;
-    max-width: 1200px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-all;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-}
-
-blockquote.mobile {
-    max-width: 550px;
-}
-
-blockquote.expand {
-    max-height: none;
-}
-
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #575757;
     color: #575757;
@@ -252,53 +210,8 @@ span.newPostCount {
     font-size: 75%;
 }
 
-.postLimitReached {
-    color: red;
-}
-
-.bumpLimitReached {
-    color: olive;
-}
-
-.pages {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.pagesItem {
-    white-space: nowrap;
-}
-
-.postingDisabledMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.postformMarkup {
-    text-align: left;
-	font-size: .7em;
-	white-space: normal;
-}
-
-.postformRules {
-    text-align: left;
-	font-size: .7em;
-	max-width: 400px;
-	white-space: normal;
-}
-
 .quotation {
     color: #789922;
-}
-
-.fileByLinkButton {
-    cursor: pointer;
 }
 
 .cspoilerTitle {
@@ -338,91 +251,8 @@ span.newPostCount {
     word-wrap: break-word;
 }
 
-.catalogItem:hover {
-    height: auto;
-}
-
-/*
-    Board image Board video Board /mlp/
-*/
-
-.theImage, .theVideo, .theButton {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-.hiddenElement {
-    display: none;
-}
-
-/*
-    Create action
-*/
-
-.createAction {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.createAction > div {
-    display: inline-block;
-}
-
-.createAction > div > div {
-    display: block;
-}
-
-.postFormVisible {
-    display: block;
-}
-
-.postFormTextarea {
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.postFormTable {
-    display: inline;
-}
-
-.postformLabel {
-    text-align: right;
-}
-
-.postformField {
-    text-align: left;
-}
-
-.symbolCounter {
-    font-size: .8em;
-    position: absolute;
-    right: 12px;
-    bottom: 7px;
-    color: #333;
-    opacity: .6;
-}
-
-.symbolCounterContainer {
-    position: relative;
-    display: inline-block;
-}
-
 .opSign {
     color: red;
-}
-
-/*
-    Create action /pr/
-*/
-
-.codechaContainer {
-    white-space: normal;
 }
 
 /*
@@ -432,35 +262,14 @@ span.newPostCount {
 .error {
     background-color: #2C2C2C;
     color: #698CC0;
-    margin-left: 80px;
-    margin-right: 80px;
-    text-align: center;
 }
 
 /*
     Home
 */
 
-.rules {
+.rules, .news {
     background-color: #2C2C2C;
-    margin-left: 5%;
-    margin-right: 5%;
-    padding-top: 10px;
-    padding-left: 10px;
-}
-
-.news {
-    background-color: #2C2C2C;
-    margin-left: 5%;
-    margin-right: 5%;
-}
-
-.sectionHeader {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
 }
 
 /*
@@ -469,53 +278,6 @@ span.newPostCount {
 
 .ipBan {
     background-color: #DDEDAA;
-    margin-left: 80px;
-    margin-right: 80px;
-}
-
-/*
-    Navbar
-*/
-
-.navbar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-    font-size: 1.2em;
-}
-
-.postingSpeedBar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.friendsBar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.navbar.navbarFrame {
-    text-align: left;
-    margin-left: 4px;
-    font-size: 1em;
-}
-
-.navbar.navbarFrame.mobile {
-    text-align: left;
-    margin-left: 4px;
-    font-size: 1.2em;
-}
-
-.navbarItem {
-    white-space: nowrap;
 }
 
 /*
@@ -528,47 +290,17 @@ span.newPostCount {
     Post
 */
 
-.post {
+.post, .draft {
     background-color: #2C2C2C;
     border: 1px solid #575757;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding-top: 10px;
-    padding-left: 10px;
-    overflow-x: auto;
-    display: table;
-}
-
-.draft {
-    background-color: #2C2C2C;
-    border: 1px solid #575757;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding-top: 10px;
-    padding-left: 10px;
-    overflow-x: auto;
-    display: table;
 }
 
 .post:not(.hidden) {
     background: url("../favicon.ico") right bottom no-repeat;
 }
 
-.opPost {
-    overflow-x: auto;
-    display: table;
-}
-
 .newPost {
     background-color: #3C3C3C;
-}
-
-.hidden > .postBody {
-    display: none;
-}
-
-.opPost.hidden ~ .post {
-    display: none;
 }
 
 .post:target, .opPost:target {
@@ -577,53 +309,11 @@ span.newPostCount {
 
 .post.temporary {
     background-color: #2C2C2C;
-    border: 1px solid #000000;
-}
-
-.thread.hidden > .omittedPosts {
-    display: none;
-}
-
-.thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postHeader, .postFileName, .postFileSize {
-    white-space: nowrap;
+    border: 1px solid #000;
 }
 
 .postFileSize {
-    font-size: 0.8em;
     color: #698CC0;
-}
-
-.postFileSize.mobile {
-    font-size: 0.6em;
-}
-
-.postFileFile > a > img.mumWatching:not(:hover) {
-    opacity: 0.05;
-}
-
-.postFileSearch {
-    padding-bottom: 4px;
-}
-
-.postToThread > a > button {
-    font-size: 1.2em;
-}
-
-.postToThread.mobile {
-    display: block;
-}
-
-.postToThread.mobile > a > button {
-    width: 100%;
-}
-
-.popupActions {
-    position: relative;
-    outline: 0;
 }
 
 .popupActions, .popupActions:active, .popupActions:visited {
@@ -631,43 +321,19 @@ span.newPostCount {
 }
 
 .popupActionsMenu {
-    list-style-type: none;
-    margin-left: 0px;
-    padding: 4px 4px 4px 4px;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s linear 0.2s,opacity 0.2s linear;
-    position: absolute;
-    z-index: 9999;
     background-color: #212121;
     border: 1px solid #575757;
-    margin-top: 0px;
-    top: 100%;
-    left: 0%;
 }
 
-.postActionsMenu.mobile {
-    left: -220px;
-}
-
-.fileActionsMenu.mobile {
-    left: -40px;
-}
-
-.popupActions:focus > .popupActionsMenu {
-    visibility: visible;
-    opacity: 1;
-}
 
 .popupActionsMenu > li > a {
-    text-decoration: none;
     color: #698CC0;
 }
 
 .popupActionsMenu > li > a:hover {
     display: block;
-    color: #FFFFFF;
-    background-color: #666666;
+    color: #FFF;
+    background-color: #666;
 }
 
 .postBody {
@@ -677,10 +343,6 @@ span.newPostCount {
 .postFile {
     display: inline-block;
     vertical-align: top;
-}
-
-.shrink {
-    width: 100%;
 }
 
 .postFile ~ .postFile {
@@ -709,7 +371,7 @@ span.newPostCount {
 }
 
 .postSubject.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
     display: block;
 }
 
@@ -718,11 +380,11 @@ span.newPostCount {
 }
 
 .tripcode.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
 }
 
 .postDateTime.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
 }
 
 .moderName {
@@ -736,7 +398,7 @@ span.newPostCount {
 }
 
 .someName.mobile {
-    font-size: 0.8em;
+    font-size: .8em;
     display: block;
 }
 
@@ -744,7 +406,7 @@ span.newPostCount {
     position: fixed;
     right: 20px;
     z-index: 9910;
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .navigationButton:hover {
@@ -763,7 +425,7 @@ span.newPostCount {
     position: fixed;
     top: 50%;
     z-index: 9910;
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .leafButton:hover {
@@ -781,19 +443,19 @@ span.newPostCount {
 .movableImage {
     position: fixed;
     z-index: 9905;
-    border: 5px solid #777777;
+    border: 5px solid #777;
     padding: 0;
     line-height: 0;
 }
 
 .postformFile {
-    border: 1px dashed #777777;
+    border: 1px dashed #777;
     text-align: justify;
 }
 
 .postformFile.drag {
     background-color: #DDEDAA;
-    border: 1px dashed #555555;
+    border: 1px dashed #555;
 }
 
 .postformFile ~ .postformFile {
@@ -833,14 +495,14 @@ span.newPostCount {
 }
 
 .referencedBy {
-    font-size: 0.8em;
+    font-size: .8em;
     color: #707070;
 }
 
 ul.tabWidget > li {
     display: inline;
     background-color: #DDEDAA;
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px;
 }
 
 ul.tabWidget > li > a {
@@ -882,7 +544,6 @@ ul.tabWidget > li.activated {
 
 .toolbar {
     display: block;
-    font-size: 0.9em;
     padding-bottom: 5px;
     text-align: center;
     overflow-x: auto;
@@ -894,7 +555,7 @@ ul.tabWidget > li.activated {
 
 .toolbar.sticky {
     position: fixed;
-    top: 0px;
+    top: 0;
     background-color: #212121;
     width: 100%;
 }
@@ -961,7 +622,7 @@ blockquote.blockquoteThread.expand {
     float: right;
     position: fixed;
     top: 200px;
-    right: 0px;
+    right: 0;
     z-index: 9920;
 }
 
@@ -973,7 +634,7 @@ blockquote.blockquoteThread.expand {
 .externalThreadFrame:hover {
     width: 90%;
     height: 100%;
-    top: 0px;
+    top: 0;
 }
 
 /*
@@ -1014,7 +675,7 @@ blockquote.blockquoteThread.expand {
 
 .track {
     background-color: #DDEDAA;
-    padding: 2px 2px 2px 2px;
+    padding: 2px;
     display: table;
 }
 
@@ -1059,7 +720,7 @@ blockquote.blockquoteThread.expand {
 
 .buttonImage {
     vertical-align: middle;
-    opacity: 0.65;
+    opacity: .65;
     -webkit-filter: invert(1);
     -moz-filter: invert(1);
     -ms-filter: invert(1);
@@ -1068,7 +729,7 @@ blockquote.blockquoteThread.expand {
 }
 
 .buttonImage:disabled {
-    opacity: 0.4;
+    opacity: .4;
 }
 
 .buttonImage:hover {
@@ -1076,7 +737,7 @@ blockquote.blockquoteThread.expand {
 }
 
 .buttonImage:disabled:hover {
-    opacity: 0.4;
+    opacity: .4;
 }
 
 input.buttonImage {
@@ -1130,7 +791,7 @@ input.buttonImage {
     height: 24px;
     width: 24px;
     display: inline-block;
-    padding: 0 0 0 0px;
+    padding: 0;
 }
 
 .imageCheckBox:checked + label {
@@ -1159,24 +820,24 @@ input.buttonImage {
 
 .temporaryPostOverlayMask {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 9000;
-    background-color: #000000;
-    opacity: 0.6;
+    background-color: #000;
+    opacity: .6;
 }
 
 .overlayMask {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 100500;
-    background-color: #000000;
-    opacity: 0.6;
+    background-color: #000;
+    opacity: .6;
 }
 
 .overlayProgressBar {
@@ -1232,14 +893,9 @@ input.buttonImage {
     white-space: nowrap;
 }
 
-.chatContact:hover {
-    color: #FFFFFF;
-    background-color: #666666;
-}
-
-.chatContact.selected {
-    color: #FFFFFF;
-    background-color: #666666;
+.chatContact:hover, .chatContact.selected {
+    color: #FFF;
+    background-color: #666;
 }
 
 .chatContactNewMessages {
@@ -1257,26 +913,4 @@ input.buttonImage {
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
-}
-
-.chatInput {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.chatSendButton {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.loadingMessage {
-    text-align: center;
-}
-
-[id^="vk_post_"] {
-    padding: 4px 5px 4px 5px;
-}
-
-.overflowContainer {
-    overflow-x: auto;
 }

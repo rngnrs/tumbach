@@ -1015,7 +1015,7 @@ lord.showDialog = function(title, label, body, afterShow) {
                 styles.maxHeight = "80%";
                 styles.maxWidth = "80%";
                 styles.overflow = "auto";
-                styles.border = "1px solid #777777";
+                styles.border = "1px solid #777";
                 return styles;
             }
         }).afterShow(function(modal) {
@@ -1258,9 +1258,10 @@ lord.template = function(templateName, model, noparse) {
 
 lord.createStylesheetLink = function(href, prefix) {
     var link = lord.node("link");
-    link.type = "text/css";
-    link.rel = "stylesheet";
     link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
+    link.id = "stylesheet";
+    link.rel = "stylesheet";
+    link.type = "text/css";
     lord.queryOne("head").appendChild(link);
     return link;
 };
