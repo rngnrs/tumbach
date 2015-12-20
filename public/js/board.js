@@ -43,7 +43,7 @@ lord.worker.addEventListener("message", function(message) {
         task.reject(message.error);
 });
 
-lord.doWork = function(type, data) {
+lord.doWork = function(type, data, transferable) {
     return new Promise(function(resolve, reject) {
         var id = uuid.v1();
         lord.workerTasks[id] = {
@@ -54,7 +54,7 @@ lord.doWork = function(type, data) {
             id: id,
             type: type,
             data: data
-        }));
+        }), transferable || []);
     });
 };
 
@@ -258,20 +258,20 @@ lord.appendExtrasToModel = function(model) {
         if (["SFW", "R-15", "R-18", "R-18G"].indexOf(r2) < 0)
             throw "Invalid rating r2: " + r2;
         switch (r1) {
-        case "SFW":
-            return (r1 == r2) ? 0 : -1;
-        case "R-15":
-            if (r1 == r2)
-                return 0;
-            return ("SFW" == r2) ? 1 : -1;
-        case "R-18":
-            if (r1 == r2)
-                return 0;
-            return ("R-18G" == r2) ? -1 : 1;
-        case "R-18G":
-            return (r1 == r2) ? 0 : 1;
-        default:
-            throw "Invalid rating r1: " + r1;
+            case "SFW":
+                return (r1 == r2) ? 0 : -1;
+            case "R-15":
+                if (r1 == r2)
+                    return 0;
+                return ("SFW" == r2) ? 1 : -1;
+            case "R-18":
+                if (r1 == r2)
+                    return 0;
+                return ("R-18G" == r2) ? -1 : 1;
+            case "R-18G":
+                return (r1 == r2) ? 0 : 1;
+            default:
+                throw "Invalid rating r1: " + r1;
         }
     };
     model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
@@ -613,7 +613,7 @@ lord.quickReply = function(el) {
     var postForm = lord.id("postForm");
     var targetContainer = post.parentNode;
     var same = (postForm.parentNode == targetContainer
-            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
+    && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
     var selection = document.getSelection().toString();
     lord.hidePostForm();
     if (same)
@@ -1363,28 +1363,28 @@ lord.fileAddedCommon = function(div, file) {
     lord.removeFileHash(div);
     var prefix = lord.data("sitePathPrefix");
     if (file && lord.getLocalObject("checkFileExistence", true)) {
+        var c = {};
         lord.readAs(file).then(function(data) {
-            return lord.doWork("getFileHash", data);
-        }).then(function(fileHash) {
-            return lord.api("fileInfo", { fileHash: fileHash }).then(function(fileInfo) {
-                if (!fileInfo)
-                    return;
-                var img = lord.node("img");
-                img.src = "/" + prefix + "img/storage.png";
-                img.title = lord.text("fileExistsOnServerText");
-                lord.queryOne("span", div).appendChild(lord.node("text", " "));
-                lord.queryOne("span", div).appendChild(img);
-                var fileHashes = lord.getFileHashes(div);
-                if (fileHashes.value.indexOf(fileHash) < 0)
-                    fileHashes.value = fileHashes.value + (fileHashes.value.length > 0 ? "," : "") + fileHash;
-                var f = inp.onchange;
-                delete inp.onchange;
-                inp.value = "";
-                inp.onchange = f;
-                div.fileHash = fileHash;
-                if (div.droppedFile)
-                    delete div.droppedFile;
-            });
+            c.fileHash = sha1(data);
+            return lord.api("fileExistence", { fileHash: c.fileHash });
+        }).then(function(exists) {
+            if (!exists)
+                return;
+            var img = lord.node("img");
+            img.src = "/" + prefix + "img/storage.png";
+            img.title = lord.text("fileExistsOnServerText");
+            lord.queryOne("span", div).appendChild(lord.node("text", " "));
+            lord.queryOne("span", div).appendChild(img);
+            var fileHashes = lord.getFileHashes(div);
+            if (fileHashes.value.indexOf(c.fileHash) < 0)
+                fileHashes.value = fileHashes.value + (fileHashes.value.length > 0 ? "," : "") + c.fileHash;
+            var f = inp.onchange;
+            delete inp.onchange;
+            inp.value = "";
+            inp.onchange = f;
+            div.fileHash = c.fileHash;
+            if (div.droppedFile)
+                delete div.droppedFile;
         }).catch(lord.handleError);
     }
     var preview = function() {
@@ -1672,65 +1672,65 @@ lord.markup = function(tag) {
         }
     };
     switch (tag) {
-    case "b":
-    case "i":
-    case "s":
-    case "u":
-    case "spoiler":
-    case "ul":
-    case "ol":
-    case "li":
-    case "sup":
-    case "sub":
-    case "url": {
-        wrap("[" + tag + "]", "[/" + tag + "]");
-        break;
-    }
-    case "uld": {
-        wrap("[ul type=disc]", "[/ul]");
-        break;
-    }
-    case "ulc": {
-        wrap("[ul type=circle]", "[/ul]");
-        break;
-    }
-    case "uls": {
-        wrap("[ul type=square]", "[/ul]");
-        break;
-    }
-    case "ol1": {
-        wrap("[ol type=1]", "[/ol]");
-        break;
-    }
-    case "olI": {
-        wrap("[ol type=I]", "[/ol]");
-        break;
-    }
-    case "oli": {
-        wrap("[ol type=i]", "[/ol]");
-        break;
-    }
-    case "olA": {
-        wrap("[ol type=A]", "[/ol]");
-        break;
-    }
-    case "ola": {
-        wrap("[ol type=a]", "[/ol]");
-        break;
-    }
-    case ">": {
-        lord.quoteSelectedText();
-        break;
-    }
-    case "code": {
-        var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
-        var lang = sel.options[sel.selectedIndex].value;
-        wrap("[" + (("-" != lang) ? (tag + " lang=\"" + lang + "\"") : tag) + "]", "[/" + tag + "]");
-        break;
-    }
-    default: {
-        break;
-    }
+        case "b":
+        case "i":
+        case "s":
+        case "u":
+        case "spoiler":
+        case "ul":
+        case "ol":
+        case "li":
+        case "sup":
+        case "sub":
+        case "url": {
+            wrap("[" + tag + "]", "[/" + tag + "]");
+            break;
+        }
+        case "uld": {
+            wrap("[ul type=disc]", "[/ul]");
+            break;
+        }
+        case "ulc": {
+            wrap("[ul type=circle]", "[/ul]");
+            break;
+        }
+        case "uls": {
+            wrap("[ul type=square]", "[/ul]");
+            break;
+        }
+        case "ol1": {
+            wrap("[ol type=1]", "[/ol]");
+            break;
+        }
+        case "olI": {
+            wrap("[ol type=I]", "[/ol]");
+            break;
+        }
+        case "oli": {
+            wrap("[ol type=i]", "[/ol]");
+            break;
+        }
+        case "olA": {
+            wrap("[ol type=A]", "[/ol]");
+            break;
+        }
+        case "ola": {
+            wrap("[ol type=a]", "[/ol]");
+            break;
+        }
+        case ">": {
+            lord.quoteSelectedText();
+            break;
+        }
+        case "code": {
+            var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
+            var lang = sel.options[sel.selectedIndex].value;
+            wrap("[" + (("-" != lang) ? (tag + " lang=\"" + lang + "\"") : tag) + "]", "[/" + tag + "]");
+            break;
+        }
+        default: {
+            break;
+        }
     }
 };
 
@@ -2052,7 +2052,7 @@ lord.submitted = function(event, form) {
     if (event)
         event.preventDefault();
     if (!form);
-        form = lord.id("postForm");
+    form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
     lord.setCookie("markupMode", markupMode.options[markupMode.selectedIndex].value);
@@ -2290,7 +2290,7 @@ lord.resetPostForm = function() {
     postForm.reset();
     var divs = lord.query(".postformFile", postForm);
     for (var i = divs.length - 1; i >= 0; --i)
-    lord.removeFile(lord.queryOne("a", divs[i]));
+        lord.removeFile(lord.queryOne("a", divs[i]));
     var trip = lord.nameOne("tripcode", postForm);
     if (trip) {
         var threadNumber = lord.nameOne("threadNumber", postForm);

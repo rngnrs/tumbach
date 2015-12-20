@@ -1275,9 +1275,10 @@ lord.template = function(templateName, model, noparse) {
 
 lord.createStylesheetLink = function(href, prefix) {
     var link = lord.node("link");
-    link.type = "text/css";
-    link.rel = "stylesheet";
     link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
+    link.id = "stylesheet";
+    link.rel = "stylesheet";
+    link.type = "text/css";
     lord.queryOne("head").appendChild(link);
     return link;
 };

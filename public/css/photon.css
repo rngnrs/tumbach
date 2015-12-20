@@ -1,8 +1,13 @@
 /*Photon*/
+/* tumb rewrite */
+.color-def {
+    background-color: #DDD !important;
+}
+/* /tumb rewrite */
 
 body {
     background-color: #EEE;
-    font-family: Verdana,sans-serif;
+    /*font-family: Verdana,sans-serif;*/
 }
 
 body.desktop {
@@ -31,7 +36,7 @@ a:hover {
 
 a.expandCollapse:hover {
     color: #666;
-    cursor: pointer
+    cursor: pointer;
 }
 
 audio {
@@ -60,13 +65,7 @@ hr {
     border: 1px solid #CCC;
 }
 
-.button {
-    background: #EAEAEA;
-    border: 1px solid #CCC;
-    cursor: pointer;
-}
-
-.checkbox {
+.button, .checkbox {
     background: #EAEAEA;
     border: 1px solid #CCC;
     cursor: pointer;
@@ -83,16 +82,6 @@ hr {
     text-align: center;
     padding: 10px;
     cursor: pointer;
-}
-
-.critical {
-    color: red;
-    border: 1px dotted red;
-}
-
-.warning {
-    color: orange;
-    border: 1px dotted orange;
 }
 
 .favorites {
@@ -123,9 +112,6 @@ hr {
     /**/
 }
 
-.inlineForm {
-    display: inline;
-}
 
 .scrollAreaH60 {
     overflow: auto;
@@ -149,18 +135,6 @@ hr {
     margin-left: auto;
     margin-right: 5px;
     cursor: pointer;
-}
-
-.hiddenPostLink {
-    text-decoration: line-through;
-}
-
-.nowrap {
-    white-space: nowrap;
-}
-
-.wrap {
-    white-space: normal;
 }
 
 .postSequenceNumber {
@@ -203,31 +177,6 @@ hr {
     overflow-x: auto;
 }
 
-blockquote {
-    margin: 15px 25px;
-    padding-top: 10px;
-    overflow-y: auto;
-    overflow-x: auto;
-    max-height: 300px;
-    box-sizing: border-box;
-    max-width: 1200px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-all; /* tumb check */
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-}
-
-blockquote.mobile {
-    max-width: 550px;
-}
-
-blockquote.expand {
-    max-height: none;
-}
-
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #BBB;
     color: #BBB;
@@ -257,55 +206,6 @@ span.tooltip {
 span.newPostCount {
     color: green;
     font-size: 75%;
-}
-
-.postLimitReached {
-    color: red;
-}
-
-.bumpLimitReached {
-    color: olive;
-}
-
-.pages {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.pagesItem {
-    white-space: nowrap;
-}
-
-.postingDisabledMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.postformMarkup {
-    text-align: left;
-	font-size: .7em;
-	white-space: normal;
-}
-
-.postformRules {
-    text-align: left;
-	font-size: .7em;
-	max-width: 400px;
-	white-space: normal;
-}
-
-.quotation {
-    color: #789922;
-}
-
-.fileByLinkButton {
-    cursor: pointer;
 }
 
 .cspoilerTitle {
@@ -346,91 +246,8 @@ span.newPostCount {
     word-wrap: break-word;
 }
 
-.catalogItem:hover {
-    height: auto;
-}
-
-/*
-    Board image Board video Board /mlp/
-*/
-
-.theImage, .theVideo, .theButton {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
-.hiddenElement {
-    display: none;
-}
-
-/*
-    Create action
-*/
-
-.createAction {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.createAction > div {
-    display: inline-block;
-}
-
-.createAction > div > div {
-    display: block;
-}
-
-.postFormVisible {
-    display: block;
-}
-
-.postFormTextarea {
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.postFormTable {
-    display: inline;
-}
-
-.postformLabel {
-    text-align: right;
-}
-
-.postformField {
-    text-align: left;
-}
-
-.symbolCounter {
-    font-size: .8em;
-    position: absolute;
-    right: 12px;
-    bottom: 7px;
-    color: #333;
-    opacity: .6;
-}
-
-.symbolCounterContainer {
-    position: relative;
-    display: inline-block;
-}
-
 .opSign {
     color: green;
-}
-
-/*
-    Create action /pr/
-*/
-
-.codechaContainer {
-    white-space: normal;
 }
 
 /*
@@ -439,36 +256,15 @@ span.newPostCount {
 
 .error {
     background-color: #DDD;
-    margin-left: 80px;
-    margin-right: 80px;
-    text-align: center;
 }
 
 /*
     Home
 */
 
-.rules {
+.rules, .news {
     background-color: #DDD;
     border: 1px solid #CCC;
-    margin-left: 5%;
-    margin-right: 5%;
-    padding-top: 10px;
-    padding-left: 10px;
-}
-
-.news {
-    background-color: #DDD;
-    margin-left: 5%;
-    margin-right: 5%;
-}
-
-.sectionHeader {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
 }
 
 /*
@@ -477,53 +273,6 @@ span.newPostCount {
 
 .ipBan {
     background-color: #DDD;
-    margin-left: 80px;
-    margin-right: 80px;
-}
-
-/*
-    Navbar
-*/
-
-.navbar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-    font-size: 1.2em;
-}
-
-.postingSpeedBar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.friendsBar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-
-.navbar.navbarFrame {
-    text-align: left;
-    margin-left: 4px;
-    font-size: 1em;
-}
-
-.navbar.navbarFrame.mobile {
-    text-align: left;
-    margin-left: 4px;
-    font-size: 1.2em;
-}
-
-.navbarItem {
-    white-space: nowrap;
 }
 
 /*
@@ -536,43 +285,13 @@ span.newPostCount {
     Post
 */
 
-.post {
+.post, .draft {
     background-color: #DDD;
     border: 1px solid #CCC;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding-top: 10px;
-    padding-left: 10px;
-    overflow-x: auto;
-    display: table;
-}
-
-.draft {
-    background-color: #DDD;
-    border: 1px solid #CCC;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding-top: 10px;
-    padding-left: 10px;
-    overflow-x: auto;
-    display: table;
-}
-
-.opPost {
-    overflow-x: auto;
-    display: table;
 }
 
 .newPost {
     background-color: #CDCDCD;
-}
-
-.hidden > .postBody {
-    display: none;
-}
-
-.opPost.hidden ~ .post {
-    display: none;
 }
 
 .post:target, .opPost:target {
@@ -583,46 +302,8 @@ span.newPostCount {
     border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts, .thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postHeader, .postFileName, .postFileSize {
-    white-space: nowrap;
-}
-
 .postFileSize {
-    font-size: .8em;
     color: #444;
-}
-
-.postFileSize.mobile {
-    font-size: .6em;
-}
-
-.postFileFile > a > img.mumWatching:not(:hover) {
-    opacity: .05;
-}
-
-.postFileSearch {
-    padding-bottom: 4px;
-}
-
-.postToThread > a > button {
-    font-size: 1.2em;
-}
-
-.postToThread.mobile {
-    display: block;
-}
-
-.postToThread.mobile > a > button {
-    width: 100%;
-}
-
-.popupActions {
-    position: relative;
-    outline: 0;
 }
 
 .popupActions, .popupActions:active, .popupActions:visited {
@@ -630,36 +311,11 @@ span.newPostCount {
 }
 
 .popupActionsMenu {
-    list-style-type: none;
-    margin-left: 0;
-    padding: 4px;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s linear .2s,opacity .2s linear;
-    position: absolute;
-    z-index: 9999;
     background-color: #DDD;
     border: 1px solid #CCC;
-    margin-top: 0;
-    top: 100%;
-    left: 0;
-}
-
-.postActionsMenu.mobile {
-    left: -220px;
-}
-
-.fileActionsMenu.mobile {
-    left: -40px;
-}
-
-.popupActions:focus > .popupActionsMenu {
-    visibility: visible;
-    opacity: 1;
 }
 
 .popupActionsMenu > li > a {
-    text-decoration: none;
     color: #000;
 }
 
@@ -676,10 +332,6 @@ span.newPostCount {
 .postFile {
     display: inline-block;
     vertical-align: top;
-}
-
-.shrink {
-    width: 100%;
 }
 
 .postFile ~ .postFile {
@@ -1204,12 +856,7 @@ input.buttonImage {
     white-space: nowrap;
 }
 
-.chatContact:hover {
-    color: #FFF;
-    background-color: #666;
-}
-
-.chatContact.selected {
+.chatContact:hover, .chatContact.selected {
     color: #FFF;
     background-color: #666;
 }
@@ -1229,26 +876,4 @@ input.buttonImage {
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
-}
-
-.chatInput {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.chatSendButton {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.loadingMessage {
-    text-align: center;
-}
-
-[id^="vk_post_"] {
-    padding: 4px 5px;
-}
-
-.overflowContainer {
-    overflow-x: auto;
 }
