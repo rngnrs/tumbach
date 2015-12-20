@@ -111,7 +111,89 @@ lord.showSettings = function() {
     c.model = merge.recursive(model,
             lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")], true));
     c.div = lord.template("settingsDialog", c.model);
-    lord.showDialog("settingsDialogTitle", null, c.div).then(function(accepted) {
+    lord.showDialog(c.div, {
+        title: "settingsDialogTitle",
+        buttons: [
+            {
+                text: "exportSettingsButtonText",
+                action: function() {
+                    var o = { settings: lord.settings() };
+                    var f = function(key, def) {
+                        if (typeof def == "undefined")
+                            def = {};
+                        o[key] = lord.getLocalObject(key, def);
+                    };
+                    f("favoriteThreads");
+                    f("ownPosts");
+                    f("spells", "");
+                    f("userJavaScript", "");
+                    f("hotkeys", {});
+                    f("hiddenPosts", {});
+                    f("lastCodeLang", "");
+                    f("chats");
+                    f("drafts");
+                    f("playlist/trackList", []);
+                    f("lastChatCheckDate", null);
+                    f("audioVideoVolume", 1);
+                    f("userCss", "");
+                    f("ownLikes");
+                    f("ownVotes");
+                    f("lastPostNumbers");
+                    f("showTripcode");
+                    f("mumWatching", false);
+                    prompt(lord.text("copySettingsHint"), JSON.stringify(o));
+                }
+            },
+            {
+                text: "importSettingsButtonText",
+                action: function() {
+                    var s = prompt(lord.text("pasteSettingsHint"));
+                    if (!s)
+                        return;
+                    var o;
+                    try {
+                        o = JSON.parse(s);
+                    } catch(err) {
+                        lord.handleError(err);
+                        return;
+                    }
+                    lord.setSettings(o.settings);
+                    var f = function(key, merge) {
+                        var val = o[key];
+                        if (typeof val == "undefined")
+                            return;
+                        if (!merge)
+                            return lord.setLocalObject(key, val);
+                        var src = lord.getLocalObject(key, {});
+                        lord.forIn(val, function(v, k) {
+                            src[v] = k;
+                        });
+                        lord.setLocalObject(src, val);
+                    };
+                    f("favoriteThreads", true);
+                    f("ownPosts", true);
+                    f("spells");
+                    f("userJavaScript");
+                    f("hotkeys");
+                    f("hiddenPosts");
+                    f("lastCodeLang");
+                    f("chats", true);
+                    f("drafts", true);
+                    f("playlist/trackList");
+                    f("lastChatCheckDate");
+                    f("audioVideoVolume");
+                    f("userCss");
+                    f("ownLikes", true);
+                    f("ownVotes", true);
+                    f("lastPostNumbers");
+                    f("showTripcode");
+                    f("mumWatching");
+                }
+            },
+            "cancel",
+            "ok"
+        ]
+    }).then(function(accepted) {
         if (!accepted)
             return;
         var model = {};
@@ -130,7 +212,7 @@ lord.showSettings = function() {
         });
         lord.setSettings(model);
         lord.reloadPage();
-    });
+    }).catch(lord.handleError);
 };
 
 lord.showFavorites = function() {
@@ -295,7 +377,7 @@ lord.editHotkeys = function() {
     };
     model = merge.recursive(model, lord.model("tr"));
     c.div = lord.template("hotkeysDialog", model);
-    lord.showDialog(null, null, c.div).then(function(accepted) {
+    lord.showDialog(c.div).then(function(accepted) {
         if (!accepted)
             return;
         lord.query("input", c.div).forEach(function(el) {
@@ -337,7 +419,7 @@ lord.editSpells = function() {
     ta.rows = 10;
     ta.cols = 43;
     ta.value = lord.getLocalObject("spells", lord.DefaultSpells);
-    lord.showDialog(null, null, ta).then(function(result) {
+    lord.showDialog(ta).then(function(result) {
         if (!result)
             return Promise.resolve();
         lord.setLocalObject("spells", ta.value);
@@ -348,14 +430,17 @@ lord.editSpells = function() {
             "data": lord.getLocalObject("spells", lord.DefaultSpells)
         });
         return Promise.resolve();
-    });
+    }).catch(lord.handleError);
 };
 
 lord.showHiddenPostList = function() {
     var model = lord.model(["base", "tr"], true);
     model.hiddenPosts = lord.toArray(lord.getLocalObject("hiddenPosts", {}));
     var div = lord.template("hiddenPostList", model);
-    return lord.showDialog("hiddenPostListText", null, div);
+    return lord.showDialog(div, {
+        title: "hiddenPostListText",
+        buttons: ["close"]
+    });
 };
 
 lord.removeHidden = function(el) {
@@ -383,15 +468,17 @@ lord.editUserCss = function() {
         ta.value = lord.getLocalObject("userCss", "");
         div.appendChild(ta);
     }
-    lord.showDialog(null, null, div, function() {
-        if (c.editor)
-            c.editor.refresh();
+    lord.showDialog(div, {
+        afterShow: function() {
+            if (c.editor)
+                c.editor.refresh();
+        }
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
         lord.setLocalObject("userCss", c.editor ? c.editor.getValue() : ta.value);
         return Promise.resolve();
-    });
+    }).catch(lord.handleError);
 };
 
 lord.editUserJavaScript = function() {
@@ -411,15 +498,17 @@ lord.editUserJavaScript = function() {
         ta.value = lord.getLocalObject("userJavaScript", "");
         div.appendChild(ta);
     }
-    lord.showDialog(null, null, div, function() {
-        if (c.editor)
-            c.editor.refresh();
+    lord.showDialog(div, {
+        afterShow: function() {
+            if (c.editor)
+                c.editor.refresh();
+        }
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
         lord.setLocalObject("userJavaScript", c.editor ? c.editor.getValue() : ta.value);
         return Promise.resolve();
-    });
+    }).catch(lord.handleError);
 };
 
 lord.hotkey_showFavorites = function() {
@@ -558,11 +647,15 @@ lord.showChat = function(key) {
         model.contacts.push({ key: key });
     });
     lord.chatDialog = lord.template("chatDialog", model);
-    lord.showDialog("chatText", null, lord.chatDialog, function() {
-        lord.checkChats();
-        if (!key)
-            return;
-        lord.selectChatContact(key);
+    lord.showDialog(lord.chatDialog, {
+        title: "chatText",
+        afterShow: function() {
+            lord.checkChats();
+            if (!key)
+                return;
+            lord.selectChatContact(key);
+        },
+        buttons: ["close"]
     }).then(function() {
         lord.chatDialog = null;
     }).catch(lord.handleError);

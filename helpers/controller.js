@@ -76,21 +76,20 @@ controller.sync = function(templateName, modelData) {
 };
 
 controller.error = function(res, error, ajax) {
+    if (error) {
+        Global.error(error);
+        if (error.stack)
+            Global.error(error.stack);
+    }
     if (!ajax && Util.isNumber(error) && 404 == error)
         return controller.notFound(res);
     var f = function(error) {
         var model = {};
         model.title = Tools.translate("Error", "pageTitle");
         if (Util.isError(error)) {
-            if (Tools.contains(process.argv.slice(2), "--dev-mode")) {
-                Global.error(error);
-                Global.error(error.stack);
-            }
             model.errorMessage = Tools.translate("Internal error", "errorMessage");
             model.errorDescription = error.message;
         } else if (Util.isObject(error) && (error.error || error.ban)) {
-            if (Tools.contains(process.argv.slice(2), "--dev-mode"))
-                Global.error(error);
             if (error.ban) {
                 model.ban = error.ban;
             } else {
@@ -98,8 +97,6 @@ controller.error = function(res, error, ajax) {
                 model.errorDescription = error.description || error.error;
             }
         } else {
-            if (Tools.contains(process.argv.slice(2), "--dev-mode"))
-                Global.error(error);
             model.errorMessage = Tools.translate("Error", "errorMessage");
             model.errorDescription = (error && Util.isString(error)) ? error
                 : ((404 == error) ? Tools.translate("404 (not found)", "errorMessage") : "");
@@ -137,7 +134,6 @@ controller.error = function(res, error, ajax) {
 };
 
 controller.notFound = function(res) {
-    Global.error(404);
     var f = function() {
         var model = {};
         model.title = Tools.translate("Error 404", "pageTitle");
@@ -158,20 +154,25 @@ controller.notFound = function(res) {
     });
 };
 
-controller.checkBan = function(req, res, boardName, write) {
+controller.checkBan = function(req, res, boardNames, write) {
     var ip = Tools.correctAddress(req.ip);
     var ban = ipBans[ip];
     if (ban && (write || "NO_ACCESS" == ban.level))
         return Promise.reject({ ban: ban });
-    return Database.userBans(ip, boardName).then(function(bans) {
+    return Database.userBans(ip, boardNames).then(function(bans) {
         if (!bans)
             return Promise.resolve();
-        var ban = bans[boardName];
-        if (!ban)
-            return Promise.resolve();
-        if (write)
-            return Promise.reject({ ban: ban });
-        return ("NO_ACCESS" == ban.level) ? Promise.reject({ ban: ban }) : Promise.resolve();
+        if (!Util.isArray(boardNames))
+            boardNames = [boardNames];
+        for (var i = 0; i < boardNames.length; ++i) {
+            var ban = bans[boardNames[i]];
+            if (ban) {
+                if (write)
+                    return Promise.reject({ ban: ban });
+                return ("NO_ACCESS" == ban.level) ? Promise.reject({ ban: ban }) : Promise.resolve();
+            }
+        }
+        return Promise.resolve();
     });
 };
 
@@ -392,7 +393,6 @@ controller.translationsModel = function() {
     translate("Spoiler", "hotkeyMarkupSpoilerLabelText");
     translate("Quote selected text", "hotkeyMarkupQuotationLabelText");
     translate("Code block", "hotkeyMarkupCodeLabelText");
-    translate("General settings", "generalSettingsLegendText");
     translate("Style:", "styleLabelText");
     translate("Code style:", "codeStyleLabelText");
     translate("Shrink posts", "postShrinkingLabelText");
@@ -407,7 +407,7 @@ controller.translationsModel = function() {
     translate("Minimalistic post form", "minimalisticPostformLabelText");
     translate("Hide boards:", "hiddenBoardsLabelText");
     translate("This option may be ignored on some boards", "captchaLabelWarningText");
-    translate("Script settings", "scriptSettingsLegendText");
+    translate("General", "generalTabText");
     translate("Posts and threads", "postsTabText");
     translate("Files", "filesTabText");
     translate("Postform and posting", "postformTabText");
@@ -554,6 +554,8 @@ controller.translationsModel = function() {
     translate("Go complain to your mum, you whiner!", "complainMessage");
     translate("Auto update", "autoUpdateText");
     translate("Close", "closeButtonText");
+    translate("Export", "exportSettingsButtonText");
+    translate("Import", "importSettingsButtonText");
     translate("Remove from hidden post/thread list", "removeFromHiddenPostListText");
     translate("Hidden posts/threads", "hiddenPostListText");
     translate("Settings", "settingsDialogTitle");
@@ -635,6 +637,9 @@ controller.translationsModel = function() {
     translate("Invalid data", "invalidDataErrorText");
     translate("No such post", "noSuchPostErrorText");
     translate("Internal error", "internalErrorText");
+    translate("Enable API request caching", "apiRequestCachingLabelText");
+    translate("Copy settings string and save it somewhere", "copySettingsHint");
+    translate("Paste settings string here", "pasteSettingsHint");
     Board.boardNames().forEach(function(boardName) {
         Board.board(boardName).addTranslations(translate);
     });

@@ -232,9 +232,7 @@ lord.Hour = 60 * lord.Minute;
 lord.Day = 24 * lord.Hour;
 lord.Year = 365 * lord.Day;
 lord.Billion = 2 * 1000 * 1000 * 1000;
-lord.SettingsStoredInCookies = ["style", "codeStyle", "stickyToolbar", "shrinkPosts", "markupMode", "time",
-                                "timeZoneOffset", "captchaEngine", "maxAllowedRating", "hidePostformRules",
-                                "minimalisticPostform", "hiddenBoards"];
+lord.SettingsStoredInCookies = ["time", "timeZoneOffset", "captchaEngine"];
 //
 lord.keyboardMap = [
   "", // [0]
@@ -967,10 +965,10 @@ lord.deviceType = function(expected) {
     return base.deviceType;
 };
 
-lord.showDialog = function(title, label, body, afterShow) {
+lord.showDialog = function(body, options) {
     var root = lord.node("div");
-    title = lord.text(title);
-    label = lord.text(label);
+    var title = lord.text(options ? options.title : null);
+    var label = lord.text(options ? options.label : null);
     if (title || label) {
         var div = lord.node("div");
         if (title) {
@@ -993,21 +991,47 @@ lord.showDialog = function(title, label, body, afterShow) {
         root.appendChild(lord.node("br"));
     }
     var div2 = lord.node("div");
-    var dialog = null;
-    var cancel = lord.node("button");
     return new Promise(function(resolve, reject) {
-        cancel.onclick = function() {
-            dialog.close();
-        };
-        cancel.appendChild(lord.node("text", lord.text("cancelButtonText")));
-        div2.appendChild(cancel);
-        var ok = lord.node("button");
-        ok.onclick = function() {
-            resolve(true);
-            dialog.close();
-        };
-        ok.appendChild(lord.node("text", lord.text("confirmButtonText")));
-        div2.appendChild(ok);
+        var dialog;
+        var buttons = (options && options.buttons) || ["cancel", "ok"];
+        buttons.forEach(function(button) {
+            if ("ok" == button) {
+                var ok = lord.node("button");
+                ok.onclick = function() {
+                    resolve(true);
+                    dialog.close();
+                };
+                ok.appendChild(lord.node("text", lord.text("confirmButtonText")));
+                div2.appendChild(ok);
+            } else if ("cancel" == button) {
+                var cancel = lord.node("button");
+                cancel.onclick = function() {
+                    dialog.close();
+                };
+                cancel.appendChild(lord.node("text", lord.text("cancelButtonText")));
+                div2.appendChild(cancel);
+            } else if ("close" == button) {
+                var close = lord.node("button");
+                close.onclick = function() {
+                    dialog.close();
+                };
+                close.appendChild(lord.node("text", lord.text("closeButtonText")));
+                div2.appendChild(close);
+            } else if (button && button.text && typeof button.action == "function") {
+                return {
+                    text: lord.text(button.text),
+                    click: function() {
+                        var result = button.action();
+                        if (typeof result != "boolean")
+                            return;
+                        resolve(result);
+                        $(this).dialog("close");
+                    }
+                };
+                btn.appendChild(lord.node("text", lord.text(button.text)));
+                div2.appendChild(btn);
+            }
+        });
         root.appendChild(div2);
         dialog = picoModal({
             content: root,
@@ -1015,17 +1039,16 @@ lord.showDialog = function(title, label, body, afterShow) {
                 styles.maxHeight = "80%";
                 styles.maxWidth = "80%";
                 styles.overflow = "auto";
-                styles.border = "1px solid #777777";
+                styles.border = "1px solid #777";
                 return styles;
             }
         }).afterShow(function(modal) {
-            if (afterShow)
-                afterShow();
+            if (options && typeof options.afterShow == "function")
+                options.afterShow();
         }).afterClose(function(modal) {
             modal.destroy();
             resolve(false);
         });
-        dialog.show();
     });
 };
 
@@ -1151,31 +1174,25 @@ lord.getPlainText = function(node) {
     return normalize(recurse(node));
 };
 
-lord.activateTab = function(a, tabIndex, display) {
+lord.activateTab = function(a) {
     if (!a)
         return;
-    tabIndex = +tabIndex;
+    var tabIndex = +lord.data("index", a.parentNode);
     if (isNaN(tabIndex))
         return;
     var tab = a.parentNode;
     var header = tab.parentNode;
-    var widget = header.nextSibling.nextSibling;
-    var page = lord.nameOne(tabIndex, widget);
-    if (typeof display != "string")
-        display = "block";
+    var widget = lord.queryOne("div", header.parentNode);
+    var page = lord.queryOne("[data-index='" + tabIndex + "']", widget);
     lord.arr(widget.childNodes).forEach(function(node) {
         if (node.nodeType != 1) //Element
             return;
-        node.style.display = ((node == page) ? display : "none");
+        node.style.display = ((node == page) ? "block" : "none");
     });
-    lord.arr(header.childNodes).forEach(function(node) {
-        if (node.nodeType != 1) //Element
-            return;
-        if (node == tab)
-            lord.addClass(node, "activated");
-        else
-            lord.removeClass(node, "activated");
+    lord.query("ul > li", header.parentNode).forEach(function(node) {
+        lord.removeClass(node, "activated");
     });
+    lord.addClass(tab, "activated");
 };
 
 lord.notificationsEnabled = function() {
@@ -1351,7 +1368,11 @@ lord.api = function(entity, parameters, prefix) {
     });
     query = (query ? "?" : "") + query;
     return new Promise(function(resolve, reject) {
-        $.getJSON("/" + lord.data("sitePathPrefix") + prefix + "/" + entity + ".json" + query).then(function(result) {
+        $.ajax({
+            url: "/" + lord.data("sitePathPrefix") + prefix + "/" + entity + ".json" + query,
+            dataType: "json",
+            cache: lord.getLocalObject("apiRequestCachingEnabled", false)
+        }).then(function(result) {
             if (lord.checkError(result))
                 reject(result);
             resolve(result);
@@ -1394,25 +1415,18 @@ lord.now = function() {
 
 lord.settings = function() {
     return {
-        style: {
-            name: lord.getCookie("style", "photon")
-        },
-        codeStyle: {
-            name: lord.getCookie("codeStyle", "default")
-        },
-        shrinkPosts: (lord.getCookie("shrinkPosts", "true") != "false"),
-        markupMode: lord.getCookie("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
-        stickyToolbar: (lord.getCookie("stickyToolbar", "true") != "false"),
         time: lord.getCookie("time", "server"),
         timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
-        captchaEngine: {
-            id: lord.getCookie("captchaEngine", "google-recaptcha")
-        },
-        maxAllowedRating: lord.getCookie("maxAllowedRating", "R-18G"),
-        hidePostformRules: (lord.getCookie("hidePostformRules", "false") == "true"),
-        minimalisticPostform: (lord.getCookie("minimalisticPostform",
-            lord.deviceType("mobile") ? "true" : "false") == "true"),
-        hiddenBoards: lord.getCookie("hiddenBoards", "").split("|"),
+        captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
+        style: { name: lord.getLocalObject("style", "photon") },
+        codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
+        shrinkPosts: lord.getLocalObject("shrinkPosts", true),
+        markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
+        stickyToolbar: lord.getLocalObject("stickyToolbar", true),
+        maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
+        hidePostformRules: lord.getLocalObject("hidePostformRules", false),
+        minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
+        hiddenBoards: lord.getLocalObject("hiddenBoards", []),
         autoUpdateThreadsByDefault: lord.getLocalObject("autoUpdateThreadsByDefault", false),
         autoUpdateInterval: lord.getLocalObject("autoUpdateInterval", 15),
         showAutoUpdateDesktopNotifications: lord.getLocalObject("showAutoUpdateDesktopNotifications", true),
@@ -1444,7 +1458,8 @@ lord.settings = function() {
         sourceHighlightingEnabled: lord.getLocalObject("sourceHighlightingEnabled", false),
         chatEnabled: lord.getLocalObject("chatEnabled", true),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
-        viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200)
+        viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
+        apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false)
     };
 };
 
@@ -1453,8 +1468,6 @@ lord.setSettings = function(model) {
         return;
     lord.forIn(model, function(val, key) {
         if (lord.SettingsStoredInCookies.indexOf(key) >= 0) {
-            if ("hiddenBoards" == key)
-                val = val.join("|");
             lord.setCookie(key, val, {
                 "expires": lord.Billion,
                 "path": "/"

@@ -801,16 +801,6 @@
             "value": "Избранные треды"
         }
     },
-    "General settings": {
-        "generalSettingsLegendText": {
-            "value": "Общие настройки"
-        }
-    },
-    "Script settings": {
-        "scriptSettingsLegendText": {
-            "value": "Настройки скрипта"
-        }
-    },
     "Framed version": {
         "framedVersionText": {
             "value": "Версия с фреймом"
@@ -853,7 +843,7 @@
     },
     "Auto update interval (sec):": {
         "autoUpdateIntervalLabelText": {
-            "value": "Интервал автообновленияы (сек):"
+            "value": "Интервал автообновления (сек):"
         }
     },
     "Auto update threads by default": {
@@ -935,6 +925,11 @@
     "Postform and posting": {
         "postformTabText": {
             "value": "Форма и постинг"
+        }
+    },
+    "General": {
+        "generalTabText": {
+            "value": "Общее"
         }
     },
     "Posts and threads": {
@@ -2388,6 +2383,31 @@
     "Invalid page number": {
         "_default": {
             "value": "Недействительный номер страницы"
+        }
+    },
+    "Enable API request caching": {
+        "apiRequestCachingLabelText": {
+            "value": "Кэшировать запросы к API"
+        }
+    },
+    "Export": {
+        "exportSettingsButtonText": {
+            "value": "Экспортировать"
+        }
+    },
+    "Import": {
+        "importSettingsButtonText": {
+            "value": "Импортировать"
+        }
+    },
+    "Copy settings string and save it somewhere": {
+        "copySettingsHint": {
+            "value": "Скопируйте строку с настройками и где-нибудь сохраните"
+        }
+    },
+    "Paste settings string here": {
+        "pasteSettingsHint": {
+            "value": "Вставьте сюда строку с настройками"
         }
     }
 }

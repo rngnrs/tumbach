@@ -820,14 +820,14 @@ module.exports.createPost = function(req, fields, files, transaction) {
 
 var rerenderReferringPosts = function(boardName, postNumber) {
     return db.hgetall("referringPosts:" + boardName + ":" + postNumber).then(function(referringPosts) {
-        if (!referringPosts)
-            return Promise.resolve();
-        var promises = [];
+        var p = Promise.resolve();
         Tools.forIn(referringPosts, function(ref) {
             ref = JSON.parse(ref);
-            promises.push(rerenderPost(ref.boardName, ref.postNumber, true));
+            p = p.then(function() {
+                return rerenderPost(ref.boardName, ref.postNumber, true);
+            });
         });
-        return Promise.all(promises);
+        return p;
     });
 };
 
@@ -892,8 +892,12 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
         return db.hdel("posts", boardName + ":" + postNumber);
     }).then(function() {
         return rerenderReferringPosts(boardName, postNumber);
+    }).catch(function(err) {
+        Global.error(err);
     }).then(function() {
         return removeReferencedPosts(boardName, postNumber);
+    }).catch(function(err) {
+        Global.error(err);
     }).then(function() {
         return db.srem("userPostNumbers:" + c.post.user.ip + ":" + board.name, postNumber);
     }).then(function() {
@@ -1282,22 +1286,6 @@ module.exports.generateRss = function() {
             rss[boardName] = builder.buildObject(doc);
         });
     });
-};
-
-var toMap = function(index, boardName) {
-    if (!index || index.length < 1)
-        return {};
-    var map = {};
-    index.forEach(function(post) {
-        post = JSON.parse(post);
-        if (boardName && post.boardName != boardName)
-            return;
-        var key = post.boardName + ":" + post.postNumber + ":" + post.source;
-        if (!map.hasOwnProperty(key))
-            map[key] = [];
-        map[key].push(post);
-    });
-    return map;
 };
 
 var findPhrase = function(phrase, boardName) {
