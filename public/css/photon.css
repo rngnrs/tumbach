@@ -529,7 +529,6 @@ ul.tabWidget > li.activated {
 */
 
 .toolbar {
-    border-bottom: 1px solid #CCC;
     display: block;
     padding-bottom: 5px;
     text-align: center;
@@ -854,9 +853,20 @@ input.buttonImage {
 
 .chatContact {
     white-space: nowrap;
+    cursor: pointer;
 }
 
-.chatContact:hover, .chatContact.selected {
+.chatContact:hover {
+    color: #FFF;
+    background-color: #666;
+}
+
+.chatContact.selected {
+    color: #000;
+    background-color: #DDD;
+}
+
+.chatContact.selected:hover {
     color: #FFF;
     background-color: #666;
 }
@@ -872,8 +882,59 @@ input.buttonImage {
 
 .chatHistory {
     padding-left: 8px;
+    padding-top: 5px;
+    padding-right: 4px;
+    padding-bottom: 5px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
+    max-width: 600px;
+}
+
+.chatHistory.mobile {
+    max-width: 300px;
+}
+
+.chatMessage {
+    border: 1px solid #CCCCCC;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    background-color: #DDDDDD;
+    padding: 4px;
+}
+
+.chatMessageDate {
+    margin-bottom: 8px;
+    border-bottom: 1px dotted black;
+}
+
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.chatInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.chatSendButton {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
+}
+
+.bordered {
+    border: 1px solid #CCC;
 }

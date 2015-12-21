@@ -44,15 +44,15 @@ audio {
 }
 
 hr {
-    color: #D6DAF0;
-    background-color: #D6DAF0;
-    border: none;
+    color: #808080;
+    border: 1px solid #808080;
+    border-top: 1px solid #DDD;
     height: 1px;
     clear: both;
 }
 
 .select {
-    background: #98E;
+    background: #EAEAEA;
     border: 1px solid #CCC;
     cursor: pointer;
 }
@@ -484,7 +484,6 @@ ul.tabWidget > li.activated {
 }
 
 .toolbar {
-    border-bottom: 1px solid #CCC;
     display: block;
     padding-bottom: 5px;
     text-align: center;
@@ -571,6 +570,7 @@ blockquote.blockquoteThread.expand {
     text-align: center;
     white-space: nowrap;
     overflow-x: auto;
+    color: #AF0A0F;
 }
 
 .vote {
@@ -783,9 +783,20 @@ input.buttonImage {
 
 .chatContact {
     white-space: nowrap;
+    cursor: pointer;
 }
 
-.chatContact:hover, .chatContact.selected {
+.chatContact:hover {
+    color: #FFF;
+    background-color: #666;
+}
+
+.chatContact.selected {
+    color: #000;
+    background-color: #DDD;
+}
+
+.chatContact.selected:hover {
     color: #FFF;
     background-color: #666;
 }
@@ -801,8 +812,59 @@ input.buttonImage {
 
 .chatHistory {
     padding-left: 8px;
+    padding-top: 5px;
+    padding-right: 4px;
+    padding-bottom: 5px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
+    max-width: 600px;
+}
+
+.chatHistory.mobile {
+    max-width: 300px;
+}
+
+.chatMessage {
+    border: 1px solid black;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    background-color: #D6DAF0;
+    padding: 4px;
+}
+
+.chatMessageDate {
+    margin-bottom: 8px;
+    border-bottom: 1px dotted black;
+}
+
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.chatInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.chatSendButton {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
+}
+
+.bordered {
+    border: 1px solid #CCCCCC;
 }

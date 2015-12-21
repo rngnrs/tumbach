@@ -675,11 +675,6 @@ lord.selectChatContact = function(key) {
     if (previous)
         lord.removeClass(previous, "selected");
     lord.addClass(div, "selected");
-    var target = lord.nameOne("target", lord.chatDialog);
-    target.style.display = "";
-    var targetKey = lord.nameOne("targetKey", lord.chatDialog);
-    lord.removeChildren(targetKey);
-    targetKey.appendChild(lord.node("text", key));
     lord.populateChatHistory(key);
     lord.nameOne("sendMessageButton", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).disabled = false;
@@ -707,7 +702,6 @@ lord.deleteChat = function(key) {
         if (!contact)
             return Promise.resolve();
         if (lord.hasClass(contact, "selected")) {
-            lord.nameOne("target", lord.chatDialog).style.display = "none";
             lord.removeChildren(lord.nameOne("targetKey", lord.chatDialog));
             lord.removeChildren(lord.nameOne("history", lord.chatDialog));
             lord.nameOne("sendMessageButton", lord.chatDialog).disabled = true;
@@ -766,6 +760,12 @@ lord.checkNotificationQueue = function() {
         lord.handleError(err);
         f();
     });
+};
+
+lord.hashChangeHandler = function() {
+    var offset = $(":target").offset();
+    var scrollto = offset.top - $(".toolbar").height() - 4;
+    $("html, body").animate({ scrollTop: scrollto }, 0);
 };
 
 lord.initializeOnLoadSettings = function() {
@@ -875,14 +875,9 @@ lord.initializeOnLoadSettings = function() {
         script.innerHTML = js;
         head.appendChild(script);
     }
-    if (lord.queryOne(".toolbar")) {
-        window.addEventListener("hashchange", function() {
-            var offset = $(":target").offset();
-            var scrollto = offset.top - $(".toolbar").height();
-            $("html, body").animate({ scrollTop: scrollto }, 0);
-        }, false);
-    }
     tumb.onLoad();
+    if (lord.queryOne(".toolbar"))
+        window.addEventListener("hashchange", lord.hashChangeHandler, false);
 };
 
 window.addEventListener("load", function load() {

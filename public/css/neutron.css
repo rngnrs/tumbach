@@ -56,6 +56,8 @@ hr {
 
 .select {
     background-color: #111;
+    border: 2px solid #545454;
+    border-radius: 5px;
     color: #EEE;
     cursor: pointer;
 }
@@ -70,12 +72,25 @@ hr {
     filter: invert(0);
 }
 
-textarea, input, .button, .checkbox {
+textarea {
     background-color: #111;
+    border: 2px solid #545454;
+    border-radius: 5px;
     color: #EEE;
 }
 
-.button, .checkbox {
+input:not([type='image']) { /*Yep, this is NOT a class*/
+    background-color: #111;
+    border: 2px solid #545454;
+    border-radius: 5px;
+    color: #EEE;
+}
+
+.button {
+    cursor: pointer;
+}
+
+.checkbox {
     cursor: pointer;
 }
 
@@ -897,11 +912,22 @@ input.buttonImage {
 
 .chatContact {
     white-space: nowrap;
+    cursor: pointer;
 }
 
-.chatContact:hover, .chatContact.selected {
+.chatContact:hover {
+    color: #48B0FD;
+    background-color: #575757;
+}
+
+.chatContact.selected {
     color: #FFF;
     background-color: #666;
+}
+
+.chatContact.selected:hover {
+    color: #48B0FD;
+    background-color: #575757;
 }
 
 .chatContactNewMessages {
@@ -909,14 +935,68 @@ input.buttonImage {
 }
 
 .chatTarget {
-    background-color: #2C2C2C;
+    color: #FFF;
+    background-color: #666;
     white-space: nowrap;
 }
 
 .chatHistory {
     padding-left: 8px;
+    padding-top: 5px;
+    padding-right: 4px;
+    padding-bottom: 5px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
+    max-width: 600px;
+}
+
+.chatHistory.mobile {
+    max-width: 300px;
+}
+
+.chatMessage {
+    border: 1px solid #575757;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    color: #698CC0;
+    background-color: #2C2C2C;
+    padding: 4px;
+}
+
+.chatMessageDate {
+    margin-bottom: 8px;
+    border-bottom: 1px dotted black;
+}
+
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.chatInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.chatSendButton {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
+}
+
+.bordered {
+    border: 1px solid #575757;
 }

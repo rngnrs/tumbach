@@ -1032,15 +1032,23 @@ lord.showDialog = function(body, options) {
                 div2.appendChild(btn);
             }
         });
-        root.appendChild(div2);
-        dialog = picoModal({
-            content: root,
-            modalStyles: function (styles) {
-                styles.maxHeight = "80%";
-                styles.maxWidth = "80%";
-                styles.overflow = "auto";
-                styles.border = "1px solid #777";
-                return styles;
+        $(body).dialog({
+            title: lord.text(options && options.title),
+            modal: true,
+            buttons: buttons,
+            closeText: lord.text("closeButtonText"),
+            width: "auto",
+            close: function() {
+                resolve(false);
+            },
+            create: function() {
+                $("body").css({ overflow: "hidden" });
+                $(".navigationButton").css({ display: "none" });
+            },
+            beforeClose: function() {
+                $("body").css({ overflow: "inherit" });
+                if (lord.scrollHandler)
+                    lord.scrollHandler();
             }
         }).afterShow(function(modal) {
             if (options && typeof options.afterShow == "function")

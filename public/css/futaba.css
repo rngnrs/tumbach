@@ -38,32 +38,27 @@ audio {
 }
 
 hr {
-    color: #808080; /*IE*/
-    background-color: #808080; /*Firefox, Opera, Safari*/
-    border: none;
-    height: 1px;
+    color: #808080;
     clear: both;
 }
 
 .select {
-    background: #FBFBEA;
     cursor: pointer;
 }
 
 .selectOption {
-    background: #FBFBEA;
+    /**/
 }
 
 .input {
+    /**/
 }
 
 .button {
-    background: #FBFBEA;
     cursor: pointer;
 }
 
 .checkbox {
-    background: #FBFBEA;
     cursor: pointer;
 }
 
@@ -841,11 +836,22 @@ input.buttonImage {
 
 .chatContact {
     white-space: nowrap;
+    cursor: pointer;
 }
 
-.chatContact.hover, .chatContact.selected {
-    color: #FFF;
-    background-color: #444;
+.chatContact:hover {
+    color: #800000;
+    background: #F0D0B6;
+}
+
+.chatContact.selected {
+    color: #000;
+    background: #F0D0B6;
+}
+
+.chatContact.selected:hover {
+    color: #800000;
+    background: #F0D0B6;
 }
 
 .chatContactNewMessages {
@@ -859,8 +865,72 @@ input.buttonImage {
 
 .chatHistory {
     padding-left: 8px;
+    padding-top: 5px;
+    padding-right: 4px;
+    padding-bottom: 5px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
     min-height: 400px;
+    max-width: 600px;
+}
+
+.chatHistory.mobile {
+    max-width: 300px;
+}
+
+.chatMessage {
+    border: 1px solid black;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    background-color: #F0E0D6;
+    color: #800000;
+    padding: 4px;
+}
+
+.chatMessageDate {
+    margin-bottom: 8px;
+    border-bottom: 1px dotted black;
+}
+
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.chatInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.chatSendButton {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.loadingMessage {
+    text-align: center;
+}
+
+[id^="vk_post_"] {
+    padding: 4px 5px 4px 5px;
+}
+
+.overflowContainer {
+    overflow-x: auto;
+}
+
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
+}
+
+.bordered {
+    border: 1px solid #F0E0D6;
 }
