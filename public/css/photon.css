@@ -544,6 +544,7 @@ ul.tabWidget > li.activated {
     top: 0;
     background-color: #EEE;
     width: 100%;
+    padding-bottom: 0px;
 }
 
 /*
