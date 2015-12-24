@@ -1,7 +1,12 @@
 /*Futaba*/
+/* tumb rewrite */
 .color-def {
     background-color: #F0E0D6;
 }
+aside {
+    background-color: #FFE;
+}
+/* /tumb rewrite */
 
 body {
     background-color: #FFE;
@@ -526,29 +531,6 @@ ul.tabWidget > li.activated {
 /*.rules <- Home*/
 
 /*
-    Search action
-*/
-
-.searchAction > form {
-    display: inline-block;
-    width: 50%;
-}
-
-.searchAction.mobile > form {
-    text-align: left;
-    white-space: nowrap;
-    width: 98%;
-}
-
-.searchActionInput {
-    width: 60%;
-}
-
-.searchActionSelect {
-    width: 30%;
-}
-
-/*
     Settings bar
 */
 
@@ -568,7 +550,7 @@ ul.tabWidget > li.activated {
     top: 0;
     background-color: #FFE;
     width: 100%;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
 /*

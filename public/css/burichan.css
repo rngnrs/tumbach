@@ -3,11 +3,14 @@
 .color-def {
     background-color: #C4C2EE !important;
 }
+aside {
+    background-color: #EEF2FF;
+}
 /* /tumb rewrite */
 
 body  {
     background-color: #EEF2FF;
-    font-family: Verdana,sans-serif;
+    /*font-family: Verdana,sans-serif;*/
 }
 
 body.desktop {

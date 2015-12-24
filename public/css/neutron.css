@@ -4,10 +4,12 @@
     background-color: #2C2C2C !important;
     color: #698CC0 !important;
 }
-
 .buttonImage, .logo {
     filter: invert(1);
     -webkit-filter: invert(1);
+}
+aside {
+    background-color: #212121;
 }
 /* /tumb rewrite */
 
@@ -563,36 +565,6 @@ ul.tabWidget > li.activated {
 /*.rules <- Home*/
 
 /*
-    Search action
-*/
-
-.searchAction {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: right;
-}
-
-.searchAction > form {
-    display: inline-block;
-    width: 50%;
-}
-
-.searchAction.mobile > form {
-    text-align: left;
-    white-space: nowrap;
-    width: 98%;
-}
-
-.searchActionInput {
-    width: 60%;
-}
-
-.searchActionSelect {
-    width: 30%;
-}
-
-/*
     Settings bar
 */
 
@@ -612,7 +584,7 @@ ul.tabWidget > li.activated {
     top: 0;
     background-color: #212121;
     width: 100%;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
 /*

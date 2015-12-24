@@ -261,20 +261,20 @@ lord.appendExtrasToModel = function(model) {
         if (["SFW", "R-15", "R-18", "R-18G"].indexOf(r2) < 0)
             throw "Invalid rating r2: " + r2;
         switch (r1) {
-            case "SFW":
-                return (r1 == r2) ? 0 : -1;
-            case "R-15":
-                if (r1 == r2)
-                    return 0;
-                return ("SFW" == r2) ? 1 : -1;
-            case "R-18":
-                if (r1 == r2)
-                    return 0;
-                return ("R-18G" == r2) ? -1 : 1;
-            case "R-18G":
-                return (r1 == r2) ? 0 : 1;
-            default:
-                throw "Invalid rating r1: " + r1;
+        case "SFW":
+            return (r1 == r2) ? 0 : -1;
+        case "R-15":
+            if (r1 == r2)
+                return 0;
+            return ("SFW" == r2) ? 1 : -1;
+        case "R-18":
+            if (r1 == r2)
+                return 0;
+            return ("R-18G" == r2) ? -1 : 1;
+        case "R-18G":
+            return (r1 == r2) ? 0 : 1;
+        default:
+            throw "Invalid rating r1: " + r1;
         }
     };
     model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
@@ -618,7 +618,7 @@ lord.quickReply = function(el) {
     var postForm = lord.id("postForm");
     var targetContainer = post.parentNode;
     var same = (postForm.parentNode == targetContainer
-    && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
+            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
     var selection = document.getSelection().toString();
     lord.hidePostForm();
     if (same)
@@ -745,13 +745,13 @@ lord.deletePost = function(el) {
     var c = {};
     var postNumber = +lord.data("number", el, true);
     var model = lord.model(["base", "tr"], true);
-        model.boardName = lord.data("boardName", el, true);
-        model.postNumber = postNumber;
-        c.div = lord.template("deletePostDialog", model);
-    lord.showDialog(c.div, {
-        title: "enterPasswordTitle",
-        label: "enterPasswordText"
-    }).then(function(result) {
+    model.boardName = lord.data("boardName", el, true);
+    model.postNumber = postNumber;
+    c.div = lord.node("div");
+    c.div.appendChild(lord.node("text", lord.text("enterPasswordText")));
+    c.div.appendChild(lord.node("br"));
+    c.div.appendChild(lord.template("deletePostDialog", model));
+    lord.showDialog(c.div, { title: "enterPasswordTitle" }).then(function(result) {
         if (!result)
             return Promise.resolve();
         var form = lord.queryOne("form", c.div);
@@ -1103,11 +1103,11 @@ lord.hideByImage = function(a) {
 lord.deleteFile = function(el) {
     var model = lord.model(["base", "tr"], true);
     model.fileName = lord.data("fileName", el, true);
-    var div = lord.template("deleteFileDialog", model);
-    lord.showDialog(div, {
-        title: "enterPasswordTitle",
-        label: "enterPasswordText"
-    }).then(function(result) {
+    var div = lord.node("div");
+    div.appendChild(lord.node("text", lord.text("enterPasswordText")));
+    div.appendChild(lord.node("br"));
+    div.appendChild(lord.template("deleteFileDialog", model));
+    lord.showDialog(div, { title: "enterPasswordTitle" }).then(function(result) {
         if (!result)
             return Promise.resolve();
         var form = lord.queryOne("form", div);
@@ -1680,65 +1680,65 @@ lord.markup = function(tag) {
         }
     };
     switch (tag) {
-        case "b":
-        case "i":
-        case "s":
-        case "u":
-        case "spoiler":
-        case "ul":
-        case "ol":
-        case "li":
-        case "sup":
-        case "sub":
-        case "url": {
-            wrap("[" + tag + "]", "[/" + tag + "]");
-            break;
-        }
-        case "uld": {
-            wrap("[ul type=disc]", "[/ul]");
-            break;
-        }
-        case "ulc": {
-            wrap("[ul type=circle]", "[/ul]");
-            break;
-        }
-        case "uls": {
-            wrap("[ul type=square]", "[/ul]");
-            break;
-        }
-        case "ol1": {
-            wrap("[ol type=1]", "[/ol]");
-            break;
-        }
-        case "olI": {
-            wrap("[ol type=I]", "[/ol]");
-            break;
-        }
-        case "oli": {
-            wrap("[ol type=i]", "[/ol]");
-            break;
-        }
-        case "olA": {
-            wrap("[ol type=A]", "[/ol]");
-            break;
-        }
-        case "ola": {
-            wrap("[ol type=a]", "[/ol]");
-            break;
-        }
-        case ">": {
-            lord.quoteSelectedText();
-            break;
-        }
-        case "code": {
-            var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
-            var lang = sel.options[sel.selectedIndex].value;
-            wrap("[" + (("-" != lang) ? (tag + " lang=\"" + lang + "\"") : tag) + "]", "[/" + tag + "]");
-            break;
-        }
-        default: {
-            break;
-        }
+    case "b":
+    case "i":
+    case "s":
+    case "u":
+    case "spoiler":
+    case "ul":
+    case "ol":
+    case "li":
+    case "sup":
+    case "sub":
+    case "url": {
+        wrap("[" + tag + "]", "[/" + tag + "]");
+        break;
+    }
+    case "uld": {
+        wrap("[ul type=disc]", "[/ul]");
+        break;
+    }
+    case "ulc": {
+        wrap("[ul type=circle]", "[/ul]");
+        break;
+    }
+    case "uls": {
+        wrap("[ul type=square]", "[/ul]");
+        break;
+    }
+    case "ol1": {
+        wrap("[ol type=1]", "[/ol]");
+        break;
+    }
+    case "olI": {
+        wrap("[ol type=I]", "[/ol]");
+        break;
+    }
+    case "oli": {
+        wrap("[ol type=i]", "[/ol]");
+        break;
+    }
+    case "olA": {
+        wrap("[ol type=A]", "[/ol]");
+        break;
+    }
+    case "ola": {
+        wrap("[ol type=a]", "[/ol]");
+        break;
+    }
+    case ">": {
+        lord.quoteSelectedText();
+        break;
+    }
+    case "code": {
+        var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
+        var lang = sel.options[sel.selectedIndex].value;
+        wrap("[" + (("-" != lang) ? (tag + " lang=\"" + lang + "\"") : tag) + "]", "[/" + tag + "]");
+        break;
+    }
+    default: {
+        break;
+    }
     }
 };
 
@@ -2060,7 +2060,7 @@ lord.submitted = function(event, form) {
     if (event)
         event.preventDefault();
     if (!form);
-    form = lord.id("postForm");
+        form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
     lord.setCookie("markupMode", markupMode.options[markupMode.selectedIndex].value);
@@ -2298,7 +2298,7 @@ lord.resetPostForm = function() {
     postForm.reset();
     var divs = lord.query(".postformFile", postForm);
     for (var i = divs.length - 1; i >= 0; --i)
-        lord.removeFile(lord.queryOne("a", divs[i]));
+    lord.removeFile(lord.queryOne("a", divs[i]));
     var trip = lord.nameOne("tripcode", postForm);
     if (trip) {
         var threadNumber = lord.nameOne("threadNumber", postForm);
