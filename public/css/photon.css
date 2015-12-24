@@ -300,6 +300,25 @@ span.newPostCount {
 
 .post.temporary {
     border: 1px solid #000;
+    display: block;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.thread.hidden > .omittedPosts {
+    display: none;
+}
+
+.thread.hidden > .threadPosts {
+    display: none;
+}
+
+.postHeader, .postFileName, .postFileSize {
+    white-space: nowrap;
+}
+
+.postFileName.mobile {
+    font-size: 0.9em;
 }
 
 .postFileSize {
@@ -371,6 +390,7 @@ span.newPostCount {
 
 .tripcode.mobile {
     font-size: .8em;
+    display: block;
 }
 
 .postDateTime.mobile {
@@ -516,12 +536,25 @@ ul.tabWidget > li.activated {
     margin-left: auto;
     margin-right: auto;
     text-align: right;
-    white-space: nowrap;
-    overflow-x: auto;
 }
 
-.searchAction.mobile {
+.searchAction > form {
+    display: inline-block;
+    width: 50%;
+}
+
+.searchAction.mobile > form {
     text-align: left;
+    white-space: nowrap;
+    width: 98%;
+}
+
+.searchActionInput {
+    width: 60%;
+}
+
+.searchActionSelect {
+    width: 30%;
 }
 
 /*
@@ -571,6 +604,10 @@ blockquote.blockquoteThread.expand {
     border: 1px solid #AAA;
     overflow-x: auto;
     max-width: 800px;
+    -ms-hyphens: none;
+    -moz-hyphens: none;
+    -webkit-hyphens: none;
+    hyphens: none;
 }
 
 .codeBlock.mobile {
@@ -634,7 +671,6 @@ blockquote.blockquoteThread.expand {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    white-space: nowrap;
     overflow-x: auto;
 }
 
@@ -773,10 +809,6 @@ input.buttonImage {
     background: url("../img/checkbox_tripcode.png") center no-repeat;
 }
 
-.searchSelect {
-    width: 100px;
-}
-
 .alignCenter {
     text-align: center;
 }
@@ -882,10 +914,7 @@ input.buttonImage {
 }
 
 .chatHistory {
-    padding-left: 8px;
-    padding-top: 5px;
-    padding-right: 4px;
-    padding-bottom: 5px;
+    padding: 5px 4px 5px 8px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
@@ -898,10 +927,10 @@ input.buttonImage {
 }
 
 .chatMessage {
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
     margin-bottom: 4px;
     border-radius: 6px;
-    background-color: #DDDDDD;
+    background-color: #DDD;
     padding: 4px;
 }
 
@@ -914,19 +943,14 @@ input.buttonImage {
     padding-left: 8px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    word-break: break-all;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
 }
 
-.chatInput {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.chatSendButton {
+.chatInput, .chatSendButton {
     box-sizing: border-box;
     width: 100%;
 }

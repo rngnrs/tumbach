@@ -1,10 +1,9 @@
 <div class="searchAction {{=it.deviceType}}">
     <form method="get" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}search.html">
-        <input id="search-field" type="text" class="input tooltip-input" maxlength="{{=it.maxSearchQueryLength}}" name="query"
-               size="{{? it.deviceType != "mobile"}}23{{??}}15{{?}}"
+        <input id="search-field" type="text" class="input searchActionInput tooltip-input" maxlength="{{=it.maxSearchQueryLength}}" name="query"
                placeholder="Поиск" value="" />
         <label for="search-field" class="tooltip" data-tooltip="{{=it.tr.searchInputPlaceholder}}"></label>
-        <select name="board" class="select{{? it.deviceType == "mobile"}} searchSelect{{?}}">
+        <select name="board" class="select searchActionSelect">
             <option value="*" {{? !it.searchBoard}}selected="true"{{?}}>[*] {{=it.tr.allBoardsText}}</option>
             {{~it.boards :brd}}
                 {{? it.settings.hiddenBoards.indexOf(brd.name) < 0 && !brd.hidden}}
@@ -14,7 +13,6 @@
             {{~}}
         </select>
         <input style="background:url(/{{=it.site.pathPrefix}}img/search.png) no-repeat;border:none;width:16px;height:16px;padding:3px;outline:none;"
-               type="submit" title="{{=it.tr.searchButtonText}}" height="16"
-               class="buttonImage" value="" />
+               type="submit" title="{{=it.tr.searchButtonText}}" class="buttonImage" value="" />
     </form>
 </div>

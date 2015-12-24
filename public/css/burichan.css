@@ -269,6 +269,25 @@ span.newPostCount {
 
 .post.temporary {
     border: 1px solid #000;
+    display: block;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.thread.hidden > .omittedPosts {
+    display: none;
+}
+
+.thread.hidden > .threadPosts {
+    display: none;
+}
+
+.postHeader, .postFileName, .postFileSize {
+    white-space: nowrap;
+}
+
+.postFileName.mobile {
+    font-size: 0.9em;
 }
 
 .postFileSize {
@@ -340,6 +359,7 @@ span.newPostCount {
 
 .tripcode.mobile {
     font-size: .8em;
+    display: block;
 }
 
 .postDateTime.mobile {
@@ -470,19 +490,6 @@ ul.tabWidget > li.activated {
     background-color: #AAA;
 }
 
-.searchAction {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: right;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-.searchAction.mobile {
-    text-align: left;
-}
-
 .toolbar {
     display: block;
     padding-bottom: 5px;
@@ -499,7 +506,7 @@ ul.tabWidget > li.activated {
     top: 0;
     background-color: #EEF2FF;
     width: 100%;
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
 blockquote.blockquoteThread {
@@ -520,6 +527,10 @@ blockquote.blockquoteThread.expand {
     border: 1px solid #AAA;
     overflow-x: auto;
     max-width: 800px;
+    -ms-hyphens: none;
+    -moz-hyphens: none;
+    -webkit-hyphens: none;
+    hyphens: none;
 }
 
 .codeBlock.mobile {
@@ -569,7 +580,6 @@ blockquote.blockquoteThread.expand {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    white-space: nowrap;
     overflow-x: auto;
     color: #AF0A0F;
 }
@@ -703,10 +713,6 @@ input.buttonImage {
     background: url("../img/checkbox_tripcode.png") center no-repeat;
 }
 
-.searchSelect {
-    width: 100px;
-}
-
 .alignCenter {
     text-align: center;
 }
@@ -812,10 +818,7 @@ input.buttonImage {
 }
 
 .chatHistory {
-    padding-left: 8px;
-    padding-top: 5px;
-    padding-right: 4px;
-    padding-bottom: 5px;
+    padding: 5px 4px 5px 8px;
     border: 1px solid black;
     overflow-y: auto;
     min-width: 200px;
@@ -844,7 +847,7 @@ input.buttonImage {
     padding-left: 8px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    word-break: break-all;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
@@ -867,5 +870,5 @@ input.buttonImage {
 }
 
 .bordered {
-    border: 1px solid #CCCCCC;
+    border: 1px solid #CCC;
 }

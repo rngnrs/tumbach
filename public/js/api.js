@@ -1013,6 +1013,9 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
+            minHeight: 256,
+            minWidth: 555,
+            open: function(event, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
             close: function() {
                 resolve(false);
             },

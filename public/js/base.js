@@ -43,7 +43,6 @@ lord._defineHotkey("markupCode", "Alt+C");
 /*Variables*/
 
 lord.chatTasks = {};
-lord.chats = lord.getLocalObject("chats", {});
 lord.chatDialog = null;
 lord.lastChatCheckDate = lord.getLocalObject("lastChatCheckDate", null);
 lord.notificationQueue = [];
@@ -554,7 +553,7 @@ lord.populateChatHistory = function(key) {
     model.formattedDate = function(date) {
         return moment(date).utcOffset(timeOffset).locale(model.site.locale).format(model.site.dateFormat);
     };
-    var messages = lord.chats[key] || [];
+    var messages = lord.getLocalObject("chats", {})[key] || [];
     messages = messages.map(function(message) {
         var m = merge.recursive(model, message);
         history.appendChild(lord.template("chatMessage", m));
@@ -612,19 +611,25 @@ lord.checkChats = function() {
         lord.lastChatCheckDate = model.lastRequestDate;
         lord.setLocalObject("lastChatCheckDate", lord.lastChatCheckDate);
         var keys = [];
+        var chats = lord.getLocalObject("chats", {});
         lord.forIn(model.chats, function(messages, key) {
-            if (!lord.chats[key])
-                lord.chats[key] = [];
-            var list = lord.chats[key];
+            if (!chats[key])
+                chats[key] = [];
+            var list = chats[key];
             if (messages.length > 0)
                 keys.push(key);
             messages.forEach(function(message) {
+                for (var i = 0; i < list.length; ++i) {
+                    var msg = list[i];
+                    if (message.type == msg.type && message.date == msg.date && message.text == msg.text)
+                        return;
+                }
                 list.push(message);
             });
         });
         if (keys.length > 0)
             lord.updateChat(keys);
-        lord.setLocalObject("chats", lord.chats);
+        lord.setLocalObject("chats", chats);
         lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord),
             lord.chatDialog ? (5 * lord.Second) : lord.Minute);
     }).catch(function(err) {
@@ -641,7 +646,7 @@ lord.showChat = function(key) {
     });
     var model = lord.model(["base", "tr"], true);
     model.contacts = [];
-    lord.forIn(lord.chats, function(_, key) {
+    lord.forIn(lord.getLocalObject("chats", {}), function(_, key) {
         model.contacts.push({ key: key });
     });
     lord.chatDialog = lord.template("chatDialog", model);
@@ -691,8 +696,9 @@ lord.deleteChat = function(key) {
     formData.append("boardName", key.split(":").shift());
     formData.append("postNumber", +key.split(":").pop());
     return lord.post("/" + lord.data("sitePathPrefix") + "action/deleteChatMessages", formData).then(function(result) {
-        delete lord.chats[key];
-        lord.setLocalObject("chats", lord.chats);
+        var chats = lord.getLocalObject("chats", {});
+        delete chats[key];
+        lord.setLocalObject("chats", chats);
         if (!lord.chatDialog)
             return Promise.resolve();
         var contact = lord.nameOne(key, lord.chatDialog);
@@ -757,6 +763,104 @@ lord.checkNotificationQueue = function() {
         lord.handleError(err);
         f();
     });
+};
+
+lord.showVideoThumb = function(e, a) {
+    if (a.img) {
+        document.body.appendChild(a.img);
+        return;
+    }
+    var thumbUrl = lord.data("thumbUrl", a, true);
+    var thumbWidth = +lord.data("thumbWidth", a, true);
+    var thumbHeight = +lord.data("thumbHeight", a, true);
+    if (!thumbUrl)
+        return;
+    a.img = lord.node("img");
+    a.img.width = thumbWidth;
+    a.img.height = thumbHeight;
+    a.img.src = thumbUrl;
+    lord.addClass(a.img, "movableImage");
+    a.img.style.left = (e.clientX + 30) + "px";
+    a.img.style.top = (e.clientY - 10) + "px";
+    document.body.appendChild(a.img);
+};
+
+lord.moveVideoThumb = function(e, a) {
+    if (!a.img)
+        return;
+    a.img.style.left = (e.clientX + 30) + "px";
+    a.img.style.top = (e.clientY - 10) + "px";
+};
+
+lord.hideVideoThumb = function(e, a) {
+    if (!a.img)
+        return;
+    document.body.removeChild(a.img);
+};
+
+lord.expandCollapseYoutubeVideo = function(a) {
+    var videoId = lord.data("videoId", a, true);
+    if (!videoId)
+        return;
+    if (a.lordExpanded) {
+        a.parentNode.removeChild(a.nextSibling);
+        a.parentNode.removeChild(a.nextSibling);
+        a.replaceChild(lord.node("text", "[" + lord.text("expandVideoText") + "]"), a.childNodes[0]);
+        lord.removeClass(a.parentNode, "expand");
+    } else {
+        lord.addClass(a.parentNode, "expand");
+        var iframe = lord.node("iframe");
+        iframe.src = "https://youtube.com/embed/" + videoId + "?autoplay=1";
+        iframe.allowfullscreen = true;
+        iframe.frameborder = "0px";
+        iframe.height = "360";
+        iframe.width = "640";
+        iframe.display = "block";
+        var parent = a.parentNode;
+        var el = a.nextSibling;
+        if (el) {
+            parent.insertBefore(lord.node("br"), el);
+            parent.insertBefore(iframe, el);
+        } else {
+            parent.appendChild(lord.node("br"));
+            parent.appendChild(iframe);
+        }
+        a.replaceChild(lord.node("text", "[" + lord.text("collapseVideoText") + "]"), a.childNodes[0]);
+    }
+    a.lordExpanded = !a.lordExpanded;
+};
+
+lord.expandCollapseCoubVideo = function(a) {
+    var videoId = lord.data("videoId", a, true);
+    if (!videoId)
+        return;
+    if (a.lordExpanded) {
+        a.parentNode.removeChild(a.nextSibling);
+        a.parentNode.removeChild(a.nextSibling);
+        a.replaceChild(lord.node("text", "[" + lord.text("expandVideoText") + "]"), a.childNodes[0]);
+        lord.removeClass(a.parentNode, "expand");
+    } else {
+        lord.addClass(a.parentNode, "expand");
+        var iframe = lord.node("iframe");
+        iframe.src = "https://coub.com/embed/" + videoId
+            + "?muted=false&autostart=false&originalSize=false&hideTopBar=false&startWithHD=false";
+        iframe.allowfullscreen = true;
+        iframe.frameborder = "0px";
+        iframe.height = "360";
+        iframe.width = "480";
+        iframe.display = "block";
+        var parent = a.parentNode;
+        var el = a.nextSibling;
+        if (el) {
+            parent.insertBefore(lord.node("br"), el);
+            parent.insertBefore(iframe, el);
+        } else {
+            parent.appendChild(lord.node("br"));
+            parent.appendChild(iframe);
+        }
+        a.replaceChild(lord.node("text", "[" + lord.text("collapseVideoText") + "]"), a.childNodes[0]);
+    }
+    a.lordExpanded = !a.lordExpanded;
 };
 
 lord.hashChangeHandler = function() {
