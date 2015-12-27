@@ -10,26 +10,26 @@ FSSync.readdirSync(__dirname).forEach(function(file) {
     Board.addBoard(require("./" + file.split(".").shift()));
 });
 
-Board.addBoard(new Board("3dpd", Tools.translate.noop("3D pron", "boardTitle")));
+//Board.addBoard(new Board("3dpd", Tools.translate.noop("3D pron", "boardTitle")));
 
-Board.addBoard(new Board("a", Tools.translate.noop("/a/nime", "boardTitle"),
-    { defaultUserName: Tools.translate.noop("Kamina", "defaultUserName") }));
+//Board.addBoard(new Board("a", Tools.translate.noop("/a/nime", "boardTitle"),
+//    { defaultUserName: Tools.translate.noop("Kamina", "defaultUserName") }));
 
 Board.addBoard(new Board("b", Tools.translate.noop("/b/rotherhood", "boardTitle")));
 
-Board.addBoard(new Board("cg", Tools.translate.noop("Console games", "boardTitle")));
+//Board.addBoard(new Board("cg", Tools.translate.noop("Console games", "boardTitle")));
 
-Board.addBoard(new Board("h", Tools.translate.noop("/h/entai", "boardTitle")));
+//Board.addBoard(new Board("h", Tools.translate.noop("/h/entai", "boardTitle")));
 
 Board.addBoard(new Board("int", "/int/ernational",
     { defaultUserName: Tools.translate.noop("Vladimir Putin", "defaultUserName") }));
 
-Board.addBoard(new Board("mlp", Tools.translate.noop("My Little Pony", "boardTitle")));
+//Board.addBoard(new Board("mlp", Tools.translate.noop("My Little Pony", "boardTitle")));
 
-Board.addBoard(new Board("po", Tools.translate.noop("/po/litics", "boardTitle"),
-    { defaultUserName: Tools.translate.noop("Armchair warrior", "defaultUserName") }));
+//Board.addBoard(new Board("po", Tools.translate.noop("/po/litics", "boardTitle"),
+//    { defaultUserName: Tools.translate.noop("Armchair warrior", "defaultUserName") }));
 
-board = new Board("pr", Tools.translate.noop("/pr/ogramming", "boardTitle"));
+/*board = new Board("pr", Tools.translate.noop("/pr/ogramming", "boardTitle"));
 Object.defineProperty(board, "supportedCaptchaEngines", {
     get: function() {
         return [Captcha.captcha("codecha").info()];
@@ -38,13 +38,13 @@ Object.defineProperty(board, "supportedCaptchaEngines", {
 Object.defineProperty(board, "markupElements", {
     value: board.markupElements.concat(Board.MarkupElements.CodeMarkupElement)
 });
-Board.addBoard(board);
+Board.addBoard(board);*/
 
-Board.addBoard(new Board("rf", Tools.translate.noop("Refuge", "boardTitle"),
-    { defaultUserName: Tools.translate.noop("Whiner", "defaultUserName") }));
+//Board.addBoard(new Board("rf", Tools.translate.noop("Refuge", "boardTitle"),
+//    { defaultUserName: Tools.translate.noop("Whiner", "defaultUserName") }));
 
-Board.addBoard(new Board("vg", Tools.translate.noop("Video games", "boardTitle"),
-    { defaultUserName: Tools.translate.noop("PC Nobleman", "defaultUserName") }));
+//Board.addBoard(new Board("vg", Tools.translate.noop("Video games", "boardTitle"),
+//    { defaultUserName: Tools.translate.noop("PC Nobleman", "defaultUserName") }));
 
 Board._banners = {};
 Board.boardNames().forEach(function(boardName) {

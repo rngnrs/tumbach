@@ -341,4 +341,4 @@ board.renderPost = function(post) {
     });
 };
 
-module.exports = board;
+//module.exports = board;
