@@ -10,7 +10,7 @@
                 src="/{{=it.site.pathPrefix}}img/settings.png" onclick="lord.showSettings(); return false;" />]
         [<input type="image" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" class="buttonImage"
                 src="/{{=it.site.pathPrefix}}img/favorite.png" onclick="lord.showFavorites(); return false;" />]
-        [<a onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"
+        [<a onclick="lord.switchMumWatching(); return false;" data-name="switchMumWatchingButton"
             title="{{=it.tr.mumWatchingText}}"><img src="/{{=it.site.pathPrefix}}img/mum_not_watching.png"
                                                     class="buttonImage"></a>]
         {{? it.user.loggedIn}}
@@ -30,7 +30,7 @@
         {{?}}
         {{#def.innerNavbar}}
         {{? it.settings.stickyToolbar}}
-            <hr style="margin-top: 3px; margin-bottom: 0px;" />
+            <hr style="margin-top: 3px; margin-bottom: 0;" />
         {{?}}
     </div>
 </div>

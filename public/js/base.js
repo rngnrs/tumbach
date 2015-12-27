@@ -242,8 +242,14 @@ lord.removeFavorite = function(el) {
 
 lord.switchMumWatching = function() {
     var watching = lord.getLocalObject("mumWatching", false);
-    var img = lord.queryOne("[name='switchMumWatchingButton'] > img");
-    img.src = "/" + lord.data("sitePathPrefix") + "img/mum" + (watching ? "_not" : "") + "_watching.png";
+    var img = lord.queryOne("[data-name='switchMumWatchingButton']");
+    if(watching) {
+        lord.removeClass(img, "zmdi-eye-off");
+        lord.addClass(img, "zmdi-eye");
+    } else {
+        lord.removeClass(img, "zmdi-eye");
+        lord.addClass(img, "zmdi-eye-off");
+    }
     lord.query(".postFileFile > a > img").forEach(function(img) {
         if (watching)
             lord.removeClass(img, "mumWatching");
