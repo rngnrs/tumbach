@@ -1,5 +1,6 @@
 *
 !3rdparty
+!tumb
 !api.js
 !base.js
 !board.js
