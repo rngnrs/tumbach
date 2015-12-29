@@ -466,6 +466,21 @@
             "value": "Выбрать все"
         }
     },
+    "Board:": {
+        "banBoardLabelText": {
+            "value": "Доска:"
+        }
+    },
+    "Ban level:": {
+        "banLevelLabelText": {
+            "value": "Уровень бана:"
+        }
+    },
+    "Ban date:": {
+        "banDateTimeLabelText": {
+            "value": "Дата бана:"
+        }
+    },
     "Markup": {
         "pageTitle": {
             "value": "Разметка"
@@ -2413,6 +2428,16 @@
     "Enter your message here": {
         "chatMessageTextPlaceholder": {
             "value": "Введите сообщение сюда"
+        }
+    },
+    "Allow bumping": {
+        "setThreadBumpableText": {
+            "value": "Разрешить бампать"
+        }
+    },
+    "Disallow bumping": {
+        "setThreadUnbumpableText": {
+            "value": "Запретить бампать"
         }
     }
 }
