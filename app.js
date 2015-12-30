@@ -43,6 +43,7 @@ if (count <= 0)
 var spawnCluster = function() {
     expressCluster(function(worker) {
         console.log("[" + process.pid + "] Инициализация...");
+        console.log("Текущая локаль: " + config("site.locale", "en"));
         var express = require("express");
         var controller = require("./helpers/controller");
         var app = express();
