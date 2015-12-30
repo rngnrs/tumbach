@@ -476,9 +476,9 @@ controller.translationsModel = function() {
     translate("Unordered list", "markupUnorderedList");
     translate("Ordered list", "markupOrderedList");
     translate("List item", "markupListItem");
+    translate("Raw HTML", "markupHtml");
     translate("Markup mode:", "postFormLabelMarkupMode");
     translate("Options:", "postFormLabelOptions");
-    translate("Raw HTML", "postFormLabelRaw");
     translate("Sign as OP", "postFormLabelSignAsOp");
     translate("Enable tripcode", "postFormLabelTripcode");
     translate("File(s):", "postFormInputFile");

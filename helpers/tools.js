@@ -244,8 +244,8 @@ module.exports.mimeType = function(fileName) {
         return new Promise(function(resolve, reject) {
             ChildProcess.exec(`file --brief --mime-type ${fileName}`, {
                 timeout: 5000,
-                encoding: "utf8",
-                stdio: [
+                    encoding: "utf8",
+                    stdio: [
                     0,
                     "pipe",
                     null
@@ -366,29 +366,29 @@ module.exports.splitCommand = function(cmd) {
         } else {
             if ("\"" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                case 1:
-                    quot = 0;
-                    break;
-                case -1:
-                    arg += c;
-                    break;
-                case 0:
-                default:
-                    quot = 1;
-                    break;
+                    case 1:
+                        quot = 0;
+                        break;
+                    case -1:
+                        arg += c;
+                        break;
+                    case 0:
+                    default:
+                        quot = 1;
+                        break;
                 }
             } else if ("'" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                case 1:
-                    arg += c;
-                    break;
-                case -1:
-                    quot = 0;
-                    break;
-                case 0:
-                default:
-                    quot = -1;
-                    break;
+                    case 1:
+                        arg += c;
+                        break;
+                    case -1:
+                        quot = 0;
+                        break;
+                    case 0:
+                    default:
+                        quot = -1;
+                        break;
                 }
             } else {
                 if (("\"" == c || "'" == c) && (i > 0 || "\\" == cmd[i - 1]) && arg.length > 0)
