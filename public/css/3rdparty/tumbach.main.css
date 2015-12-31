@@ -561,7 +561,7 @@ audio {
 }
 .popup {
     position: fixed;
-    top: 107px;
+    top: 77px;
     right: 5px;
     z-index: 9950;
     vertical-align: middle;
@@ -653,7 +653,6 @@ blockquote {
     max-width: 1200px;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-all;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
