@@ -195,10 +195,9 @@ width: auto;
 }
 .main{
 position:relative;
-/*width:620px;*/
 width:95%;
 margin:0 auto;
-padding:50px 0 10px;
+padding:40px 0 10px;
 }
 .home-intro {
 height:150px;
@@ -857,6 +856,9 @@ blockquote.expand {
 .thread.hidden > .threadPosts {
     display: none;
 }
+.postHeader.desktop {
+    white-space: nowrap;
+}
 .postFileSize {
     font-size: .8em;
 }
@@ -878,35 +880,67 @@ blockquote.expand {
 .postToThread.mobile > a > button {
     width: 100%;
 }
-.popupActions {
-    position: relative;
-    outline: none;
-}
-.popupActionsMenu {
-    list-style-type: none;
-    margin-left: 0;
-    padding: 4px;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s linear .2s,opacity .2s linear;
+.menu {
+    white-space: nowrap;
+    box-sizing: border-box;
     position: absolute;
+    width: auto;
+    display: none;
+    list-style-type: none;
+    padding: 2px;
     z-index: 9999;
-    margin-top: 0;
-    top: 100%;
-    left: 0;
 }
+.menu > li {
+    padding: 2px 4px 2px 2px;
+}
+#markupUnorderedListActionsMenu {
+    padding-left: 20px;
+}
+#markupOrderedListActionsMenu {
+    padding-left: 30px;
+}
+.menu > li > a {
+    display: block;
+    text-decoration: none;
+}
+.postformFile {
+    text-align: justify;
+}
+.postformFile ~ .postformFile {
+    margin-top: 5px;
+}
+.postformFilePreview {
+    max-width: 100px;
+    max-height: 100px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.postformFileInput {
+    display: inline-block;
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+.postformFileText, .postformFileRemoveButton {
+    display: inline-block;
+    vertical-align: top;
+}
+.postformFileRemoveImage {
+    display: inline;
+    vertical-align: top;
+}
+.referencedBy {
+    font-size: .8em;
+}
+
 .postActionsMenu.mobile {
     left: -220px;
 }
 .fileActionsMenu.mobile {
     left: -40px;
-}
-.popupActions:focus > .popupActionsMenu {
-    visibility: visible;
-    opacity: 1;
-}
-.popupActionsMenu > li > a {
-    text-decoration: none;
 }
 .shrink {
     width: 100%;
@@ -1000,22 +1034,58 @@ blockquote.expand {
 
 
 
+.tabWidget {
+    text-align: center;
+}
+ul.tabWidget > li {
+    display: inline;
+    padding: 5px 10px;
+    border-left: none;
+}
+
+ul.tabWidget > li > a {
+    text-decoration: none;
+    cursor: pointer;
+}
 
 
 
 
 
 
-
-
-
-
+/* Thread echo */
+.threadActions {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+.externalThreadFrame {
+    width: 300px;
+    height: 400px;
+    float: right;
+    position: fixed;
+    top: 200px;
+    right: 0;
+    z-index: 9920;
+}
+.externalThreadFrame.mobile {
+    width: 120px;
+    height: 240px;
+}
+.externalThreadFrame:hover {
+    width: 90%;
+    height: 100%;
+    top: 0;
+}
 .searchAction, .theTitle {
     display: block;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     overflow-x: auto;
 }
 .newPostCount {
@@ -1024,9 +1094,210 @@ blockquote.expand {
     font-size:100% !important;
     color: green;
 }
+
+/* Vote */
+.vote {
+    display: table;
+}
+.voteText {
+    font-weight: bold;
+}
+.voteCount {
+    font-style: italic;
+}
+
+/* Playlist */
+.track {
+    padding: 2px;
+    display: table;
+}
+.track ~ .track {
+    margin-top: 5px;
+}
+.track > audio {
+    width: 600px;
+}
+
+#recaptcha_image_cell, #recaptcha_response_field {
+    background-color: inherit;
+}
+.stretchedPost {
+    width: 99%;
+}
+.login {
+    text-align: center;
+    white-space: nowrap;
+}
+.loginDescription {
+    text-align: center;
+    margin-top: 20px;
+}
+.loginDescription.desktop {
+    max-width: 80%;
+    margin-left: 10%;
+}
+.buttonImage {
+    vertical-align: middle;
+    opacity: .65;
+}
+.buttonImage:disabled {
+    opacity: .4;
+}
+.buttonImage:hover {
+    opacity: 1;
+}
+.buttonImage:disabled:hover {
+    opacity: .4;
+}
+input.buttonImage {
+    background-color: transparent;
+}
+.signImage {
+    vertical-align: middle;
+}
+.boardSelectContainer {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    overflow: hidden;
+}
+.boardSelect {
+    border: none;
+    background: url("../../img/boards.png") left top no-repeat;
+    width: 36px;
+}
+.boardSelectForm {
+    display: inline;
+}
+.imageCheckBox {
+    display: none;
+}
+.imageCheckBox + label {
+    height: 24px;
+    width: 24px;
+    display: inline-block;
+    padding: 0;
+}
+#checkboxRawHtml + label, #checkboxRawHtmlEdit + label {
+    background: url("../../img/checkbox_raw_html.png") center no-repeat;
+}
+#checkboxOp + label {
+    background: url("../../img/checkbox_op.png") center no-repeat;
+}
+#checkboxTripcode + label {
+    background: url("../../img/checkbox_tripcode.png") center no-repeat;
+}
+.alignCenter {
+    text-align: center;
+}
+.temporaryPostOverlayMask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9000;
+    background-color: #000;
+    opacity: .6;
+}
+.overlayMask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100500;
+    background-color: #000;
+    opacity: .6;
+}
+.overlayProgressBar {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 400px;
+    height: 50px;
+    margin-top: -25px;
+    margin-left: -200px;
+    z-index: 100501;
+}
+.overlayProgressBarCancelButton {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: -15px;
+    margin-left: -40px;
+    width: 80px;
+    height: 30px;
+    z-index: 100502;
+}
+.numberSize3 {
+    width: 40px;
+}
+.postFormInput {
+    width: 100%;
+    box-sizing: border-box;
+}
+.submitContainer {
+    text-align: center;
+}
+.submitContainer > input {
+    font-size: 1.2em;
+    width: 100%;
+}
+.cursorPointer {
+    cursor: pointer;
+}
+.chatContactList {
+    overflow-y: auto;
+    min-width: 50px;
+}
+.chatContact {
+    white-space: nowrap;
+    cursor: pointer;
+}
+.chatContactNewMessages {
+    color: red;
+}
+.chatTarget {
+    white-space: nowrap;
+}
+.chatHistory {
+    padding: 5px 4px 5px 8px;
+    border: 1px solid black;
+    overflow-y: auto;
+    min-width: 200px;
+    min-height: 400px;
+    max-width: 600px;
+}
+.chatHistory.mobile {
+    max-width: 300px;
+}
+.chatMessage {
+    margin-bottom: 4px;
+    border-radius: 6px;
+    padding: 4px;
+}
+.chatMessageDate {
+    margin-bottom: 8px;
+    border-bottom: 1px dotted black;
+}
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
 .chatInput, .chatSendButton {
     box-sizing: border-box;
     width: 100%;
+}
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
 }
 .loadingMessage {
     position:absolute;

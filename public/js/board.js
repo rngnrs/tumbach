@@ -334,7 +334,7 @@ lord.createPostNode = function(post, permanent, threadInfo) {
             });
         }
         if (!permanent) {
-            var actions = lord.nameOne("postActions", c.node);
+            var actions = lord.nameOne("postActionsContainer", c.node);
             if (actions)
                 actions.parentNode.removeChild(actions);
             var qr = lord.nameOne("quickReplyContainer", c.node);
@@ -484,6 +484,10 @@ lord.hideImage = function() {
 lord.globalOnclick = function(e) {
     if (e.button)
         return;
+    if (lord.currentMenu) {
+        lord.currentMenu.hide();
+        lord.currentMenu = null;
+    }
     var t = e.target;
     if (t && lord.img && t == lord.img)
         return;
@@ -1178,7 +1182,7 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
     var p;
     if (post) {
         post = post.cloneNode(true);
-        var actions = lord.queryOne(".popupActions", post);
+        var actions = lord.nameOne("postActionsContainer", post);
         if (actions)
             actions.parentNode.removeChild(actions);
         var qr = lord.nameOne("quickReplyContainer", post);
@@ -2749,6 +2753,25 @@ lord.showTripcode = function(threadNumber) {
     if (!threadNumber)
         return false;
     return !!lord.getLocalObject("showTripcode", {})[lord.data("boardName") + "/" + threadNumber];
+};
+
+lord.showMenu = function(e, input, selector) {
+    e.stopPropagation();
+    if (lord.currentMenu) {
+        var same = (lord.currentMenu.selector == selector);
+        lord.currentMenu.hide();
+        if (same) {
+            lord.currentMenu = null;
+            return;
+        }
+    }
+    lord.currentMenu = $(selector);
+    lord.currentMenu.menu().toggle().position({
+        my: "left top",
+        at: "left bottom+2px",
+        of: $(input),
+        collision: "fit flip"
+    }).show();
 };
 
 lord.selectCaptchaEngine = function() {

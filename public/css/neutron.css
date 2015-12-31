@@ -243,7 +243,7 @@ span.newPostCount {
     display: none;
 }
 
-.postHeader, .postFileName, .postFileSize {
+.postFileName, .postFileSize {
     white-space: nowrap;
 }
 
@@ -251,25 +251,24 @@ span.newPostCount {
     font-size: .9em;
 }
 
-.postFileSize, .popupActions, .popupActions:active, .popupActions:visited {
+.postFileSize {
     color: #698CC0;
 }
 
-.popupActionsMenu {
-    background-color: #212121;
-    border: 1px solid #575757;
+.menu {
+    background: #212121 !important;
+    color: #698CC0 !important;
+    border: 1px solid #575757 !important;
 }
 
-
-.popupActionsMenu > li > a {
+.menu > li > a {
     color: #698CC0;
 }
 
-.popupActionsMenu > li > a:hover {
-    display: block;
-    color: #FFF;
+.menu > li:hover {
     background-color: #666;
 }
+
 .postSubject {
     color: #3941AC;
 }
@@ -281,7 +280,6 @@ span.newPostCount {
 
 .postformFile {
     border: 1px dashed #777;
-    text-align: justify;
 }
 
 .postformFile.drag {
@@ -289,61 +287,16 @@ span.newPostCount {
     border: 1px dashed #555;
 }
 
-.postformFile ~ .postformFile {
-    margin-top: 5px;
-}
-
-.postformFilePreview {
-    max-width: 100px;
-    max-height: 100px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.postformFileInput {
-    display: inline-block;
-    position: absolute;
-    left: -10px;
-    top: -10px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-}
-
-.postformFileText {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.postformFileRemoveButton {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.postformFileRemoveImage {
-    display: inline;
-    vertical-align: top;
-}
-
 .referencedBy {
-    font-size: .8em;
     color: #707070;
 }
 
-.tabWidget {
-    text-align: center;
-}
-
 ul.tabWidget > li {
-    display: inline;
     background-color: #DDEDAA;
-    padding: 5px 10px;
 }
 
 ul.tabWidget > li > a {
     color: #698CC0;
-    text-decoration: none;
-    cursor: pointer;
 }
 
 ul.tabWidget > li.activated {
@@ -464,110 +417,23 @@ blockquote.blockquoteThread.expand {
     Title
 */
 
-.theTitle {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    overflow-x: auto;
-}
-
 /* Vote */
 
 .vote {
-    display: table;
     background-color: #DDEDAA;
-}
-
-.voteText {
-    font-weight: bold;
-}
-
-.voteCount {
-    font-style: italic;
-}
-
-/* Settings dialog */
-
-.settingsDialog {
-    /**/
 }
 
 /* Playlist */
 
 .track {
     background-color: #DDEDAA;
-    padding: 2px;
-    display: table;
-}
-
-.track ~ .track {
-    margin-top: 5px;
-}
-
-.track > audio {
-    width: 600px;
 }
 
 #recaptcha_response_field {
     color: #698CC0;
 }
 
-#recaptcha_image_cell {
-    background-color: inherit;
-}
-
-#recaptcha_response_field {
-    background-color: inherit;
-}
-
-.stretchedPost {
-    width: 99%;
-}
-
-.login {
-    text-align: center;
-    white-space: nowrap;
-}
-
-.loginDescription {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.loginDescription.desktop {
-    max-width: 80%;
-    margin-left: 10%;
-}
-
-.buttonImage {
-    vertical-align: middle;
-    opacity: .65;
-    -webkit-filter: invert(1);
-    -moz-filter: invert(1);
-    -ms-filter: invert(1);
-    -o-filter: invert(1);
-    filter: invert(1);
-}
-
-.buttonImage:disabled {
-    opacity: .4;
-}
-
-.buttonImage:hover {
-    opacity: 1;
-}
-
-.buttonImage:disabled:hover {
-    opacity: .4;
-}
-
-input.buttonImage {
-    background-color: transparent;
-}
-
-.signImage {
-    vertical-align: middle;
+.buttonImage, .signImage, .boardSelect {
     -webkit-filter: invert(1);
     -moz-filter: invert(1);
     -ms-filter: invert(1);
@@ -583,133 +449,8 @@ input.buttonImage {
     filter: invert(0);
 }
 
-.boardSelectContainer {
-    display: inline-block;
-    vertical-align: middle;
-    width: 16px;
-    overflow: hidden;
-}
-
-.boardSelect {
-    border: none;
-    background: url("../img/boards.png") left top no-repeat;
-    -webkit-filter: invert(1);
-    -moz-filter: invert(1);
-    -ms-filter: invert(1);
-    -o-filter: invert(1);
-    filter: invert(1);
-    width: 36px;
-}
-
-.boardSelectForm {
-    display: inline;
-}
-
-.imageCheckBox {
-    display: none;
-}
-
-.imageCheckBox + label {
-    height: 24px;
-    width: 24px;
-    display: inline-block;
-    padding: 0;
-}
-
 .imageCheckBox:checked + label {
     box-shadow: inset 0 1px 5px #EEFEBB;
-}
-
-#checkboxRawHtml + label, #checkboxRawHtmlEdit + label {
-    background: url("../img/checkbox_raw_html.png") center no-repeat;
-}
-
-#checkboxOp + label {
-    background: url("../img/checkbox_op.png") center no-repeat;
-}
-
-#checkboxTripcode + label {
-    background: url("../img/checkbox_tripcode.png") center no-repeat;
-}
-
-.alignCenter {
-    text-align: center;
-}
-
-.temporaryPostOverlayMask {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9000;
-    background-color: #000;
-    opacity: .6;
-}
-
-.overlayMask {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100500;
-    background-color: #000;
-    opacity: .6;
-}
-
-.overlayProgressBar {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    width: 400px;
-    height: 50px;
-    margin-top: -25px;
-    margin-left: -200px;
-    z-index: 100501;        
-}
-
-.overlayProgressBarCancelButton {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    margin-top: -15px;
-    margin-left: -40px;
-    width: 80px;
-    height: 30px;
-    z-index: 100502;
-}
-
-.numberSize3 {
-    width: 40px;
-}
-
-.postFormInput {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.submitContainer {
-    text-align: center;
-}
-
-.submitContainer > input {
-    font-size: 1.2em;
-    width: 100%;
-}
-
-.cursorPointer {
-	cursor: pointer;
-}
-
-.chatContactList {
-    overflow-y: auto;
-    min-width: 50px;
-}
-
-.chatContact {
-    white-space: nowrap;
-    cursor: pointer;
 }
 
 .chatContact:hover {
@@ -727,62 +468,15 @@ input.buttonImage {
     background-color: #575757;
 }
 
-.chatContactNewMessages {
-    color: red;
-}
-
 .chatTarget {
     color: #FFF;
     background-color: #666;
-    white-space: nowrap;
-}
-
-.chatHistory {
-    padding: 5px 4px 5px 8px;
-    border: 1px solid black;
-    overflow-y: auto;
-    min-width: 200px;
-    min-height: 400px;
-    max-width: 600px;
-}
-
-.chatHistory.mobile {
-    max-width: 300px;
 }
 
 .chatMessage {
     border: 1px solid #575757;
-    margin-bottom: 4px;
-    border-radius: 6px;
     color: #698CC0;
     background-color: #2C2C2C;
-    padding: 4px;
-}
-
-.chatMessageDate {
-    margin-bottom: 8px;
-    border-bottom: 1px dotted black;
-}
-
-.chatMessageText {
-    padding-left: 8px;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-all;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-}
-
-.chatInput, .chatSendButton {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.select[name="codeLang"] {
-    height: 20px;
-    vertical-align: middle;
 }
 
 .bordered {

@@ -70,4 +70,4 @@ board.testParameters = function(fields, files, creatingThread) {
     return testLink(fields.link);
 };
 
-module.exports = board;
+//module.exports = board;
