@@ -13,13 +13,6 @@ body {
     color: #800000;
 }
 
-body.mobile {
-    -moz-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    font-size: 14px;
-}
-
 a {
     color: #00E;
 }
@@ -38,95 +31,25 @@ a.expandCollapse:hover {
     cursor: pointer;
 }
 
-audio {
-    width: 500px;
-}
-
 hr {
     color: #808080;
     clear: both;
 }
 
-.select {
+.select, .button, .checkbox {
     cursor: pointer;
 }
 
-.selectOption {
-    /**/
-}
-
-.input {
-    /**/
-}
-
-.button {
-    cursor: pointer;
-}
-
-.checkbox {
-    cursor: pointer;
-}
-
-.popup {
+.popup, .favorites {
     background-color: #F0E0D6;
-    position: fixed;
-    top: 35px;
-    right: 5px;
-    z-index: 9950;
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.favorites {
-    background-color: #F0E0D6;
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    max-width: 90%;
-    max-height: 90%;
-    z-index: 9980;
-    padding: 2px;
 }
 
 .favorites > div {
     background-color: #FBFBEA;
-    padding: 2px;
-}
-
-.favorites > span {
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-}
-
-.centerForm {
-    /**/
 }
 
 .scrollAreaH60 {
-    overflow: auto;
-    max-height: 60px;
     border: 1px solid #800000;
-}
-
-.hidePostformRulesButton {
-    display: block;
-    text-decoration: none;
-    font-size: .7em;
-    margin-left: 30px;
-    cursor: pointer;
-}
-
-.hidePostformMarkupButton {
-    display: block;
-    text-decoration: none;
-    text-align: right;
-    font-size: .7em;
-    margin-left: auto;
-    margin-right: 5px;
-    cursor: pointer;
 }
 
 .postSequenceNumber {
@@ -146,28 +69,15 @@ hr {
 
 .ban {
     background-color: #F0E0D6;
-    margin-left: 80px;
-    margin-right: 80px;
 }
 
 /*
     Banner
 */
 
-.banner {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-}
-
 /*
     Board
 */
-
-#postForm {
-    overflow-x: auto;
-}
 
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #F0D0B6;
@@ -218,27 +128,12 @@ span.newPostCount {
 */
 
 .catalogContainer {
-    box-sizing: border-box;
     color: #800000;
-    padding: 0;
-    text-align: center;
 }
 
 .catalogItem {
     background-color: #F0E0D6;
-    box-sizing: border-box;
     color: #800000;
-    display: inline-block;
-    height: 450px;
-    min-height: 450px;
-    margin: 10px;
-    overflow: hidden;
-    padding: 5px;
-    position: relative;
-    text-align: center;
-    vertical-align:top;
-    width: 240px;
-    word-wrap: break-word;
 }
 
 .opSign {
@@ -294,15 +189,9 @@ span.newPostCount {
 
 .post.temporary {
     border: 1px solid #000;
-    display: block;
-    box-sizing: border-box;
-    overflow-x: hidden;
 }
 
-.thread.hidden > .omittedPosts {
-    display: none;
-}
-
+.thread.hidden > .omittedPosts,
 .thread.hidden > .threadPosts {
     display: none;
 }
@@ -312,14 +201,10 @@ span.newPostCount {
 }
 
 .postFileName.mobile {
-    font-size: 0.9em;
+    font-size: .9em;
 }
 
-.postFileSize {
-    color: #800000;
-}
-
-.popupActions, .popupActions:active, .popupActions:visited {
+.postFileSize, .popupActions, .popupActions:active, .popupActions:visited {
     color: #800000;
 }
 
@@ -338,119 +223,13 @@ span.newPostCount {
     background-color: #444;
 }
 
-.postBody {
-    text-align: left;
-}
-
-.postFile {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.postFile ~ .postFile {
-    padding-left: 20px;
-}
-
-.postText {
-    vertical-align: top;
-    white-space: normal;
-}
-
-.postFiles > .postText {
-    display: inline-block;
-    max-width: 80%;
-}
-
-.bannedFor {
-    color: red;
-}
-
-.modificationDateTime {
-    font-style: italic;
-}
-
 .postSubject {
-    font-weight: bold;
     color: #CC1105;
-}
-
-.postSubject.mobile {
-    font-size: .8em;
-    display: block;
-}
-
-.tripcode {
-    color: green;
-}
-
-.tripcode.mobile {
-    font-size: .8em;
-    display: block;
-}
-
-.postDateTime.mobile {
-    font-size: .8em;
-}
-
-.moderName {
-    font-weight: bold;
-    color: blue;
 }
 
 .userName {
     font-weight: bold;
     color: #117743;
-}
-
-.someName.mobile {
-    font-size: .8em;
-    display: block;
-}
-
-.navigationButton {
-    position: fixed;
-    right: 20px;
-    z-index: 9910;
-    opacity: .5;
-}
-
-.navigationButton:hover {
-    opacity: 1;
-}
-
-.navigationButtonBottom {
-    bottom: 30px;
-}
-
-.navigationButtonTop {
-    top: 30px;
-}
-
-.leafButton {
-    position: fixed;
-    top: 50%;
-    z-index: 9910;
-    opacity: .5;
-}
-
-.leafButton:hover {
-    opacity: 1;
-}
-
-.leafButtonPrevious {
-    left: 20px;
-}
-
-.leafButtonNext {
-    right: 20px;
-}
-
-.movableImage {
-    position: fixed;
-    z-index: 9905;
-    border: 5px solid #777;
-    padding: 0;
-    line-height: 0;
 }
 
 .postformFile {

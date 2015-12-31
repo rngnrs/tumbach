@@ -1396,7 +1396,7 @@ lord.now = function() {
 
 lord.settings = function() {
     return {
-        time: lord.getCookie("time", "server"),
+        time: lord.getCookie("time", "local"),
         timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
         captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
         style: { name: lord.getLocalObject("style", "photon") },

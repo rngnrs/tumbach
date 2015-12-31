@@ -154,10 +154,6 @@ a {
 text-decoration:none;
 /*color:#000;*/
 }
-.cardy-c a, .card-paper a {
-text-decoration: underline;
-color:#FF7F27;
-}
 .logo {
 position:relative;
 left:0;
@@ -552,6 +548,28 @@ ul.tabWidget > li > a {
     padding: 11px;
 }
 /* COMMON FOR ALL STYLES */
+body.desktop {
+    font-size: 15px;
+}
+body.mobile {
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-size: 14px;
+}
+audio {
+     width: 500px;
+}
+.popup {
+    position: fixed;
+    top: 107px;
+    right: 5px;
+    z-index: 9950;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
 .critical {
     color: red;
     border: 1px dotted red;
@@ -560,8 +578,45 @@ ul.tabWidget > li > a {
     color: orange;
     border: 1px dotted orange;
 }
+.favorites {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    max-width: 90%;
+    max-height: 90%;
+    z-index: 9980;
+    padding: 2px;
+}
+.favorites > div {
+    padding: 2px;
+}
+.favorites > span {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
 .inlineForm {
     display: inline;
+}
+.scrollAreaH60 {
+    overflow: auto;
+    max-height: 60px;
+}
+.hidePostformRulesButton {
+    display: block;
+    text-decoration: none;
+    font-size: .7em;
+    margin-left: 30px;
+    cursor: pointer;
+}
+.hidePostformMarkupButton {
+    display: block;
+    text-decoration: none;
+    text-align: right;
+    font-size: .7em;
+    margin-left: auto;
+    margin-right: 5px;
+    cursor: pointer;
 }
 .hiddenPostLink {
     text-decoration: line-through;
@@ -572,8 +627,20 @@ ul.tabWidget > li > a {
 .wrap {
     white-space: normal;
 }
+.ban {
+    margin: 0 80px;
+}
+.banner {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
 
 /*Board*/
+#postForm {
+    overflow-x: auto;
+}
 .quotation {
     color: #789922;
 }
@@ -702,6 +769,25 @@ blockquote.expand {
     margin-right: 80px;
     text-align: center;
 }
+.catalogContainer {
+    box-sizing: border-box;
+    padding: 0;
+    text-align: center;
+}
+.catalogItem {
+    box-sizing: border-box;
+    display: inline-block;
+    height: 450px;
+    min-height: 450px;
+    margin: 10px;
+    overflow: hidden;
+    padding: 5px;
+    position: relative;
+    text-align: center;
+    vertical-align:top;
+    width: 240px;
+    word-wrap: break-word;
+}
 
 /* Home */
 .rules, .news {
@@ -756,6 +842,11 @@ blockquote.expand {
     overflow-x: auto;
     display: table;
 }
+.post.temporary {
+    display: block;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
 .opPost {
     overflow-x: auto;
     display: table;
@@ -768,7 +859,6 @@ blockquote.expand {
 }
 .postFileSize {
     font-size: .8em;
-    color: #444;
 }
 .postFileSize.mobile {
     font-size: .6em;
@@ -821,14 +911,92 @@ blockquote.expand {
 .shrink {
     width: 100%;
 }
+.postBody {
+    text-align: left;
+}
+.postFile {
+    display: inline-block;
+    vertical-align: top;
+}
+.postFile ~ .postFile {
+    padding-left: 20px;
+}
 .postText {
     vertical-align: top;
+    white-space: normal;
 }
 .postFiles > .postText {
     display: inline-block;
+    max-width: 80%;
 }
-
-
+.bannedFor {
+    color: red;
+}
+.modificationDateTime {
+    font-style: italic;
+}
+.postSubject {
+    font-weight: bold;
+}
+.postSubject.mobile {
+    font-size: .8em;
+    display: block;
+}
+.tripcode {
+    color: green;
+}
+.tripcode.mobile {
+    font-size: .8em;
+    display: block;
+}
+.postDateTime.mobile {
+    font-size: .8em;
+}
+.moderName {
+    font-weight: bold;
+    color: blue;
+}
+.someName.mobile {
+    font-size: .8em;
+    display: block;
+}
+.navigationButton {
+    position: fixed;
+    right: 20px;
+    z-index: 9910;
+    opacity: .5;
+}
+.navigationButton:hover {
+    opacity: 1;
+}
+.navigationButtonBottom {
+    bottom: 30px;
+}
+.navigationButtonTop {
+    top: 30px;
+}
+.leafButton {
+    position: fixed;
+    top: 50%;
+    z-index: 9910;
+    opacity: .5;
+}
+.leafButton:hover {
+    opacity: 1;
+}
+.leafButtonPrevious {
+    left: 20px;
+}
+.leafButtonNext {
+    right: 20px;
+}
+.movableImage {
+    position: fixed;
+    z-index: 9905;
+    border: 5px solid #777;
+    padding: 0;
+    line-height: 0;
+}
 
 
 
