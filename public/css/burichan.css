@@ -375,3 +375,24 @@ blockquote.blockquoteThread.expand {
 .bordered {
     border: 1px solid #CCC;
 }
+
+.ui-tooltip {
+    border: 1px solid #CCC !important;
+    z-index: 11000 !important;
+}
+
+.ui-tooltip-content {
+    background-color: #D6DAF0;
+}
+
+.ui-tooltip-content::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+    top: -10px;
+    left: 85px;
+    border-color: #CCC transparent;
+    border-width: 0 10px 10px;
+}
