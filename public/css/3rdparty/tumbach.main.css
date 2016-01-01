@@ -8,7 +8,7 @@ body {
 position:relative;
 margin: 0;
 -webkit-font-smoothing: antialiased;
-/*min-width: 320px;*/
+min-width: 480px;
 font-family: 'PT Sans', sans-serif;
 }
 .color-def {
@@ -17,7 +17,6 @@ transition: .5s background;
 .tooltip:after {
 background: rgba(0, 0, 0, .9);
 border-radius: 4px;
-/* box-shadow: 1px 1px 10px rgba(0, 0, 0, .5); */
 color: #FFF;
 content: attr(data-tooltip);
 top: 50px;
@@ -30,6 +29,7 @@ padding: 3px 4px;
 position: absolute;
 visibility: hidden;
 transition: all .3s ease-in-out;
+z-index: 10;
 }
 .tooltip:focus:after, .tooltip-input:focus + label:after {
 opacity: 1;
@@ -47,60 +47,51 @@ position: relative;
 }
 #header.fixed {
 position:fixed;
-width: calc(100% - 280px);
-top:0;left:280px;right:0;
-opacity:.4;
+width: 100%;
+top:0;right:0;
+opacity:.1;
 z-index: 1;
-}
-@media (max-width: 1040px) {
-    #header.fixed {
-        width: 100%;
-        left:0;
-    }
 }
 #header:hover {
 opacity:1 !important;
 }
 .sidebar {
-    /*width: 0;*/
-    overflow:hidden;
-    transform: translate3d(-280px, 0, 0);
-    transition: transform .2s cubic-bezier(.4,.0,1,1),visibility .2s;
-    /*background: #fff;*/
-    visibility:hidden;
+overflow:hidden;
+transform: translate3d(-280px, 0, 0);
+transition: transform .2s cubic-bezier(.4,.0,1,1),visibility .2s;
+visibility:hidden;
 }
 .sidebar.open {
-    min-width: 280px;
-    width: 280px;
-    transform: translate3d(0, 0, 0);
-    transition: transform .3s cubic-bezier(.4,.0,1,1),visibility .3s;
-    visibility:visible;
+min-width: 280px;
+width: 280px;
+transform: translate3d(0, 0, 0);
+transition: transform .3s cubic-bezier(.4,.0,1,1),visibility .3s;
+visibility:visible;
 }
 .sidebar-fixed-left,
 .sidebar-fixed-right,
 .sidebar-stacked {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    z-index: 100;
+position: fixed;
+top: 72px;
+bottom: 0;
+z-index: 5;
 }
 .sidebar-stacked {
-    left: 0;
+left: 0;
 }
 .sidebar-fixed-left {
-    left: 0;
-    box-shadow: 2px 0 15px rgba(0, 0, 0, .35);
+left: 0;
+box-shadow: 2px 0 15px rgba(0, 0, 0, .35);
 }
 .sidebar-fixed-right {
-    right: 0;
-    top:72px;
-    width: 280px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, .35);
-    transform: translate3d(280px, 0, 0);
+right: 0;
+width: 280px;
+box-shadow: 0 2px 15px rgba(0, 0, 0, .35);
+transform: translate3d(280px, 0, 0);
 }
 /*.sidebar-fixed-right.open {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
+-webkit-transform: translate3d(0, 0, 0);
+transform: translate3d(0, 0, 0);
 }*/
 .sidebar .header {
 position:relative;
