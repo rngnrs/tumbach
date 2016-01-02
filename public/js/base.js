@@ -573,11 +573,10 @@ lord.updateChat = function(keys) {
             if (img && img.src.replace("chat_message.gif", "") == img.src)
                 img.src = img.src.replace("chat.png", "chat_message.gif");
             else
-                if(!img) {
+                if (!img) {
                     var img = lord.node("img");
                     lord.addClass(img, "buttonImage");
                     img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
-                    a.title = lord.text("newChatMessageText");
                     a.appendChild(img);
                 }
         });
@@ -659,9 +658,13 @@ lord.showChat = function(key) {
             img.src = img.src.replace("chat_message.gif", "chat.png");
     });
     var btn = lord.queryOne(".list-item[name='chatButton']");
-    btn.title = "";
-    lord.removeChildren(btn);
-    btn.appendChild(lord.node("text", lord.text("chatText")));
+    if (btn) {
+        var img = lord.queryOne("img", btn);
+        if (img) {
+            lord.removeChildren(btn);
+            btn.appendChild(lord.node("text", lord.text("chatText")));
+        }
+    }
     var model = lord.model(["base", "tr"], true);
     model.contacts = [];
     lord.forIn(lord.getLocalObject("chats", {}), function(_, key) {
