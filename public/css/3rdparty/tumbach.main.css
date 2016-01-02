@@ -126,12 +126,12 @@ overflow-y:auto;
     padding-left: 48px;
 }*/
 .list-item {
+position:relative;
 cursor: pointer;
 display: flex;
 align-items: center;
 font-size: 14px;
 line-height: 24px;
-/*color: rgba(0,0,0,0.87);*/
 font-weight: bold;
 padding: 12px 12px 12px 26px;
 }
@@ -157,6 +157,7 @@ float: left;
 }
 .logo-big {
 width:150px;
+min-height:150px;
 height:100%;
 }
 .kek {
@@ -191,7 +192,7 @@ margin:0 auto;
 padding:40px 0 10px;
 }
 .home-intro {
-height:150px;
+min-height:150px;
 position:relative;
 }
 .home-intro .titl {
@@ -511,11 +512,24 @@ text-indent:20px;
 
 
 /* CUSTOM */
-.post {
+/*.post {
     padding: 10px 4px 4px 10px;
-}
+}*/
 h1 {
     margin: 0 auto;
+}
+.mobile #search-field {
+    width: 65px;
+}
+.mobile .titl {
+    padding: 59px 0;
+    font-size: 25px;
+}
+.list-item .buttonImage {
+    position: absolute;
+    right: 12px;
+    padding: 4px;
+    top:12px;
 }
 .tabWidget {
     float: left;
@@ -537,6 +551,15 @@ ul.tabWidget > li > a {
     box-sizing: border-box;
     padding: 11px;
 }
+
+/* JQUERY UI */
+.ui-dialog,
+.ui-dialog-buttonpane,
+.ui-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 /* COMMON FOR ALL STYLES */
 body.desktop {
     font-size: 15px;
@@ -826,8 +849,7 @@ blockquote.expand {
 /* Post */
 .post, .draft {
     margin: 4px 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px 4px 4px 10px;
     overflow-x: auto;
     display: table;
 }
@@ -997,7 +1019,7 @@ blockquote.expand {
     bottom: 30px;
 }
 .navigationButtonTop {
-    top: 30px;
+    top: 102px;
 }
 .leafButton {
     position: fixed;
@@ -1242,11 +1264,16 @@ input.buttonImage {
     min-width: 50px;
 }
 .chatContact {
+    position:relative;
     white-space: nowrap;
     cursor: pointer;
 }
 .chatContactNewMessages {
     color: red;
+}
+.chatContactNewMessages ~ .buttonImage {
+    position: absolute;
+    right: 0;
 }
 .chatTarget {
     white-space: nowrap;
@@ -1258,8 +1285,9 @@ input.buttonImage {
     min-width: 200px;
     min-height: 400px;
     max-width: 600px;
+    height: calc(100% - 42px);
 }
-.chatHistory.mobile {
+.mobile .chatHistory {
     max-width: 300px;
 }
 .chatMessage {

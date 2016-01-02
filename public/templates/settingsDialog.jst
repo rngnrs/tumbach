@@ -199,7 +199,7 @@
             <tbody>
                 <tr>
                     <td>
-                        {{=it.tr.captchaLabelText}}<sup><font color="red">*</font></sup>
+                        {{=it.tr.captchaLabelText}}<sup><span style="color: red;">*</span></sup>
                     </td>
                     <td>
                         <select name="captchaEngine" class="select">
@@ -210,6 +210,11 @@
                                 </option>
                             {{~}}
                         </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <sup><span style="color: red;">*</span> {{=it.tr.captchaLabelWarningText}}</sup>
                     </td>
                 </tr>
                 <tr>
@@ -271,11 +276,6 @@
                     <td colspan="2">
                         <input type="checkbox" name="stripExifFromJpeg"
                                {{? it.settings.stripExifFromJpeg}}checked="true"{{?}} /><label>{{=it.tr.stripExifFromJpegLabelText}}</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <sup><font color="red">*</font></sup> – {{=it.tr.captchaLabelWarningText}}
                     </td>
                 </tr>
             </tbody>

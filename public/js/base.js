@@ -570,8 +570,16 @@ lord.updateChat = function(keys) {
     if (!lord.chatDialog) {
         lord.name("chatButton").forEach(function(a) {
             var img = lord.queryOne("img", a);
-            if (img.src.replace("chat_message.gif", "") == img.src)
+            if (img && img.src.replace("chat_message.gif", "") == img.src)
                 img.src = img.src.replace("chat.png", "chat_message.gif");
+            else
+                if(!img) {
+                    var img = lord.node("img");
+                    lord.addClass(img, "buttonImage");
+                    img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
+                    a.title = lord.text("newChatMessageText");
+                    a.appendChild(img);
+                }
         });
         var div = lord.node("div");
         var a = lord.node("a");
@@ -581,7 +589,7 @@ lord.updateChat = function(keys) {
         a.title = lord.text("chatText");
         a.appendChild(img);
         var lastKey = lord.last(keys);
-        a.onclick = lord.showChat.bind(lord, lastKey);
+        div.onclick = lord.showChat.bind(lord, lastKey);
         div.appendChild(a);
         div.appendChild(lord.node("text", " " + lord.text("newChatMessageText") + " [" + lastKey + "]"));
         lord.showPopup(div, { type: "node" });
@@ -647,9 +655,13 @@ lord.checkChats = function() {
 lord.showChat = function(key) {
     lord.name("chatButton").forEach(function(a) {
         var img = lord.queryOne("img", a);
-        if (img.src.replace("chat_message.gif", "") != img.src)
+        if (img && img.src.replace("chat_message.gif", "") != img.src)
             img.src = img.src.replace("chat_message.gif", "chat.png");
     });
+    var btn = lord.queryOne(".list-item[name='chatButton']");
+    btn.title = "";
+    lord.removeChildren(btn);
+    btn.appendChild(lord.node("text", lord.text("chatText")));
     var model = lord.model(["base", "tr"], true);
     model.contacts = [];
     lord.forIn(lord.getLocalObject("chats", {}), function(_, key) {
@@ -658,13 +670,15 @@ lord.showChat = function(key) {
     lord.chatDialog = lord.template("chatDialog", model);
     lord.showDialog(lord.chatDialog, {
         title: "chatText",
+        height: 250,
+        width: 555,
         afterShow: function() {
             lord.checkChats();
             if (!key)
                 return;
             lord.selectChatContact(key);
         },
-        buttons: ["close"]
+        buttons: []
     }).then(function() {
         lord.chatDialog = null;
     }).catch(lord.handleError);
