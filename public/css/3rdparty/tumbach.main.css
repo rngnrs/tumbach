@@ -1082,8 +1082,10 @@ ul.tabWidget > li > a {
     top: 200px;
     right: 0;
     z-index: 9920;
+    opacity: .5;
+    transition: .1s all;
 }
-.externalThreadFrame.mobile {
+.mobile .externalThreadFrame {
     width: 120px;
     height: 240px;
 }
@@ -1091,13 +1093,14 @@ ul.tabWidget > li > a {
     width: 90%;
     height: 100%;
     top: 0;
+    box-shadow: 0 0 20px #000;
+    opacity: 1;
 }
 .searchAction, .theTitle {
     display: block;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    /*white-space: nowrap;*/
     overflow-x: auto;
 }
 .newPostCount {
@@ -1189,6 +1192,9 @@ input.buttonImage {
     width: 24px;
     display: inline-block;
     padding: 0;
+}
+.imageCheckBox:checked + label {
+    box-shadow: inset 0 1px 5px #555;
 }
 #checkboxRawHtml + label, #checkboxRawHtmlEdit + label {
     background: url("../../img/checkbox_raw_html.png") center no-repeat;

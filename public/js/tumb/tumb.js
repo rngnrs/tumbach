@@ -95,7 +95,8 @@ tumb.clicky = function(el) {
 	});
 };
 tumb.switchStyle = function(style) {
-	$('#stylesheet').attr('href','/css/'+style+'.css');
+	$('#stylesheet').attr('href','/'+lord.data("sitePathPrefix")+'css/'+style+'.css');
+	$('#jqui-stylesheet').attr('href', '/'+lord.data("sitePathPrefix")+'css/3rdparty/jquery-ui/'+style+'/jquery-ui.min.css');
     lord.setLocalObject("style", style);
 };
 tumb.onLoad = function(){

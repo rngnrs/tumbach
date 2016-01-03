@@ -1,0 +1,57 @@
+<aside id="sidebar" class="sidebar open sidebar-stacked">
+    <div class="sidebar_form sidebar_form_auth">
+        <div id="auth">
+            <div class="btn-group btn color-def">
+                {{? it.user.loggedIn}}
+                <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
+                      enctype="application/x-www-form-urlencoded" class="inlineForm"
+                      >
+                    <input type="hidden" name="source" value="{{=it.path}}" />
+                    <input class="btn-emb" type="submit" name="auth" value="{{=it.tr.logoutText}}"
+                           onclick="lord.doLogout(event, this.parent); return false;"
+                           title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"/>
+                </form>
+                {{??}}
+                    <a href="/login.html" onclick="lord.redirectToLoginPage();return false;" class="btn-center float-l ajax">
+                        <input class="btn-emb" type="submit" name="auth" value="{{=it.tr.loginText}}" />
+                    </a>
+                {{?}}
+            </div>
+        </div>
+    </div>
+    <div class="tumb-menu">
+        <nav>
+            {{~it.boards :board}}
+                {{? it.settings.hiddenBoards.indexOf(board.name) < 0 && !board.hidden}}
+                    <span class="navbarItem navbarItemBoard">
+                        <a class="list-item ajax"
+                           href="/{{=it.site.pathPrefix}}{{=board.name}}/" title="{{=board.name}}"
+                           data-board-name="{{=board.name}}">
+                            {{=board.title}}
+                        </a>
+                    </span>
+                {{?}}
+            {{~}}
+            <div class="clr"></div>
+            <hr/>
+            {{? it.settings.chatEnabled}}
+            <a name="chatButton" class="list-item ajax" href="javascript:void(0);" onclick="lord.showChat(); return false;">
+                {{=it.tr.chatText}}
+            </a>
+            {{?}}
+            <a class="list-item ajax" href="/faq.html">{{=it.tr.toFaqPageText}}</a>
+            {{? it.compareRegisteredUserLevels(it.user.level, "MODER") >= 0}}
+                <a class="list-item ajax" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
+            {{?}}
+        </nav>
+    </div>
+    <div class="select_sidebar color-def">
+        <select id="style-switcher" class="color-def">
+                {{~it.styles :style}}
+                <option value="{{=style.name}}"{{? style.name == it.settings.style.name}} selected="true"{{?}}>
+                    {{=style.title}}
+                </option>
+                {{~}}
+        </select>
+    </div>
+</aside>

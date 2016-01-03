@@ -1,0 +1,68 @@
+/*Tumbach (beta)*/
+
+.color-def {
+    background-color: #99D9EA !important;
+    color: #000 !important;
+}
+body, aside {
+    background-color: #EEE;
+}
+a {
+    text-decoration:none;
+    color: rgba(0, 127, 255, .87);
+    transition: .1s color;
+}
+.card-paper a, .post a {
+    text-decoration: underline;
+    color: #F60;
+}
+a.expandCollapse {
+    color: #444;
+}
+a:hover {
+    color: #F80;
+}
+a.expandCollapse:hover {
+    color: #666;
+}
+hr {
+    background-color: #CCC;
+}
+span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
+    background: #BBB;
+    color: #BBB;
+}
+span.spoiler:hover {
+    color: #333;
+}
+.select {
+    background: #EAEAEA;
+    border: 1px solid #CCC;
+}
+.selectOption {
+    background: #EAEAEA;
+}
+.input {
+    border: 1px solid #CCC;
+}
+.button {
+    background: #EAEAEA;
+    border: 1px solid #CCC;
+}
+.popup {
+    background-color: #DDD;
+    border: 1px solid #BBB;
+}
+.post, .rules, .draft {
+    background: #FAFAFA;
+    border: 1px solid #CCC;
+}
+
+.chatMessage {
+    border: 1px solid #CCC;
+    background-color: rgba(0, 188, 212, .25);
+}
+
+ul.tabWidget > li.activated {
+    background-color: #AAA;
+}

@@ -47,6 +47,6 @@ lord.templates = {};
     });
     var settings = lord.settings();
     lord.createStylesheetLink(settings.style.name + ".css", true);
-    lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
-    lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true);
+    lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true, "hjs-stylesheet");
+    lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
 })();
