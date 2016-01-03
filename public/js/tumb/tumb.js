@@ -14,26 +14,26 @@ tumb.dottie = function(floatElement, upperDiv) {
 	};
 	init();
 	localStorage["scroll"] = height;
-/*	$(window).bind('resize', function(){init()});*/
+/*	$(window).bind('resize', function(){init()});
 	$(floatElement).hover(function(){decrypt()},function(){if(floatElement.hasClass('fixed')){crypt()}});
 	$('menu li').each(function(){
 		var self = $(this);
 		name = $(self).text();
 		$(self).data('name', name);
-	});
+	});*/
 
 	window.onscroll = function(event) {
 		if (window.scrollY > height) {
 			if(localStorage["scroll"]<$(document).scrollTop()) localStorage["scroll"] = $(document).scrollTop();
 			if (floatElement.hasClass('default')) {
-				$('menu li').css({'opacity':'.2'});
+				//$('menu li').css({'opacity':'.2'});
 				floatElement.removeClass("default").addClass("fixed");
 				$(wrap).css({'padding-top':$(floatElement).height()+$(wrap).css('padding-top').replace(/[^-d.]/g, '')+'px'});
 				crypt();
 			}
 		} else {
 			if (floatElement.hasClass('fixed')) {
-				$('menu li').css({'opacity':''});
+				//$('menu li').css({'opacity':''});
 				floatElement.removeClass("fixed").addClass("default");
 				$(wrap).css({'padding-top':''});
 				decrypt();

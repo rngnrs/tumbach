@@ -8,11 +8,11 @@
             {{~it.boards :brd}}
                 {{? it.settings.hiddenBoards.indexOf(brd.name) < 0 && !brd.hidden}}
                 <option {{? it.searchBoard && it.searchBoard == brd.name}}selected="true"{{?}}
-                        value="{{=brd.name}}">[{{=brd.name}}]<!-- {{=brd.title}}--></option>
+                        value="{{=brd.name}}">[{{=brd.name}}] {{=brd.title}}</option>
                 {{?}}
             {{~}}
         </select>
-        <input style="background:url(/{{=it.site.pathPrefix}}img/search.png) no-repeat;border:none;width:16px;height:16px;padding:3px;outline:none;"
+        <input style="background:url(/{{=it.site.pathPrefix}}img/search.png) no-repeat;border:none;width:16px;height:19px;outline:none;"
                type="submit" title="{{=it.tr.searchButtonText}}" class="buttonImage" value="" />
     </form>
 </div>
