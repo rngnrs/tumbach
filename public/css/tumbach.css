@@ -57,6 +57,10 @@ span.spoiler:hover {
     background: #FAFAFA;
     border: 1px solid #CCC;
 }
+.cspoilerBody {
+    background-color: #BBB;
+    border: 1px solid #CCC;
+}
 
 .chatMessage {
     border: 1px solid #CCC;

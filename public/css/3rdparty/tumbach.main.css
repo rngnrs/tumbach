@@ -798,6 +798,8 @@ blockquote.expand {
     border: 5px solid #777;
     padding: 0;
     line-height: 0;
+    background: #777;
+    transition: .1s transform;
 }
 
 
