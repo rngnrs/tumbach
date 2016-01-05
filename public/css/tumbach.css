@@ -14,7 +14,6 @@ a {
 }
 .card-paper a, .post a {
     text-decoration: underline;
-    color: #F60;
 }
 a.expandCollapse {
     color: #444;

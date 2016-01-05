@@ -7,7 +7,9 @@
 body {
 position:relative;
 margin: 0;
+font-smooth: auto;
 -webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
 min-width: 480px;
 font-family: 'PT Sans', sans-serif;
 }
@@ -166,6 +168,7 @@ z-index:2;
 width:150px;
 min-height:150px;
 height:100%;
+z-index:initial;
 }
 .kek {
 position:absolute;
@@ -175,7 +178,6 @@ top:0;bottom:0;left:0;right:0;
 background: rgba(0,0,0,.25);
 }
 .wrap {
-/*background: #eee;*/
 position: relative;
 transition: .3s width, .3s height, .3s left, .3s width;
 width: calc(100% - 280px);
@@ -275,7 +277,7 @@ h1 {
     margin: 0 auto;
 }
 .mobile #search-field {
-    width: 65px;
+    width: 64px;
 }
 .mobile .titl {
     padding: 59px 0;
@@ -414,11 +416,11 @@ audio {
     color: #789922;
 }
 blockquote {
-    margin: 15px 25px;
+    margin: 10px 20px;
     padding-top: 10px;
     overflow-y: auto;
     overflow-x: auto;
-    max-height: 300px;
+    max-height: 442px;
     box-sizing: border-box;
     max-width: 1200px;
     overflow-wrap: break-word;
@@ -862,7 +864,7 @@ ul.tabWidget > li > a {
     overflow-x: auto;
 }
 .searchActionSelect {
-    width: 105px;
+    width: 100px;
 }
 .newPostCount {
     position: absolute;
