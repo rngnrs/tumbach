@@ -8,7 +8,8 @@
      data-board-name="{{=it.boardName}}"
      data-file-name="{{=it.fileName}}"
      data-thread="{{=it.thread}}">
-    <div class="float-l">
+    <div class="float-l"
+         title="{{? it.artist}}{{=it.artist}}{{?}} {{? it.artist || it.title}}—{{??}}Untitled{{?}} {{? it.title}}{{=it.title}}{{?}}">
         {{? it.artist}}{{=it.artist}}{{?}}
         {{? it.artist || it.title}}—{{??}}Untitled{{?}}
         {{? it.title}}{{=it.title}}{{?}}

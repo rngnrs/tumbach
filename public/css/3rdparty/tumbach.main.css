@@ -274,12 +274,19 @@ outline:none;
 }
 .track {
     box-sizing: border-box;
-    padding:10px;
+    padding: 7px;
     cursor:pointer;
     transition: background .1s;
 }
 .track.playing {
     background: rgba(0,0,0,.2);
+}
+.track > .float-l {
+    width: 180px;
+    height: 19px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .track .zmdi {
     padding: 2px;
