@@ -100,6 +100,14 @@ tumb.switchStyle = function(style) {
     lord.setLocalObject("style", style);
 };
 tumb.onLoad = function(){
+	var head = lord.queryOne("head");
+	var script = lord.node("script");
+	script.type = "text/javascript";
+	script.src = "/" + lord.data("sitePathPrefix") + "js/playlist.js";
+	head.appendChild(script);
+
+
+
     $.extend($.fn.disableTextSelect  = function() {
         return this
             .attr('unselectable', 'on')
@@ -113,7 +121,7 @@ tumb.onLoad = function(){
     tumb.dottie('header');
     tumb.slidy('.kek');
     var sb = $('#sidebar'),
-        /*sb2 = $('#sidebar2'),*/
+        sb2 = $('#sidebar2'),
         ov = $('.overlay'),
         wr = $('.wrap'),
         width = $(window).width();
@@ -133,7 +141,7 @@ tumb.onLoad = function(){
     });
     $('.overlay, .menu .list-item').bind('click', function(e){
         if (sb.hasClass('open') && width < 1024){sb.removeClass('open');}
-        /*sb2.removeClass('open');*/
+        sb2.removeClass('open');
         ov.removeClass('toggled');
     });
     $('.wrap, .overlay').on({
@@ -152,9 +160,9 @@ tumb.onLoad = function(){
             return false;
         }
     });
-    /*$('.player-menu').on({
+    $('.player-menu').on({
         click: function(e) {
             sb2.toggleClass('open');
         }
-    });*/
+    });
 }

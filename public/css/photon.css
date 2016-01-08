@@ -1,7 +1,10 @@
 /*Photon*/
 /* tumb rewrite */
-.color-def {
-    background-color: #DDD !important;
+.color-prim {
+    background-color: #DDD;
+}
+.color-prim-inv {
+    background-color: #000;
 }
 aside {
     background-color: #EEE;

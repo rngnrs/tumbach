@@ -19,7 +19,7 @@ lord.trackDrag = function(e) {
 lord.trackDrop = function(e) {
     e.preventDefault();
     var data = e.dataTransfer.getData("text");
-    var parent = lord.id("playlist");
+    var parent = lord.id("player-audio-list");
     var draggedTrack = lord.id(data);
     var replacedTrack = $(e.target).closest(".track")[0];
     if (!draggedTrack || !replacedTrack)
@@ -50,10 +50,13 @@ lord.trackDrop = function(e) {
     parent.insertBefore(draggedTrack, replacedTrack);
 };
 
+    /**
+     * @deprecated
+     */
 lord.addTrack = function(key, track) {
     var model = merge.recursive(track, lord.model(["base", "tr"], true));
     var node = lord.template("playlistItem", model);
-    lord.id("playlist").appendChild(node);
+    lord.id("player-audio-list").appendChild(node);
     lord.currentTracks[key] = track;
     var audio = lord.queryOne("audio", node);
     audio.addEventListener("play", function() {
@@ -93,11 +96,15 @@ lord.removeFromPlaylist = function(a) {
     lord.setLocalObject("playlist/trackList", trackList);
     var node = lord.id("track/" + key);
     if (node)
-        lord.id("playlist").removeChild(node);
+        lord.id("player-audio-list").removeChild(node);
     if (lord.currentTracks.hasOwnProperty(key))
         delete lord.currentTracks[key];
+    Player.initAudioList();
 };
 
+    /**
+    * @deprecated
+    */
 lord.checkPlaylist = function() {
     lord.getLocalObject("playlist/trackList", []).forEach(function(track) {
         var key = track.boardName + "/" + track.fileName;
@@ -109,7 +116,304 @@ lord.checkPlaylist = function() {
     setTimeout(lord.checkPlaylist, lord.Second);
 };
 
-window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
-    lord.checkPlaylist();
-}, false);
+var audio = new Audio(),
+    atmpt = 0,
+    hover = false,
+    LO = {
+        get: lord.getLocalObject,
+        set: lord.setLocalObject
+    },
+    Player = {
+        inited: false,
+        init: function() {
+            if(!this.inited) {
+                var pph = lord.id("tplayerPlaceholder");
+                var model = lord.model(["base", "tr"], true);
+                if (pph)
+                    pph.parentNode.replaceChild(lord.template("player", model), pph);
+                this.getVolume();
+                this.playAudio(0, false);
+                this.inited = true;
+            }
+        },
+        uninit: function() {
+            if(this.inited) {
+                this.stop();
+                var ph = lord.node("div"),
+                    pph = lord.id("tplayer");
+                ph.id = "tplayerPlaceholder";
+                lord.removeChildren(pph);
+                pph.appendChild(ph);
+                $.each($('.track'), function () {
+                    $(this).removeClass('playing');
+                });
+                this.inited = false;
+            }
+        },
+        initAudioList: function () {
+            var ncont = '#player-audio-list',
+                pl = LO.get("playlist/trackList", '');
+            $(document).off('click', ncont + ' .track')
+                .on('click', ncont + ' .track', function () {
+                    var th = $(this);
+                    if(th.hasClass('playing')){
+                        audio.paused ? Player.play() : Player.pause();
+                    } else {
+                        Player.playAudio(th.index(ncont + ' .track'));
+                        $.each($('.track'), function () {
+                            $(this).removeClass('playing');
+                        });
+                        th.addClass('playing');
+                    }
+                    $('#player-line').show();
+                });
+            if (pl == '') {
+                $(ncont).html('<div class="table-cell" id="pl-splash">Список воспроизведения пуст.</div>');
+                return;
+            }
+            pl.forEach(function(track) {
+                var key = track.boardName + "/" + track.fileName;
+                if (lord.currentTracks.hasOwnProperty(key))
+                    return;
+                lord.currentTracks[key] = {};
+                Player.addTrack(key, track);
+            });
+        },
+        initRadio: function () {
+            var file = "/assets/radio.json",
+                ncont = '#player-radio-list',
+                cont = $(ncont),
+                html = '';
+            $.getJSON(file, function (data) {
+                $.each(data, function (key, val) {
+                    html += "<div class='musicindathread' data-title='" + val.title + "'><div class='player-thread-header'>" + val.title + "</div>";
+                    $.each(val.quality, function (k, v) {
+                        html += "<div class='track' data-url='" + v.url + "'><div class='float-l'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
+                    });
+                    html += "</div>";
+                });
+                cont.html(html);
+                $(ncont).data('loaded', true);
+            });
+            $(document).off('click', ncont + ' .track')
+                .on('click', ncont + ' .track', function () {
+                    var th = $(this);
+                    if(th.hasClass('playing'))
+                        return;
+                    Player.playRadio(th.data('url'), $(ncont + ' .musicindathread').data('title'));
+                    $.each($('.track'), function () {
+                        $(this).removeClass('playing');
+                    });
+                    th.addClass('playing');
+                    $('#player-line').hide();
+                });
+        },
+        playAudio: function (id, play) {
+            if(typeof play == 'undefined') var play = true;
+            if(!this.inited && play)
+                this.init();
+            if(typeof id == 'undefined')
+                var id = LO.get('player.audio.last.id', 0);
+            var aud = $(lord.query('.track',lord.id('player-audio-list'))[id]),
+                data = aud.data(),
+                title = $(aud.find('.float-l')[0]).text();
+            audio.src = data.url;
+            $('#pl-title').html('<b>>>'+data["boardName"]+'/'+data["thread"]+'</b><br/>'+title+'</div>');
+
+            $("#player-ctrl-forward").addClass("zmdi-fast-forward").removeClass("zmdi-replay");
+            $.each($('.track'), function () {
+                $(this).removeClass('playing');
+            });
+            aud.addClass('playing');
+            LO.set('player.audio.last', {id:id, url:data['url']});
+            LO.set('player.audio.last.id', id);
+            LO.set('player.mode', 'audio');
+            if(play) this.play();
+            //lord.showPopup("Аудиозапись недоступна.",{type:"critical"});
+        },
+        playRadio: function (url, title) {
+            if(!this.inited)
+                Player.init();
+            audio.src = url;
+            $('#pl-title').html('<b>Radio Mode</b><br/>' + title + '</div>');
+            $("#player-ctrl-forward").removeClass("zmdi-fast-forward").addClass("zmdi-replay");
+            LO.set('player.radio.last', {url:url, title:title});
+            LO.set('player.mode','radio');
+            this.play();
+        },
+        play: function() {
+            audio.play();
+            $('#plpa').removeClass('zmdi-play').addClass('zmdi-pause');
+        },
+        pause: function() {
+            audio.pause();
+            $('#plpa').removeClass('zmdi-pause').addClass('zmdi-play');
+        },
+        stop: function() {
+            this.pseudostop();
+            audio.src = '';
+        },
+        pseudostop: function() {
+            this.pause();
+            audio.currentTime = 0;
+        },
+        reconnect: function() {
+            var text = '[Radio] Переподключение...';
+            console.warn(text);
+            lord.showPopup(text);
+            this.pause();
+            this.playRadio(LO.get('player.radio.last')['url'], LO.get('player.radio.last')['title']);
+        },
+        getVolume: function () {
+            var vol = LO.get('audioVideoVolume') || 0.42;
+            audio.volume = vol;
+            $('#vol-line-active').width(vol * 100 + '%');
+        },
+        setVolume: function (p) {
+            var vol = p.vol,
+                ch = p.ch,
+                prop,
+                cb = $('#mute');
+            $('#vol-line-active').width(vol * 100 + '%');
+            if (vol < 0) vol = 0;
+            else if (vol > 1) vol = 1;
+            audio.volume = vol;
+            if (prop = (vol == 0)) cb.prop('checked', true);
+            if (cb.checked != prop) cb.prop('checked', prop);
+            if (undefined == ch && !prop) LO.set('audioVideoVolume', Math.ceil(vol * 100) / 100);
+        },
+        parse: function (c) { /* -1<=c<=1 */
+            var cb = $('#shuffle').prop('checked'),
+                ls = LO.get('playlist/trackList'),
+                l = ls.length-1; /*last_id*/
+            if (cb) {
+                var rnd = Math.floor(Math.random() * (l + 1)) - 1;
+                while(LO.get('player.audio.last.id',0) == rnd) {
+                    var rn = Math.floor(Math.random() * (l + 1)) - 1;
+                    LO.set('player.audio.last.id', rn);
+                }
+                c = 1;
+            }
+            var id = LO.get('player.audio.last.id',0), /*current_id*/
+                n = id + c; /*next_id*/
+            if (undefined != c) {
+                if (c == 0) //loop
+                    this.play();
+                else if (n <= -1) //lookbehind from da beginning
+                    this.playAudio(l);
+                else if (n <= l) //lookahead
+                    this.playAudio(n);
+                else { //lookbehind from da end
+                    this.playAudio(0);
+                    if (!cb) this.pseudostop();
+                }
+            } else {
+                this.playAudio(0);
+                LO.set('player.audio.last.id', 0);
+            }
+            return true;
+        },
+        addTrack: function(key, track) {
+            var spl = lord.id("pl-splash");
+            if(spl) spl.parentNode.removeChild(spl);
+            var model = merge.recursive(track, lord.model(["base","tr"], true));
+            lord.id("player-audio-list").appendChild(lord.template("playlistItem", model));
+            lord.currentTracks[key] = track;
+        }
+    };
+audio.addEventListener('ended', function(){
+    Player.initAudioList();
+    if(LO.get('player.mode') == 'audio') {
+        if ($("#repeat").prop('checked'))
+            Player.parse(0);
+        else Player.parse(1);
+    } else {
+        setTimeout(function(){Player.reconnect()},5000);
+    }
+});
+audio.addEventListener("timeupdate", function() {
+    var seconds = audio.currentTime;
+    var s = (parseInt(seconds%60) <10) ? '0'+parseInt(parseInt(seconds%60)) : parseInt(parseInt(seconds%60));
+    var m = ((seconds/60)%60 <10) ? '0'+parseInt((seconds/60)%60) : parseInt((seconds/60)%60);
+    var h = ((seconds/3600)%60 <1) ? '' : parseInt((seconds/3600)%60)+':';
+    $('#pl-duration').html(h + m + ':' + s);
+    if(LO.get('player.mode') == 'audio') {
+        var length = audio.duration;
+        var progress = (seconds/length) * 100;
+        var seekableEnd = (audio.buffered.length > 0) ? ((audio.buffered.end(audio.buffered.length-1)/length) * 100) : 0;
+        $('#lineloaded').css({'width':seekableEnd+'%'});
+        if(!hover)$('#lineplayed').css({'width':progress+'%'});
+    }
+});
+audio.addEventListener('error', function failed(e) {
+    switch (e.target.error.code) {
+        case e.target.error.MEDIA_ERR_NETWORK:
+            lord.showPopup("Не можем загрузить аудио", {type:"critical"});
+            if(LO.get('player.mode') == 'radio') {
+                if(atmpt < 4) {
+                    atmpt++;
+                    setTimeout(function () {
+                        Player.reconnect()
+                    }, 5000);
+                    return;
+                }
+                Player.pause();
+                atmpt = 0;
+                lord.showPopup("Не можем проиграть, такие дела", {type:"critical"});
+            }
+            break;
+    }
+}, true);
+$(document).on('click',".rewind",function(){
+    Player.parse(-1);
+}).on('click',".zmdi-fast-forward",function(){
+    Player.parse(1);
+}).on('click', '.zmdi-replay', function(){
+    Player.reconnect();
+}).on('click',".zmdi-play",function(){
+    if(audio.src == '')
+        Player.parse();
+    else
+        Player.play();
+}).on('click',".zmdi-pause",function(){
+    Player.pause();
+    $(this).removeClass('btn-pause');
+}).on('click',"#tabl2",function(){
+    if($('#player-radio-list').data('loaded') != true) Player.initRadio();
+}).on('click',"#tabl1,.player-menu",function() {
+    Player.initAudioList();
+}).on('mousedown',"#vol-line, #player-line",function(){
+    hover = true;
+}).on('mouseup',"body",function(){
+    hover = false;
+}).on('mousemove',"#vol-line",function(e) {
+    if(!hover) return;
+    var th = $(this);
+    Player.setVolume({vol: (e.pageX - th.offset().left) / th.width()});
+}).on('click',"#vol-line",function(e) {
+    var th = $(this);
+    Player.setVolume({vol: (e.pageX - th.offset().left) / th.width()});
+}).on('mousemove',"#player-line",function(e) {
+    if(!hover) return;
+    var th = $(this);
+    $('#lineplayed').css({'width': 100 * (e.pageX - th.offset().left) / th.width()+'%'});
+}).on('mouseup',"#player-line",function(e) {
+    var th = $(this);
+    audio.currentTime = audio.duration * (e.pageX - th.offset().left) / th.width();
+}).on('click',".btn-repeat.btn-ctrl",function(){
+    var loop = $(this).hasClass("on");
+    $('.audio-container audio').attr('loop',loop);
+    $(this).toggleClass("on");
+}).on('click',".stop",function() {
+    Player.uninit();
+});
+
+$('input[type="checkbox"][name="mute"]').change(function() {
+    if(this.checked) {
+        audio.muted = 1;
+        Player.setVolume({vol: 0, ch: false});
+    } else {
+        audio.muted = 0;
+        Player.setVolume({vol: LO.get('audioVideoVolume'), ch: false});
+    }
+});

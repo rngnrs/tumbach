@@ -1,8 +1,12 @@
 /*Tumbach (beta)*/
 
-.color-def {
-    background-color: #99D9EA !important;
-    color: #000 !important;
+.color-prim {
+    background-color: #99D9EA;
+    color: #000;
+}
+.color-prim-inv {
+    background-color: #000;
+    color: #99D9EA;
 }
 body, aside {
     background-color: #EEE;

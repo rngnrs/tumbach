@@ -1,7 +1,12 @@
 /*Futaba*/
 /* tumb rewrite */
-.color-def {
+.color-prim {
     background-color: #F0E0D6;
+    color: #800000;
+}
+.color-prim-inv {
+    background-color: #800000;
+    color: #F0E0D6;
 }
 aside {
     background-color: #FFE;

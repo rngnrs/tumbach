@@ -1,8 +1,12 @@
 /*Neutron*/
 /* tumb rewrite */
-.color-def {
-    background-color: #2C2C2C !important;
-    color: #698CC0 !important;
+.color-prim {
+    background-color: #2C2C2C;
+    color: #698CC0;
+}
+.color-prim-inv {
+    background-color: #698CC0;
+    color: #2C2C2C;
 }
 .buttonImage, .logo {
     filter: invert(1);

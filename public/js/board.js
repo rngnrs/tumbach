@@ -1152,9 +1152,10 @@ lord.editAudioTags = function(el) {
 };
 
 lord.addToPlaylist = function(a) {
-    var boardName = lord.data("boardName", a, true);
-    var fileName = lord.data("fileName", a, true);
-    var trackList = lord.getLocalObject("playlist/trackList", []);
+    var boardName = lord.data("boardName", a, true),
+        fileName = lord.data("fileName", a, true),
+        thread = a.parentNode.parentNode.parentNode.parentNode.parentNode.id,
+        trackList = lord.getLocalObject("playlist/trackList", []);
     for (var i = 0; i < trackList.length; ++i) {
         var track = trackList[i];
         if (boardName == track.boardName && fileName == track.fileName)
@@ -1162,6 +1163,7 @@ lord.addToPlaylist = function(a) {
     }
     trackList.push({
         boardName: boardName,
+        thread: thread,
         fileName: fileName,
         mimeType: lord.data("mimeType", a, true),
         bitrate: lord.data("bitrate", a, true),
@@ -1172,6 +1174,7 @@ lord.addToPlaylist = function(a) {
         year: lord.data("audioTagYear", a, true)
     });
     lord.setLocalObject("playlist/trackList", trackList);
+    Player.initAudioList();
 };
 
 lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
@@ -1907,7 +1910,10 @@ lord.showImage = function(a, mimeType, width, height) {
         lord.removeChildren(lord.imgWrapper);
     }
     if (lord.isAudioType(mimeType)) {
-        width = (lord.deviceType("mobile")) ? 500 : 400;
+        lord.addToPlaylist(a);
+        Player.init();
+        return true;
+/*        width = (lord.deviceType("mobile")) ? 500 : 400;
         lord.img = lord.node("audio");
         lord.img.width = width + "px";
         lord.img.controls = true;
@@ -1923,7 +1929,7 @@ lord.showImage = function(a, mimeType, width, height) {
         var src = lord.node("source");
         src.src = href;
         src.type = mimeType;
-        lord.img.appendChild(src);
+        lord.img.appendChild(src);*/
     } else if (lord.isImageType(mimeType)) {
         if (width <= 0 || height <= 0)
             return;

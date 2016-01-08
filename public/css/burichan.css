@@ -1,7 +1,10 @@
 /*Burichan*/
 /* tumb rewrite */
-.color-def {
-    background-color: #C4C2EE !important;
+.color-prim {
+    background-color: #C4C2EE;
+}
+.color-prim-inv {
+    background-color: #000;
 }
 aside {
     background-color: #EEF2FF;
@@ -18,7 +21,7 @@ a {
 }
 
 a.expandCollapse {
-    color: #D6DAF0;
+    color: #777;
     cursor: pointer;
 }
 
@@ -27,7 +30,7 @@ a:hover {
 }
 
 a.expandCollapse:hover {
-    color: #666;
+    color: #444;
     cursor: pointer;
 }
 

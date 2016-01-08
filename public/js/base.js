@@ -999,7 +999,6 @@ lord.initializeOnLoadSettings = function() {
         script.innerHTML = js;
         head.appendChild(script);
     }
-    tumb.onLoad();
     if (lord.queryOne(".toolbar"))
         window.addEventListener("hashchange", lord.hashChangeHandler, false);
     var bsc = lord.getLocalObject("tooltips/boardSelect", 0);
@@ -1032,6 +1031,7 @@ window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     lord.initializeOnLoadSettings();
     lord.checkFavoriteThreads();
+    tumb.onLoad();
 }, false);
 
 window.addEventListener("beforeunload", function unload() {

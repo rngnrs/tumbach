@@ -1,7 +1,7 @@
-<aside id="sidebar" class="sidebar open sidebar-stacked">
+<div><aside id="sidebar" class="sidebar open sidebar-stacked">
     <div class="sidebar_form sidebar_form_auth">
         <div id="auth">
-            <div class="btn-group btn color-def">
+            <div class="btn-group btn color-prim">
                 {{? it.user.loggedIn}}
                 <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
                       enctype="application/x-www-form-urlencoded" class="inlineForm"
@@ -45,8 +45,8 @@
             {{?}}
         </nav>
     </div>
-    <div class="select_sidebar color-def">
-        <select id="style-switcher" class="color-def">
+    <div class="select_sidebar color-prim">
+        <select id="style-switcher" class="color-prim">
                 {{~it.styles :style}}
                 <option value="{{=style.name}}"{{? style.name == it.settings.style.name}} selected="true"{{?}}>
                     {{=style.title}}
@@ -55,3 +55,109 @@
         </select>
     </div>
 </aside>
+<aside id="sidebar2" class="sidebar sidebar-fixed-right">
+    <section class="tabs">
+        <input id="tab_1" type="radio" name="tab" checked="checked" />
+        <input id="tab_2" type="radio" name="tab" />
+        <div class="tabs_cont">
+            <div id="tab_c1">
+                <div class="player-dropdown-row_labels color-prim">
+                    <div class="rewind">
+                        <i title="Предыдущая композиция" class="zmdi zmdi-fast-rewind zmdi-hc-2x"></i>
+                    </div>
+                    <div class="stop">
+                        <i class="zmdi zmdi-stop zmdi-hc-2x" title="Остановить и скрыть плеер"></i>
+                    </div>
+                    <div class="shuffle">
+                        <input type="checkbox" name="shuffle" id="shuffle" />
+                        <label for="shuffle" title="Воспроизводить вперемешку"><i class="zmdi zmdi-shuffle zmdi-hc-2x"></i></label>
+                    </div>
+                    <div class="repeat">
+                        <input type="checkbox" name="repeat" id="repeat" />
+                        <label for="repeat" title="Повторять композицию"><i class="zmdi zmdi-repeat zmdi-hc-2x"></i></label>
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                <div class="scroll-window">
+                    <div id="player-audio-list"></div>
+                </div>
+            </div>
+            <div id="tab_c2">
+                <div class="player-dropdown-row_labels color-prim">
+                    <div>
+                        <input type="checkbox" name="mute" id="mute" />
+                        <label for="mute" title="Отключить звук"><i class="zmdi zmdi-volume-off zmdi-hc-2x"></i></label>
+                    </div>
+                    <div class="stop">
+                        <i class="zmdi zmdi-stop zmdi-hc-2x" title="Остановить и скрыть плеер"></i>
+                    </div>
+                    <div class="clr"></div>
+                </div>
+                <div class="scroll-window">
+                    <div class="tab-content" id="player-radio-list"></div>
+                </div>
+            </div>
+        </div>
+        <div class="clr"></div>
+        <div class="dropdown-labels color-prim">
+            <label for="tab_1" class="double-btn" id="tabl1">Музыка</label>
+            <label for="tab_2" class="double-btn" id="tabl2">Радио</label>
+            <div class="clr"></div>
+        </div>
+    </section>
+<!--    <script>
+        (function(){
+            var A0 = document.querySelector('.scroll-window'),
+                    A1 = A0.querySelectorAll('.tab-content .player-thread-header');
+            Array.prototype.slice.call(A1).forEach(function(a, index) {
+                var b = null, P = 108;
+                document.querySelector('.scroll-window').addEventListener('scroll', Ascroll, false);
+                // document.body.addEventListener('scroll', Ascroll, false);
+                function Ascroll() {
+                    if (b == null) {
+                        var Sa = getComputedStyle(a, ''), s = '';
+                        for (var i = 0; i < Sa.length; i++) {
+                            if (Sa[i].indexOf('overflow') == 0 || Sa[i].indexOf('padding') == 0 || Sa[i].indexOf('border') == 0 || Sa[i].indexOf('outline') == 0 || Sa[i].indexOf('box-shadow') == 0 || Sa[i].indexOf('background') == 0) {
+                                s += Sa[i] + ': ' +Sa.getPropertyValue(Sa[i]) + '; '
+                            }
+                        }
+                        b = document.createElement('div');
+                        b.style.cssText = s + ' box-sizing: border-box; width: ' + a.offsetWidth + 'px;';
+                        a.insertBefore(b, a.firstChild);
+                        var l = a.childNodes.length;
+                        for (var i = 1; i < l; i++) {
+                            b.appendChild(a.childNodes[1]);
+                        }
+                        a.style.height = b.getBoundingClientRect().height + 'px';
+                        a.style.padding = '0';
+                        a.style.border = '0';
+                    }
+                    console.log(b);
+                    var Ra = a.getBoundingClientRect(), R, Rh = Ra.top + b.getBoundingClientRect().height;
+                    if (A1[index+1] != undefined) {
+                        R = Math.round(Rh - A1[index+1].getBoundingClientRect().top);  // расстояние между блоками, чтобы плавающие элементы не прижимались вплотную друг к другу
+                    } else {
+                        R = Math.round(Rh - A0.getBoundingClientRect().bottom + parseFloat(getComputedStyle(A0, '').paddingBottom.slice(0, -2)));
+                    }
+                    if ((Ra.top - P) <= 0) {
+                        if ((Ra.top - P) <= R) {
+                            b.className = 'stop';
+                            b.style.top = - R +'px';
+                        } else {
+                            b.className = 'sticky';
+                            b.style.top = P + 'px';
+                        }
+                    } else {
+                        b.className = 'stop';
+                        b.style.top = '0';
+                    }
+                    window.addEventListener('resize', function() {
+                        a.children[0].style.width = getComputedStyle(a, '').width
+                    }, false);
+                }
+            })
+        })()
+    </script>-->
+</aside>
+<div class="overlay"></div>
+</div>

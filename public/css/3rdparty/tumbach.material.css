@@ -84,7 +84,7 @@ box-sizing: border-box;
 position:relative;
 margin-top: 10px;
 }
-.color-def .btn-emb:active, .color-def .btn-divider:active, .color-def .btn-sep:active, .btn-card:active, .btn-card_active {
+.color-prim .btn-emb:active, .color-prim .btn-divider:active, .color-prim .btn-sep:active, .btn-card:active, .btn-card_active {
 background: rgba(0,0,0,.3);
 }
 .btn-left {
