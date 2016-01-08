@@ -1412,7 +1412,9 @@ module.exports.findPosts = function(query, boardName) {
             return Promise.resolve([]);
         return db.hmget("posts", keys);
     }).then(function(posts) {
-        return posts.map(function(post) {
+        return posts.filter(function(post, i) {
+            return post;
+        }).map(function(post) {
             return JSON.parse(post);
         });
     });
