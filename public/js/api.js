@@ -1018,6 +1018,7 @@ lord.showDialog = function(body, options) {
             open: function(event, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
             close: function() {
                 resolve(false);
+                $(this).dialog("destroy").remove();
             },
             create: function() {
                 $("body").css({ overflow: "hidden" });
@@ -1441,7 +1442,8 @@ lord.settings = function() {
         chatEnabled: lord.getLocalObject("chatEnabled", true),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
-        apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false)
+        apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
+        bannersMode: lord.getLocalObject("bannersMode", "random")
     };
 };
 

@@ -3,87 +3,87 @@
       onsubmit="lord.submitted(event, this); return false;">
     <input type="hidden" name="boardName" value="{{=it.board.name}}" />
     {{? it.thread}}
-        <input type="hidden" name="threadNumber" value="{{=it.thread.number}}" />
+    <input type="hidden" name="threadNumber" value="{{=it.thread.number}}" />
     {{?}}
     <input type="hidden" name="captchaEngine" value="{{=it.settings.captchaEngine.id}}" />
     <input type="hidden" value="" name="fileHashes" />
     <table class="postFormTable">
         <tbody>
-            {{? it.customPostFormField && it.customPostFormField[0]}}
-                {{ out += it.customPostFormField[0](it); }}
+        {{? it.customPostFormField && it.customPostFormField[0]}}
+        {{ out += it.customPostFormField[0](it); }}
+        {{?}}
+        <tr>
+            {{? it.minimalisticPostform()}}
+            <td class="postformField nowrap" colspan="2">
+                <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
+                       placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
+            </td>
+            {{??}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelEmail}}</b>
+            </td>
+            <td class="postformField">
+                <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email"
+                       class="postFormInput" />
+            </td>
             {{?}}
-            <tr>
-                {{? it.minimalisticPostform()}}
-                    <td class="postformField nowrap" colspan="2">
-                       <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
-                              placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
-                    </td>
-                {{??}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelEmail}}</b>
-                    </td>
-                    <td class="postformField">
-                        <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email"
-                               class="postFormInput" />
-                    </td>
-                {{?}}
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[10]}}
-                {{ out += it.customPostFormField[10](it); }}
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[10]}}
+        {{ out += it.customPostFormField[10](it); }}
+        {{?}}
+        <tr>
+            {{? it.minimalisticPostform()}}
+            <td class="postformField" colspan="2">
+                <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
+                       placeholder="{{=it.tr.postFormPlaceholderName}}" />
+            </td>
+            {{??}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelName}}</b>
+            </td>
+            <td class="postformField">
+                <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput" />
+            </td>
             {{?}}
-            <tr>
-                {{? it.minimalisticPostform()}}
-                    <td class="postformField" colspan="2">
-                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
-                               placeholder="{{=it.tr.postFormPlaceholderName}}" />
-                    </td>
-                {{??}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelName}}</b>
-                    </td>
-                    <td class="postformField">
-                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput" />
-                    </td>
-                {{?}}
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[20]}}
-                {{ out += it.customPostFormField[20](it); }}
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[20]}}
+        {{ out += it.customPostFormField[20](it); }}
+        {{?}}
+        <tr>
+            {{? it.minimalisticPostform()}}
+            <td class="postformField" colspan="2">
+                <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
+                       class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderSubject}}" />
+            </td>
+            {{??}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelSubject}}</b>
+            </td>
+            <td class="postformField">
+                <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
+                       class="postFormInput" />
+            </td>
             {{?}}
-            <tr>
-                {{? it.minimalisticPostform()}}
-                    <td class="postformField" colspan="2">
-                        <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
-                               class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderSubject}}" />
-                    </td>
-                {{??}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelSubject}}</b>
-                    </td>
-                    <td class="postformField">
-                        <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
-                               class="postFormInput" />
-                    </td>
-                {{?}}
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[30]}}
-                {{ out += it.customPostFormField[30](it); }}
-            {{?}}
-            <tr>
-                {{? it.minimalisticPostform()}}
-                    <td class="postformField" colspan="2">
-                        <div class="symbolCounterContainer postFormInput">
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[30]}}
+        {{ out += it.customPostFormField[30](it); }}
+        {{?}}
+        <tr>
+            {{? it.minimalisticPostform()}}
+            <td class="postformField" colspan="2">
+                <div class="symbolCounterContainer postFormInput">
                             <textarea name="text" rows="10" cols="41"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       class="postFormTextarea"></textarea>
-                        </div>
-                    </td>
-                {{??}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelText}}</b>
-                    </td>
-                    <td class="postformField">
-                        <div class="symbolCounterContainer postFormInput">
-                            <span class="symbolCounter"><span name="used">0</span>/{{=it.board.maxTextLength}}</span>
+                </div>
+            </td>
+            {{??}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelText}}</b>
+            </td>
+            <td class="postformField">
+                <div class="symbolCounterContainer postFormInput">
+                    <span class="symbolCounter"><span name="used">0</span>/{{=it.board.maxTextLength}}</span>
                             <textarea name="text" rows="10" cols="43" class="postFormTextarea"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       oninput="lord.countSymbols(this);"></textarea>
@@ -252,104 +252,107 @@
                     {{? it.customPostFormOption && it.customPostFormOption[0]}}
                         {{ out += it.customPostFormOption[0](it); }}
                     {{?}}
-                    {{? it.compareRegisteredUserLevels(it.user.level, "ADMIN") >= 0}}
-                        <input id="checkboxRawHtml" type="checkbox" name="raw" value="true"
-                               class="imageCheckBox" /><label title="{{!it.tr.postFormLabelRaw}}"
-                                                              for="checkboxRawHtml"></label>
-                    {{?}}
-                    {{? it.customPostFormOption && it.customPostFormOption[10]}}
-                        {{ out += it.customPostFormOption[10](it); }}
-                    {{?}}
-                    <input id="checkboxOp" type="checkbox" name="signAsOp" value="true"
-                           class="imageCheckBox" /><label title="{{!it.tr.postFormLabelSignAsOp}}"
-                                                          for="checkboxOp"></label>
-                    {{? it.customPostFormOption && it.customPostFormOption[20]}}
-                        {{ out += it.customPostFormOption[20](it); }}
-                    {{?}}
-                    {{? it.user.loggedIn}}
-                        <input id="checkboxTripcode" type="checkbox" name="tripcode" value="true"
-                               onclick="lord.switchShowTripcode();"
-                               class="imageCheckBox" /><label title="{{!it.tr.postFormLabelTripcode}}"
-                                                              for="checkboxTripcode"></label>
-                    {{?}}
-                    {{? it.customPostFormOption && it.customPostFormOption[30]}}
-                        {{ out += it.customPostFormOption[30](it); }}
-                    {{?}}
-                    <a href="javascript:void(0);" onclick="lord.addToDrafts(this); return false;"
-                       style="display: inline-block; vertical-align: top;"
-                       title="{{=it.tr.addToDraftsText}}"><img src="/{{=it.site.pathPrefix}}img/draft.png"
-                                                               class="buttonImage" width="24" height="24"></a>
-                    {{? it.customPostFormOption && it.customPostFormOption[40]}}
-                        {{ out += it.customPostFormOption[40](it); }}
-                    {{?}}
-                </td>
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[70]}}
-                {{ out += it.customPostFormField[70](it); }}
-            {{?}}
-            {{? it.board.maxFileCount > 0}}
-                <tr>
-                    {{? !it.minimalisticPostform()}}
-                        <td class="postformLabel">
-                            <b>{{=it.tr.postFormInputFile}}</b>
-                        </td>
-                    {{?}}
-                    <td class="postformField" {{? it.minimalisticPostform()}}colspan="2"{{?}}>
-                        {{#def.fileInputs}}
-                    </td>
-                </tr>
-            {{?}}
-            {{? it.customPostFormField && it.customPostFormField[80]}}
-                {{ out += it.customPostFormField[80](it); }}
-            {{?}}
-            <tr>
-                {{? it.minimalisticPostform()}}
-                    <td class="postformField" colspan="2">
-                        <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
-                               class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderPassword}}" />
-                    </td>
-                {{??}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelPassword}}</b>
-                    </td>
-                    <td class="postformField">
-                        <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
-                               class="postFormInput" />
-                    </td>
+                    <span id="options">
+                        <input id="checkboxOp" type="checkbox" name="signAsOp"
+                               value="true" /><label for="checkboxOp">{{!it.tr.postFormLabelSignAsOp}}</label>
+                        {{? it.customPostFormOption && it.customPostFormOption[10]}}
+                            {{ out += it.customPostFormOption[10](it); }}
+                        {{?}}
+                        {{? it.user.loggedIn}}
+                            <input id="checkboxTripcode" type="checkbox" name="tripcode"
+                                   onclick="lord.switchShowTripcode();"
+                                   value="true" /><label for="checkboxTripcode">{{!it.tr.postFormLabelTripcode}}</label>
+                        {{?}}
+                        {{? it.customPostFormOption && it.customPostFormOption[20]}}
+                            {{ out += it.customPostFormOption[20](it); }}
+                        {{?}}
+                    </span>
+                {{? it.customPostFormOption && it.customPostFormOption[30]}}
+                {{ out += it.customPostFormOption[30](it); }}
                 {{?}}
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[90]}}
-                {{ out += it.customPostFormField[90](it); }}
-            {{?}}
-            <tr>
-                {{? !it.minimalisticPostform()}}
-                    <td class="postformLabel">
-                        <b>{{=it.tr.postFormLabelCaptcha}}</b>
-                    </td>
+                {{? it.compareRegisteredUserLevels(it.user.level, "MODER") >= 0}}
+                <a href="javascript:void(0);" onclick="lord.markup('raw-html'); return false;"
+                   style="display: inline-block; vertical-align: top;" title='{{=it.tr.markupHtml}}'
+                   name="markupHtml"><img src="/{{=it.site.pathPrefix}}img/html.png" class="signImage"></a>
                 {{?}}
-                <td id="captchaContainer" class="postformField">
-                    {{? !it.board.captchaEnabled}}
-                        <span class="noCaptchaText">{{=it.tr.noCaptchaText}}</span>
-                    {{?}}
-                </td>
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[100]}}
-                {{ out += it.customPostFormField[100](it); }}
-            {{?}}
+                {{? it.customPostFormOption && it.customPostFormOption[40]}}
+                {{ out += it.customPostFormOption[40](it); }}
+                {{?}}
+                <a href="javascript:void(0);" onclick="lord.addToDrafts(this); return false;" name="optionDraft"
+                   style="display: inline-block; vertical-align: top;"
+                   title="{{=it.tr.addToDraftsText}}"><img src="/{{=it.site.pathPrefix}}img/draft.png"
+                                                           class="signImage"></a>
+                {{? it.customPostFormOption && it.customPostFormOption[50]}}
+                {{ out += it.customPostFormOption[50](it); }}
+                {{?}}
+            </td>
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[70]}}
+        {{ out += it.customPostFormField[70](it); }}
+        {{?}}
+        {{? it.board.maxFileCount > 0}}
+        <tr>
             {{? !it.minimalisticPostform()}}
-                <tr>
-                    <td colspan="2" class="postformRules">
-                        <ul {{? it.settings.hidePostformRules}}style="display: none;"{{?}}>
-                            {{~it.postformRules: rule}}
-                                <li>{{=rule}}</li>
-                            {{~}}
-                        </ul>
-                    </td>
-                </tr>
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormInputFile}}</b>
+            </td>
             {{?}}
-            {{? it.customPostFormField && it.customPostFormField[110]}}
-                {{ out += it.customPostFormField[110](it); }}
+            <td class="postformField" {{? it.minimalisticPostform()}}colspan="2"{{?}}>
+                {{#def.fileInputs}}
+            </td>
+        </tr>
+        {{?}}
+        {{? it.customPostFormField && it.customPostFormField[80]}}
+        {{ out += it.customPostFormField[80](it); }}
+        {{?}}
+        <tr>
+            {{? it.minimalisticPostform()}}
+            <td class="postformField" colspan="2">
+                <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
+                       class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderPassword}}" />
+            </td>
+            {{??}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelPassword}}</b>
+            </td>
+            <td class="postformField">
+                <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
+                       class="postFormInput" />
+            </td>
             {{?}}
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[90]}}
+        {{ out += it.customPostFormField[90](it); }}
+        {{?}}
+        <tr>
+            {{? !it.minimalisticPostform()}}
+            <td class="postformLabel">
+                <b>{{=it.tr.postFormLabelCaptcha}}</b>
+            </td>
+            {{?}}
+            <td id="captchaContainer" class="postformField">
+                {{? !it.board.captchaEnabled}}
+                <span class="noCaptchaText">{{=it.tr.noCaptchaText}}</span>
+                {{?}}
+            </td>
+        </tr>
+        {{? it.customPostFormField && it.customPostFormField[100]}}
+        {{ out += it.customPostFormField[100](it); }}
+        {{?}}
+        {{? !it.minimalisticPostform()}}
+        <tr>
+            <td colspan="2" class="postformRules">
+                <ul {{? it.settings.hidePostformRules}}style="display: none;"{{?}}>
+                    {{~it.postformRules: rule}}
+                    <li>{{=rule}}</li>
+                    {{~}}
+                </ul>
+            </td>
+        </tr>
+        {{?}}
+        {{? it.customPostFormField && it.customPostFormField[110]}}
+        {{ out += it.customPostFormField[110](it); }}
+        {{?}}
         </tbody>
     </table>
 </form>

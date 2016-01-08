@@ -455,7 +455,7 @@ lord.readableSize = function(sz) {
         sz = sz.toString();
         sz += " " + lord.text("bytesText");
     }
-    return Promise.resolve(sz);
+    return sz;
 };
 
 lord.getFileHashes = function(div) {
@@ -1354,9 +1354,7 @@ lord.fileAddedCommon = function(div, file) {
         fileName = fileName.substr(0, 27) + "...";
     var p;
     if (file) {
-        p = lord.readableSize(file.size).then(function(txt) {
-            return Promise.resolve("(" + txt + ")");
-        });
+        p = Promise.resolve("(" + lord.readableSize(file.size) + ")");
         if (+file.size > +lord.data("maxFileSize"))
             warn();
     } else if (div.fileUrl.replace("vk://", "") != div.fileUrl) {
@@ -1698,16 +1696,16 @@ lord.markup = function(tag) {
         }
     };
     switch (tag) {
-    case "b":
-    case "i":
-    case "s":
-    case "u":
-    case "spoiler":
-    case "ul":
-    case "ol":
-    case "li":
-    case "sup":
-    case "sub":
+        case "b":
+        case "i":
+        case "s":
+        case "u":
+        case "spoiler":
+        case "ul":
+        case "ol":
+        case "li":
+        case "sup":
+        case "sub":
     case "url": {
         wrap("[" + tag + "]", "[/" + tag + "]");
         break;
@@ -2319,7 +2317,7 @@ lord.resetPostForm = function() {
     postForm.reset();
     var divs = lord.query(".postformFile", postForm);
     for (var i = divs.length - 1; i >= 0; --i)
-    lord.removeFile(lord.queryOne("a", divs[i]));
+        lord.removeFile(lord.queryOne("a", divs[i]));
     var trip = lord.nameOne("tripcode", postForm);
     if (trip) {
         var threadNumber = lord.nameOne("threadNumber", postForm);
@@ -2821,11 +2819,43 @@ lord.initializeOnLoadBaseBoard = function() {
     } else {
         p = lord.api("catalog", { sort: lord.data("sortMode") }, lord.data("boardName"));
     }
-    var bannerFileNames = c.model.board.bannerFileNames;
+    var bannerFileNames = [];
+    var bannerBoardName = lord.data("boardName");
+    var bannerBoardTitle = null;
+    switch (c.model.settings.bannersMode) {
+        case "random":
+            var boards = [];
+            for (var i = 0; i < c.model.boards.length; ++i) {
+                var board = c.model.boards[i];
+                if (board.name == lord.data("boardName"))
+                    continue;
+                if (board.bannerFileNames.length > 0) {
+                    boards.push({
+                        name: board.name,
+                        title: board.title,
+                        bannerFileNames: board.bannerFileNames
+                    });
+                }
+            }
+            if (boards.length > 0) {
+                var board = boards[Math.floor(Math.random() * boards.length)];
+                bannerFileNames = board.bannerFileNames;
+                bannerBoardName = board.name;
+                bannerBoardTitle = board.title;
+            }
+            break;
+        case "same":
+            bannerFileNames = c.model.board.bannerFileNames;
+            break;
+        default:
+            break;
+    }
     if (bannerFileNames.length > 0) {
         var bannerFileName = bannerFileNames[Math.floor(Math.random() * bannerFileNames.length)];
         var bannerPlaceholder = lord.id("bannerPlaceholder");
         c.model.bannerFileName = bannerFileName;
+        c.model.bannerBoardName = bannerBoardName;
+        c.model.bannerBoardTitle = bannerBoardTitle;
         var banner = lord.template("banner", c.model);
         bannerPlaceholder.parentNode.replaceChild(banner, bannerPlaceholder);
         banner.parentNode.insertBefore(lord.node("br"), banner);
@@ -2841,6 +2871,13 @@ lord.initializeOnLoadBaseBoard = function() {
                 c.model.thread = model.thread;
             c.model.postformRules = JSON.parse(lord.id("model-postformRules").innerHTML);
             lord.id("hiddenPostForm").appendChild(lord.template("postForm", c.model));
+            lord.arr(lord.id("options").childNodes).forEach(function(node) {
+                if (3 != node.nodeType)
+                    return;
+                node.parentNode.removeChild(node);
+            });
+            $("#options").buttonset();
+            $("[name='markupHtml'], [name='optionDraft']").button();
             var captcha = lord.selectCaptchaEngine();
             var appendCaptchaWidgetToContainer = function(container) {
                 if (captcha && captcha.widgetHtml)
@@ -2871,6 +2908,8 @@ lord.initializeOnLoadBaseBoard = function() {
                     script.src = captcha.scriptSource;
                     lord.queryOne("head").appendChild(script);
                 }
+                if (typeof lord.postFormLoaded == "function")
+                    lord.postFormLoaded();
             }).catch(lord.handleError);
         }
         if (+lord.data("threadNumber")) {

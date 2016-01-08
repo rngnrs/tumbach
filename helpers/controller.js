@@ -321,7 +321,7 @@ controller.translationsModel = function() {
     translate("Answers:", "referencedByText");
     translate("Fixed", "fixedText");
     translate("The thread is closed", "closedText");
-    translate("Add to drafts", "addToDraftsText");
+    translate("To drafts", "addToDraftsText");
     translate("This user is registered", "registeredText");
     translate("Post limit reached", "postLimitReachedText");
     translate("Bump limit reached", "bumpLimitReachedText");
@@ -479,8 +479,8 @@ controller.translationsModel = function() {
     translate("Raw HTML", "markupHtml");
     translate("Markup mode:", "postFormLabelMarkupMode");
     translate("Options:", "postFormLabelOptions");
-    translate("Sign as OP", "postFormLabelSignAsOp");
-    translate("Enable tripcode", "postFormLabelTripcode");
+    translate("OP", "postFormLabelSignAsOp");
+    translate("Tripcode", "postFormLabelTripcode");
     translate("File(s):", "postFormInputFile");
     translate("Select file", "selectFileText");
     translate("Remove this file", "removeFileText");
@@ -646,6 +646,10 @@ controller.translationsModel = function() {
     translate("Allow bumping", "setThreadBumpableText");
     translate("Disallow bumping", "setThreadUnbumpableText");
     translate("Use this button to jump between boards", "boardSelectTooltip");
+    translate("Banners mode:", "bannersModeLabelText");
+    translate("Show random board banner", "bannersModeRandomText");
+    translate("Show current board banner", "bannersModeSameText");
+    translate("Do not show banners", "bannersModeNoneText");
     Board.boardNames().forEach(function(boardName) {
         Board.board(boardName).addTranslations(translate);
     });
