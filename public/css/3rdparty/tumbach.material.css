@@ -5,27 +5,6 @@ input:-webkit-autofill {
     color: #aaa !important; /* цвет текста */
 }
 
-label input[type=checkbox] {
-    display: none !important;
-}
-label span {
-    height: 15px !important;
-    display: block !important;
-    background: url('../../img/dev_check.png') no-repeat scroll 0 0 !important;
-    cursor: pointer;
-    line-height: 14px;
-    padding: 0 22px !important;
-}
-label input + span:hover {
-    background-position: 0 -30px !important;
-}
-label input:checked + span {
-    background-position: 0 -15px !important;
-}
-label input:checked + span:hover {
-    background-position: 0 -45px !important;
-}
-
 .btn, .btn-card, .btn-group input, .btn-emb{
 font-family: 'PT Sans';
 font-weight: 300;

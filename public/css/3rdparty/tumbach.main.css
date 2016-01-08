@@ -16,6 +16,9 @@ font-family: 'PT Sans', sans-serif;
 .color-prim {
 transition: .5s opacity, .5s background;
 }
+.ui-widget {
+    font-size: 14px !important;
+}
 .tooltip:after {
 background: rgba(0, 0, 0, .9);
 border-radius: 4px;
@@ -367,8 +370,8 @@ outline:none;
 #tplayer {
     max-height: 72px;
     width: 30%;
-    max-width: 600px;
-    min-width:400px;
+    max-width: 500px;
+    min-width:360px;
 }
 .player-menu {
     -webkit-appearance: none;
@@ -427,7 +430,7 @@ outline:none;
     background: rgba(255, 255, 255, .9);
 }
 #tplayer .pmain {
-    width: calc(100% - 121px);
+    width: calc(100% - 100px);
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1042,6 +1045,9 @@ ul.tabWidget > li > a {
 .searchActionSelect {
     width: 100px;
 }
+.mobile .searchActionSelect {
+    width: 50px;
+}
 .newPostCount {
     position: absolute;
     right:5%;
@@ -1110,27 +1116,6 @@ input.buttonImage {
 }
 .boardSelectForm {
     display: inline;
-}
-.imageCheckBox {
-    display: none;
-}
-.imageCheckBox + label {
-    height: 24px;
-    width: 24px;
-    display: inline-block;
-    padding: 0;
-}
-.imageCheckBox:checked + label {
-    box-shadow: inset 0 1px 5px #555;
-}
-#checkboxRawHtml + label, #checkboxRawHtmlEdit + label {
-    background: url("../../img/checkbox_raw_html.png") center no-repeat;
-}
-#checkboxOp + label {
-    background: url("../../img/checkbox_op.png") center no-repeat;
-}
-#checkboxTripcode + label {
-    background: url("../../img/checkbox_tripcode.png") center no-repeat;
 }
 .alignCenter {
     text-align: center;
@@ -1254,7 +1239,7 @@ input.buttonImage {
     position:absolute;
     text-align: center;
     width:100%;
-    margin: calc(50vh - 117px) auto;
+    margin: calc(50vh - 150px) auto;
 }
 [id^="vk_post_"] {
     padding: 4px 5px;

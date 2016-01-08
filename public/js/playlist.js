@@ -125,14 +125,15 @@ var audio = new Audio(),
     },
     Player = {
         inited: false,
-        init: function() {
+        init: function(noRender) {
             if(!this.inited) {
                 var pph = lord.id("tplayerPlaceholder");
                 var model = lord.model(["base", "tr"], true);
                 if (pph)
                     pph.parentNode.replaceChild(lord.template("player", model), pph);
                 this.getVolume();
-                this.playAudio(0, false);
+                if (!noRender)
+                    this.playAudio(0, false);
                 this.inited = true;
             }
         },
@@ -233,7 +234,7 @@ var audio = new Audio(),
         },
         playRadio: function (url, title) {
             if(!this.inited)
-                Player.init();
+                Player.init(true);
             audio.src = url;
             $('#pl-title').html('<b>Radio Mode</b><br/>' + title + '</div>');
             $("#player-ctrl-forward").removeClass("zmdi-fast-forward").addClass("zmdi-replay");
