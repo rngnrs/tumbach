@@ -189,7 +189,7 @@ var audio = new Audio(),
                 $.each(data, function (key, val) {
                     html += "<div class='musicindathread' data-title='" + val.title + "'><div class='player-thread-header'>" + val.title + "</div>";
                     $.each(val.quality, function (k, v) {
-                        html += "<div class='track' data-url='" + v.url + "'><div class='float-l'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
+                        html += "<div class='track' data-url='" + v.url + "'><div class='float-l' title='"+ val.title +"'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
                     });
                     html += "</div>";
                 });
