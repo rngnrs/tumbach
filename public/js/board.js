@@ -1151,15 +1151,17 @@ lord.editAudioTags = function(el) {
     }).catch(lord.handleError);
 };
 
-lord.addToPlaylist = function(a) {
+lord.addToPlaylist = function(a, play) {
     var boardName = lord.data("boardName", a, true),
         fileName = lord.data("fileName", a, true),
         thread = a.parentNode.parentNode.parentNode.parentNode.parentNode.id,
         trackList = lord.getLocalObject("playlist/trackList", []);
     for (var i = 0; i < trackList.length; ++i) {
         var track = trackList[i];
-        if (boardName == track.boardName && fileName == track.fileName)
+        if (boardName == track.boardName && fileName == track.fileName) {
+            if (play) Player.playAudio(i, lord.getLocalObject('playAudioVideoImmediately',true));
             return;
+        }
     }
     trackList.push({
         boardName: boardName,
@@ -1175,6 +1177,8 @@ lord.addToPlaylist = function(a) {
     });
     lord.setLocalObject("playlist/trackList", trackList);
     Player.initAudioList();
+    if (play) Player.playAudio(i, lord.getLocalObject('playAudioVideoImmediately',true));
+    return false;
 };
 
 lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
@@ -1864,6 +1868,27 @@ lord.showImage = function(a, mimeType, width, height) {
         width = lord.data("width", a, true);
         height = lord.data("height", a, true);
     }
+    if (lord.isAudioType(mimeType)) {
+        lord.addToPlaylist(a, true);
+        return;
+        /*        width = (lord.deviceType("mobile")) ? 500 : 400;
+         lord.img = lord.node("audio");
+         lord.img.width = width + "px";
+         lord.img.controls = true;
+         if (lord.getLocalObject("loopAudioVideo", false))
+         lord.img.loop = true;
+         if (lord.deviceType("mobile"))
+         lord.imgWrapper.scale = 60;
+         else
+         lord.imgWrapper.scale = 100;
+         var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
+         var remember = lord.getLocalObject("rememberAudioVideoVolume", false);
+         lord.img.volume = remember ? lord.getLocalObject("audioVideoVolume", defVol) : defVol;
+         var src = lord.node("source");
+         src.src = href;
+         src.type = mimeType;
+         lord.img.appendChild(src);*/
+    }
     lord.img = lord.images[href];
     if (lord.img) {
         lord.removeChildren(lord.imgWrapper);
@@ -1907,28 +1932,7 @@ lord.showImage = function(a, mimeType, width, height) {
     } else {
         lord.removeChildren(lord.imgWrapper);
     }
-    if (lord.isAudioType(mimeType)) {
-        lord.addToPlaylist(a);
-        Player.init();
-        return true;
-/*        width = (lord.deviceType("mobile")) ? 500 : 400;
-        lord.img = lord.node("audio");
-        lord.img.width = width + "px";
-        lord.img.controls = true;
-        if (lord.getLocalObject("loopAudioVideo", false))
-            lord.img.loop = true;
-        if (lord.deviceType("mobile"))
-            lord.imgWrapper.scale = 60;
-        else
-            lord.imgWrapper.scale = 100;
-        var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
-        var remember = lord.getLocalObject("rememberAudioVideoVolume", false);
-        lord.img.volume = remember ? lord.getLocalObject("audioVideoVolume", defVol) : defVol;
-        var src = lord.node("source");
-        src.src = href;
-        src.type = mimeType;
-        lord.img.appendChild(src);*/
-    } else if (lord.isImageType(mimeType)) {
+    if (lord.isImageType(mimeType)) {
         if (width <= 0 || height <= 0)
             return;
         lord.img = lord.node("img");

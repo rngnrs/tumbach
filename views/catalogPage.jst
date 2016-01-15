@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body class="mobile" {{#def.baseData}} data-sort-mode="{{=it.sortMode}}">
-<div id="customHeaderPlaceholder" style="display: none;"></div>
+{{#def.customHeader}}
 <div class="wrap">
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
-        <div class="main">
+        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        <div id="wrapper">
             <a id="top"></a>
             <br />
             {{~["top", "bottom"] :target}}
@@ -41,7 +42,7 @@
             <a id="bottom"></a>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>

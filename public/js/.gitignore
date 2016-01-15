@@ -1,6 +1,5 @@
 *
 !3rdparty
-!tumb
 !api.js
 !base.js
 !board.js
@@ -20,6 +19,7 @@
 !search.js
 !soc.js
 !thread.js
+!tumb.js
 !worker.js
 !yandex-captcha-script.js
 !.gitignore

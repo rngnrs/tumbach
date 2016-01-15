@@ -16,11 +16,11 @@
     VK.init({ apiId: {{=it.site.vkontakte.appId}} });
 </script>
 {{?}}
-<div id="customHeaderPlaceholder" style="display: none;"></div>
 <div class="wrap">
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
-        <div class="main">
+        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        <div id="wrapper">
             <div class="theTitle">
                 <h1>
                     {{=it.title}}
@@ -48,7 +48,6 @@
             {{?}}
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
 </div>
 </body>
 </html>

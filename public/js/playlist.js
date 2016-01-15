@@ -84,7 +84,7 @@ lord.addTrack = function(key, track) {
 lord.removeFromPlaylist = function(a) {
     var boardName = lord.data("boardName", a, true);
     var fileName = lord.data("fileName", a, true);
-    var key = boardName + "/" + fileName;
+    var key = lord.data("sitePathPrefix") + boardName + "/src/" + fileName;
     var trackList = lord.getLocalObject("playlist/trackList", []);
     for (var i = 0; i < trackList.length; ++i) {
         var track = trackList[i];
@@ -100,20 +100,6 @@ lord.removeFromPlaylist = function(a) {
     if (lord.currentTracks.hasOwnProperty(key))
         delete lord.currentTracks[key];
     Player.initAudioList();
-};
-
-    /**
-    * @deprecated
-    */
-lord.checkPlaylist = function() {
-    lord.getLocalObject("playlist/trackList", []).forEach(function(track) {
-        var key = track.boardName + "/" + track.fileName;
-        if (lord.currentTracks.hasOwnProperty(key))
-            return;
-        lord.currentTracks[key] = {};
-        lord.addTrack(key, track);
-    });
-    setTimeout(lord.checkPlaylist, lord.Second);
 };
 
 var audio = new Audio(),
@@ -132,9 +118,13 @@ var audio = new Audio(),
                 if (pph)
                     pph.parentNode.replaceChild(lord.template("player", model), pph);
                 this.getVolume();
-                if (!noRender)
-                    this.playAudio(0, false);
+	            $(function(){
+		            $('#loop').prop('checked', LO.get('player.loop', false));
+		            $('#shuffle').prop('checked', LO.get('player.shuffle', false));
+	            });
                 this.inited = true;
+	            if (noRender == false)
+		            this.playAudio(tumb.objSize(lord.currentTracks)-1, false);
             }
         },
         uninit: function() {
@@ -151,6 +141,19 @@ var audio = new Audio(),
                 this.inited = false;
             }
         },
+	    /*findTrack: function(track){
+		    console.log(track, lord.currentTracks);
+		    if(!this.inited)
+		        this.init(true);
+		    var keys = [],
+			    obj = lord.currentTracks;
+		    for(var key in obj){
+			    if (track == key)
+			        return this.playAudio(keys.length);
+			    keys.push(key);
+		    }
+		    return false;
+	    },*/
         initAudioList: function () {
             var ncont = '#player-audio-list',
                 pl = LO.get("playlist/trackList", '');
@@ -173,7 +176,7 @@ var audio = new Audio(),
                 return;
             }
             pl.forEach(function(track) {
-                var key = track.boardName + "/" + track.fileName;
+                var key = lord.data("sitePathPrefix") + track.boardName + "/src/" + track.fileName;
                 if (lord.currentTracks.hasOwnProperty(key))
                     return;
                 lord.currentTracks[key] = {};
@@ -189,7 +192,7 @@ var audio = new Audio(),
                 $.each(data, function (key, val) {
                     html += "<div class='musicindathread' data-title='" + val.title + "'><div class='player-thread-header'>" + val.title + "</div>";
                     $.each(val.quality, function (k, v) {
-                        html += "<div class='track' data-url='" + v.url + "'><div class='float-l' title='"+ val.title +"'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
+                        html += "<div class='track' data-url='" + v.url + "'><div class='float-l' title='"+ v.prefix +"'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
                     });
                     html += "</div>";
                 });
@@ -210,17 +213,25 @@ var audio = new Audio(),
                 });
         },
         playAudio: function (id, play) {
-            if(typeof play == 'undefined') var play = true;
-            if(!this.inited && play)
-                this.init();
+	        console.log('play',id,play);
+            if(typeof play == 'undefined')
+	            var play = true;
+            if(!this.inited) {
+	            this.init();
+	            this.initAudioList();
+            }
             if(typeof id == 'undefined')
                 var id = LO.get('player.audio.last.id', 0);
             var aud = $(lord.query('.track',lord.id('player-audio-list'))[id]),
                 data = aud.data(),
                 title = $(aud.find('.float-l')[0]).text();
-            audio.src = data.url;
-            $('#pl-title').html('<b>>>'+data["boardName"]+'/'+data["thread"]+'</b><br/>'+title+'</div>');
-
+	        if(typeof data == 'undefined') {
+		        lord.showPopup("Аудиозапись недоступна.",{type:"critical"});
+		        return false;
+	        }
+		    audio.src = data.url;
+            $('#pl-title').html('<b class="cursorPointer" title="Ответить прикрепившему музыку" onclick=lord.quickReply(lord.id("'
+                +data["thread"]+'"));><u>&gt;&gt;'+data["boardName"]+'/'+data["thread"]+'</u></b><br/>'+title+'</div>');
             $("#player-ctrl-forward").addClass("zmdi-fast-forward").removeClass("zmdi-replay");
             $.each($('.track'), function () {
                 $(this).removeClass('playing');
@@ -230,7 +241,6 @@ var audio = new Audio(),
             LO.set('player.audio.last.id', id);
             LO.set('player.mode', 'audio');
             if(play) this.play();
-            //lord.showPopup("Аудиозапись недоступна.",{type:"critical"});
         },
         playRadio: function (url, title) {
             if(!this.inited)
@@ -255,8 +265,8 @@ var audio = new Audio(),
             audio.src = '';
         },
         pseudostop: function() {
-            this.pause();
             audio.currentTime = 0;
+            this.pause();
         },
         reconnect: function() {
             var text = '[Radio] Переподключение...';
@@ -266,8 +276,9 @@ var audio = new Audio(),
             this.playRadio(LO.get('player.radio.last')['url'], LO.get('player.radio.last')['title']);
         },
         getVolume: function () {
-            var vol = LO.get('audioVideoVolume') || 0.42;
-            audio.volume = vol;
+            var vol = 0.42,
+                remember = LO.get("rememberAudioVideoVolume", false);
+            audio.volume = remember ? LO.get("audioVideoVolume", vol) : vol;
             $('#vol-line-active').width(vol * 100 + '%');
         },
         setVolume: function (p) {
@@ -281,7 +292,8 @@ var audio = new Audio(),
             audio.volume = vol;
             if (prop = (vol == 0)) cb.prop('checked', true);
             if (cb.checked != prop) cb.prop('checked', prop);
-            if (undefined == ch && !prop) LO.set('audioVideoVolume', Math.ceil(vol * 100) / 100);
+            if (LO.get("rememberAudioVideoVolume", false))
+                if (undefined == ch && !prop) LO.set('audioVideoVolume', Math.ceil(vol * 100) / 100);
         },
         parse: function (c) { /* -1<=c<=1 */
             var cb = $('#shuffle').prop('checked'),
@@ -347,69 +359,75 @@ audio.addEventListener("timeupdate", function() {
     }
 });
 audio.addEventListener('error', function failed(e) {
-    switch (e.target.error.code) {
-        case e.target.error.MEDIA_ERR_NETWORK:
-            lord.showPopup("Не можем загрузить аудио", {type:"critical"});
-            if(LO.get('player.mode') == 'radio') {
-                if(atmpt < 4) {
-                    atmpt++;
-                    setTimeout(function () {
-                        Player.reconnect()
-                    }, 5000);
+    if(LO.get('player.mode') == 'radio') {
+        switch (e.target.error.code) {
+            case e.target.error.MEDIA_ERR_NETWORK:
+                    if(atmpt < 4) {
+                        atmpt++;
+                        setTimeout(function () {
+                            Player.reconnect()
+                        }, 5000);
+                        return;
+                    }
+                    Player.pause();
+                    atmpt = 0;
+                    lord.showPopup("Не можем проиграть, такие дела", {type:"critical"});
                     return;
-                }
-                Player.pause();
-                atmpt = 0;
-                lord.showPopup("Не можем проиграть, такие дела", {type:"critical"});
-            }
-            break;
+                break;
+        }
     }
+    //lord.showPopup("Не можем загрузить аудио", {type:"critical"});
+    //TODO: Обработка ошибок загрузки музыки
 }, true);
-$(document).on('click',".rewind",function(){
+$(document).on('click', ".rewind", function() {
     Player.parse(-1);
-}).on('click',".zmdi-fast-forward",function(){
+}).on('click', ".zmdi-fast-forward", function() {
     Player.parse(1);
-}).on('click', '.zmdi-replay', function(){
+}).on('click', '.zmdi-replay', function() {
     Player.reconnect();
-}).on('click',".zmdi-play",function(){
-    if(audio.src == '')
+}).on('click', ".zmdi-play", function() {
+    if (audio.src == '')
         Player.parse();
     else
         Player.play();
-}).on('click',".zmdi-pause",function(){
+}).on('click', ".zmdi-pause", function() {
     Player.pause();
     $(this).removeClass('btn-pause');
-}).on('click',"#tabl2",function(){
-    if($('#player-radio-list').data('loaded') != true) Player.initRadio();
-}).on('click',"#tabl1,.player-menu",function() {
+}).on('click', "#tabl2", function() {
+    if ($('#player-radio-list').data('loaded') != true) Player.initRadio();
+}).on('click', "#tabl1,.player-menu", function() {
     Player.initAudioList();
-}).on('mousedown',"#vol-line, #player-line",function(){
+}).on('mousedown', "#vol-line, #player-line", function() {
     hover = true;
-}).on('mouseup',"body",function(){
+}).on('mouseup', "body", function() {
     hover = false;
-}).on('mousemove',"#vol-line",function(e) {
-    if(!hover) return;
+}).on('mousemove', "#vol-line", function(e) {
+    if (!hover) return;
     var th = $(this);
     Player.setVolume({vol: (e.pageX - th.offset().left) / th.width()});
-}).on('click',"#vol-line",function(e) {
+}).on('click', "#vol-line", function(e) {
     var th = $(this);
     Player.setVolume({vol: (e.pageX - th.offset().left) / th.width()});
-}).on('mousemove',"#player-line",function(e) {
-    if(!hover) return;
+}).on('mousemove', "#player-line", function(e) {
+    if (!hover) return;
     var th = $(this);
-    $('#lineplayed').css({'width': 100 * (e.pageX - th.offset().left) / th.width()+'%'});
-}).on('mouseup',"#player-line",function(e) {
+    $('#lineplayed').css({'width': 100 * (e.pageX - th.offset().left) / th.width() + '%'});
+}).on('mouseup', "#player-line", function(e) {
     var th = $(this);
     audio.currentTime = audio.duration * (e.pageX - th.offset().left) / th.width();
-}).on('click',".btn-repeat.btn-ctrl",function(){
-    var loop = $(this).hasClass("on");
-    $('.audio-container audio').attr('loop',loop);
-    $(this).toggleClass("on");
-}).on('click',".stop",function() {
+}).on('change', "#shuffle", function() {
+    var shuf = this.checked;
+    if (LO.get('player.shuffle', false) != shuf)
+        LO.set('player.shuffle', shuf);
+}).on('change', "#loop", function() {
+    var loop = this.checked;
+    console.log(loop);
+    if (LO.get('player.loop', false) != loop)
+        LO.set('player.loop', loop);
+    $('.audio-container audio').attr('loop', loop);
+}).on('click', ".stop", function() {
     Player.uninit();
-});
-
-$('input[type="checkbox"][name="mute"]').change(function() {
+}).on('change','#mute', function() {
     if(this.checked) {
         audio.muted = 1;
         Player.setVolume({vol: 0, ch: false});

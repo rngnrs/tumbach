@@ -1,6 +1,6 @@
 <div class="track"
      draggable="true"
-     id="track/{{=it.boardName}}/{{=it.fileName}}"
+     id="track/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
      data-url="/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
      ondragstart="lord.trackDrag(event);"
      ondragover="lord.allowTrackDrop(event);"

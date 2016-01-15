@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body class="mobile" {{#def.baseData}}>
-<div id="customHeaderPlaceholder" style="display: none;"></div>
+{{#def.customHeader}}
 <div class="wrap">
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
-        <div class="main">
+        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        <div id="wrapper">
             <div class="theTitle">
                 <h1>
                     {{=it.title}}
@@ -15,7 +16,7 @@
             <div id="faqContentPlaceholder" style="display: none;"></div>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>

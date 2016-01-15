@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body class="mobile" {{#def.baseData}} data-thread-number="{{=it.threadNumber}}">
+<a id="top"></a>
 <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
 {{? it.site.vkontakte.integrationEnabled }}
     <script type="text/javascript">
@@ -12,7 +13,7 @@
 {{? it.board.captchaEnabled}}
     <div id="hiddenCaptcha" style="display: none;"></div>
 {{?}}
-<div id="customHeaderPlaceholder" style="display: none;"></div>
+{{#def.customHeader}}
 <div class="wrap">
     {{~["top", "bottom"] :target}}
     {{#def.navigationButton}}
@@ -22,8 +23,8 @@
     {{~}}
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
-        <div class="main">
-            <a id="top"></a>
+        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        <div id="wrapper">
             <div id="bannerPlaceholder" style="display: none;"></div>
             <div class="theTitle">
                 <h1>{{!it.title}}</h1>
@@ -47,7 +48,7 @@
             <a id="bottom"></a>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>
