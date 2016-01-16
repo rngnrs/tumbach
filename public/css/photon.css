@@ -68,13 +68,17 @@ hr {
 }
 
 .favorites {
-    background-color: #CCC;
-    border: 1px solid #AAA;
+    background-color: #EEE;
+    min-width: 300px;
+    min-height: 400px;
+    padding: 2px;
 }
 
 .favorites > div {
     background-color: #DDD;
     border: 1px solid #CCC;
+    padding: 2px;
+    margin-top: 4px;
 }
 
 .scrollAreaH60 {
@@ -435,4 +439,9 @@ blockquote.blockquoteThread.expand {
     left: 85px;
     border-color: #CCCCCC transparent;
     border-width: 0 10px 10px;
+}
+
+.archivalThreadLink {
+    font-size: 1.2em;
+    margin-left: 10px;
 }

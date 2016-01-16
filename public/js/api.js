@@ -862,9 +862,7 @@ lord.contains = function(s, subs) {
 
 lord.isInViewport = function(el) {
     var rect = el.getBoundingClientRect();
-    return (rect.top >= 0 && rect.left >= 0
-        && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-        && rect.right <= (window.innerWidth || document.documentElement.clientWidth));
+    return (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight));
 };
 
 lord.addClass = function(element, classNames) {
@@ -1013,9 +1011,9 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            minHeight: 256,
-            minWidth: 555,
-            open: function(event, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
+            minHeight: 200,
+            minWidth: 200,
+            open: function(e, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
             close: function() {
                 resolve(false);
                 $(this).dialog("destroy").remove();
@@ -1223,6 +1221,20 @@ lord.data = function(key, el, bubble) {
     return undefined;
 };
 
+lord.scriptWorkaround = function(parent) {
+    if (!parent)
+        parent = document;
+    lord.query("script", parent).forEach(function(script) {
+        var nscript = lord.node("script");
+        nscript.type = script.type;
+        if (script.src)
+            nscript.src = script.src;
+        else if (script.innerHTML)
+            nscript.innerHTML = script.innerHTML;
+        script.parentNode.replaceChild(nscript, script);
+    });
+};
+
 lord.template = function(templateName, model, noparse) {
     var template = lord.templates[templateName];
     if (!template)
@@ -1242,22 +1254,31 @@ lord.template = function(templateName, model, noparse) {
     }
     if (!node)
         return null;
-    lord.query("script", node).forEach(function(script) {
-        var nscript = lord.node("script");
-        nscript.type = script.type;
-        if (script.src)
-            nscript.src = script.src;
-        else if (script.innerHTML)
-            nscript.innerHTML = script.innerHTML;
-        script.parentNode.replaceChild(nscript, script);
-    });
+    lord.scriptWorkaround(node);
     return node;
+};
+
+lord.createDocumentFragment = function(html) {
+    var temp = document.createElement("div");
+    temp.innerHTML = html;
+    if (typeof document.createDocumentFragment != "function")
+        return Promise.resolve(temp);
+    var frag = document.createDocumentFragment();
+    return new Promise(function(resolve) {
+        var f = function() {
+            if (!temp.firstChild)
+                return resolve(frag);
+            frag.appendChild(temp.firstChild);
+            setTimeout(f, 0);
+        };
+        f();
+    });
 };
 
 lord.createStylesheetLink = function(href, prefix, id) {
     var link = lord.node("link");
     link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
-    if(!id) id = "stylesheet";
+    if(typeof id == 'undefined') id = "stylesheet";
     link.id = id;
     link.rel = "stylesheet";
     link.type = "text/css";

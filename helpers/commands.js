@@ -49,8 +49,18 @@ _installHandler(["respawn"], function(args) {
 });
 
 _installHandler("help", function() {
-    console.log("q | quit - Exit the application");
-    console.log("help - Print this Help");
+    console.log(
+        "Подробная информация: https://github.com/ololoepepe/ololord.js/wiki\n\n" +
+        "█████ █   █ █   █ ████  ████ ████ █  █\n" +
+        "  █   █   █ █   █ █  ██ █  █ █    █  █\n" +
+        "  █   █   █ ██ ██ ████  ████ █    ████\n" +
+        "  █   █   █ █ █ █ █  ██ █  █ █    █  █\n" +
+        "  █   █████ █ █ █ ████  █  █ ████ █  █\n\n" +
+        "Доступные команды:\n" +
+        "rerender-posts [board] - Регенерирует отображение постов [на выбранной доске]\n" +
+        "q | quit - Выключить движок\n" +
+        "help - Вывести эту справку"
+    );
     return Promise.resolve();
 });
 
@@ -63,7 +73,7 @@ _installHandler("set", function(args) {
         config.set(path, JSON.parse(value));
         return Promise.resolve("OK");
     }
-    return rl.question("Enter value for '" + path + "': ").then(function(answer) {
+    return rl.question("Введите значение для '" + path + "': ").then(function(answer) {
         config.set(path, (typeof answer == "string") ? answer : JSON.parse(answer));
         return Promise.resolve("OK");
     });
@@ -74,8 +84,8 @@ _installHandler("get", function(args) {
         return Promise.reject(console.log("Неверная команда. Введите 'help' для справки"));
     var v = config(args);
     if (undefined == v)
-        return Promise.reject("No such value");
-    return Promise.resolve("Value for '" + args + "': " + JSON.stringify(v, null, 4));
+        return Promise.reject("Такого значения нет!");
+    return Promise.resolve("Значение для '" + args + "': " + JSON.stringify(v, null, 4));
 });
 
 _installHandler("remove", function(args) {
@@ -87,21 +97,21 @@ _installHandler("remove", function(args) {
 
 _installHandler("register-user", function() {
     rl.pause();
-    var password = ReadLineSync.question("Enter password: ", {
+    var password = ReadLineSync.question("Введите пароль: ", {
         hideEchoBack: true,
         mask: ""
     });
-    if (password.length < 1)
-        return Promise.reject("Invalid password");
+    if (password.length < 3)
+        return Promise.reject("Пароль должен быть больше 3 символов!");
     var c = {};
     return rl.question("Enter level: USER | MODER | ADMIN\nYour choice: ").then(function(answer) {
         if (!Tools.contains(["USER", "MODER", "ADMIN"], answer))
             return Promise.reject("Invalid level");
         c.level = answer;
-        return rl.question("Enter boards:\n"
-            + "Separate board names by spaces.\n"
-            + "* - any board\n"
-            + "Your choice: ");
+        return rl.question("Введите аббревиатуры досок для модерации.\n"
+            + "Разделите их пробелами.\n"
+            + "* - любая доска\n"
+            + "Доски для модерации: ");
     }).then(function(answer) {
         c.boardNames = answer.split(/\s+/gi);
         if (!password.match(/^([0-9a-fA-F]){40}$/)) {
@@ -113,11 +123,11 @@ _installHandler("register-user", function() {
         for (var i = 0; i < c.boardNames.length; ++i) {
             var boardName = c.boardNames[i];
             if ("*" != boardName && !Tools.contains(availableBoardNames, boardName))
-                return Promise.reject("Invalid board(s)");
+                return Promise.reject("Неправильно указаны доски");
         }
-        return rl.question("Enter user IP (zero, one or more, separated by commas):\n"
-            + "[ip][,ip]...\n"
-            + "List: ");
+        return rl.question("Введите IP пользователя. Или не вводите, хех.\n"
+            + "Если несколько, то разделите их запятыми: [ip][,ip]...\n"
+            + "IP: ");
     }).then(function(answer) {
         c.ips = answer ? answer.split(".") : [];
         return Database.registerUser(password, c.level, c.boardNames, c.ips);
@@ -130,17 +140,17 @@ _installHandler("rerender-posts", function(args) {
     var boards = Board.boardNames();
     if (args) {
         if (boards.indexOf(args) < 0)
-            return Promise.reject("Invalid board");
+            return Promise.reject("Неправильно указана доска!");
         boards = [args];
     }
-    return rl.question("Are you sure? [Yes/no] ").then(function(answer) {
+    return rl.question("Уверен в этом? [yes/no][да/нет] ").then(function(answer) {
         answer = answer.toLowerCase();
-        if (answer && answer != "yes" && answer != "y")
+        if (answer && answer != "yes" && answer != "y" && answer != "д" && answer != "да")
             return Promise.resolve();
         return Global.IPC.send("stop").then(function() {
             return Database.rerenderPosts(boards);
         }).then(function() {
-            console.log("Generating cache, please, wait...");
+            console.log("Генерация кэша...");
             return BoardModel.generate();
         }).then(function() {
             return Global.IPC.send("start");
@@ -164,7 +174,7 @@ _installHandler("start", function(args) {
 
 _installHandler("regenerate", function(args) {
     return Global.IPC.send("stop").then(function() {
-        console.log("Generating cache, please, wait...");
+        console.log("Генерация кэша...");
         return BoardModel.generate();
     }).then(function() {
         return Global.IPC.send("start");
@@ -174,9 +184,9 @@ _installHandler("regenerate", function(args) {
 });
 
 _installHandler("rebuild-search-index", function(args) {
-    return rl.question("Are you sure? [Yes/no] ").then(function(answer) {
+    return rl.question("Уверен в этом? [yes/no][да/нет] ").then(function(answer) {
         answer = answer.toLowerCase();
-        if (answer && answer != "yes" && answer != "y")
+        if (answer && answer != "yes" && answer != "y" && answer != "д" && answer != "да")
             return Promise.resolve();
         return Database.rebuildSearchIndex().then(function() {
             return Promise.resolve();

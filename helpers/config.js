@@ -18,7 +18,7 @@ var configFileName = process.argv[2];
 if (!configFileName)
     configFileName = __dirname + "/../config.json";
 configFileName = Path.resolve(__dirname + "/..", configFileName);
-console.log("[" + process.pid + "] Using config file: \"" + configFileName + "\"...");
+console.log("[PID:" + process.pid + "] Используем файл конфигурации: \"" + configFileName + "\"");
 var config = require(configFileName);
 
 var setHooks = {};

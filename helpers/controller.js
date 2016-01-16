@@ -356,6 +356,7 @@ controller.translationsModel = function() {
     translate("Add to playlist", "addToPlaylistText");
     translate("Borad rules", "boardRulesLinkText");
     translate("Threads catalog", "boardCatalogLinkText");
+    translate("Thread archive", "boardArchiveLinkText");
     translate("RSS feed", "boardRssLinkText");
     translate("Posting is disabled at this board", "postingDisabledBoardText");
     translate("Posting is disabled in this thread", "postingDisabledThreadText");
@@ -656,6 +657,13 @@ controller.translationsModel = function() {
     translate("Show random board banner", "bannersModeRandomText");
     translate("Show current board banner", "bannersModeSameText");
     translate("Do not show banners", "bannersModeNoneText");
+    translate("This thread is archived. Posting is disabled", "archivedThreadText");
+    translate("Synchronize", "synchronizationText");
+    translate("Synchronize settings", "synchronizeSettingsLabelText");
+    translate("Synchronize CSS and JS", "synchronizeCssAndJsLabelText");
+    translate("No password specified, and not logged in", "noPasswordNotLoggedInError");
+    translate("Synchronization data will be available within 5 minutes", "synchronizationTimeoutText");
+    translate("Synchronization completed successfully", "synchronizationSuccessfulText");
     Board.boardNames().forEach(function(boardName) {
         Board.board(boardName).addTranslations(translate);
     });

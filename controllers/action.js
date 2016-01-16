@@ -1,4 +1,3 @@
-var Crypto = require("crypto");
 var express = require("express");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
@@ -109,8 +108,8 @@ var getFiles = function(fields, files, transaction) {
         var hashes = fields.fileHashes ? fields.fileHashes.split(",") : [];
         return Database.getFileInfosByHashes(hashes);
     }).then(function(fileInfos) {
-        return tmpFiles.concat(fileInfos.map(function(fileInfo) {
-            return {
+        return tmpFiles.concat(fileInfos.map(function(fileInfo, i) {
+            var fi = {
                 name: fileInfo.name,
                 thumbName: fileInfo.thumb.name,
                 size: fileInfo.size,
@@ -119,6 +118,8 @@ var getFiles = function(fields, files, transaction) {
                 rating: fileInfo.rating,
                 copy: true
             };
+            setFileRating(fi, fields.fileHashes.split(",")[i]);
+            return fi;
         }));
     });
 };
@@ -203,11 +204,8 @@ router.post("/action/markupText", function(req, res) {
             },
             createdAt: date.toISOString()
         };
-        if (req.hashpass && c.fields.tripcode) {
-            var md5 = Crypto.createHash("md5");
-            md5.update(req.hashpass + config("site.tripcodeSalt", ""));
-            data.tripcode = "!" + md5.digest("base64").substr(0, 10);
-        }
+        if (req.hashpass && c.fields.tripcode)
+            data.tripcode = Tools.generateTripcode(req.hashpass);
         res.send(data);
     }).catch(function(err) {
         controller.error(res, err, true);
@@ -518,6 +516,28 @@ router.post("/action/deleteChatMessages", function(req, res) {
         return Chat.deleteMessages(req, fields.boardName, fields.postNumber);
     }).then(function(result) {
         res.send(result);
+    }).catch(function(err) {
+        controller.error(res, err, true);
+    });
+});
+
+router.post("/action/synchronize", function(req, res) {
+    var c = {};
+    Tools.parseForm(req).then(function(result) {
+        c.key = result.fields.key;
+        if (!c.key)
+            return Promise.reject(Tools.translate("No key specified"));
+        var data = result.fields.data;
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+        return Database.db.set("synchronizationData:" + c.key, JSON.stringify(data));
+    }).then(function() {
+        return Database.db.expire("synchronizationData:" + c.key, 300); //NOTE: 5 minutes
+    }).then(function() {
+        res.send({});
     }).catch(function(err) {
         controller.error(res, err, true);
     });

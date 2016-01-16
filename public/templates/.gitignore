@@ -1,6 +1,7 @@
 *
 !partials
 !addFilesDialog.jst
+!archiveThread.jst
 !banner.jst
 !boardPageLower.jst
 !boardPageUpper.jst
@@ -47,6 +48,7 @@
 !settingsDialog.jst
 !setVotingOpenedDialog.jst
 !socPostHeaderPart.jst
+!synchronizationDialog.jst
 !thread.jst
 !threadPageLower.jst
 !threadPageUpper.jst

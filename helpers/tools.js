@@ -40,7 +40,7 @@ var ExternalLinkRegexpPattern = (function() {
     var hostname = "([\\w\\p{L}\\.\\-]+)\\.([\\p{L}]{2,17}\\.?)";
     var port = ":\\d+";
     var path = "(\\/[\\w\\p{L}\\.\\-\\!\\?\\=\\+#~&%:\\,\\(\\)]*)*\\/?";
-    return "(" + schema + ")?(" + hostname + "|" + ip + ")(" + port + ")?" + path/* + "(?!\\S)"*/;
+    return "(" + schema + ")?(" + hostname + "|" + ip + ")(" + port + ")?" + path;
 })();
 
 Object.defineProperty(module.exports, "Billion", { value: (2 * 1000 * 1000 * 1000) });
@@ -423,6 +423,7 @@ module.exports.parseForm = function(req) {
     var form = new Formidable.IncomingForm();
     form.uploadDir = config("system.tmpPath", __dirname + "/../tmp") + "/formidable";
     form.hash = "sha1";
+    form.maxFieldsSize = 5 * 1024 * 1024;
     return new Promise(function(resolve, reject) {
         form.parse(req, function(err, fields, files) {
             if (err) {
@@ -648,4 +649,10 @@ module.exports.series = function(arr, f) {
         });
     }
     return p;
+};
+
+module.exports.generateTripcode = function(source) {
+    var md5 = Crypto.createHash("md5");
+    md5.update(source + config("site.tripcodeSalt", ""));
+    return "!" + md5.digest("base64").substr(0, 10);
 };

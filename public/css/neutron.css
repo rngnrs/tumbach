@@ -89,12 +89,22 @@ input:not([type='image']) { /*Yep, this is NOT a class*/
     cursor: pointer;
 }
 
-.popup, .favorites {
+.popup {
     background-color: #DDEDAA;
 }
 
+.favorites {
+    background-color: #212121;
+    min-width: 300px;
+    min-height: 400px;
+    padding: 2px;
+}
+
 .favorites > div {
-    background-color: #111;
+    background-color: #2C2C2C;
+    border: 1px solid #575757;
+    padding: 2px;
+    margin-top: 4px;
 }
 
 .postSequenceNumber {
@@ -291,6 +301,45 @@ span.newPostCount {
     border: 1px dashed #555;
 }
 
+.postformFile ~ .postformFile {
+    margin-top: 5px;
+}
+
+.postformFilePreview {
+    max-width: 100px;
+    max-height: 100px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.postformFileInput {
+    display: inline-block;
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.postformFileText {
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.postformFileRemoveButton {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.postformFileRemoveImage {
+    vertical-align: top !important;
+}
+
 .referencedBy {
     color: #707070;
 }
@@ -482,4 +531,9 @@ blockquote.blockquoteThread.expand {
     left: 85px;
     border-color: #575757 transparent;
     border-width: 0 10px 10px;
+}
+
+.archivalThreadLink {
+    font-size: 1.2em;
+    margin-left: 10px;
 }

@@ -1,5 +1,6 @@
 *
 !partials/
+!archivePage.jst
 !ban.jst
 !boardPage.jst
 !catalogPage.jst

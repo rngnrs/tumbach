@@ -6,6 +6,7 @@ var Board = require("../boards");
 var config = require("./config");
 var controller = require("./controller");
 var Database = require("./database");
+var Global = require("./global");
 var Tools = require("./tools");
 
 var langNames = require("../misc/lang-names.json");
@@ -604,7 +605,7 @@ var convertExternalLink = function(info, text, matchs, _, options) {
     if (!text)
         return Promise.resolve("");
     options.type = SkipTypes.HtmlSkip;
-    if (info.isIn(matchs.index + matchs[0].length, text.length, SkipTypes.HtmlSkip))
+    if (info.isIn(matchs.index, matchs[0].length, SkipTypes.HtmlSkip))
         return Promise.resolve(text);
     var href = matchs[0];
     if (href.lastIndexOf("http", 0) && href.lastIndexOf("ftp", 0))
@@ -684,7 +685,7 @@ var convertUrl = function(info, text, matchs, matche, options) {
     if (!text)
         return Promise.resolve("");
     options.type = SkipTypes.HtmlSkip;
-    if (info.isIn(matchs.index + matchs[0].length, text.length, SkipTypes.HtmlSkip))
+    if (info.isIn(matchs.index, matchs[0].length, SkipTypes.HtmlSkip))
         return Promise.resolve(text);
     var href = text;
     if (href.lastIndexOf("http", 0) && href.lastIndexOf("ftp", 0))

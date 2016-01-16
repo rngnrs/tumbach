@@ -91,7 +91,7 @@
             {{? it.customPostHeaderPart && it.customPostHeaderPart[120]}}
                 {{ out += it.customPostHeaderPart[120](it, thread, post); }}
             {{?}}
-            {{? thread.postingEnabled && !thread.postLimitReached}}
+            {{? thread.postingEnabled && !thread.archived && !thread.postLimitReached}}
                 <span name="quickReplyContainer">[<a href="javascript:void(0);" name="quickReply"
                                                      onclick="lord.quickReply(this); return false;"
                                                      title="{{=it.tr.quickReplyText}}"><img src="/{{=it.site.pathPrefix}}img/reply.png"

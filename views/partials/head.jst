@@ -15,7 +15,7 @@
         <script src="/{{=it.site.pathPrefix}}js/3rdparty/LAB.min.js"></script>
         <script>
             $LAB
-                    .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.1.4.min.js")
+                    .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.1.4.min.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js").wait()
@@ -23,13 +23,13 @@
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/uuid.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js").wait()
-                    .script("/{{=it.site.pathPrefix}}js/base.js")
-                    .script("/{{=it.site.pathPrefix}}js/tumb.js")
+                    .script("/{{=it.site.pathPrefix}}js/base.js").wait()
+                    .script("/{{=it.site.pathPrefix}}js/tumb.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/bottom.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/playlist.js").wait()
         {{? it.includeBoardScripts}}
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js").wait()
-                    .script("/{{=it.site.pathPrefix}}js/board.js")
+                    .script("/{{=it.site.pathPrefix}}js/board.js").wait()
                 {{? it.includeThreadScripts}}
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jszip.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js")

@@ -118,10 +118,6 @@ var audio = new Audio(),
                 if (pph)
                     pph.parentNode.replaceChild(lord.template("player", model), pph);
                 this.getVolume();
-	            $(function(){
-		            $('#loop').prop('checked', LO.get('player.loop', false));
-		            $('#shuffle').prop('checked', LO.get('player.shuffle', false));
-	            });
                 this.inited = true;
 	            if (noRender == false)
 		            this.playAudio(tumb.objSize(lord.currentTracks)-1, false);
@@ -213,7 +209,6 @@ var audio = new Audio(),
                 });
         },
         playAudio: function (id, play) {
-	        console.log('play',id,play);
             if(typeof play == 'undefined')
 	            var play = true;
             if(!this.inited) {
@@ -379,7 +374,12 @@ audio.addEventListener('error', function failed(e) {
     //lord.showPopup("Не можем загрузить аудио", {type:"critical"});
     //TODO: Обработка ошибок загрузки музыки
 }, true);
-$(document).on('click', ".rewind", function() {
+$(document).ready(function(){
+    setTimeout(function(){
+        $('#loop').prop('checked', LO.get('player.loop', false));
+        $('#shuffle').prop('checked', LO.get('player.shuffle', false));
+    },2000);
+}).on('click', ".rewind", function() {
     Player.parse(-1);
 }).on('click', ".zmdi-fast-forward", function() {
     Player.parse(1);
@@ -421,9 +421,7 @@ $(document).on('click', ".rewind", function() {
         LO.set('player.shuffle', shuf);
 }).on('change', "#loop", function() {
     var loop = this.checked;
-    console.log(loop);
-    if (LO.get('player.loop', false) != loop)
-        LO.set('player.loop', loop);
+    LO.set('player.loop', loop);
     $('.audio-container audio').attr('loop', loop);
 }).on('click', ".stop", function() {
     Player.uninit();

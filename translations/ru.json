@@ -27,6 +27,9 @@
     "Posting is disabled at this board": {
         "postingDisabledBoardText": {
             "value": "На этой доске постинг запрещен"
+        },
+        "_default": {
+            "value": "На этой доске постинг запрещен"
         }
     },
     "Internal error": {
@@ -263,6 +266,11 @@
     "Threads catalog": {
         "boardCatalogLinkText": {
             "value": "Каталог тредов"
+        }
+    },
+    "Thread archive": {
+        "boardArchiveLinkText": {
+            "value": "Архив тредов"
         }
     },
     "Reply count:": {
@@ -711,6 +719,11 @@
     "Thread link:": {
         "postFormLabelLink": {
             "value": "Ссылка на тред:"
+        }
+    },
+    "Thread link": {
+        "postFormPlaceholderLink": {
+            "value": "Ссылка на тред"
         }
     },
     "Home": {
@@ -1272,6 +1285,11 @@
             "value": "Posting is disabled in this thread"
         }
     },
+    "This thread is archived. Posting is disabled": {
+        "archivedThreadText": {
+            "value": "Это архивный тред. Постинг запрещен"
+        }
+    },
     "Post limit reached": {
         "postLimitReachedText": {
             "value": "Достигнут лимит постов"
@@ -1696,6 +1714,11 @@
             "value": "Добавить вариант"
         }
     },
+    "Remove this variant": {
+        "removeVoteVariantText": {
+            "value": "Удалить этот вариант"
+        }
+    },
     "Multiple variants allowed:": {
         "multipleVoteVariantsText": {
             "value": "Разрешено несколько вариантов:"
@@ -1832,10 +1855,11 @@
             "value": "не зарегистрирован"
         }
     },
-    "monospace \\\\`` font with escaped \\\\`` characters": {
+    "monospace \\`` font with escaped \\`` characters": {
         "monospaceEscaped": {
-            "value": "моноширинный шрифт \\\\`` с экранированными \\\\`` символами"
-        }
+            "value": "моноширинный шрифт \\`` с экранированными \\`` символами"
+        },
+        "_obsolete": true
     },
     "Google reCAPTCHA v1": {
         "_default": {
@@ -2240,11 +2264,6 @@
             "value": "Не удалось скопировать файл"
         }
     },
-    "Posting is disabled on this board": {
-        "_default": {
-            "value": "На этой доске постинг запрещен"
-        }
-    },
     "Invalid captcha engine": {
         "_default": {
             "value": "Недействительный движок капчи"
@@ -2285,9 +2304,9 @@
             "value": "Файл не является аудио-файлом"
         }
     },
-    "Invalid PID": {
+    "Invalid worker ID": {
         "_default": {
-            "value": "Недействительный PID"
+            "value": "Недействительный идентификатор воркера"
         }
     },
     "Failed to get Twitter embedded HTML": {
@@ -2483,6 +2502,56 @@
     "Do not show banners": {
         "bannersModeNoneText": {
             "value": "Не показывать баннеры"
+        }
+    },
+    "Synchronize": {
+        "synchronizationText": {
+            "value": "Синхронизировать"
+        }
+    },
+    "Synchronize settings": {
+        "synchronizeSettingsLabelText": {
+            "value": "Синхронизировать настройки"
+        }
+    },
+    "Synchronize CSS and JS": {
+        "synchronizeCssAndJsLabelText": {
+            "value": "Синхронизировать CSS и JS"
+        }
+    },
+    "No password specified, and not logged in": {
+        "noPasswordNotLoggedInError": {
+            "value": "Пароль не указан, и вы не залогинены"
+        }
+    },
+    "Synchronization data will be available within 5 minutes": {
+        "synchronizationTimeoutText": {
+            "value": "Данные синхронизации будут доступны в течение 5 минут"
+        }
+    },
+    "Synchronization completed successfully": {
+        "synchronizationSuccessfulText": {
+            "value": "Синхронизация успешно завершена"
+        }
+    },
+    "No key specified": {
+        "_default": {
+            "value": "Не указан ключ"
+        }
+    },
+    "Supported languages": {
+        "supportedCodeLanguagesText": {
+            "value": "Поддерживаемые языки"
+        }
+    },
+    "Language name": {
+        "codeLanguageNameText": {
+            "value": "Имя языка"
+        }
+    },
+    "Language ID": {
+        "codeLanguageIdText": {
+            "value": "Идентификатор языка"
         }
     }
 }

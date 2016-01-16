@@ -60,7 +60,8 @@ width: 100%;
 top:0;right:0;
 z-index: 1;
 }
-#header.fixed .header_wrapper {
+#header.fixed .header_wrapper,
+.mobile .logo {
 opacity: .1;
 }
 .header_wrapper {
@@ -164,9 +165,7 @@ width: 72px;
 height: 100%;
 background-size: cover;
 float: left;
-}
-.desktop .logo {
-z-index:2;
+z-index: 2;
 }
 .logo-big {
 width:150px;
@@ -535,10 +534,6 @@ audio {
 }
 .favorites {
     position: fixed;
-    width: 600px;
-    height: 600px;
-    max-width: 90%;
-    max-height: 90%;
     z-index: 9980;
     padding: 2px;
 }
@@ -1053,7 +1048,7 @@ ul.tabWidget > li > a {
 .mobile .searchActionSelect {
     width: 50px;
 }
-.newPostCount {
+.list-item .newPostCount {
     position: absolute;
     right:5%;
     font-size:100% !important;
