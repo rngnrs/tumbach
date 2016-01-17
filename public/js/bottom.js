@@ -10,7 +10,6 @@ lord.templates = {};
 
 /**/
 
-(function() {
     var baseModelHtml = lord.get("misc/base.json") || "";
     ["base", "boards", "tr", "partials", "templates"].forEach(function(modelName) {
         var html = ("base" == modelName) ? baseModelHtml : lord.id("model-" + modelName).innerHTML;
@@ -49,4 +48,3 @@ lord.templates = {};
     lord.createStylesheetLink(settings.style.name + ".css", true);
     lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true, "hjs-stylesheet");
     lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
-})();

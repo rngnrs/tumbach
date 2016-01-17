@@ -251,6 +251,12 @@ lord.traverseChildren = function(elem) {
     return children;
 };
 
+lord.scaledSize = function(size) {
+    if (lord.deviceType("desktop"))
+        return size;
+    return Math.floor(0.7 * size);
+};
+
 lord.appendExtrasToModel = function(model) {
     var settings = lord.settings();
     var locale = model.site.locale;
@@ -288,11 +294,7 @@ lord.appendExtrasToModel = function(model) {
     model.minimalisticPostform = function() {
         return settings.minimalisticPostform;
     };
-    model.scaledSize = function(size) {
-        if (lord.deviceType("desktop"))
-            return size;
-        return Math.floor(0.7 * size);
-    };
+    model.scaledSize = lord.scaledSize;
     model.customPostBodyPart = lord.customPostBodyPart;
     model.customPostHeaderPart = lord.customPostHeaderPart;
     model.customPostMenuAction = lord.customPostMenuAction;
@@ -342,6 +344,9 @@ lord.createPostNode = function(post, permanent, threadInfo) {
             var qr = lord.nameOne("quickReplyContainer", c.node);
             if (qr)
                 qr.parentNode.removeChild(qr);
+            var ptt = lord.nameOne("toThread", c.node);
+            if (ptt)
+                ptt.parentNode.removeChild(ptt);
             lord.removeClass(c.node, "opPost");
             lord.addClass(c.node, "post");
             lord.addClass(c.node, "temporary");
@@ -486,7 +491,7 @@ lord.hideImage = function() {
 lord.globalOnclick = function(e) {
     if (e.button)
         return;
-    if (lord.currentMenu) {
+    if (lord.currentMenu && (!e.target || !lord.hasClass(e.target, "ui-widget-header"))) {
         lord.currentMenu.hide();
         lord.currentMenu = null;
     }
@@ -762,7 +767,10 @@ lord.deletePost = function(el) {
         if (!result)
             return Promise.resolve();
         var form = lord.queryOne("form", c.div);
-        return lord.post(form.action, new FormData(form));
+        var formData = new FormData(form);
+        if (lord.data("archived", el, true) == "true")
+            formData.append("archived", true);
+        return lord.post(form.action, formData);
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
@@ -772,7 +780,7 @@ lord.deletePost = function(el) {
         if (lord.data("isOp", post)) {
             if (!isNaN(+lord.data("threadNumber"))) {
                 window.location = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
-                    + lord.data("boardName");
+                    + lord.data("boardName") + ((lord.data("archived", el, true) == "true") ? "/archive.html" : "");
             } else {
                 lord.reloadPage();
             }
@@ -1208,7 +1216,7 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
         var qr = lord.nameOne("quickReplyContainer", post);
         if (qr)
             qr.parentNode.removeChild(qr);
-        var ptt = lord.queryOne(".postToThread", post);
+        var ptt = lord.nameOne("toThread", post);
         if (ptt)
             ptt.parentNode.removeChild(ptt);
         lord.removeClass(post, "opPost hidden");
@@ -1464,7 +1472,7 @@ lord.fileAddedCommon = function(div, file) {
             return lord.removeExifData(data);
         }).then(function(pieces) {
             if (pieces)
-                div.droppedFile = new File(pieces, file.name, {"type": "image/jpeg"});
+                div.droppedFile = new Blob(pieces, {"type": "image/jpeg"});
             if (lord.getLocalObject("showAttachedFilePreview", true))
                 preview();
         }).catch(lord.handleError);
@@ -2475,6 +2483,56 @@ lord.signOwnPostLinks = function(parent, ownPosts) {
     });
 };
 
+lord.downloadThread = function(el) {
+    var suffix = lord.data("archived", el, true) ? "arch" : "res";
+    lord.api(lord.data("number", el, true), {}, lord.data("boardName") + "/" + suffix).then(function(thread) {
+        var thread = thread.thread;
+        var fileNames = [thread.opPost].concat(thread.lastPosts).reduce(function(acc, post) {
+            return acc.concat(post.fileInfos.map(function(fileInfo) {
+                return fileInfo.name;
+            }));
+        }, []);
+        if (fileNames.length < 1)
+            return Promise.resolve();
+        var cancel = false;
+        var zip = new JSZip();
+        var progressBar = new lord.OverlayProgressBar({
+            max: fileNames.length,
+            cancelCallback: function() {
+                cancel = true;
+            },
+            finishCallback: function() {
+                progressBar.hide();
+                var title = thread.title || (lord.data("boardName") + " — " + thread.opPost.number);
+                saveAs(zip.generate({ "type": "blob" }), title + ".zip");
+            }
+        });
+        var last = 0;
+        var prefix = "/" + lord.data("sitePathPrefix") + lord.data("boardName") + "/src";
+        var append = function(i) {
+            if (cancel) {
+                progressBar.hide();
+                return;
+            }
+            var fileName = fileNames[i];
+            JSZipUtils.getBinaryContent(prefix + "/" + fileName, function(err, data) {
+                if (!err) {
+                    zip.file(fileName, data, {
+                        "binary": true
+                    });
+                }
+                progressBar.progress(progressBar.value + 1);
+                if (last < fileNames.length - 1)
+                    append(++last);
+            });
+        };
+        progressBar.show();
+        append(last);
+        if (fileNames.length > 1)
+            append(++last);
+    }).catch(lord.handleError);
+};
+
 lord.expandCollapseThread = function(el) {
     lord.expandThread($(el).closest(".thread")[0]);
 };
@@ -2784,7 +2842,7 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    lord.currentMenu.menu().toggle().position({
+    lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
         my: "left top",
         at: "left bottom+2px",
         of: $(input),
@@ -2974,6 +3032,11 @@ lord.initializeOnLoadBaseBoard = function() {
             lord.removeClass(threads, "loadingMessage");
             threads.appendChild(frag);
             lord.scriptWorkaround(threads);
+            if (lord.queryOne(".opPost[data-archived='true']")) {
+                lord.name("backButton").forEach(function(btn) {
+                    btn.href += "/archive.html";
+                });
+            }
             if (typeof lord.postsLoaded == "function")
                 lord.postsLoaded();
             $(".postBody").css("maxWidth", ($(window).width() - 30) + "px");
