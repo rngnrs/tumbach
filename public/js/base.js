@@ -1009,7 +1009,8 @@ lord.initializeOnLoadSettings = function() {
     if ("desktop" == model.deviceType) {
         lord.removeClass(document.body, "mobile");
         lord.addClass(document.body, "desktop");
-        document.head.removeChild(lord.nameOne("viewport", document.head));
+        if(lord.nameOne("viewport", document.head))
+            document.head.removeChild(lord.nameOne("viewport", document.head));
     }
     if (lord.data("boardName"))
         model.board = lord.model("board/" + lord.data("boardName")).board;
@@ -1146,6 +1147,10 @@ window.addEventListener("load", function load() {
     lord.checkFavoriteThreads();
     tumb.onLoad();
 }, false);
+
+lord.initializeOnLoadSettings();
+lord.checkFavoriteThreads();
+tumb.onLoad();
 
 window.addEventListener("beforeunload", function unload() {
     window.removeEventListener("beforeunload", unload, false);

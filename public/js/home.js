@@ -16,15 +16,11 @@
         selfcontained: false
     }, lord.partials);
 })();
-
-window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
-    var customContentPlaceholder = lord.id("customContentPlaceholder");
-    if (customContentPlaceholder) {
-        var model = lord.model(["base", "tr", "boards"], true);
-        model.settings = lord.settings();
-        var data = lord.template("custom-home", model);
-        if (data)
-            customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
-    }
-}, false);
+var customContentPlaceholder = lord.id("customContentPlaceholder");
+if (customContentPlaceholder) {
+    var model = lord.model(["base", "tr", "boards"], true);
+    model.settings = lord.settings();
+    var data = lord.template("custom-home", model);
+    if (data)
+        customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
+}
