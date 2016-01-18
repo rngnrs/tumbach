@@ -76,7 +76,7 @@ lord.delall = function(e, form) {
     });
 };
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     lord.query("[name='expires'], [name^='banExpires_']").forEach(function(inp) {
         $(inp).change(function(){
@@ -89,4 +89,17 @@ window.addEventListener("load", function load() {
         });
     });
     $(".xdsoft_datetimepicker").css("zIndex", 11000);
-}, false);
+}, false);*/
+(function() {
+    lord.query("[name='expires'], [name^='banExpires_']").forEach(function(inp) {
+        $(inp).change(function(){
+            $(this).attr("value", $(inp).val());
+        });
+        $(inp).datetimepicker({
+            i18n: { format: "YYYY/MM/DD HH:mm" },
+            mask: true,
+            value: inp.value
+        });
+    });
+    $(".xdsoft_datetimepicker").css("zIndex", 11000);
+})();

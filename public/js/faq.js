@@ -17,7 +17,7 @@
     }, lord.partials);
 })();
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     var faqContentPlaceholder = lord.id("faqContentPlaceholder");
     if (faqContentPlaceholder) {
@@ -34,4 +34,21 @@ window.addEventListener("load", function load() {
             }
         }, lord.Second);
     }
-}, false);
+}, false);*/
+(function() {
+    var faqContentPlaceholder = lord.id("faqContentPlaceholder");
+    if (faqContentPlaceholder) {
+        var model = lord.model(["base", "tr", "boards"], true);
+        model.settings = lord.settings();
+        var data = lord.template("custom-faq", model);
+        if (data)
+            faqContentPlaceholder.parentNode.replaceChild(data, faqContentPlaceholder);
+        setTimeout(function() {
+            var hash = lord.hash();
+            if (hash && "#" != hash) {
+                window.location.hash = "";
+                window.location.hash = hash;
+            }
+        }, lord.Second);
+    }
+})();

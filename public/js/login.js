@@ -36,11 +36,18 @@ lord.vkAuth = function() {
     }, VK.access.AUDIO);
 };
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     var vkButton = lord.id("vkontakteLoginButton");
     if (!vkButton)
         return;
     VK.UI.button("vkontakteLoginButton");
     vkButton.style.width = "";
-}, false);
+}, false);*/
+(function() {
+    var vkButton = lord.id("vkontakteLoginButton");
+    if (!vkButton)
+        return;
+    VK.UI.button("vkontakteLoginButton");
+    vkButton.style.width = "";
+})();

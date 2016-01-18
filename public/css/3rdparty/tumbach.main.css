@@ -492,6 +492,9 @@ ul.tabWidget > li > a {
     box-sizing: border-box;
     padding: 11px;
 }
+.cspoilerTitle {
+    cursor: pointer;
+}
 
 /* JQUERY UI */
 .ui-dialog,
@@ -1085,7 +1088,7 @@ ul.tabWidget > li > a {
     margin-left: 10%;
 }
 .buttonImage {
-    /*vertical-align: middle;*/
+    vertical-align: middle;
     opacity: .65;
 }
 .buttonImage:disabled {

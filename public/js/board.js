@@ -3218,9 +3218,12 @@ lord.scrollHandler = function() {
     lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";
 };
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     lord.initializeOnLoadBaseBoard();
-}, false);
+}, false);*/
+(function() {
+    lord.initializeOnLoadBaseBoard();
+})();
 
 window.addEventListener("scroll", lord.scrollHandler, false);

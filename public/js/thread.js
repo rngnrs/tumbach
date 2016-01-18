@@ -282,7 +282,10 @@ lord.initializeOnLoadThread = function() {
         lord.setAutoUpdateEnabled(true);
 };
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     lord.initializeOnLoadThread();
-}, false);
+}, false);*/
+(function() {
+    lord.initializeOnLoadThread();
+})();

@@ -22,6 +22,7 @@ a {
 a.expandCollapse {
     color: #444;
 }
+.postSequenceNumber,
 a:hover {
     color: #F80;
 }

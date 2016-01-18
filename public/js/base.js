@@ -1140,18 +1140,18 @@ lord.initializeOnLoadSettings = function() {
         }, 3 * lord.Second);
     }
 };
-
-window.addEventListener("load", function load() {
+/* TODO: Не забыть убрать, хех */
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     lord.initializeOnLoadSettings();
     lord.checkFavoriteThreads();
     tumb.onLoad();
-}, false);
-
-lord.initializeOnLoadSettings();
-lord.checkFavoriteThreads();
-tumb.onLoad();
-
+}, false);*/
+(function() {
+    lord.initializeOnLoadSettings();
+    lord.checkFavoriteThreads();
+    tumb.onLoad();
+})();
 window.addEventListener("beforeunload", function unload() {
     window.removeEventListener("beforeunload", unload, false);
     lord.unloading = true;
