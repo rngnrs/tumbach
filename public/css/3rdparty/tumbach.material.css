@@ -2,14 +2,15 @@
 input:-webkit-autofill {
     -webkit-box-shadow: inset 0 0 0 50px #EFF !important; /* Цвет фона */
     -webkit-text-fill-color: #aaa !important; /* цвет текста */
-    color: #aaa !important; /* цвет текста */
+    color: #AAA !important; /* цвет текста */
 }
 
-.btn, .btn-card, .btn-group input, .btn-emb{
+.btn, .btn-card, .btn-group input, .btn-emb, textarea {
 font-family: 'PT Sans';
 font-weight: 300;
 }
-.btn-emb:hover, .btn-divider:hover, .btn-sep:hover, .btn-card:hover, .dropdown-item:hover {
+.btn-emb:hover, .btn-divider:hover, .btn-sep:hover, .btn-card:hover,
+.color-prim .btn-emb:active, .color-prim .btn-sep:active, .btn-card:active, .btn-card_active {
 background: rgba(0,0,0,.2);
 }
 .btn {
@@ -23,7 +24,6 @@ min-height: 46px;
 border: none !important;
 }
 textarea {
-font-family: 'PT Sans';
 font-size:18px;
 font-weight:normal;
 position:relative;
@@ -35,8 +35,6 @@ outline:none;
 border-bottom: 1px solid #777;
 padding:10px 10px 10px 5px;
 margin:0;
-max-width:570px;
-max-height:700px;
 }
 .btn .btn-emb { /*embedded*/
 text-transform: uppercase;
@@ -52,9 +50,7 @@ transition: .2s background;
 position:relative;
 margin:10px auto 5px auto;
 padding: 10px;
-/*background: #fafafa;
-color: #000;*/
-box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
 display: block;
 width: 100%;
 box-sizing: border-box;
@@ -63,47 +59,14 @@ box-sizing: border-box;
 position:relative;
 margin-top: 10px;
 }
-.color-prim .btn-emb:active, .color-prim .btn-divider:active, .color-prim .btn-sep:active, .btn-card:active, .btn-card_active {
-background: rgba(0,0,0,.3);
-}
 .btn-left {
 width: calc(100% - 25px);
 }
 .btn-center {
 width: 100%;
 }
-.btn-divider {
-max-width: 25px;
-padding: 14px 6px 15px 6px;
-position:relative;
-/*max-width: 12px;
-padding: 9px 6px 10px 6px;*/
-border-left: 1px solid #555;
-}
-.btn-dropdown {
-position:absolute;
-right:0;
-width:100%;
-visibility: hidden;
-opacity:0;
-z-index:2;
-transition:visibility 0s linear .4s,opacity .4s linear;
-background: #fff;
-overflow-y:auto;
-max-height:600%;
-border: 1px solid #bbb;
-}
-/*.btn-divider:active+.btn-dropdown,*/ .btn-dropdown:hover {
-visibility: visible;
-opacity: 1;
-transition:opacity .1s linear;
-}
-.btn-dropdown .dropdown-item {
-padding: 13px 15px;
-transition: .3s background;
-}
 .btn-card {
-color: #020;
+color: rgba(0,0,0,.87);
 padding: 5px;
 text-transform: uppercase;
 transition: .3s background;
@@ -159,7 +122,6 @@ height:2px;
 width:0;
 bottom:1px; 
 position:absolute;
-background:#99D9EA; 
 transition:.2s ease all; 
 -moz-transition:.2s ease all; 
 }
@@ -179,7 +141,7 @@ width:50%;
 .highlight {
 position:absolute;
 height:22px;
-width:50%; 
+/*width:50%; */
 top:10px;
 left:5px;
 pointer-events:none;
@@ -193,10 +155,10 @@ animation:inputHighlighter .3s ease;
 }
 /* ANIMATIONS */
 @-moz-keyframes inputHighlighter {
-from { background:#99D9EA; }
+from { width:50%; }
 to 	{ width:0; background:transparent; }
 }
 @keyframes inputHighlighter {
-from { background:#99D9EA; }
+from { width:50%; }
 to 	{ width:0; background:transparent; }
 }

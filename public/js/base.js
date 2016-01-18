@@ -980,7 +980,7 @@ lord.hashChangeHandler = function() {
 };
 
 lord.setTooltips = function(parent) {
-    $(".codeBlock, .tooltip", parent).css("cursor", "pointer").click(function(e) {
+    $(".codeBlock, .tooltip, .flag, .postFileSize", parent).css("cursor", "pointer").click(function(e) {
         var _this = $(this);
         _this.tooltip({
             position: {
@@ -1000,6 +1000,9 @@ lord.setTooltips = function(parent) {
                 $(this).tooltip("disable");
             }
         }).tooltip("enable").tooltip("open");
+        setTimeout(function() {
+            _this.tooltip("close");
+        }, 15 * lord.Second);
     });
 };
 

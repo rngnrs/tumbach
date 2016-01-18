@@ -258,30 +258,12 @@ span.newPostCount {
     margin-top: 5px;
 }
 
-.postformFilePreview {
-    max-width: 100px;
-    max-height: 100px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.postformFileInput {
-    display: inline-block;
-    position: absolute;
-    left: -10px;
-    top: -10px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-}
-
 .postformFileText {
     display: inline-block;
     vertical-align: top;
     white-space: normal;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
 }
 
 .postformFileRemoveButton {

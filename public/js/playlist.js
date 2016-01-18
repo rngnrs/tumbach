@@ -313,7 +313,7 @@ var audio = new Audio(),
                     this.playAudio(n);
                 else { //lookbehind from da end
                     this.playAudio(0);
-                    if (!cb) this.pseudostop();
+                    if (!cb && l != 0) this.pseudostop();
                 }
             } else {
                 this.playAudio(0);
