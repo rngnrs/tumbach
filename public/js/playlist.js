@@ -313,7 +313,8 @@ var audio = new Audio(),
                     this.playAudio(n);
                 else { //lookbehind from da end
                     this.playAudio(0);
-                    if (!cb && l != 0) this.pseudostop();
+                    if (!cb)
+                        this.pseudostop();
                 }
             } else {
                 this.playAudio(0);
@@ -332,12 +333,11 @@ var audio = new Audio(),
 audio.addEventListener('ended', function(){
     Player.initAudioList();
     if(LO.get('player.mode') == 'audio') {
-        if ($("#repeat").prop('checked'))
+        if (LO.get('player.loop', false))
             Player.parse(0);
         else Player.parse(1);
-    } else {
+    } else
         setTimeout(function(){Player.reconnect()},5000);
-    }
 });
 audio.addEventListener("timeupdate", function() {
     var seconds = audio.currentTime;
