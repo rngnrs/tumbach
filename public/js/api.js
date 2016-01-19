@@ -236,7 +236,7 @@ lord.Hour = 60 * lord.Minute;
 lord.Day = 24 * lord.Hour;
 lord.Year = 365 * lord.Day;
 lord.Billion = 2 * 1000 * 1000 * 1000;
-lord.SettingsStoredInCookies = ["time", "timeZoneOffset", "captchaEngine"];
+lord.SettingsStoredInCookies = ["deviceType", "time", "timeZoneOffset", "captchaEngine"];
 //
 lord.keyboardMap = [
   "", // [0]
@@ -864,11 +864,6 @@ lord.contains = function(s, subs) {
     return false;
 };
 
-lord.isInViewport = function(el) {
-    var rect = el.getBoundingClientRect();
-    return (rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight));
-};
-
 lord.addClass = function(element, classNames) {
     if (!element || !element.tagName || !classNames || typeof classNames != "string")
         return;
@@ -1211,8 +1206,14 @@ lord.nearlyEqual = function(a, b, epsilon) {
     }
 };
 
-lord.hash = function() {
-    return window.location.hash.substr(1, window.location.hash.length - 1);
+lord.hash = function(hash) {
+    if (typeof hash == "undefined")
+        return window.location.hash.substr(1, window.location.hash.length - 1);
+    hash = "" + hash;
+    if (!hash && !lord.hash())
+        return;
+    window.location.hash = "";
+    window.location.hash = hash;
 };
 
 lord.data = function(key, el, bubble) {
@@ -1424,6 +1425,7 @@ lord.now = function() {
 lord.settings = function() {
     return {
         time: lord.getCookie("time", "local"),
+        deviceType: lord.getCookie("deviceType", "auto"),
         timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
         captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
         style: { name: lord.getLocalObject("style", "photon") },

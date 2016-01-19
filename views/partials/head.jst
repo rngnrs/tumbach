@@ -18,6 +18,7 @@
             $LAB
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.1.4.min.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js")
+                    .script("/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/api.js").wait()
@@ -67,7 +68,6 @@
         <link rel="apple-touch-icon" sizes="114x114" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-114x114.png">
         <link rel="apple-touch-icon" sizes="120x120" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-120x120.png">
         <link rel="apple-touch-icon" sizes="144x144" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-144x144.png">
-        <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/jquery.datetimepicker.css">
         <script id="model-base" type="application/json"></script>
         <script id="model-boards" type="application/json">{{=it.models.boards}}</script>
         <script id="model-tr" type="application/json">{{=it.models.tr}}</script>
@@ -82,4 +82,5 @@
     {{?}}
     <link id="tumbach.main" rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/tumbach.main.css">
     <link id="tumbach.material" rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/tumbach.material.css">
+    <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/jquery.datetimepicker.css">
 </head>

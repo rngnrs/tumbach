@@ -11,8 +11,8 @@ tumb.dottie = function(floatElement, upperDiv) {
 		else upperDiv.css({'height':height+'px'});
 	};
 	init();
-	if(!localStorage["scroll"]) localStorage["scroll"] = height;
-
+	if(!localStorage["scroll"])
+		localStorage["scroll"] = height;
 	window.onscroll = function() {
 		if (window.scrollY > height) {
 			if(localStorage["scroll"]<$(document).scrollTop()) localStorage["scroll"] = $(document).scrollTop();
@@ -30,7 +30,8 @@ tumb.dottie = function(floatElement, upperDiv) {
 	return (mode === 1) ? 'down-only' : 'landing';
 };
 tumb.slidy = function(el) {
-	localStorage["scroll"] = $("header").offset().top;
+	if(!localStorage["scroll"])
+		localStorage["scroll"] = $("header").offset().top;
 	$(el).bind('mousewheel', function (e) {
 	  if( e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0 ) { //scroll down
 		$('body').stop().animate({
@@ -45,6 +46,7 @@ tumb.slidy = function(el) {
 	  }
 	});
 };
+/** @deprecated ? */
 tumb.clicky = function(el) {
 	$(el).bind('click', function () {
 	  if($(document).scrollTop() <= ($(window).height()/2)) {//is it the top of this page?
@@ -96,6 +98,7 @@ tumb.onLoad = function(){
     $('.kek').bind('click', function(){
         if(width < 1024){
             sb.toggleClass('open');
+			ov.toggleClass('toggled');
             return false;
         }
     });
