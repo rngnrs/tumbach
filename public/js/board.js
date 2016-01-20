@@ -3020,8 +3020,9 @@ lord.initializeOnLoadBaseBoard = function() {
                 document.body.onmouseout = lord.globalOnmouseout;
             }
             if (lord.getLocalObject("mumWatching", false)) {
-                var img = lord.queryOne("[name='switchMumWatchingButton'] > img");
-                img.src = "/" + lord.data("sitePathPrefix") + "img/mum_watching.png";
+                var img = lord.queryOne("[data-name='switchMumWatchingButton']");
+                lord.removeClass(img, "zmdi-eye");
+                lord.addClass(img, "zmdi-eye-off");
                 lord.query(".postFileFile > a > img").forEach(function(img) {
                     lord.addClass(img, "mumWatching");
                 });

@@ -2569,5 +2569,10 @@
         "postMenuCategoryUserText": {
             "value": "Пользователь"
         }
+    },
+    "Somebody is chatting here already": {
+        "_default": {
+            "value": "Здесь уже кто-то чатится"
+        }
     }
 }

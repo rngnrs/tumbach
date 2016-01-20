@@ -660,12 +660,12 @@ lord.updateChat = function(keys) {
             if (img && img.src.replace("chat_message.gif", "") == img.src)
                 img.src = img.src.replace("chat.png", "chat_message.gif");
             else
-                if (!img) {
-                    var img = lord.node("img");
-                    lord.addClass(img, "buttonImage");
-                    img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
-                    a.appendChild(img);
-                }
+            if (!img) {
+                var img = lord.node("img");
+                lord.addClass(img, "buttonImage");
+                img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
+                a.appendChild(img);
+            }
         });
         var div = lord.node("div");
         var a = lord.node("a");
@@ -991,7 +991,7 @@ lord.setTooltips = function(parent) {
                     var pos = _this.position();
                     $(this).css({
                         position: "absolute",
-                        left: (e.pageX - 100) + "px",
+                        left: Math.max(e.pageX - 100, 5) + "px",
                         top: (e.pageY + 15) + "px",
                         width: "200px"
                     });

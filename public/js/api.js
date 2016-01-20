@@ -1021,6 +1021,7 @@ lord.showDialog = function(body, options) {
                 $("body").css({ overflow: "hidden" });
                 $(".navigationButton").css({ display: "none" });
             },
+            open: (options ? options.afterShow : undefined),
             beforeClose: function() {
                 $("body").css({ overflow: "inherit" });
                 if (lord.scrollHandler)
