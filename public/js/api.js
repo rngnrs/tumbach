@@ -1012,7 +1012,10 @@ lord.showDialog = function(body, options) {
             width: "auto",
             minHeight: 200,
             minWidth: 200,
-            open: function(e, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
+            open: function(e, ui) {
+                /*(options ? options.afterShow : undefined);*/
+                $('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});
+            },
             close: function() {
                 resolve(false);
                 $(this).dialog("destroy").remove();
@@ -1021,7 +1024,6 @@ lord.showDialog = function(body, options) {
                 $("body").css({ overflow: "hidden" });
                 $(".navigationButton").css({ display: "none" });
             },
-            open: (options ? options.afterShow : undefined),
             beforeClose: function() {
                 $("body").css({ overflow: "inherit" });
                 if (lord.scrollHandler)

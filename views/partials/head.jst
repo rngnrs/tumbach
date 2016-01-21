@@ -16,7 +16,7 @@
         <script src="/{{=it.site.pathPrefix}}js/3rdparty/LAB.min.js"></script>
         <script>
             $LAB
-                    .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.1.4.min.js").wait()
+                    .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.2.0.min.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js")
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js")
@@ -32,6 +32,7 @@
                     .script("/{{=it.site.pathPrefix}}js/tumb.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/base.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/playlist.js").wait()
+                    .script("/{{=it.site.pathPrefix}}js/ajax.js")
         {{? it.includeBoardScripts}}
                     .script("/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js").wait()
                     .script("/{{=it.site.pathPrefix}}js/board.js").wait()
