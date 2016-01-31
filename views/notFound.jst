@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}}>
-<script id="model-notFoundImageFileNames"
-        type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
+<body class="mobile">
 {{#def.customHeader}}
-<div class="wrap">
+<div class="wrap" {{#def.baseData}}>
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            <script id="model-notFoundImageFileNames"
+                    type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
             <div class="theTitle">
                 <h1>{{=it.notFoundMessage}}</h1>
             </div>

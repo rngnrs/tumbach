@@ -1,4 +1,4 @@
-(function() {
+$(function() {
     var html = lord.get("templates/custom-home.jst");
     if (!html)
         return;
@@ -15,12 +15,21 @@
         append: true,
         selfcontained: false
     }, lord.partials);
-})();
-var customContentPlaceholder = lord.id("customContentPlaceholder");
-if (customContentPlaceholder) {
-    var model = lord.model(["base", "tr", "boards"], true);
-    model.settings = lord.settings();
-    var data = lord.template("custom-home", model);
-    if (data)
-        customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
+});
+
+if (document.readyState === "complete")
+    load();
+else
+    window.onload = load;
+
+function load() {
+    window.removeEventListener("load", load, false);
+    var customContentPlaceholder = lord.id("customContentPlaceholder");
+    if (customContentPlaceholder) {
+        var model = lord.model(["base", "tr", "boards"], true);
+        model.settings = lord.settings();
+        var data = lord.template("custom-home", model);
+        if (data)
+            customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
+    }
 }

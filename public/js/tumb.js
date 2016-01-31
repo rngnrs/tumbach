@@ -1,4 +1,5 @@
 var tumb = tumb || {};
+lord.setLocalObject('enableAjax', false);
 tumb.dottie = function(floatElement, upperDiv) {
 	var mode = (upperDiv === undefined) ? 1 : 0;
 	var maxh = 650,
@@ -6,11 +7,10 @@ tumb.dottie = function(floatElement, upperDiv) {
 		upperDiv = $(upperDiv),
 		wrap = $('.wrap');
 	var height = (mode === 1) ? 0 : $(window).height()-$(floatElement).height();
-	var init = function(){
-		if(height<maxh && mode === 0) height=maxh;
-		else upperDiv.css({'height':height+'px'});
-	};
-	init();
+	if(height < maxh && mode === 0)
+		height = maxh;
+	else
+		upperDiv.css({'height':height+'px'});
 	if(!localStorage["scroll"])
 		localStorage["scroll"] = height;
 	window.onscroll = function() {
@@ -78,7 +78,7 @@ tumb.onLoad = function(){
     $('.noselect').attr('unselectable', 'on')
         .css('user-select', 'none')
         .on('selectstart', false);
-    $('#style-switcher').change(function () {
+    $('#style-switcher').change(function() {
         tumb.switchStyle(this.value);
     });
     tumb.dottie('header');
@@ -102,7 +102,7 @@ tumb.onLoad = function(){
             return false;
         }
     });
-    $('.overlay, .menu .list-item').bind('click', function(){
+    $('.overlay, .list-item').bind('click', function(){
         if (sb.hasClass('open') && width < 1024)
 	        sb.removeClass('open');
         sb2.removeClass('open');

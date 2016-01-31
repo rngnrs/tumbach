@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}} data-thread-number="{{=it.threadNumber}}">
-<script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
-{{? it.site.vkontakte.integrationEnabled }}
-    <script type="text/javascript">
-        VK.init({ apiId: {{=it.site.vkontakte.appId}} });
-    </script>
-{{?}}
-<div id="hiddenPostForm" style="display: none;"></div>
-{{? it.board.captchaEnabled}}
-    <div id="hiddenCaptcha" style="display: none;"></div>
-{{?}}
+<body class="mobile">
 {{#def.customHeader}}
 <a id="top"></a>
-<div class="wrap">
-    {{~["top", "bottom"] :target}}
-    {{#def.navigationButton}}
-    {{~}}
-    {{~["previous", "next"] :target}}
-    {{#def.leafButton}}
-    {{~}}
+<div class="wrap" {{#def.baseData}} data-thread-number="{{=it.threadNumber}}">
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
+            {{? it.site.vkontakte.integrationEnabled }}
+            <script type="text/javascript">
+                VK.init({ apiId: {{=it.site.vkontakte.appId}} });
+            </script>
+            {{?}}
+                <div id="hiddenPostForm" style="display: none;"></div>
+            {{? it.board.captchaEnabled}}
+                <div id="hiddenCaptcha" style="display: none;"></div>
+            {{?}}
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+            {{#def.leafButton}}
+            {{~}}
             <div id="bannerPlaceholder" style="display: none;"></div>
             <div class="theTitle">
                 <h1>{{!it.title}}</h1>
@@ -45,10 +45,10 @@
             {{~}}
             <div id="lowerPlaceholder" style="display: none;"></div>
             <div id="navbarPlaceholder" style="display: none;"></div>
-            <a id="bottom"></a>
         </div>
     </div>
     {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>

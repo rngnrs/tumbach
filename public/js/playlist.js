@@ -118,6 +118,7 @@ var audio = new Audio(),
                 if (pph)
                     pph.parentNode.replaceChild(lord.template("player", model), pph);
                 this.getVolume();
+                LO.set('enableAjax',true);
                 this.inited = true;
 	            if (noRender == false)
 		            this.playAudio(tumb.objSize(lord.currentTracks)-1, false);
@@ -134,6 +135,7 @@ var audio = new Audio(),
                 $.each($('.track'), function () {
                     $(this).removeClass('playing');
                 });
+                LO.set('enableAjax',false);
                 this.inited = false;
             }
         },
@@ -165,7 +167,6 @@ var audio = new Audio(),
                         });
                         th.addClass('playing');
                     }
-                    $('#player-line').show();
                 });
             if (pl == '') {
                 $(ncont).html('<div class="table-cell" id="pl-splash">Список воспроизведения пуст.</div>');
@@ -205,7 +206,6 @@ var audio = new Audio(),
                         $(this).removeClass('playing');
                     });
                     th.addClass('playing');
-                    $('#player-line').hide();
                 });
         },
         playAudio: function (id, play) {
@@ -224,6 +224,7 @@ var audio = new Audio(),
 		        lord.showPopup("Аудиозапись недоступна.",{type:"critical"});
 		        return false;
 	        }
+            $('#player-line').show();
 		    audio.src = data.url;
             $('#pl-title').html('<b class="cursorPointer" title="Ответить прикрепившему музыку" onclick=lord.quickReply(lord.id("'
                 +data["thread"]+'"));><u>&gt;&gt;'+data["boardName"]+'/'+data["thread"]+'</u></b><br/>'+title+'</div>');
@@ -240,6 +241,7 @@ var audio = new Audio(),
         playRadio: function (url, title) {
             if(!this.inited)
                 Player.init(true);
+            $('#player-line').hide();
             audio.src = url;
             $('#pl-title').html('<b>Radio Mode</b><br/>' + title + '</div>');
             $("#player-ctrl-forward").removeClass("zmdi-fast-forward").addClass("zmdi-replay");
@@ -272,23 +274,27 @@ var audio = new Audio(),
         },
         getVolume: function () {
             var vol = 0.42,
-                remember = LO.get("rememberAudioVideoVolume", false);
+                remember = lord.settings().rememberAudioVideoVolume;
             audio.volume = remember ? LO.get("audioVideoVolume", vol) : vol;
             $('#vol-line-active').width(vol * 100 + '%');
+            if(!LO.get('audioVideoVolume', false))
+                LO.set("audioVideoVolume", vol);
         },
         setVolume: function (p) {
             var vol = p.vol,
                 ch = p.ch,
-                prop,
+                nul = (vol == 0),
                 cb = $('#mute');
             $('#vol-line-active').width(vol * 100 + '%');
-            if (vol < 0) vol = 0;
-            else if (vol > 1) vol = 1;
+            if (vol < 0)
+                vol = 0;
+            else if (vol > 1)
+                vol = 1;
             audio.volume = vol;
-            if (prop = (vol == 0)) cb.prop('checked', true);
-            if (cb.checked != prop) cb.prop('checked', prop);
-            if (LO.get("rememberAudioVideoVolume", false))
-                if (undefined == ch && !prop) LO.set('audioVideoVolume', Math.ceil(vol * 100) / 100);
+            //if (nul) cb.prop('checked', true);
+            if (cb.checked != nul) cb.prop('checked', nul);
+            if (lord.settings().rememberAudioVideoVolume)
+                if (undefined == ch && !nul) LO.set('audioVideoVolume', Math.ceil(vol * 100) / 100);
         },
         parse: function (c) { /* -1<=c<=1 */
             var cb = $('#shuffle').prop('checked'),

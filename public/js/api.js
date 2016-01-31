@@ -1220,7 +1220,7 @@ lord.hash = function(hash) {
 };
 
 lord.data = function(key, el, bubble) {
-    el = el || document.body;
+    el = el || lord.queryOne(".wrap");//document.body;
     while (el && el.dataset) {
         if (key in el.dataset)
             return el.dataset[key];
@@ -1294,8 +1294,10 @@ lord.createStylesheetLink = function(href, prefix, id) {
     return link;
 };
 
-lord.createScript = function(src, prefix) {
+lord.createScript = function(src, prefix, cl) {
     var script = lord.node("script");
+    if(typeof cl != "undefined")
+        script.className = cl;
     script.type = "text/javascript";
     script.src = (prefix ? ("/" + lord.models.base.site.pathPrefix + "js/") : "") + src;
     lord.queryOne("head").appendChild(script);
@@ -1359,10 +1361,10 @@ lord.model = function(modelName, mustMerge) {
 
 lord.get = function(what) {
     var xhr = new XMLHttpRequest();
-    xhr.open("get", "/" + lord.data("sitePathPrefix", lord.queryOne("head")) + what, false);
+    xhr.open("get", "/" + lord.data("sitePathPrefix", lord.queryOne("head")) + what +'?_='+new Date().getTime(), false);
     xhr.send(null);
     if (xhr.status === 200)
-        return xhr.responseText;
+        return (xhr.responseText != '') ? xhr.responseText : null;
     return null;
 };
 

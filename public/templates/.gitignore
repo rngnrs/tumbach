@@ -35,6 +35,7 @@
 !navbar.jst
 !notFoundImage.jst
 !pagination.jst
+!player.jst
 !playlistItem.jst
 !post.jst
 !postForm.jst

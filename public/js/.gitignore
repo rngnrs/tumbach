@@ -1,5 +1,6 @@
 *
 !3rdparty
+!ajax.js
 !api.js
 !base.js
 !board.js

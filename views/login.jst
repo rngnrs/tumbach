@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}}>
-{{? it.site.vkontakte.integrationEnabled}}
-<style type="text/css">
-    #vkontakteLoginButton {
-        text-align: center;
-        margin-top: 8px;
-    }
-    #vkontakteLoginButton > table {
-        margin: 0 auto;
-    }
-</style>
-<script type="text/javascript">
-    VK.init({ apiId: {{=it.site.vkontakte.appId}} });
-</script>
-{{?}}
+<body class="mobile">
 {{#def.customHeader}}
-<div class="wrap">
+<div class="wrap" {{#def.baseData}}>
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            {{? it.site.vkontakte.integrationEnabled}}
+            <style type="text/css">
+                #vkontakteLoginButton {
+                    text-align: center;
+                    margin-top: 8px;
+                }
+                #vkontakteLoginButton > table {
+                    margin: 0 auto;
+                }
+            </style>
+            <script type="text/javascript">
+                VK.init({ apiId: {{=it.site.vkontakte.appId}} });
+            </script>
+            {{?}}
             <div class="theTitle">
                 <h1>
                     {{=it.title}}

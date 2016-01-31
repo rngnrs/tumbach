@@ -920,7 +920,7 @@ lord.expandCollapseYoutubeVideo = function(a) {
     } else {
         lord.addClass(a.parentNode, "expand");
         var iframe = lord.node("iframe");
-        iframe.src = "https://youtube.com/embed/" + videoId + "?autoplay=1";
+        iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1";
         iframe.allowfullscreen = true;
         iframe.frameborder = "0px";
         iframe.height = "360";
@@ -1146,18 +1146,17 @@ lord.initializeOnLoadSettings = function() {
         }, 3 * lord.Second);
     }
 };
-/* TODO: Не забыть убрать, хех */
-/*window.addEventListener("load", function load() {
+if (document.readyState === "complete")
+    load();
+else
+    window.addEventListener("load", load, false);
+
+function load() {
     window.removeEventListener("load", load, false);
     lord.initializeOnLoadSettings();
     lord.checkFavoriteThreads();
     tumb.onLoad();
-}, false);*/
-(function() {
-    lord.initializeOnLoadSettings();
-    lord.checkFavoriteThreads();
-    tumb.onLoad();
-})();
+}
 window.addEventListener("beforeunload", function unload() {
     window.removeEventListener("beforeunload", unload, false);
     lord.unloading = true;

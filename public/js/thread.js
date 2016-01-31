@@ -95,16 +95,16 @@ lord.addVisibilityChangeListener = function(callback) {
 };
 
 lord.visibilityChangeListener = function(e) {
-    var v = "visible";
-    var h = "hidden";
-    var eMap = {
-        "focus": v,
-        "focusin": v,
-        "pageshow": v,
-        "blur": h,
-        "focusout": h,
-        "pagehide": h
-    };
+    var v = "visible",
+        h = "hidden",
+        eMap = {
+            "focus": v,
+            "focusin": v,
+            "pageshow": v,
+            "blur": h,
+            "focusout": h,
+            "pagehide": h
+        };
     e = e || window.event;
     if (e.type in eMap)
         lord.pageVisible = eMap[e.type];
@@ -149,8 +149,10 @@ lord.updateThread = function(silent) {
         boardName: lord.data("boardName"),
         threadNumber: threadNumber
     }).then(function(result) {
-        if (!result || !result.lastPostNumber)
+        if (!result || !result.lastPostNumber) {
+            lord.setAutoUpdateEnabled(false);
             return Promise.reject("threadDeletedErrorText");
+        }
         c.newLastPostNumber = result.lastPostNumber;
         if (c.newLastPostNumber <= lastPostNumber)
             return Promise.resolve({ thread: { lastPosts: [] } });
@@ -261,18 +263,20 @@ lord.updateThread = function(silent) {
 };
 
 lord.setAutoUpdateEnabled = function(enabled) {
-    if (enabled) {
-        var intervalSeconds = lord.getLocalObject("autoUpdateInterval", 15);
-        lord.autoUpdateTimer = new lord.AutoUpdateTimer(intervalSeconds);
-        lord.autoUpdateTimer.start();
+    var list = lord.getLocalObject("autoUpdate", {});
+    var threadNumber = +lord.data("threadNumber");
+    if(list[threadNumber] != true) {
+        list[threadNumber] = enabled;
+        lord.setLocalObject("autoUpdate", list);
+        if (enabled && !lord.autoUpdateTimer) {
+            var intervalSeconds = lord.getLocalObject("autoUpdateInterval", 15);
+            lord.autoUpdateTimer = new lord.AutoUpdateTimer(intervalSeconds);
+            lord.autoUpdateTimer.start();
+        }
     } else if (lord.autoUpdateTimer) {
         lord.autoUpdateTimer.stop();
         lord.autoUpdateTimer = null;
     }
-    var list = lord.getLocalObject("autoUpdate", {});
-    var threadNumber = +lord.data("threadNumber");
-    list[threadNumber] = enabled;
-    lord.setLocalObject("autoUpdate", list);
 };
 
 lord.initializeOnLoadThread = function() {
@@ -282,10 +286,12 @@ lord.initializeOnLoadThread = function() {
         lord.setAutoUpdateEnabled(true);
 };
 
-/*window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
+if (document.readyState === "complete")
+    load_t();
+else
+    window.addEventListener("load", load_t, false);
+
+function load_t(){
+    window.removeEventListener("load", load_t, false);
     lord.initializeOnLoadThread();
-}, false);*/
-(function() {
-    lord.initializeOnLoadThread();
-})();
+}

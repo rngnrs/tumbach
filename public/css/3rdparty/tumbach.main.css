@@ -383,7 +383,7 @@ outline:none;
     max-height: 72px;
     width: 30%;
     max-width: 500px;
-    min-width:360px;
+    min-width: 258px;
 }
 .player-menu {
     -webkit-appearance: none;
@@ -1261,10 +1261,9 @@ input.buttonImage {
     vertical-align: middle;
 }
 .loadingMessage {
-    position:absolute;
     text-align: center;
     width:100%;
-    margin: calc(50vh - 150px) auto;
+    margin: calc(50vh - 165px) auto;
 }
 [id^="vk_post_"] {
     padding: 4px 5px;

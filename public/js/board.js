@@ -21,7 +21,7 @@ lord.customPostFormField = {};
 lord.customPostFormOption = {};
 lord.customPostHeaderPart = {};
 lord.customPostMenuAction = {};
-lord.customPostBodyPart = {};
+lord.customPostBodyPart = lord.customPostBodyPart || {};
 lord.customEditPostDialogPart = {};
 
 /*Functions*/
@@ -2112,8 +2112,8 @@ lord.showLoadingPostsPopup = function(text) {
 lord.submitted = function(event, form) {
     if (event)
         event.preventDefault();
-    if (!form);
-    form = lord.id("postForm");
+    if (!form)
+        form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
     lord.setCookie("markupMode", markupMode.options[markupMode.selectedIndex].value);
@@ -3170,16 +3170,19 @@ lord.scrollHandler = function() {
     var k = 1300;
     var top = ((window.innerHeight + window.scrollY + k) >= document.body.offsetHeight);
     var bottom = (window.scrollY <= k);
-    lord.queryOne(".navigationButtonTop").style.display = bottom ? "none" : "";
-    lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";
+    if(lord.queryOne(".navigationButtonTop"))
+        lord.queryOne(".navigationButtonTop").style.display = bottom ? "none" : "";
+    if(lord.queryOne(".navigationButtonBottom"))
+        lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";
 };
 
-/*window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
-    lord.initializeOnLoadBaseBoard();
-}, false);*/
-(function() {
-    lord.initializeOnLoadBaseBoard();
-})();
+if (document.readyState === "complete")
+    load_b();
+else
+    window.addEventListener("load", load_b, false);
 
-window.addEventListener("scroll", lord.scrollHandler, false);
+function load_b() {
+    window.removeEventListener("load", load_b, false);
+    lord.initializeOnLoadBaseBoard();
+}
+/*window.addEventListener("scroll", lord.scrollHandler, false);*/

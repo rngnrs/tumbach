@@ -13,7 +13,7 @@ lord.templates = {};
 (function() {
     var baseModelHtml = lord.get("misc/base.json") || "";
     ["base", "boards", "tr", "partials", "templates"].forEach(function(modelName) {
-        var html = ("base" == modelName) ? baseModelHtml : lord.id("model-" + modelName).innerHTML;
+        var html = ("base" === modelName) ? baseModelHtml : lord.id("model-" + modelName).innerHTML;
         lord.models[modelName] = JSON.parse(html);
     });
     lord.model("partials").forEach(function(partialName) {

@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}} data-current-page="{{=it.currentPage}}">
-<script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
-{{? it.site.vkontakte.integrationEnabled }}
-    <script type="text/javascript">
-        VK.init({ apiId: {{=it.site.vkontakte.appId}} });
-    </script>
-{{?}}
-<div id="hiddenPostForm" style="display: none;"></div>
-{{? it.board.captchaEnabled}}
-    <div id="hiddenCaptcha" style="display: none;"></div>
-{{?}}
+<body class="mobile">
 {{#def.customHeader}}
 <a id="top"></a>
-<div class="wrap">
-    {{~["top", "bottom"] :target}}
-    {{#def.navigationButton}}
-    {{~}}
-    {{~["previous", "next"] :target}}
-    {{#def.leafButton}}
-    {{~}}
+<div class="wrap" {{#def.baseData}} data-current-page="{{=it.currentPage}}">
     <div id="toolbarPlaceholder" style="display: none;"></div>
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            {{? it.site.vkontakte.integrationEnabled }}
+                <script type="text/javascript">
+                    VK.init({ apiId: {{=it.site.vkontakte.appId}} });
+                </script>
+            {{?}}
+            <div id="hiddenPostForm" style="display: none;"></div>
+            {{? it.board.captchaEnabled}}
+                <div id="hiddenCaptcha" style="display: none;"></div>
+            {{?}}
+            <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+            {{#def.leafButton}}
+            {{~}}
             <div id="bannerPlaceholder" style="display: none;"></div>
             <div class="theTitle">
                 <h1>
                     {{=it.board.title}}
-                    <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html"
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html"
                        title="{{=it.tr.boardCatalogLinkText}}"><img src="/{{=it.site.pathPrefix}}img/catalog.png"
                                                                     class="buttonImage" width="24" height="24"></a>
-                    <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/archive.html"
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/archive.html"
                        title="{{=it.tr.boardArchiveLinkText}}"><img src="/{{=it.site.pathPrefix}}img/archive.png"
                                                                     class="buttonImage" width="24" height="24"></a>
                     <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/rss.xml" target="_blank"
