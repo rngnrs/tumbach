@@ -273,9 +273,8 @@ var audio = new Audio(),
             this.playRadio(LO.get('player.radio.last')['url'], LO.get('player.radio.last')['title']);
         },
         getVolume: function () {
-            var vol = 0.42,
-                remember = lord.settings().rememberAudioVideoVolume;
-            audio.volume = remember ? LO.get("audioVideoVolume", vol) : vol;
+            var vol = LO.get("audioVideoVolume", 0.42);
+            audio.volume = vol;
             $('#vol-line-active').width(vol * 100 + '%');
             if(!LO.get('audioVideoVolume', false))
                 LO.set("audioVideoVolume", vol);
