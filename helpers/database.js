@@ -1230,7 +1230,7 @@ var findPhrase = function(phrase, boardName) {
             var nextChain = [];
             for (var i = 0; i < results[ind].length; ++i) {
                 var post = results[ind][i];
-                if (post.boardName != lastPost.boardName || post.number != lastPost.number
+                if (post.boardName != lastPost.boardName || post.postNumber != lastPost.postNumber
                     || post.source != lastPost.source || post.position != (lastPost.position + 1)) {
                     continue;
                 }
@@ -1451,6 +1451,7 @@ module.exports.rerenderPosts = function(boardNames) {
 
 module.exports.rebuildSearchIndex = function() {
     var posts = {};
+    console.log(`Purging post search index (this may take some time)...`);
     return db.keys("postSearchIndex:*").then(function(keys) {
         var p = (keys.length > 0) ? db.del(keys[0]) : Promise.resolve();
         keys.slice(1).forEach(function(key) {

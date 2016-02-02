@@ -13,53 +13,49 @@
     <meta name="msapplication-TileImage" content="/{{=it.site.pathPrefix}}assets/mstile-144x144.png">
     <meta name="theme-color" content="#99d9ea">
     {{? !it.noJavaScript}}
-        <!--<script src="/{{=it.site.pathPrefix}}js/3rdparty/LAB.min.js"></script>-->
         <script src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.2.0.min.js"></script>
         <script src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js"></script>
-<!--        <script>
-            $LAB-->
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/api.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/uuid.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/jszip.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/FileSaver.min.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/base.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/bottom.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/playlist.js"></script>
-    <script defer src="/{{=it.site.pathPrefix}}js/ajax.js"></script>
-    <!--</script>-->
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/data.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/api.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/uuid.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/jszip.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/3rdparty/FileSaver.min.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/base.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/bottom.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/playlist.js"></script>
+        <script defer src="/{{=it.site.pathPrefix}}js/ajax.js"></script>
         {{? it.includeBoardScripts}}
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js"></script>
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/board.js"></script>
-                {{? it.includeThreadScripts}}
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery.knob.min.js"></script>
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/thread.js"></script>
-                {{?}}
-                {{? it.site.twitter.integrationEnabled }}
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/twitter.js"></script>
-                {{?}}
+            <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js"></script>
+            <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/board.js"></script>
+            {{? it.includeThreadScripts}}
+                <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery.knob.min.js"></script>
+                <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/thread.js"></script>
+            {{?}}
+            {{? it.site.twitter.integrationEnabled }}
+                <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/3rdparty/twitter.js"></script>
+            {{?}}
         {{?}}
         {{? it.extraScripts}}
             {{~it.extraScripts :script}}
                 {{? script.source}}
-    <script defer class="extraScripts" src="{{=script.source}}"></script>
+                    <script defer class="extraScripts" src="{{=script.source}}"></script>
                 {{?? script.fileName}}
-    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/{{=script.fileName}}"></script>
+                    <script defer class="extraScripts" src="/{{=it.site.pathPrefix}}js/{{=script.fileName}}"></script>
                 {{?? script.value}}
-    <script class="extraScripts">{{=script.value}}</script>
-                    })
+                    <script class="extraScripts">{{=script.value}}</script>
                 {{?}}
             {{~}}
         {{?}}
-                {{? it.site.vkontakte.integrationEnabled }}
-    <script defer src="//vk.com/js/api/openapi.js"></script>
-                {{?}}
+        {{? it.site.vkontakte.integrationEnabled }}
+            <script defer src="//vk.com/js/api/openapi.js"></script>
+        {{?}}
         <link rel="apple-touch-icon" sizes="57x57" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-60x60.png">
         <link rel="apple-touch-icon" sizes="72x72" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-72x72.png">

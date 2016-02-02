@@ -1895,8 +1895,8 @@ lord.showImage = function(a, mimeType, width, height) {
         href = window.location.protocol + "//" + window.location.host + "/" + lord.data("sitePathPrefix")
             + lord.data("boardName", a, true) + "/src/" + lord.data("fileName", a, true);
         mimeType = lord.data("mimeType", a, true);
-        width = lord.data("width", a, true);
-        height = lord.data("height", a, true);
+        width = +lord.data("width", a, true) || (lord.deviceType("mobile") ? 500 : 400);
+        height = +lord.data("height", a, true);
     }
     if (lord.isAudioType(mimeType)) {
         lord.addToPlaylist(a, true);
@@ -1984,7 +1984,8 @@ lord.showImage = function(a, mimeType, width, height) {
     }
     lord.img.mimeType = mimeType;
     lord.img.width = width;
-    lord.img.height = height;
+    if (height)
+        lord.img.height = height;
     lord.imgWrapper.appendChild(lord.img);
     lord.setInitialScale(lord.imgWrapper, width, height);
     lord.resetScale(lord.imgWrapper);
@@ -2166,7 +2167,7 @@ lord.submitted = function(event, form) {
             var currentThreadNumber = lord.data("threadNumber");
             if (currentThreadNumber) {
                 lord.updateThread(true).then(function() {
-                    if (lord.getLocalObject("moveToPostOnReplyInThread", true))
+                    if (lord.getLocalObject("moveToPostOnReplyInThread", false))
                         lord.hash(result.number);
                 });
             } else {
@@ -2982,7 +2983,8 @@ lord.initializeOnLoadBaseBoard = function() {
         var html = "";
         c.threads.forEach(function(thread) {
             c.model.thread = thread;
-            html += "<hr />";
+            if (c.threadOrBoard)
+                html += "<hr />";
             var templateName = c.threadOrBoard ? "thread" : (c.archive ? "archiveThread" : "catalogThread");
             html += lord.template(templateName, c.model, true);
         });

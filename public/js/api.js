@@ -1286,8 +1286,8 @@ lord.createDocumentFragment = function(html) {
 lord.createStylesheetLink = function(href, prefix, id) {
     var link = lord.node("link");
     link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
-    if(typeof id == 'undefined') id = "stylesheet";
-    link.id = id;
+    if(typeof id !== 'undefined')
+        link.id = id;
     link.rel = "stylesheet";
     link.type = "text/css";
     lord.queryOne("head").appendChild(link);
@@ -1359,9 +1359,11 @@ lord.model = function(modelName, mustMerge) {
     }
 };
 
-lord.get = function(what) {
+lord.get = function(what, enableCache) {
     var xhr = new XMLHttpRequest();
-    xhr.open("get", "/" + lord.data("sitePathPrefix", lord.queryOne("head")) + what +'?_='+new Date().getTime(), false);
+    if (!enableCache)
+        what += ((what.indexOf("?") >= 0) ? "&" : "?") + '_='+new Date().getTime();
+    xhr.open("get", "/" + lordData.site.pathPrefix + what, false);
     xhr.send(null);
     if (xhr.status === 200)
         return (xhr.responseText != '') ? xhr.responseText : null;
@@ -1433,7 +1435,7 @@ lord.settings = function() {
         deviceType: lord.getCookie("deviceType", "auto"),
         timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
         captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
-        style: { name: lord.getLocalObject("style", "photon") },
+        style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
