@@ -45,16 +45,20 @@ lord.templates = {};
             selfcontained: false
         }, lord.partials);
     });
-    var style = lord.getLocalObject("style", "photon");
+    var style = lord.getLocalObject("style", "tumbach");
     var codeStyle = lord.getLocalObject("codeStyle", "default");
-    var styleHtml = "<link rel='stylesheet' type='text/css' href='/" + lord.models["base"].site.pathPrefix;
-    document.open();
-    document.write(styleHtml + "css/" + style +".css'>");
-    if (lord.deviceType("desktop"))
-        document.write("<style type='text/css'>input, select { font-size: 14.4px; }</style>");
-    document.write(styleHtml + "css/3rdparty/highlight.js/" + codeStyle + ".css'>");
-    document.write(styleHtml + "css/3rdparty/jquery-ui/" + style + "/jquery-ui.min.css'>");
-    document.close();
+    lord.createStylesheetLink(style + ".css", true, "stylesheet");
+    lord.createStylesheetLink("3rdparty/highlight.js/" + codeStyle + ".css", true);
+    lord.createStylesheetLink("3rdparty/jquery-ui/" + style + "/jquery-ui.min.css", true);
+})();
+
+if (document.readyState === "complete")
+    load_main();
+else
+    window.addEventListener("load", load_main, false);
+
+function load_main() {
+    window.removeEventListener("load", load_main, false);
     var path;
     var boardName;
     var pathname = window.location.pathname;
@@ -87,7 +91,7 @@ lord.templates = {};
             lord.appendExtrasToModel(model);
             var threads = contentModel.threads || [contentModel.thread];
             var html = "";
-            threads.forEach(function(thread) {
+            threads.forEach(function (thread) {
                 model.thread = thread;
                 html += "<hr />";
                 var templateName = (matchThread || matchBoard || matchPage) ? "thread"
@@ -100,4 +104,4 @@ lord.templates = {};
             console.log(err);
         }
     }
-})();
+}

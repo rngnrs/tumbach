@@ -19,6 +19,7 @@
                 <h1>
                     <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}">{{=it.board.title}}</a>
                 </h1>
+                <hr />
                 {{=it.tr.sortingModeLabelText}}
                 <select name="catalogSortingModeSelect" class="select"
                         onchange="location = '/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html?sort=' + this.options[this.selectedIndex].value;">
@@ -30,7 +31,6 @@
                             {{? it.sortMode == "bumps"}}selected="true"{{?}}>{{=it.tr.sortingModeBumpsLabelText}}</option>
                 </select>
             </div>
-            <hr />
             <hr />
             <div id="threads" class="catalogContainer">
                 <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">

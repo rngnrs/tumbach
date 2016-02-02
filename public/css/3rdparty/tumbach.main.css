@@ -366,8 +366,8 @@ outline:none;
      -webkit-transition: opacity .2s ease-in-out;
      transition: opacity .2s ease-in-out;
 }
-.scroll-window, #player-audio-list {
-    height: 100%;
+.scroll-window {
+    height: calc(100% - 31px);
     overflow-y: auto;
     position: relative;
     width: 100%;
@@ -1225,9 +1225,7 @@ input.buttonImage {
     padding: 5px 4px 5px 8px;
     border: 1px solid black;
     overflow-y: auto;
-    min-width: 200px;
-    min-height: 400px;
-    max-width: 600px;
+    min-height:100px;
     height: calc(100% - 42px);
 }
 .mobile .chatHistory {

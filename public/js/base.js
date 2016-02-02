@@ -760,8 +760,9 @@ lord.showChat = function(key) {
     lord.chatDialog = lord.template("chatDialog", model);
     lord.showDialog(lord.chatDialog, {
         title: "chatText",
-        height: 250,
+        height: 300,
         width: 555,
+        minHeight: 164,
         afterShow: function() {
             lord.checkChats();
             if (!key)
