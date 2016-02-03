@@ -922,11 +922,11 @@ lord.expandCollapseYoutubeVideo = function(a) {
         lord.addClass(a.parentNode, "expand");
         var iframe = lord.node("iframe");
         iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1";
-        iframe.allowfullscreen = true;
-        iframe.frameborder = "0px";
+        iframe.setAttribute('allowfullscreen', ''); /* iframe.allowfullscreen = true; <- Это не работает. Серьёзно? */
+        iframe.setAttribute('frameborder', 'none'); /* iframe.frameborder = "0px"; */
         iframe.height = "360";
         iframe.width = "640";
-        iframe.display = "block";
+        //iframe.display = "block";
         var parent = a.parentNode;
         var el = a.nextSibling;
         if (el) {
@@ -955,11 +955,11 @@ lord.expandCollapseCoubVideo = function(a) {
         var iframe = lord.node("iframe");
         iframe.src = "https://coub.com/embed/" + videoId
             + "?muted=false&autostart=false&originalSize=false&hideTopBar=false&startWithHD=false";
-        iframe.allowfullscreen = true;
-        iframe.frameborder = "0px";
+        iframe.setAttribute('allowfullscreen', ''); /* iframe.allowfullscreen = true; <- Это не работает. Серьёзно? */
+        iframe.setAttribute('frameborder', 'none'); /* iframe.frameborder = "0px"; */
         iframe.height = "360";
         iframe.width = "480";
-        iframe.display = "block";
+        //iframe.display = "block";
         var parent = a.parentNode;
         var el = a.nextSibling;
         if (el) {
