@@ -3,20 +3,20 @@ var NavigationCache = [],
     wrap = $(".wrap"),
     selector = " #wrapper > *";
 $(function(){
-    if (history.pushState && lord.getLocalObject('enableAjax', false)) {
-        NavigationCache[window.location.pathname] = $('#wrapper').html();
-        history.pushState({page: window.location.pathname, type: "page"}, document.title, window.location.pathname);
+    if (history.pushState)  {
+        NavigationCache[window.location.pathname] = $('body').html();
+        if (lord.getLocalObject('enableAjax', false))
+            history.pushState({page: window.location.pathname, type: "page"}, document.title, window.location.pathname);
         window.onpopstate = function (e) {
-            if (null != e.state && e.state.type.length > 0) {
-                if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0) {
+            console.log(e);
+            if (e.state.type.length > 0)
+                if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0)
                     getPage(NavigationCache[e.state.page], true)
                         .then(htmlToSel)
                         .then(setPage)
                         .catch(function (err) {
                             lord.showPopup(err, {type: "critical"});
                         });
-                }
-            }
         }
     }
     $("body").on("click", "a.ajax", function(e) {
@@ -55,7 +55,7 @@ function getPage(url, noHistory) {
             xhr.send();
         });
     }
-    return url;
+    return Promise.resolve(url);
 }
 function setPage(data) {
     var rt = $(data);
