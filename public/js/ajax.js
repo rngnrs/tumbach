@@ -1,14 +1,14 @@
 var NavigationCache = [],
     content = $("#wrapper"),
     wrap = $(".wrap"),
-    selector = " #wrapper > *";
+    selector = " #wrapper > *",
+    body = $("body");
 $(function(){
     if (history.pushState)  {
-        NavigationCache[window.location.pathname] = $('body').html();
+        NavigationCache[window.location.pathname] = body.html();
         if (lord.getLocalObject('enableAjax', false))
             history.pushState({page: window.location.pathname, type: "page"}, document.title, window.location.pathname);
         window.onpopstate = function (e) {
-            console.log(e);
             if (e.state.type.length > 0)
                 if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0)
                     getPage(NavigationCache[e.state.page], true)
@@ -19,7 +19,7 @@ $(function(){
                         });
         }
     }
-    $("body").on("click", "a.ajax", function(e) {
+    body.on("click", "a.ajax", function(e) {
         if (lord.getLocalObject('enableAjax', false)) {
             e.preventDefault();
             var url = $(this).attr("href");
@@ -50,6 +50,7 @@ function getPage(url, noHistory) {
             };
             xhr.onerror = function() {
                 console.info(url+": "+xhr.status);
+                content.fadeOut().html();
                 reject(lord.text("error0Text"));
             };
             xhr.send();

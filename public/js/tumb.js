@@ -1,5 +1,4 @@
 var tumb = tumb || {};
-lord.setLocalObject('enableAjax', false);
 tumb.dottie = function(floatElement, upperDiv) {
 	var mode = (upperDiv === undefined) ? 1 : 0;
 	var maxh = 650,
