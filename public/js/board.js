@@ -3191,4 +3191,5 @@ function load_b() {
     window.removeEventListener("load", load_b, false);
     lord.initializeOnLoadBaseBoard();
 }
-/*window.addEventListener("scroll", lord.scrollHandler, false);*/
+if(!lord.getLocalObject('enableAjax', false))
+    window.addEventListener("scroll", lord.scrollHandler, false);

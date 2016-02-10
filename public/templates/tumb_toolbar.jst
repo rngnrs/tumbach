@@ -5,7 +5,7 @@
             <input id="tab_2" type="radio" name="tab" />
             <div class="tabs_cont">
                 <div id="tab_c1">
-                    <div class="player-dropdown-row_labels color-prim">
+                    <div class="frameLabels color-prim">
                         <div class="rewind">
                             <i title="Предыдущая композиция" class="zmdi zmdi-fast-rewind zmdi-hc-2x"></i>
                         </div>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div id="tab_c2">
-                    <div class="player-dropdown-row_labels color-prim">
+                    <div class="frameLabels color-prim">
                         <div>
                             <input type="checkbox" name="mute" id="mute" />
                             <label for="mute" title="Отключить звук"><i class="zmdi zmdi-volume-off zmdi-hc-2x"></i></label>
@@ -103,8 +103,23 @@
                 })()
             </script>-->
     </aside>
-    <aside id="sidebar" class="sidebar open sidebar-stacked">
-        <div class="sidebar_form sidebar_form_auth">
+    <aside id="sidebar" class="sidebar sidebar-stacked">
+        <div class="frameLabels color-prim">
+            <div>
+                <i class="zmdi zmdi-filter-list zmdi-hc-2x" title="{{=it.tr.editSpellsText}}" onclick="lord.editSpells();return false;"></i>
+            </div>
+            <div>
+                <i class="zmdi zmdi-settings zmdi-hc-2x" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
+            </div>
+            <div>
+                <i class="zmdi zmdi-star-outline zmdi-hc-2x" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
+            </div>
+            <div>
+                <i class="zmdi zmdi-eye zmdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" data-name="switchMumWatchingButton"></i>
+            </div>
+            <div class="clr"></div>
+        </div>
+        <!--<div class="sidebar_form sidebar_form_auth">
             <div id="auth">
                 <div class="btn-group btn color-prim">
                     {{? it.user.loggedIn}}
@@ -123,10 +138,10 @@
                     {{?}}
                 </div>
             </div>
-        </div>
+        </div>-->
         <div class="tumb-menu">
             <nav>
-                <a id="list-item_home" class="list-item ajax" href="/{{=it.site.pathPrefix}}">{{=it.tr.toHomePageText}}</a>
+                <a class="list-item ajax" href="/{{=it.site.pathPrefix}}">{{=it.tr.toHomePageText}}</a>
                 {{~it.boards :board}}
                     {{? it.settings.hiddenBoards.indexOf(board.name) < 0 && !board.hidden}}
                         <span class="navbarItem navbarItemBoard">
@@ -148,6 +163,16 @@
                 <a class="list-item ajax" href="/faq.html">{{=it.tr.toFaqPageText}}</a>
                 {{? it.compareRegisteredUserLevels(it.user.level, "MODER") >= 0}}
                     <a class="list-item ajax" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
+                {{?}}
+                {{? it.user.loggedIn}}
+                <a href="javascript:void(0)" onclick="lord.doLogout(event, this.parent); return false;" class="list-item"
+                   {{? it.loginMessageText}}title="[{{=it.loginMessageText}}]"{{?}}>
+                    {{=it.tr.logoutText}}
+                </a>
+                {{??}}
+                <a href="/login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item ajax">
+                    {{=it.tr.loginText}}
+                </a>
                 {{?}}
             </nav>
         </div>

@@ -49,7 +49,7 @@ lord.templates = {};
     var codeStyle = lord.getLocalObject("codeStyle", "default");
     lord.createStylesheetLink(style + ".css", true, "stylesheet");
     lord.createStylesheetLink("3rdparty/highlight.js/" + codeStyle + ".css", true);
-    lord.createStylesheetLink("3rdparty/jquery-ui/" + style + "/jquery-ui.min.css", true);
+    lord.createStylesheetLink("3rdparty/jquery-ui/" + style + "/jquery-ui.min.css", true, "jqui-stylesheet");
 })();
 
 if (document.readyState === "complete")

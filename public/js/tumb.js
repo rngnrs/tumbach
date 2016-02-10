@@ -68,9 +68,9 @@ tumb.switchStyle = function(style) {
 };
 tumb.objSize =function(obj) {
 	var size = 0, key;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) size++;
-	}
+	for (key in obj)
+		if (obj.hasOwnProperty(key))
+			size++;
 	return size;
 };
 tumb.onLoad = function(){
@@ -87,19 +87,22 @@ tumb.onLoad = function(){
         ov = $('.overlay'),
         wr = $('.wrap'),
         width = $(window).width();
-    if(width < 1024){
-        wr.addClass('toggle');
+    if(width < 1024) {
+		wr.removeClass('toggle');
         sb.removeClass('sidebar-stacked open').addClass('sidebar-fixed-left');
     } else {
-        wr.removeClass('toggle');
+		wr.addClass('toggle');
         sb.addClass('sidebar-stacked open').removeClass('sidebar-fixed-left');
     }
     $('.kek').bind('click', function(){
-        if(width < 1024){
-            sb.toggleClass('open');
+		sb.toggleClass('open');
+        if(width < 1024)
 			ov.toggleClass('toggled');
-            return false;
-        }
+        else
+			wr.toggleClass('toggle');
+		if (sb2.hasClass('open') && width < 1024)
+			sb2.removeClass('open');
+		return false;
     });
     $('.overlay, .list-item').bind('click', function(){
         if (sb.hasClass('open') && width < 1024)
