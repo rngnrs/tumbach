@@ -3329,7 +3329,7 @@ lord.updateThread = function(silent) {
                 post.onmouseover = undefined;
                 lord.removeClass(post, "newPost");
             };
-            document.body.insertBefore(post, before);
+            before.parentNode.insertBefore(post, before);
         });
         var board = lord.model("board/" + boardName).board;
         var bumpLimitReached = c.sequenceNumber >= board.bumpLimit;

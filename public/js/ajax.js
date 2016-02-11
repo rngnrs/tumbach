@@ -9,7 +9,7 @@ $(function(){
         if (lord.getLocalObject('enableAjax', false))
             history.pushState({page: window.location.pathname, type: "page"}, document.title, window.location.pathname);
         window.onpopstate = function (e) {
-            if (e.state.type.length > 0)
+            if (e.state && e.state.type.length > 0)
                 if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0)
                     getPage(NavigationCache[e.state.page], true)
                         .then(htmlToSel)
