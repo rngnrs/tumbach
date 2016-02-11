@@ -45,63 +45,19 @@ lord.templates = {};
             selfcontained: false
         }, lord.partials);
     });
-    var style = lord.getLocalObject("style", "tumbach");
-    var codeStyle = lord.getLocalObject("codeStyle", "default");
-    lord.createStylesheetLink(style + ".css", true, "stylesheet");
-    lord.createStylesheetLink("3rdparty/highlight.js/" + codeStyle + ".css", true);
-    lord.createStylesheetLink("3rdparty/jquery-ui/" + style + "/jquery-ui.min.css", true, "jqui-stylesheet");
+    var settings = lord.settings();
+    if (lord.deviceType("desktop")) {
+        var css = "input, select { font-size: 14.4px; }";
+        var head = lord.queryOne("head");
+        var style = lord.node("style");
+        style.type = "text/css";
+        if (style.styleSheet)
+            style.styleSheet.cssText = css;
+        else
+            style.appendChild(lord.node("text", css));
+        head.appendChild(style);
+    }
+    lord.createStylesheetLink(settings.style.name + ".css", true, "stylesheet");
+    lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
+    lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
 })();
-
-if (document.readyState === "complete")
-    load_main();
-else
-    window.addEventListener("load", load_main, false);
-
-function load_main() {
-    window.removeEventListener("load", load_main, false);
-    var path;
-    var boardName;
-    var pathname = window.location.pathname;
-    var matchThread = pathname.match(/\/(([^\/])+\/(res|arch)\/\d+)\.html$/i);
-    var matchCatalog = pathname.match(/\/(([^\/])+\/catalog)\.html$/i);
-    var matchArchive = pathname.match(/\/(([^\/])+\/archive)\.html$/i);
-    var matchPage = pathname.match(/\/(([^\/])+\/\d+)\.html$/i);
-    var matchBoard = pathname.match(/\/([^\/\.]+)(\/)?$/i);
-    if (matchThread) {
-        path = matchThread[1] + ".json";
-        boardName = matchThread[2];
-    } else if (matchCatalog) {
-        path = matchCatalog[1] + ".json" + (window.location.search || "?sort=date");
-        boardName = matchCatalog[2];
-    } else if (matchArchive) {
-        path = matchArchive[1] + ".json";
-        boardName = matchArchive[2];
-    } else if (matchPage) {
-        path = matchPage[1] + ".json";
-        boardName = matchPage[2];
-    } else if (matchBoard) {
-        path = matchBoard[1] + "/0.json";
-        boardName = matchBoard[1];
-    }
-    if (path) {
-        try {
-            var contentModel = JSON.parse(lord.get(path));
-            var model = lord.model(["base", "tr", "boards", "board/" + boardName], true);
-            model.settings = lord.settings();
-            lord.appendExtrasToModel(model);
-            var threads = contentModel.threads || [contentModel.thread];
-            var html = "";
-            threads.forEach(function (thread) {
-                model.thread = thread;
-                html += "<hr />";
-                var templateName = (matchThread || matchBoard || matchPage) ? "thread"
-                    : (matchArchive ? "archiveThread" : "catalogThread");
-                html += lord.template(templateName, model, true);
-            });
-            lord._contentModel = contentModel;
-            lord._contentHtml = html;
-        } catch (err) {
-            console.log(err);
-        }
-    }
-}
