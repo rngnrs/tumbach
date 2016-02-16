@@ -1,28 +1,31 @@
 var tumb = tumb || {};
 tumb.dottie = function(floatElement, upperDiv) {
-	var mode = (upperDiv === undefined) ? 1 : 0;
-	var maxh = 650,
+	var mode = (upperDiv === undefined) ? 1 : 0,
+		maxh = 650,
 	    floatElement = $(floatElement),
 		upperDiv = $(upperDiv),
-		wrap = $('.wrap');
-	var height = (mode === 1) ? 0 : $(window).height()-$(floatElement).height();
+		wrap = $('.wrap'),
+		height = (mode === 1) ? 0 : $(window).height()-floatElement.height();
 	if(height < maxh && mode === 0)
 		height = maxh;
 	else
 		upperDiv.css({'height':height+'px'});
-	if(!localStorage["scroll"])
+	if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location) {
 		localStorage["scroll"] = height;
+		localStorage["scrollPage"] = window.location;
+	}
 	window.onscroll = function() {
 		if (window.scrollY > height) {
-			if(localStorage["scroll"]<$(document).scrollTop()) localStorage["scroll"] = $(document).scrollTop();
+			if(localStorage["scroll"] < $(document).scrollTop())
+				localStorage["scroll"] = $(document).scrollTop();
 			if (floatElement.hasClass('default')) {
 				floatElement.removeClass("default").addClass("fixed");
-				$(wrap).css({'padding-top':$(floatElement).height()+$(wrap).css('padding-top').replace(/[^-d.]/g, '')+'px'});
+				wrap.css({'padding-top':floatElement.height()+wrap.css('padding-top').replace(/[^-d.]/g, '')+'px'});
 			}
 		} else {
 			if (floatElement.hasClass('fixed')) {
 				floatElement.removeClass("fixed").addClass("default");
-				$(wrap).css({'padding-top':''});
+				wrap.css({'padding-top':''});
 			}
 		}
 	};
@@ -42,22 +45,6 @@ tumb.slidy = function(el) {
 			scrollTop: 0
 		}, 500);
 		e.preventDefault();
-	  }
-	});
-};
-/** @deprecated ? */
-tumb.clicky = function(el) {
-	$(el).bind('click', function () {
-	  if($(document).scrollTop() <= ($(window).height()/2)) {//is it the top of this page?
-		$('body').stop().animate({
-			scrollTop: localStorage["scroll"]
-		}, 500);
-		event.preventDefault();
-	  } else { //oh no, it isn't.
-		$('body').stop().animate({
-			scrollTop: 0
-		}, 500);
-		event.preventDefault();
 	  }
 	});
 };
