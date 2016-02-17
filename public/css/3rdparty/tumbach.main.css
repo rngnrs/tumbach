@@ -76,14 +76,18 @@ body {
     min-width: 210px;
     overflow: hidden;
     transform: translate3d(-210px, 0, 0);
-    transition: transform .2s cubic-bezier(.4,0,1,1),visibility .2s;
     visibility: hidden;
 }
 .sidebar.open {
     width: 210px;
     transform: translate3d(0, 0, 0);
-    transition: transform .3s cubic-bezier(.4,0,1,1),visibility .3s;
     visibility: visible;
+}
+.sidebar.transition {
+     transition: transform .2s cubic-bezier(.4,0,1,1),visibility .2s;
+ }
+.sidebar.transition.open {
+    transition: transform .3s cubic-bezier(.4,0,1,1),visibility .3s;
 }
 .sidebar-fixed-left,
 .sidebar-fixed-right,
@@ -181,16 +185,20 @@ a {
 .kek:hover {
     background: rgba(0,0,0,.25);
 }
+.wrap {
+     position: relative;
+     width: 100%;
+     left: 0;
+ }
 .wrap.toggle {
     width: calc(100% - 210px);
     left: 210px;
-    transition: left .3s cubic-bezier(.4,0,1,1), width .3s cubic-bezier(.4,0,1,1);
 }
-.wrap {
-    position: relative;
+.wrap.transition {
     transition: left .2s cubic-bezier(.4,0,1,1), width .2s cubic-bezier(.4,0,1,1);
-    width: 100%;
-    left: 0;
+}
+.wrap.transition.toggle {
+    transition: left .3s cubic-bezier(.4,0,1,1), width .3s cubic-bezier(.4,0,1,1);
 }
 .wrappie {
 position:relative;
@@ -1055,7 +1063,7 @@ ul.tabWidget > li > a {
     overflow-x: auto;
 }
 .searchActionSelect {
-    width: 100px;
+    width: 111px;
 }
 .mobile .searchActionSelect {
     width: 50px;

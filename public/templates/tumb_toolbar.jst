@@ -1,5 +1,5 @@
 <div>
-    <aside id="sidebar2" class="sidebar sidebar-fixed-right">
+    <aside id="sidebar2" class="sidebar sidebar-fixed-right transition">
         <section class="tabs">
             <input id="tab_1" type="radio" name="tab" checked="checked" />
             <input id="tab_2" type="radio" name="tab" />
@@ -119,26 +119,6 @@
             </div>
             <div class="clr"></div>
         </div>
-        <!--<div class="sidebar_form sidebar_form_auth">
-            <div id="auth">
-                <div class="btn-group btn color-prim">
-                    {{? it.user.loggedIn}}
-                    <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
-                          enctype="application/x-www-form-urlencoded" class="inlineForm"
-                          >
-                        <input type="hidden" name="source" value="{{=it.path}}" />
-                        <input class="btn-emb" type="submit" name="auth" value="{{=it.tr.logoutText}}"
-                               onclick="lord.doLogout(event, this.parent); return false;"
-                               title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"/>
-                    </form>
-                    {{??}}
-                        <a href="/login.html" onclick="lord.redirectToLoginPage();return false;" class="btn-center float-l ajax">
-                            <input class="btn-emb" type="submit" name="auth" value="{{=it.tr.loginText}}" />
-                        </a>
-                    {{?}}
-                </div>
-            </div>
-        </div>-->
         <div class="tumb-menu">
             <nav>
                 <a class="list-item ajax" href="/{{=it.site.pathPrefix}}">{{=it.tr.toHomePageText}}</a>

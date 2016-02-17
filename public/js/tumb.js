@@ -60,44 +60,60 @@ tumb.objSize =function(obj) {
 			size++;
 	return size;
 };
+tumb.toggleFrame = function(toggle) {
+	var hc = tumb.go.sb.hasClass('open');
+	if(!toggle)
+		setTimeout(function() {
+			tumb.go.wr.addClass("transition");
+			tumb.go.sb.addClass("transition");
+		}, 100);
+	if(toggle || (lord.getLocalObject("showFrame", lord.deviceType("desktop")) != hc)) {
+		if((tumb.go.width < 1024 || lord.deviceType("mobile")) && !toggle)
+			return;
+		else
+			lord.setLocalObject("showFrame", !hc);
+		if(tumb.go.width < 1024) {
+			tumb.go.ov.toggleClass('toggled');
+			tumb.go.sb.removeClass('sidebar-stacked').addClass('sidebar-fixed-left');
+			if (tumb.go.sb2.hasClass('open'))
+				tumb.go.sb2.removeClass('open');
+		} else {
+			tumb.go.wr.toggleClass('toggle');
+			tumb.go.sb.addClass('sidebar-stacked').removeClass('sidebar-fixed-left');
+		}
+		tumb.go.sb.toggleClass('open');
+		return hc;
+	}
+	return false;
+};
 tumb.onLoad = function(){
+	tumb.go = {
+		sb: $('#sidebar'),
+		sb2: $('#sidebar2'),
+		ov: $('.overlay'),
+		wr: $('.wrap'),
+		width: $(window).width()
+	};
     $('.noselect').attr('unselectable', 'on')
         .css('user-select', 'none')
         .on('selectstart', false);
     $('#style-switcher').change(function() {
         tumb.switchStyle(this.value);
     });
+	tumb.toggleFrame();
     tumb.dottie('header');
     tumb.slidy('.kek');
-    var sb = $('#sidebar'),
-        sb2 = $('#sidebar2'),
-        ov = $('.overlay'),
-        wr = $('.wrap'),
-        width = $(window).width();
-    if(width < 1024) {
-		wr.removeClass('toggle');
-        sb.removeClass('sidebar-stacked open').addClass('sidebar-fixed-left');
-    } else {
-		wr.addClass('toggle');
-        sb.addClass('sidebar-stacked open').removeClass('sidebar-fixed-left');
-    }
     $('.kek').bind('click', function(){
-		sb.toggleClass('open');
-        if(width < 1024)
-			ov.toggleClass('toggled');
-        else
-			wr.toggleClass('toggle');
-		if (sb2.hasClass('open') && width < 1024)
-			sb2.removeClass('open');
+		tumb.toggleFrame(true);
 		return false;
     });
     $('.overlay, .list-item').bind('click', function(){
-        if (sb.hasClass('open') && width < 1024)
-	        sb.removeClass('open');
-        sb2.removeClass('open');
-        ov.removeClass('toggled');
+        if (tumb.go.sb.hasClass('open') && tumb.go.width < 1024)
+			tumb.go.sb.removeClass('open');
+		tumb.go.sb2.removeClass('open');
+		tumb.go.ov.removeClass('toggled');
     });
     $('.player-menu').bind('click', function() {
-        sb2.toggleClass('open');
+		tumb.go.sb2.toggleClass('open');
     });
 };
