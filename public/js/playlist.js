@@ -211,7 +211,7 @@ var audio = new Audio(),
         },
         playAudio: function(id, play) {
             if (!this.inited) {
-                this.init(null, true);
+                this.idle();
                 this.initAudioList();
             }
             if (typeof play == "undefined")

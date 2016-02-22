@@ -447,11 +447,11 @@ div.scroll-window {
     background: rgba(255, 255, 255, .9);
 }
 #tplayer .pmain {
-    width: calc(100% - 70px);
+    width: calc(100% - 75px);
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 2px 3px;
+    padding: 2px 5px;
 }
 
 /* MATERIAL REPLACEMENT */
