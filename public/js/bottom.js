@@ -47,7 +47,7 @@ lord.templates = {};
     });
     var settings = lord.settings();
     if (lord.deviceType("desktop")) {
-        var css = "input, select { font-size: 14.4px; }";
+        var css = "input, select { font-size: 14px; }";
         var head = lord.queryOne("head");
         var style = lord.node("style");
         style.type = "text/css";

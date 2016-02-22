@@ -114,12 +114,12 @@ var audio = new Audio(),
         wasAjax: false,
         init: function(noRender, notIdle) {
             if (!this.inited) {
-                if (LO.get("enableAjax", false))
+                if (!notIdle)
+                    this.idle();
+                else if (LO.get("enableAjax", false))
                     this.wasAjax = true;
                 else
                     LO.set("enableAjax", true);
-                if (!notIdle)
-                    this.idle();
                 if (!noRender)
                     this.playAudio(tumb.objSize(lord.currentTracks)-1, false);
                 this.inited = true;
@@ -139,10 +139,12 @@ var audio = new Audio(),
                 });
                 if (!this.wasAjax)
                     LO.set("enableAjax",false);
+                tumb.toggle.player(false);
                 this.inited = false;
             }
         },
         idle: function() {
+            tumb.toggle.player(true);
             if (this.inited) {
                 lord.id("tplayer").replaceChild(lord.template("player", lord.model(["base", "tr"], true)), lord.queryOne('div', lord.id("tplayer")));
             } else {
@@ -150,10 +152,10 @@ var audio = new Audio(),
                     model = lord.model(["base", "tr"], true);
                 if (pph)
                     pph.parentNode.replaceChild(lord.template("player", model), pph);
-                this.inited = true;
+                this.init(true,true);
             }
         },
-        initAudioList: function () {
+        initAudioList: function() {
             var ncont = "#player-audio-list",
                 pl = LO.get("playlist/trackList", "");
             $(document).off("click", ncont + " .track")
@@ -179,7 +181,7 @@ var audio = new Audio(),
                 Player.addTrack(key, track);
             });
         },
-        initRadio: function () {
+        initRadio: function() {
             var file = "/assets/radio.json",
                 ncont = "#player-radio-list",
                 cont = $(ncont),
@@ -207,9 +209,9 @@ var audio = new Audio(),
                     th.addClass("playing");
                 });
         },
-        playAudio: function (id, play) {
+        playAudio: function(id, play) {
             if (!this.inited) {
-                this.init();
+                this.init(null, true);
                 this.initAudioList();
             }
             if (typeof play == "undefined")
@@ -236,7 +238,7 @@ var audio = new Audio(),
             if (play)
                 this.play();
         },
-        playRadio: function (url, title) {
+        playRadio: function(url, title) {
             if (!this.inited)
                 Player.init(true);
             $("#player-line").hide();
@@ -267,7 +269,7 @@ var audio = new Audio(),
             this.pause();
             this.playRadio(LO.get("player.radio.last")["url"], LO.get("player.radio.last")["title"]);
         },
-        getVolume: function () {
+        getVolume: function() {
             var vol = LO.get("audioVideoVolume", 0.42);
             audio.volume = vol;
             $("#vol-line-active").width(vol * 100 + "%");
@@ -275,7 +277,7 @@ var audio = new Audio(),
                 LO.set("audioVideoVolume", vol);
             return vol;
         },
-        setVolume: function (p) {
+        setVolume: function(p) {
             var vol = p.vol,
                 ch = p.ch,
                 nul = (vol == 0),
@@ -291,12 +293,12 @@ var audio = new Audio(),
             if (lord.settings().rememberAudioVideoVolume)
                 if (undefined == ch && !nul) LO.set("audioVideoVolume", Math.ceil(vol * 100) / 100);
         },
-        parse: function (c) { /* -1<=c<=1 */
+        parse: function(c) { /* -1<=c<=1 */
             var cb = LO.get("player.shuffle", false),
                 ls = LO.get("playlist/trackList"),
                 l = ls.length-1; /*last_id*/
             if (l == -1)
-                return this.idle();//lord.id("tplayer").replaceChild(lord.template("player", lord.model(["base", "tr"], true)), lord.queryOne('div', lord.id("tplayer")));
+                return this.idle();
             if (cb && l > 1) {
                 var rnd = Math.floor(Math.random() * (l + 1));
                 while (LO.get("player.audio.last.id",0) == rnd) {

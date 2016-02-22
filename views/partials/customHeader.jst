@@ -1,17 +1,18 @@
 <header id="header" class="default">
-    <div class="logo">
+    <div class="float-l logo">
         <a href="/{{=it.site.pathPrefix}}" class="ajax"><div class="kek"></div></a>
     </div>
-    <div class="header_wrapper color-prim">
-        <div id="search" class="float-l">
-            <div id="searchPlaceholder" style="display: none;"></div>
+    <div class="header-wrapper color-prim">
+        <div class="header-wrapper_container">
+            <div id="search">
+                <div id="searchPlaceholder"></div>
+            </div>
+            <div id="tplayer">
+                <div id="tplayerPlaceholder"></div>
+            </div>
         </div>
-
-        <button class="float-r player-menu color-prim">
+        <button class="float-r player-menu">
             <i class="zmdi zmdi-playlist-audio zmdi-hc-2x"></i>
         </button>
-        <div class="float-r" id="tplayer">
-            <div id="tplayerPlaceholder"></div>
-        </div>
     </div>
 </header>
