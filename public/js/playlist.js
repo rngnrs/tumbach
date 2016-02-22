@@ -225,7 +225,8 @@ var audio = new Audio(),
                 return lord.showPopup("Ты втираешь мне какую-то дичь!",{type:"critical"});
             $("#player-line").show();
             $("#pl-title").html('<b class="cursorPointer" title="Ответить прикрепившему музыку" onclick=lord.quickReply(lord.id("'
-                +data["thread"]+'"));><u>&gt;&gt;' + data["boardName"] + '/' + data["thread"] + '</u></b><br/>' + title + '</div>');
+                +data["thread"]+'"));><u>&gt;&gt;' + data["boardName"] + '/' + data["thread"] + '</u></b><br/>' + title)
+                .prop("title", title.replace(/[\n\r] {2,}/g, ' '));
             $("#player-ctrl-forward").addClass("zmdi-fast-forward").removeClass("zmdi-replay");
             $.each($(".track"), function () {
                 $(this).removeClass("playing");

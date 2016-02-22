@@ -446,11 +446,16 @@ div.scroll-window {
 #lineloaded {
     background: rgba(255, 255, 255, .9);
 }
+#pl-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 88%;
+    height: 38px;
+    white-space: nowrap;
+}
 #tplayer .pmain {
     width: calc(100% - 75px);
     max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
     padding: 2px 5px;
 }
 
