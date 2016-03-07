@@ -3,87 +3,87 @@
       onsubmit="lord.submitted(event, this); return false;">
     <input type="hidden" name="boardName" value="{{=it.board.name}}" />
     {{? it.thread}}
-    <input type="hidden" name="threadNumber" value="{{=it.thread.number}}" />
+        <input type="hidden" name="threadNumber" value="{{=it.thread.number}}" />
     {{?}}
     <input type="hidden" name="captchaEngine" value="{{=it.settings.captchaEngine.id}}" />
     <input type="hidden" value="" name="fileHashes" />
     <table class="postFormTable">
         <tbody>
-        {{? it.customPostFormField && it.customPostFormField[0]}}
-        {{ out += it.customPostFormField[0](it); }}
-        {{?}}
-        <tr>
-            {{? it.minimalisticPostform()}}
-            <td class="postformField nowrap" colspan="2">
-                <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
-                       placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
-            </td>
-            {{??}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelEmail}}</b>
-            </td>
-            <td class="postformField">
-                <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email"
-                       class="postFormInput" />
-            </td>
+            {{? it.customPostFormField && it.customPostFormField[0]}}
+                {{ out += it.customPostFormField[0](it); }}
             {{?}}
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[10]}}
-        {{ out += it.customPostFormField[10](it); }}
-        {{?}}
-        <tr>
-            {{? it.minimalisticPostform()}}
-            <td class="postformField" colspan="2">
-                <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
-                       placeholder="{{=it.tr.postFormPlaceholderName}}" />
-            </td>
-            {{??}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelName}}</b>
-            </td>
-            <td class="postformField">
-                <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput" />
-            </td>
+            <tr>
+                {{? it.settings.minimalisticPostform}}
+                    <td class="postformField nowrap" colspan="2">
+                       <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
+                              placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
+                    </td>
+                {{??}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelEmail}}</b>
+                    </td>
+                    <td class="postformField">
+                        <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email"
+                               class="postFormInput" />
+                    </td>
+                {{?}}
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[10]}}
+                {{ out += it.customPostFormField[10](it); }}
             {{?}}
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[20]}}
-        {{ out += it.customPostFormField[20](it); }}
-        {{?}}
-        <tr>
-            {{? it.minimalisticPostform()}}
-            <td class="postformField" colspan="2">
-                <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
-                       class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderSubject}}" />
-            </td>
-            {{??}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelSubject}}</b>
-            </td>
-            <td class="postformField">
-                <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
-                       class="postFormInput" />
-            </td>
+            <tr>
+                {{? it.settings.minimalisticPostform}}
+                    <td class="postformField" colspan="2">
+                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
+                               placeholder="{{=it.tr.postFormPlaceholderName}}" />
+                    </td>
+                {{??}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelName}}</b>
+                    </td>
+                    <td class="postformField">
+                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput" />
+                    </td>
+                {{?}}
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[20]}}
+                {{ out += it.customPostFormField[20](it); }}
             {{?}}
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[30]}}
-        {{ out += it.customPostFormField[30](it); }}
-        {{?}}
-        <tr>
-            {{? it.minimalisticPostform()}}
-            <td class="postformField" colspan="2">
-                <div class="symbolCounterContainer postFormInput">
+            <tr>
+                {{? it.settings.minimalisticPostform}}
+                    <td class="postformField" colspan="2">
+                        <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
+                               class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderSubject}}" />
+                    </td>
+                {{??}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelSubject}}</b>
+                    </td>
+                    <td class="postformField">
+                        <input type="text" maxlength="{{=it.board.maxSubjectLength}}" name="subject"
+                               class="postFormInput" />
+                    </td>
+                {{?}}
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[30]}}
+                {{ out += it.customPostFormField[30](it); }}
+            {{?}}
+            <tr>
+                {{? it.settings.minimalisticPostform}}
+                    <td class="postformField" colspan="2">
+                        <div class="symbolCounterContainer postFormInput">
                             <textarea name="text" rows="10" cols="41"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       class="postFormTextarea"></textarea>
-                </div>
-            </td>
-            {{??}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelText}}</b>
-            </td>
-            <td class="postformField">
-                <div class="symbolCounterContainer postFormInput">
-                    <span class="symbolCounter"><span name="used">0</span>/{{=it.board.maxTextLength}}</span>
+                        </div>
+                    </td>
+                {{??}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelText}}</b>
+                    </td>
+                    <td class="postformField">
+                        <div class="symbolCounterContainer postFormInput">
+                            <span class="symbolCounter"><span name="used">0</span>/{{=it.board.maxTextLength}}</span>
                             <textarea name="text" rows="10" cols="41" class="postFormTextarea"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       {{? "mobile" != it.deviceType}}style="min-width: 400px;"{{?}}
@@ -93,7 +93,7 @@
                 {{?}}
             </tr>
             <tr>
-                {{? !it.minimalisticPostform()}}
+                {{? !it.settings.minimalisticPostform}}
                     <td class="postformLabel">
                         <a class="hidePostformMarkupButton" />
                         <a href="javascript:void(0);"
@@ -101,44 +101,53 @@
                            class="hidePostformRulesButton">{{? it.settings.hidePostformRules}}{{=it.tr.showPostformRulesText}}{{??}}{{=it.tr.hidePostformRulesText}}{{?}}</a>
                     </td>
                 {{?}}
-                <td {{? it.minimalisticPostform()}}colspan="2"{{?}} class="postformField submitContainer">
+                <td {{? it.settings.minimalisticPostform}}colspan="2"{{?}} class="postformField submitContainer">
                     <input type="submit" name="submit" class="button" value="{{=it.tr.postFormButtonSubmit}}" />
                 </td>
             </tr>
             {{? it.customPostFormField && it.customPostFormField[40]}}
                 {{ out += it.customPostFormField[40](it); }}
             {{?}}
-            {{? !it.minimalisticPostform()}}
+            {{? !it.settings.minimalisticPostform}}
                 <tr name="postformMarkup">
                     <td class="postformLabel">
                     </td>
                     <td class="postformMarkup">
-                        <span>
+                        <span id="markup">
                             {{? it.board.markupElements.indexOf("BOLD") >= 0}}
-                                <button class="button" onclick="lord.markup('b'); return false;" name="markupBold"
-                                        title="{{=it.tr.markupBold}}"><b>B</b></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/bold.png"
+                                       onclick="lord.markup('b'); return false;" name="markupBold"
+                                       title="{{=it.tr.markupBold}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("ITALICS") >= 0}}
-                                <button class="button" onclick="lord.markup('i'); return false;" name="markupItalics"
-                                        title="{{=it.tr.markupItalics}}"><i>i</i></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/italics.png"
+                                       onclick="lord.markup('i'); return false;" name="markupItalics"
+                                       title="{{=it.tr.markupItalics}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("STRIKED_OUT") >= 0}}
-                                <button class="button" onclick="lord.markup('s'); return false;"
-                                        name="markupStrikedOut" title="{{=it.tr.markupStrikedOut}}"><s>S</s></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/strikedout.png"
+                                       onclick="lord.markup('s'); return false;" name="markupStrikedOut"
+                                       title="{{=it.tr.markupStrikedOut}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("UNDERLINED") >= 0}}
-                                <button class="button" onclick="lord.markup('u'); return false;"
-                                        name="markupUnderlined" title="{{=it.tr.markupUnderlined}}"><u>U</u></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/underlined.png"
+                                       onclick="lord.markup('u'); return false;" name="markupUnderlined"
+                                       title="{{=it.tr.markupUnderlined}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("SPOILER") >= 0}}
-                                <button class="button" onclick="lord.markup('spoiler'); return false;"
-                                        name="markupSpoiler"
-                                        title="{{=it.tr.markupSpoiler}}"><span class="spoiler">Спойлер</button>
+                                <button onclick="lord.markup('spoiler'); return false;" name="markupSpoiler"
+                                        title="{{=it.tr.markupSpoiler}}"
+                                        class="spoilerMarkupButton bordered"><span class="spoiler">ab</span></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("QUOTATION") >= 0}}
-                                <button class="button" onclick="lord.markup('>'); return false;"
-                                        title="{{=it.tr.markupQuotation}}"
-                                        name="markupQuotation"><span class="quoatation">&gt;</span></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/quotation.png"
+                                       onclick="lord.markup('>'); return false;" name="markupQuotation"
+                                       title="{{=it.tr.markupQuotation}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("UNORDERED_LIST") >= 0}}
                                 <input type="image" src="/{{=it.site.pathPrefix}}img/markup/ul.png"
@@ -193,18 +202,21 @@
                                        height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("SUBSCRIPT") >= 0}}
-                                <button class="button" onclick="lord.markup('sub'); return false;"
-                                        title="{{=it.tr.markupSubscript}}"
-                                        name="markupSubscript">H<sub>2</sub>O</button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/subscript.png"
+                                       onclick="lord.markup('sub'); return false;" name="markupSubscript"
+                                       title="{{=it.tr.markupSubscript}}" class="buttonImage bordered" width="36"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("SUPERSCRIPT") >= 0}}
-                                <button class="button" onclick="lord.markup('sup'); return false;"
-                                        title="{{=it.tr.markupSuperscript}}"
-                                        name="markupSuperscript">X<sup>3</sup></button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/superscript.png"
+                                       onclick="lord.markup('sup'); return false;" name="markupSuperscript"
+                                       title="{{=it.tr.markupSuperscript}}" class="buttonImage bordered" width="20"
+                                       height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("URL") >= 0}}
-                                <button class="button" onclick="lord.markup('url'); return false;"
-                                        title="{{=it.tr.markupUrl}}" name="markupUrl">http://</button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/url.png"
+                                       onclick="lord.markup('url'); return false;" name="markupUrl"
+                                       title="{{=it.tr.markupUrl}}" class="buttonImage bordered" width="40" height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("CODE") >= 0}}
                                 <br />
@@ -215,8 +227,10 @@
                                         <option value="{{=lang.id}}">{{=lang.name}}</option>
                                     {{~}}
                                 </select>
-                                <button class="button" onclick="lord.markup('code'); return false;" name="markupCode"
-                                        title="{{=it.tr.markupCode}}">[code]</button>
+                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/code.png"
+                                       onclick="lord.markup('code'); return false;" name="markupCode"
+                                       title="{{=it.tr.markupCode}}" class="buttonImage bordered" width="40"
+                                       height="20" />
                             {{?}}
                         </span>
                     </td>
@@ -226,12 +240,12 @@
                 {{ out += it.customPostFormField[50](it); }}
             {{?}}
             <tr>
-                {{? !it.minimalisticPostform()}}
+                {{? !it.settings.minimalisticPostform}}
                     <td class="postformLabel">
                         <b>{{=it.tr.postFormLabelMarkupMode}}</b>
                     </td>
                 {{?}}
-                <td class="postformField" {{? it.minimalisticPostform()}}colspan="2"{{?}}>
+                <td class="postformField" {{? it.settings.minimalisticPostform}}colspan="2"{{?}}>
                     <select name="markupMode" class="select">
                         {{~it.markupModes :mode}}
                             <option {{? mode.name == it.settings.markupMode}}selected="true"{{?}}
@@ -244,12 +258,12 @@
                 {{ out += it.customPostFormField[60](it); }}
             {{?}}
             <tr>
-                {{? !it.minimalisticPostform()}}
+                {{? !it.settings.minimalisticPostform}}
                     <td class="postformLabel">
                         <b>{{=it.tr.postFormLabelOptions}}</b>
                     </td>
                 {{?}}
-                <td class="postformField" {{? it.minimalisticPostform()}}colspan="2"{{?}}>
+                <td class="postformField" {{? it.settings.minimalisticPostform}}colspan="2"{{?}}>
                     {{? it.customPostFormOption && it.customPostFormOption[0]}}
                         {{ out += it.customPostFormOption[0](it); }}
                     {{?}}
@@ -268,92 +282,92 @@
                             {{ out += it.customPostFormOption[20](it); }}
                         {{?}}
                     </span>
-                {{? it.customPostFormOption && it.customPostFormOption[30]}}
-                {{ out += it.customPostFormOption[30](it); }}
-                {{?}}
-                {{? it.compareRegisteredUserLevels(it.user.level, "MODER") >= 0}}
-                <a href="javascript:void(0);" onclick="lord.markup('raw-html'); return false;"
-                   style="display: inline-block; vertical-align: top;" title='{{=it.tr.markupHtml}}'
-                   name="markupHtml"><img src="/{{=it.site.pathPrefix}}img/html.png" class="signImage"></a>
-                {{?}}
-                {{? it.customPostFormOption && it.customPostFormOption[40]}}
-                {{ out += it.customPostFormOption[40](it); }}
-                {{?}}
-                <a href="javascript:void(0);" onclick="lord.addToDrafts(this); return false;" name="optionDraft"
-                   style="display: inline-block; vertical-align: top;"
-                   title="{{=it.tr.addToDraftsText}}"><img src="/{{=it.site.pathPrefix}}img/draft.png"
-                                                           class="signImage"></a>
-                {{? it.customPostFormOption && it.customPostFormOption[50]}}
-                {{ out += it.customPostFormOption[50](it); }}
-                {{?}}
-            </td>
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[70]}}
-        {{ out += it.customPostFormField[70](it); }}
-        {{?}}
-        {{? it.board.maxFileCount > 0}}
-        <tr>
-            {{? !it.minimalisticPostform()}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormInputFile}}</b>
-            </td>
+                    {{? it.customPostFormOption && it.customPostFormOption[30]}}
+                        {{ out += it.customPostFormOption[30](it); }}
+                    {{?}}
+                    {{? it.user.isModer(it.board.name)}}
+                        <a href="javascript:void(0);" onclick="lord.markup('raw-html'); return false;"
+                           style="display: inline-block; vertical-align: top;" title='{{=it.tr.markupHtml}}'
+                           name="markupHtml"><img src="/{{=it.site.pathPrefix}}img/html.png" class="signImage"></a>
+                    {{?}}
+                    {{? it.customPostFormOption && it.customPostFormOption[40]}}
+                        {{ out += it.customPostFormOption[40](it); }}
+                    {{?}}
+                    <a href="javascript:void(0);" onclick="lord.addToDrafts(this); return false;" name="optionDraft"
+                       style="display: inline-block; vertical-align: top;"
+                       title="{{=it.tr.addToDraftsText}}"><img src="/{{=it.site.pathPrefix}}img/draft.png"
+                                                               class="signImage"></a>
+                    {{? it.customPostFormOption && it.customPostFormOption[50]}}
+                        {{ out += it.customPostFormOption[50](it); }}
+                    {{?}}
+                </td>
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[70]}}
+                {{ out += it.customPostFormField[70](it); }}
             {{?}}
-            <td class="postformField" {{? it.minimalisticPostform()}}colspan="2"{{?}}>
-                {{#def.fileInputs}}
-            </td>
-        </tr>
-        {{?}}
-        {{? it.customPostFormField && it.customPostFormField[80]}}
-        {{ out += it.customPostFormField[80](it); }}
-        {{?}}
-        <tr>
-            {{? it.minimalisticPostform()}}
-            <td class="postformField" colspan="2">
-                <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
-                       class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderPassword}}" />
-            </td>
-            {{??}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelPassword}}</b>
-            </td>
-            <td class="postformField">
-                <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
-                       class="postFormInput" />
-            </td>
+            {{? it.board.maxFileCount > 0}}
+                <tr>
+                    {{? !it.settings.minimalisticPostform}}
+                        <td class="postformLabel">
+                            <b>{{=it.tr.postFormInputFile}}</b>
+                        </td>
+                    {{?}}
+                    <td class="postformField" {{? it.settings.minimalisticPostform}}colspan="2"{{?}}>
+                        {{#def.fileInputs}}
+                    </td>
+                </tr>
             {{?}}
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[90]}}
-        {{ out += it.customPostFormField[90](it); }}
-        {{?}}
-        <tr>
-            {{? !it.minimalisticPostform()}}
-            <td class="postformLabel">
-                <b>{{=it.tr.postFormLabelCaptcha}}</b>
-            </td>
+            {{? it.customPostFormField && it.customPostFormField[80]}}
+                {{ out += it.customPostFormField[80](it); }}
             {{?}}
-            <td id="captchaContainer" class="postformField">
-                {{? !it.board.captchaEnabled}}
-                <span class="noCaptchaText">{{=it.tr.noCaptchaText}}</span>
+            <tr>
+                {{? it.settings.minimalisticPostform}}
+                    <td class="postformField" colspan="2">
+                        <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
+                               class="postFormInput" placeholder="{{=it.tr.postFormPlaceholderPassword}}" />
+                    </td>
+                {{??}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelPassword}}</b>
+                    </td>
+                    <td class="postformField">
+                        <input type="password" maxlength="{{=it.board.maxPasswordLength}}" name="password"
+                               class="postFormInput" />
+                    </td>
                 {{?}}
-            </td>
-        </tr>
-        {{? it.customPostFormField && it.customPostFormField[100]}}
-        {{ out += it.customPostFormField[100](it); }}
-        {{?}}
-        {{? !it.minimalisticPostform()}}
-        <tr>
-            <td colspan="2" class="postformRules">
-                <ul {{? it.settings.hidePostformRules}}style="display: none;"{{?}}>
-                    {{~it.postformRules: rule}}
-                    <li>{{=rule}}</li>
-                    {{~}}
-                </ul>
-            </td>
-        </tr>
-        {{?}}
-        {{? it.customPostFormField && it.customPostFormField[110]}}
-        {{ out += it.customPostFormField[110](it); }}
-        {{?}}
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[90]}}
+                {{ out += it.customPostFormField[90](it); }}
+            {{?}}
+            <tr>
+                {{? !it.settings.minimalisticPostform}}
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelCaptcha}}</b>
+                    </td>
+                {{?}}
+                <td id="captchaContainer" class="postformField">
+                    {{? !it.board.captchaEnabled}}
+                        <span class="noCaptchaText">{{=it.tr.noCaptchaText}}</span>
+                    {{?}}
+                </td>
+            </tr>
+            {{? it.customPostFormField && it.customPostFormField[100]}}
+                {{ out += it.customPostFormField[100](it); }}
+            {{?}}
+            {{? !it.settings.minimalisticPostform}}
+                <tr>
+                    <td colspan="2" class="postformRules">
+                        <ul {{? it.settings.hidePostformRules}}style="display: none;"{{?}}>
+                            {{~it.postformRules: rule}}
+                                <li>{{=rule}}</li>
+                            {{~}}
+                        </ul>
+                    </td>
+                </tr>
+            {{?}}
+            {{? it.customPostFormField && it.customPostFormField[110]}}
+                {{ out += it.customPostFormField[110](it); }}
+            {{?}}
         </tbody>
     </table>
 </form>

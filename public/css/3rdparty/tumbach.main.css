@@ -29,7 +29,7 @@ body {
     border-radius: 4px;
     color: #FFF;
     content: attr(data-tooltip);
-    top: 24px;
+    top: 36px;
     left: 0;
     min-width: 100%;
     margin: 0 auto;
@@ -108,28 +108,19 @@ body {
 }
 .header-wrapper_container > div {
     position: relative;
-    width: 100%;
+    width: calc(100% - 32px);
     margin: 0 auto;
 }
 .header-wrapper {
     position: absolute;
     width: 100%;
     height: 100%;
+    padding-left: 50px;
+    box-sizing: border-box;
 }
 .header-wrapper_container {
-    position: absolute;
-    left: 50px;
-    right: 32px;
-    height: 100%;
-    opacity: 1;
-}
-#search {
-    padding: 14px 0;
-    max-width: 350px;
-}
-#search-field {
     position: relative;
-    width: 60%;
+    opacity: 1;
 }
 header i, .kek {
     transition: .2s background;
@@ -142,7 +133,7 @@ header i:hover,
 .tumb-menu {
     position: relative;
     width: 100%;
-    height: calc(100vh - 131px);
+    height: calc(100vh - 129px);
     overflow-y: auto;
 }
 .list-item {
@@ -176,14 +167,6 @@ a {
     position:relative;
     height:100%;
     z-index:initial;
-}
-.desktop .logo-big {
-    width:150px;
-    min-height:150px;
-}
-.mobile .logo-big {
-    width:75px;
-    height:75px;
 }
 .kek {
     position:absolute;
@@ -223,10 +206,6 @@ a {
 .titl {
     position: relative;
     text-align: center;
-}
-.desktop .titl {
-    padding: 42px 0;
-    font-size: 50px;
 }
 .float-l {
     float:left;
@@ -282,15 +261,6 @@ footer:after {
     transition: .1s background;
     padding: 2px 10px;
 }
-.track {
-    box-sizing: border-box;
-    padding: 7px;
-    cursor:pointer;
-    transition: background .1s;
-}
-.track.playing {
-    background-color: rgba(0,0,0,.2);
-}
 .track > .float-l {
     width: 187px;
     text-overflow: ellipsis;
@@ -311,7 +281,6 @@ footer:after {
     width: 100%;
     overflow: hidden;
     text-align: center;
-    border-bottom: 1px solid #bbb;
     font-weight: bold;
 }
 .frameLabels div {
@@ -376,7 +345,7 @@ footer:after {
     width: 100%;
 }
 div.scroll-window {
-    height: calc(100% - 31px);
+    height: calc(100% - 29px);
     font-size: 14px;
 }
 #tab_1:checked ~ .tabs_cont #tab_c1,
@@ -400,9 +369,6 @@ div.scroll-window {
     width: 32px;
     right:0;
 }
-/*#tplayer .controls {
-    width: 67px;
-}*/
 #tplayer i, .player-menu i {
     padding: 0 5px;
     height: 50px;
@@ -415,49 +381,22 @@ div.scroll-window {
     top: 50%;
     margin-top: -.5em;
 }
-#player-line, #vol-line {
-    height: 5px;
-    border-radius: 5px;
-    position: relative;
-    background: #999;
-    cursor: pointer;
-}
-#lineloaded, #lineplayed, #vol-line-active {
-    position: absolute;
-    width: 0;
-    height: 100%;
-    max-width:100%;
-    border-radius: 5px;
-    transition: width .5s ease;
-    -webkit-transition: width .5s ease;
-}
-/*#tplayer .line-wrap {
-    padding-top: 5px;
-}*/
-.audio-ball {
-    float: right;
-    width: 9px;
-    height: 9px;
-    border-radius: 5px;
-    margin: -2px -6px 0 0;
-    background: #444;
-    display: block;
-}
-#lineloaded {
-    background: rgba(255, 255, 255, .9);
-}
-#pl-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 88%;
-    height: 38px;
-    white-space: nowrap;
-}
 #tplayer .pmain {
     width: calc(100% - 75px);
     max-width: 100%;
     padding: 2px 5px;
 }
+
+
+header .searchAction {
+    margin-top: 6px;
+    float: left;
+}
+
+#tplayer {
+    float: right;
+}
+
 
 /* MATERIAL REPLACEMENT */
 div.card-paper {
@@ -471,25 +410,19 @@ h1 {
     position:fixed;
     top:0;bottom:0;
     left:0;right:0;
-    transition:.3s all;
+    transition: .3s all;
     visibility: hidden;
 }
 .overlay.toggled {
     visibility: visible;
     background: rgba(0,0,0,.4);
-}
-.mobile #search-field {
-    width: 100px;
-}
-.mobile .titl {
-    padding: 23px 0;
-    font-size: 23px;
+    z-index: 1;
 }
 .list-item .buttonImage {
     position: absolute;
     right: 12px;
     padding: 4px;
-    top:12px;
+    top: 12px;
 }
 .tabWidget {
     float: left;
@@ -523,16 +456,10 @@ ul.tabWidget > li > a {
     margin: 0 !important;
 }
 
+
+
+
 /* COMMON FOR ALL STYLES */
-body.desktop {
-    font-size: 15px;
-}
-body.mobile {
-    -moz-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    font-size: 12px;
-}
 .popup {
     position: fixed;
     top: 77px;
@@ -627,9 +554,6 @@ blockquote {
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
-}
-blockquote.mobile {
-    max-width: 550px;
 }
 blockquote.expand {
     max-height: none;
@@ -793,11 +717,6 @@ blockquote.expand {
     margin-left: 4px;
     font-size: 1em;
 }
-.navbar.navbarFrame.mobile {
-/*    text-align: left;
-    margin-left: 4px;*/
-    font-size: 1.2em;
-}
 .navbarItem, .postHeader, .postFileName, .postFileSize {
     white-space: nowrap;
 }
@@ -824,14 +743,8 @@ blockquote.expand {
 .thread.hidden > .threadPosts {
     display: none;
 }
-.postHeader.desktop {
-    white-space: nowrap;
-}
 .postFileSize {
     font-size: .8em;
-}
-.postFileSize.mobile {
-    font-size: .6em;
 }
 .postFileFile > a > img.mumWatching:not(:hover) {
     opacity: .05;
@@ -841,12 +754,6 @@ blockquote.expand {
 }
 .postToThread > a > button {
     font-size: 1.2em;
-}
-.postToThread.mobile {
-    display: block;
-}
-.postToThread.mobile > a > button {
-    width: 100%;
 }
 .menu {
     white-space: nowrap;
@@ -903,13 +810,6 @@ blockquote.expand {
 .referencedBy {
     font-size: .8em;
 }
-
-.postActionsMenu.mobile {
-    left: -220px;
-}
-.fileActionsMenu.mobile {
-    left: -40px;
-}
 .shrink {
     width: 100%;
 }
@@ -920,17 +820,6 @@ blockquote.expand {
     display: inline-block;
     vertical-align: top;
 }
-.postFile ~ .postFile {
-    padding-left: 20px;
-}
-.postText {
-    vertical-align: top;
-    white-space: normal;
-}
-.postFiles > .postText {
-    display: inline-block;
-    max-width: 80%;
-}
 .bannedFor {
     color: red;
 }
@@ -940,70 +829,13 @@ blockquote.expand {
 .postSubject {
     font-weight: bold;
 }
-.postSubject.mobile {
-    font-size: .8em;
-    display: block;
-}
 .tripcode {
     color: green;
-}
-.tripcode.mobile {
-    font-size: .8em;
-    display: block;
-}
-.postDateTime.mobile {
-    font-size: .8em;
 }
 .moderName {
     font-weight: bold;
     color: blue;
 }
-.someName.mobile {
-    font-size: .8em;
-    display: block;
-}
-.navigationButton {
-    position: fixed;
-    right: 20px;
-    z-index: 7;
-    opacity: .5;
-}
-.navigationButton:hover {
-    opacity: 1;
-}
-.navigationButtonBottom {
-    bottom: 30px;
-}
-.navigationButtonTop {
-    top: 102px;
-}
-.leafButton {
-    position: fixed;
-    top: 50%;
-    z-index: 9910;
-    opacity: .5;
-}
-.leafButton:hover {
-    opacity: 1;
-}
-.leafButtonPrevious {
-    left: 20px;
-}
-.leafButtonNext {
-    right: 20px;
-}
-.movableImage {
-    position: fixed;
-    z-index: 9905;
-    border: 5px solid #777;
-    padding: 0;
-    line-height: 0;
-    background: #777;
-    transition: .1s transform;
-}
-
-
-
 .tabWidget {
     text-align: center;
 }
@@ -1043,10 +875,6 @@ ul.tabWidget > li > a {
     opacity: .5;
     transition: .1s all;
 }
-.mobile .externalThreadFrame {
-    width: 120px;
-    height: 240px;
-}
 .externalThreadFrame:hover {
     width: 90%;
     height: 100%;
@@ -1062,12 +890,6 @@ ul.tabWidget > li > a {
     /*overflow-x: auto;*/
     position: relative;
     width: 100%;
-}
-.searchActionSelect {
-    width: 30%;
-}
-.mobile .searchActionSelect {
-    width: 100px;
 }
 .list-item .newPostCount {
     position: absolute;
@@ -1100,10 +922,6 @@ ul.tabWidget > li > a {
 .loginDescription {
     text-align: center;
     margin-top: 20px;
-}
-.loginDescription.desktop {
-    max-width: 80%;
-    margin-left: 10%;
 }
 .buttonImage {
     vertical-align: middle;
@@ -1223,9 +1041,6 @@ input.buttonImage {
     overflow-y: auto;
     min-height:100px;
     height: calc(100% - 42px);
-}
-.mobile .chatHistory {
-    max-width: 300px;
 }
 .chatMessage {
     margin-bottom: 4px;

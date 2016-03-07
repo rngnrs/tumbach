@@ -1,5 +1,5 @@
 <div>
-    <table style="width:100%;height:100%;">
+    <table style="position:relative;width:100%;height:100%;">
         <tbody>
             <tr>
                 <td style="vertical-align: top;">
@@ -9,15 +9,15 @@
                         {{~}}
                     </div>
                 </td>
-                <td style="height:100%;">
-                    <div class="chatHistory {{=it.deviceType}}" name="history"></div>
+                <td>
+                    <div class="chatHistory" name="history"></div>
                     <div>
-                        <input type="text" class="chatInput" name="message" disabled
+                        <input type="text" class="chatInput" name="message" disabled="true"
                                onkeypress="if (13 != event.keyCode) return; lord.sendChatMessage(); return false;"
                                placeholder="{{=it.tr.chatMessageTextPlaceholder}}" />
                     </div>
                     <div>
-                        <button name="sendMessageButton" onclick="lord.sendChatMessage();" disabled
+                        <button name="sendMessageButton" onclick="lord.sendChatMessage();" disabled="true"
                                 class="button chatSendButton">{{=it.tr.sendChatMessageButtonText}}</button>
                     </div>
                 </td>

@@ -103,11 +103,11 @@
                 <tr>
                     <td colspan="2">
                         <button onclick="lord.exportSettings(); return false;"
-                                name="exportSettingsButton">{{=it.tr.exportSettingsButtonText}}</button><br/>
+                                name="exportSettingsButton">{{=it.tr.exportSettingsButtonText}}</button>
                         <button onclick="lord.importSettings(); return false;"
-                                name="importSettingsButton">{{=it.tr.importSettingsButtonText}}</button><br/>
+                                name="importSettingsButton">{{=it.tr.importSettingsButtonText}}</button>
                         <button onclick="lord.synchronize(); return false;"
-                                name="synchronizationButton">{{=it.tr.synchronizationText}}</button><br/>
+                                name="synchronizationButton">{{=it.tr.synchronizationText}}</button>
                     </td>
                 </tr>
             </tbody>
@@ -164,6 +164,15 @@
                                value="{{=it.settings.viewPostPreviewDelay}}" />
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        {{=it.tr.hidePostPreviewDelayLabelText}}
+                    </td>
+                    <td>
+                        <input type="number" min="0" name="hidePostPreviewDelay" class="numberSize4"
+                               value="{{=it.settings.hidePostPreviewDelay}}" />
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table data-index="2" style="display: none;">
@@ -173,7 +182,7 @@
                         {{=it.tr.imageZoomSensitivityLabelText}}
                     </td>
                     <td>
-                        <input type="number" min="1" name="imageZoomSensitivity" class="numberSize3"
+                        <input type="number" min="1" max="100" name="imageZoomSensitivity" class="numberSize3"
                                value="{{=it.settings.imageZoomSensitivity}}" /> %
                     </td>
                 </tr>
@@ -192,6 +201,12 @@
                     <td colspan="2">
                         <input type="checkbox" name="closeFilesByClickingOnly"
                                {{? it.settings.closeFilesByClickingOnly}}checked="true"{{?}} /><label>{{=it.tr.closeFilesByClickingOnlyLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="resetFileScaleOnOpening"
+                               {{? it.settings.resetFileScaleOnOpening}}checked="true"{{?}} /><label>{{=it.tr.resetFileScaleOnOpeningLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
@@ -388,6 +403,12 @@
                     <td colspan="2">
                         <input type="checkbox" name="chatEnabled"
                                {{? it.settings.chatEnabled}}checked="true"{{?}} /><label>{{=it.tr.chatLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="drawingEnabled"
+                               {{? it.settings.drawingEnabled}}checked="true"{{?}} /><label>{{=it.tr.drawingLabelText}}</label>
                     </td>
                 </tr>
                 <tr>

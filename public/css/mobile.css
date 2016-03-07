@@ -1,0 +1,235 @@
+/* tumb rewrite */
+.logo-big {
+    width: 75px;
+    height: 75px;
+}
+.titl {
+    padding: 23px 0;
+    font-size: 23px;
+}
+header .searchAction {
+    display: none;
+}
+/* /tumb rewrite */
+
+body {
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-size: 14px;
+}
+
+.spoiler {
+    cursor: pointer;
+}
+
+blockquote {
+    max-width: 550px;
+}
+
+.navbar.navbarFrame {
+    font-size: 1.2em;
+}
+
+.postFileName {
+    font-size: .9em;
+}
+
+.postFileSize {
+    font-size: .6em;
+}
+
+.postFileSearch {
+    padding-bottom: 4px;
+}
+
+.postFileThumbImage {
+    max-width: 140px;
+    max-height: 140px;
+}
+
+.postToThread {
+    display: block;
+}
+
+.postToThread > a > button {
+    width: 100%;
+}
+
+.postSubject {
+    font-size: .8em;
+}
+
+.tripcode {
+    font-size: .8em;
+    display: block;
+}
+
+.postDateTime, .someName {
+    font-size: .8em;
+}
+
+.searchAction > form {
+    white-space: nowrap;
+    /*width: 98%;*/
+    width: 70%;
+    margin: 0 auto;
+}
+
+.externalThreadFrame {
+    width: 120px;
+    height: 240px;
+}
+
+.login {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.buttonImage {
+    vertical-align: middle;
+    opacity: .65;
+}
+
+.buttonImage:disabled {
+    opacity: .4;
+}
+
+.buttonImage:hover {
+    opacity: 1;
+}
+
+.buttonImage:disabled:hover {
+    opacity: .4;
+}
+
+input.buttonImage {
+    background-color: transparent;
+}
+
+.signImage {
+    vertical-align: middle;
+}
+
+.boardSelectContainer {
+    display: inline-block;
+    vertical-align: top;
+    width: 16px;
+    overflow: hidden;
+}
+
+.boardSelect {
+    cursor: pointer;
+    border: none;
+    background: url("../img/boards.png") left top no-repeat;
+    width: 36px;
+}
+
+.boardSelectForm {
+    display: inline;
+}
+
+.postToThreadDesktop {
+    display: none;
+}
+
+#player {
+    width: 80%;
+}
+
+.playerMinimizedActionsDesktop {
+    display: none;
+}
+
+.playerMinimizedActionsMobile {
+    display: inline-block;
+}
+
+/*#playerTrackInfo {
+    font-size: 1.1em;
+}*/
+
+#playerDurationSlider {
+    width: -moz-calc(100% - 6px);
+    width: -webkit-calc(100% - 6px);
+    width: -o-calc(100% - 6px);
+    width: calc(100% - 6px);
+    margin-right: 0px;
+}
+
+#playerVolumeSlider,
+[name='playerMuteButton'] {
+    display: none;
+}
+
+/*#playerTrackTags {
+    font-size: 1.1em;
+}*/
+
+.movablePlayerConstrolsSliders {
+    width: -moz-calc(100% - 28px);
+    width: -webkit-calc(100% - 28px);
+    width: -o-calc(100% - 28px);
+    width: calc(100% - 28px);
+}
+
+.movablePlayerDurationSlider {
+    width: -moz-calc(100% - 6px);
+    width: -webkit-calc(100% - 6px);
+    width: -o-calc(100% - 6px);
+    width: calc(100% - 6px);
+    margin-right: 0px;
+}
+
+.movablePlayerVolumeSlider {
+    display: none;
+}
+
+div.bannedUser {
+    overflow-x: auto;
+}
+
+.chatContactList {
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.chatContact > input[type="image"] {
+    display: none;
+}
+
+.chatContactList:hover {
+    min-width: 150px;
+    max-width: 150px;
+}
+
+.chatContactList:hover > .chatContact > input[type="image"] {
+    display: inline;
+}
+
+.chatHistory {
+    min-width: 200px;
+    max-width: 300px;
+    min-height: 400px;
+    max-height: 400px;
+}
+
+.registeredUserHashpassInput {
+    box-sizing: border-box;
+    width: -moz-calc(100% - 8px);
+    width: -webkit-calc(100% - 8px);
+    width: -o-calc(100% - 8px);
+    width: calc(100% - 8px);
+}
+
+.registeredUserIpsInput {
+    box-sizing: border-box;
+    width: -moz-calc(100% - 8px);
+    width: -webkit-calc(100% - 8px);
+    width: -o-calc(100% - 8px);
+    width: calc(100% - 8px);
+}
+
+.banExpiresInput {
+    width: 130px;
+}

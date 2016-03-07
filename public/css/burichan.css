@@ -14,6 +14,27 @@ aside a {
 }
 /* /tumb rewrite */
 
+.ui-tooltip {
+    border: 1px solid #CCC !important;
+}
+
+.ui-tooltip-content {
+    font-family: Verdana,sans-serif;
+    background-color: #D6DAF0;
+}
+
+.ui-tooltip-content::after {
+    border-color: #CCC transparent;
+}
+
+.ui-slider {
+    border: 1px solid black !important;
+}
+
+.ui-slider-handle {
+    border: 1px solid black !important;
+}
+
 body  {
     background-color: #EEF2FF;
     /*font-family: Verdana,sans-serif;*/
@@ -26,7 +47,6 @@ a {
 
 a.expandCollapse {
     color: #777;
-    cursor: pointer;
 }
 
 a:hover {
@@ -35,7 +55,6 @@ a:hover {
 
 a.expandCollapse:hover {
     color: #444;
-    cursor: pointer;
 }
 
 hr {
@@ -49,7 +68,6 @@ hr {
 .select {
     background: #EAEAEA;
     border: 1px solid #CCC;
-    cursor: pointer;
 }
 
 .selectOption {
@@ -63,13 +81,11 @@ hr {
 .button {
     background: #EAEAEA;
     border: 1px solid #CCC;
-    cursor: pointer;
 }
 
 .checkbox {
     background: #EAEAEA;
     border: 1px solid #CCC;
-    cursor: pointer;
 }
 
 .popup {
@@ -79,16 +95,11 @@ hr {
 
 .favorites {
     background-color: #EEF2FF;
-    min-width: 300px;
-    min-height: 400px;
-    padding: 2px;
 }
 
 .favorites > div {
     background-color: #D6DAF0;
     border: 1px solid #CCC;
-    padding: 2px;
-    margin-top: 4px;
 }
 
 .scrollAreaH60 {
@@ -97,13 +108,10 @@ hr {
 
 .postSequenceNumber {
     color: green;
-    font-size: 75%;
 }
 
 .hiddenPostList > div:nth-child(even) {
     background-color: #D6DAF0;
-    margin-top: 3px;
-    margin-bottom: 3px;
 }
 
 .ban {
@@ -131,14 +139,28 @@ span.spoiler:hover .quotation {
     color: #789922;
 }
 
+.spoilerMarkupButton {
+    background-color: #EEF2FF;
+}
+
+.spoilerMarkupButton.spoiler {
+    color: #333;
+}
+
 span.tooltip {
     color: #304070;
-    cursor: help;
 }
 
 span.newPostCount {
     color: green;
-    font-size: 75%;
+}
+
+.postLimitReached {
+    color: red;
+}
+
+.bumpLimitReached {
+    color: olive;
 }
 
 .quotation {
@@ -146,7 +168,6 @@ span.newPostCount {
 }
 
 .cspoilerTitle {
-    cursor: pointer;
     color: #304070;
 }
 
@@ -172,17 +193,19 @@ span.newPostCount {
     background-color: #D6DAF0;
 }
 
-.rules, .news {
+.sectionBody {
     background-color: #D6DAF0;
     border: 1px solid #CCC;
 }
 
-.ipBan {
+.post {
     background-color: #D6DAF0;
+    border: 1px solid #CCCCCC;
 }
 
-.post, .draft {
+.draft {
     background-color: #D6DAF0;
+    border: 1px solid #CCC;
 }
 
 .newPost {
@@ -197,22 +220,6 @@ span.newPostCount {
     border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts {
-    display: none;
-}
-
-.thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postFileName, .postFileSize {
-    white-space: nowrap;
-}
-
-.postFileName.mobile {
-    font-size: .9em;
-}
-
 .postFileSize {
     color: #444;
 }
@@ -220,20 +227,28 @@ span.newPostCount {
 .menu {
     background: #D6DAF0 !important;
     border: 1px solid #BBB !important;
+    /*font-family: Verdana,sans-serif !important;*/
 }
 
-.menu > li > a {
-    color: #000000;
+.bannedFor {
+    color: red;
 }
 
-.menu > li:hover {
-    background-color: #666;
+.modificationDateTime {
+    font-style: italic;
 }
 
-.postformFile {
-    border: 1px dashed #777;
-    text-align: justify;
-    cursor: pointer;
+.postSubject {
+    font-weight: bold;
+}
+
+.tripcode {
+    color: green;
+}
+
+.moderName {
+    font-weight: bold;
+    color: blue;
 }
 
 .postformFile.drag {
@@ -258,72 +273,8 @@ ul.tabWidget > li.activated {
     background-color: #AAA;
 }
 
-.toolbar {
-    display: block;
-    padding-bottom: 5px;
-    text-align: center;
-    overflow-x: auto;
-    font-size: 1.2em;
-    position: relative;
-    top: -8px;
-    z-index: 1;
-}
-
 .toolbar.sticky {
-    position: fixed;
-    top: 0;
     background-color: #EEF2FF;
-    width: 100%;
-    padding-bottom: 0;
-}
-
-blockquote.blockquoteThread {
-    max-height: 800px;
-}
-
-blockquote.blockquoteThread.expand {
-    max-height: none;
-}
-
-.codeBlock {
-    font-family: monospace;
-    white-space: pre;
-    word-break: normal;
-    word-wrap: normal;
-    overflow-wrap: normal;
-    padding-left: 20px !important;
-    border: 1px solid #AAA;
-    overflow-x: auto;
-    max-width: 800px;
-    -ms-hyphens: none;
-    -moz-hyphens: none;
-    -webkit-hyphens: none;
-    hyphens: none;
-}
-
-.codeBlock.mobile {
-    max-width: 300px;
-}
-
-.theMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.threadActions {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-.theTitle {
-    color: #000;
 }
 
 .vote {
@@ -331,8 +282,15 @@ blockquote.blockquoteThread.expand {
     border: 1px solid #BBB;
 }
 
-.track {
-    background-color: #DDD;
+.voteText {
+    font-weight: bold;
+}
+
+.voteCount {
+    font-style: italic;
+}
+
+.chatContactList {
     border: 1px solid #CCC;
 }
 
@@ -351,8 +309,16 @@ blockquote.blockquoteThread.expand {
     background-color: #666;
 }
 
+.chatContactNewMessages {
+    color: red;
+}
+
 .chatTarget {
     background-color: #D6DAF0;
+}
+
+.chatHistory {
+    border: 1px solid #CCC;
 }
 
 .chatMessage {
@@ -360,32 +326,59 @@ blockquote.blockquoteThread.expand {
     background-color: #D6DAF0;
 }
 
+.chatMessageDate {
+    border-bottom: 1px dotted black;
+}
+
 .bordered {
     border: 1px solid #CCC;
 }
 
-.ui-tooltip {
-    border: 1px solid #CCC !important;
-    z-index: 11000 !important;
+.submitContainer > input {
+    border-color: #000;
 }
 
-.ui-tooltip-content {
+.hideReason {
+    font-weight: bold;
+}
+
+#player {
+    background-color: #EEF2FF;
+    border: 1px solid #CCC;
+}
+
+#player.minimized {
     background-color: #D6DAF0;
 }
 
-.ui-tooltip-content::after {
-    content: '';
-    position: absolute;
-    border-style: solid;
-    display: block;
-    width: 0;
-    top: -10px;
-    left: 85px;
-    border-color: #CCC transparent;
-    border-width: 0 10px 10px;
+.track {
+    background-color: #D6DAF0;
+    border: 1px solid #CCC;
 }
 
-.archivalThreadLink {
-    font-size: 1.2em;
-    margin-left: 10px;
+.track:hover {
+    background-color: #D9D9D9;
+}
+
+.track.selected {
+    background-color: #AAA;
+}
+
+.track.selected > .trackInfo,
+.bannedUserHeader,
+.registeredUserHeader {
+    font-weight: bold;
+}
+
+.searchResult {
+    background-color: #D6DAF0;
+    border: 1px solid #CCCCCC;
+}
+
+.searchResultHighlighted {
+    background-color: yellow;
+}
+
+.delallHeader {
+    font-weight: bold;
 }

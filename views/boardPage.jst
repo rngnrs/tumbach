@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile">
-{{#def.customHeader}}
+<body>
 <a id="top"></a>
-<div class="wrap" {{#def.baseData}} data-current-page="{{=it.currentPage}}">
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+{{#def.customHeader}}
+<div class="wrap" {{#def.baseData}} data-current-page="{{=it.currentPage}}" data-page-count="{{=it.pageCount}}">
+    {{#def.toolbar}}
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
             {{? it.site.vkontakte.integrationEnabled }}
                 <script type="text/javascript">
                     VK.init({ apiId: {{=it.site.vkontakte.appId}} });
@@ -18,14 +19,13 @@
             {{? it.board.captchaEnabled}}
                 <div id="hiddenCaptcha" style="display: none;"></div>
             {{?}}
-            <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
             {{~["top", "bottom"] :target}}
-            {{#def.navigationButton}}
+                {{#def.navigationButton}}
             {{~}}
             {{~["previous", "next"] :target}}
-            {{#def.leafButton}}
+                {{#def.leafButton}}
             {{~}}
-            <div id="bannerPlaceholder" style="display: none;"></div>
+            {{#def.banner}}
             <div class="theTitle">
                 <h1>
                     {{=it.board.title}}
@@ -40,17 +40,58 @@
                                                                 width="24" height="24"></a>
                 </h1>
             </div>
-            <div id="upperPlaceholder" style="display: none;"></div>
-            <div id="threads" class="loadingMessage">
-                <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">
-                <h1 style="display: inline;">{{=it.tr.loadingThreadsMessage}}</h1>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["tr", "board/" + lord.data("boardName")]);
+                    model.settings = lord.settings();
+                    document.open();
+                    document.write(lord.template("boardPageUpper", model, true));
+                    document.close();
+                })();
+            </script>
+            <div id="threads">
+                {{~it.threads :thread}}
+                    <hr />
+                    <div id="thread{{=thread.opPost.number}}" class="thread"{{? thread.expanded}} data-expanded="true"{{?}}>
+                        {{~[thread.opPost] :post}}
+                            {{#def.post}}
+                        {{~}}
+                        {{? thread.omittedPosts > 0}}
+                            <div class="omittedPosts">
+                                {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
+                            </div>
+                        {{?}}
+                        <div class="threadPosts">
+                            {{~thread.lastPosts :post}}
+                                {{#def.post}}
+                            {{~}}
+                        </div>
+                    </div>
+                {{~}}
             </div>
-            <div id="lowerPlaceholder" style="display: none;"></div>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["tr", "board/" + lord.data("boardName")]);
+                    model.settings = lord.settings();
+                    document.open();
+                    document.write(lord.template("boardPageLower", model, true));
+                    document.close();
+                })();
+            </script>
             <hr />
-            <div id="pagesPlaceholder" style="display: none;"></div>
-            <div id="navbarPlaceholder" style="display: none;"></div>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["base", "tr", "board/" + lord.data("boardName")]);
+                    model.pageCount = +lord.data("pageCount");
+                    model.currentPage = +lord.data("currentPage");
+                    document.open();
+                    document.write(lord.template("pagination", model, true));
+                    document.close();
+                })();
+            </script>
+            {{#def.navbar}}
             <hr />
-            <div id="postingSpeedPlaceholder" style="display: none;"></div>
+            {{#def.postingSpeed}}
             <a id="bottom"></a>
         </div>
     </div>

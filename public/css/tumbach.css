@@ -57,7 +57,7 @@ span.spoiler:hover {
     background-color: #DDD;
     border: 1px solid #BBB;
 }
-.post, .rules, .draft, .catalogItem {
+.sectionBody, .draft, .catalogItem {
     background: #FAFAFA;
     border: 1px solid #CCC;
 }
@@ -73,7 +73,10 @@ span.spoiler:hover {
     border: 1px solid #CCC;
     background-color: rgba(0, 188, 212, .25);
 }
-
+ul.tabWidget > li {
+    background-color: #DDD;
+    border: 1px solid #CCC;
+}
 ul.tabWidget > li.activated {
     background-color: #AAA;
 }

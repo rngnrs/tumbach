@@ -1,12 +1,13 @@
-/*ololord global object*/
+/*
+/!*ololord global object*!/
 
 var lord = lord || {};
 
-/*Variables*/
+/!*Variables*!/
 
 lord.currentTracks = {};
 
-/*Functions*/
+/!*Functions*!/
 
 lord.allowTrackDrop = function(e) {
     e.preventDefault();
@@ -50,9 +51,9 @@ lord.trackDrop = function(e) {
     parent.insertBefore(draggedTrack, replacedTrack);
 };
 
-    /**
+    /!**
      * @deprecated
-     */
+     *!/
 lord.addTrack = function(key, track) {
     var model = merge.recursive(track, lord.model(["base", "tr"], true));
     var node = lord.template("playlistItem", model);
@@ -294,10 +295,10 @@ var audio = new Audio(),
             if (lord.settings().rememberAudioVideoVolume)
                 if (undefined == ch && !nul) LO.set("audioVideoVolume", Math.ceil(vol * 100) / 100);
         },
-        parse: function(c) { /* -1<=c<=1 */
+        parse: function(c) { /!* -1<=c<=1 *!/
             var cb = LO.get("player.shuffle", false),
                 ls = LO.get("playlist/trackList"),
-                l = ls.length-1; /*last_id*/
+                l = ls.length-1; /!*last_id*!/
             if (l == -1)
                 return this.idle();
             if (cb && l > 1) {
@@ -308,8 +309,8 @@ var audio = new Audio(),
                 }
                 c = 0;
             }
-            var id = LO.get("player.audio.last.id",0), /*current_id*/
-                n = id + c; /*next_id*/
+            var id = LO.get("player.audio.last.id",0), /!*current_id*!/
+                n = id + c; /!*next_id*!/
             if (undefined != c) {
                 if (LO.get("player.loop", false)) //loop
                     this.play();
@@ -455,3 +456,4 @@ window.addEventListener("beforeunload", function unload() {
     if (!Player.wasAjax && Player.inited)
         LO.set("enableAjax", false);
 }, false);
+*/

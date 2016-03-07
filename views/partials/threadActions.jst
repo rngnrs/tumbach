@@ -7,10 +7,8 @@
                                        src="/{{=it.site.pathPrefix}}img/thread_update.png"></a>]
     [<input id="autoUpdate{{=position}}" type="text" style="display: none;" />]
     <script type="text/javascript">
-        if (document.readyState === "complete")
-            setTimeout(function(){load_k{{=position}}()},1000);
-        else
-            window.addEventListener("load", load_k{{=position}}, false);
+        (document.readyState === "complete") ? setTimeout(function(){load_k{{=position}}()},1000)
+        : window.addEventListener("load", load_k{{=position}}, false);
 
         function load_k{{=position}}() {
             window.removeEventListener("load", load_k{{=position}}, false);

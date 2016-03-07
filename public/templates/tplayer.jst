@@ -1,0 +1,18 @@
+<div id="tplayer" style="display:none">
+    <div class="float-r pmain">
+        <div id="playerTrackTags" class="playerHeader float-l">
+            Плейлист пуст.
+        </div>
+        <div id="playerTrackInfo" class="float-r"></div>
+        <div class="clr"></div>
+        <div class="playerHeader">
+            <div id="playerDurationSlider"></div>
+            <div id="playerVolumeSlider"></div>
+        </div>
+    </div>
+    <div class="float-r controls">
+        <i class="zmdi zmdi-play zmdi-hc-3x" name="playerPlayPauseButton" onclick="lord.playerPlayPause();"></i>
+        <i class="zmdi zmdi-fast-forward zmdi-hc-2x" onclick="lord.playerPrevious();" title="{{=it.tr.playerNextTrackText}}"></i>
+    </div>
+    <div class="clr"></div>
+</div>

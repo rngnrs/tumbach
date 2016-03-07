@@ -1,34 +1,10 @@
-[done] Improve missing page/thread handling (use 404)
-[done] Fix erroneous caching in some browsers
-[done] Handle video files with audio-stream only
-[done] Fix Coub video information retrieving
-[done] Use Multiparty instead of Formidable for form parsing
-[done] Implement uptime command; add uptime information to base data
-[done] Use NPM crock-then-redis package instead of then-redis package
-[done] Fix regeneration on user ban
-[done] Fix regeneration on post deletion
-[done] Log form fields of POST requests
-[done] Merge thread.js with board.js
-[done] Select files without appending input to DOM
-[done] Simplify file attaching code
-[done] Improve cache system
-
-[partly] Add own player for media file previews
-[done] Add playlist to every page
-[partly] Use common CSS file (specify style-specific stuff only in separate files)
-[partly] Improve jQuery UI styles
-
-* Add ability to paint on any board using canvas
-* Improve file previews
 * Optimize spells
-* Render board/thread/catalog on the server side
-* Treat manually and auto-hidden posts differently
-* Show auto-hide reason
-* Add post preview disappearance delay
-* Add some API to client scripts and simplify existing API
-* Implement different access levels for different boards
-* Use web interface for user access level management and registration
-* Optimize cache renewal when modifying posts with large amount of post references
-* Use Elasticsearch or other search engine [not sure if needed]
-* Write detailed DB schema documentation
-* Write client scripts API documentation
+* Use iframes instead of old HTML frames
+* Use vorpal for commands handling
+* Use commander for command line options handling
+* Implement LaTeX markup (use mathjax-node)
+* Implement boards management page
+* Implement content management page
+* Implement user action permissions
+* Consider using Elasticsearch or other search engine [not sure if needed]
+* COnsider using markdown-it as a parser [not sure if needed]

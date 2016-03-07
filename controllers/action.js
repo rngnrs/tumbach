@@ -34,7 +34,6 @@ var getFiles = function(fields, files, transaction) {
         return true;
     });
     var promises = Tools.mapIn(tmpFiles, function(file, fieldName) {
-        file.fieldName = fieldName;
         setFileRating(file, file.fieldName.substr(5));
         transaction.filePaths.push(file.path);
         return Tools.mimeType(file.path).then(function(mimeType) {
@@ -46,7 +45,7 @@ var getFiles = function(fields, files, transaction) {
         tmpFiles = files;
         var urls = [];
         Tools.forIn(fields, function(url, key) {
-            if (key.substr(0, 9) != "file_url_")
+            if (!/^file_url_\S+$/.test(key))
                 return;
             urls.push({
                 url: url,
@@ -137,29 +136,29 @@ var testParameters = function(fields, files, creatingThread) {
     var maxFileSize = board.maxFileSize;
     var maxFileCount = board.maxFileCount;
     if (email.length > board.maxEmailLength)
-        return Promise.reject(Tools.translate("E-mail is too long", "error"));
+        return Promise.reject(Tools.translate("E-mail is too long"));
     if (name.length > board.maxNameLength)
-        return Promise.reject(Tools.translate("Name is too long", "error"));
+        return Promise.reject(Tools.translate("Name is too long"));
     if (subject.length > board.maxSubjectLength)
-        return Promise.reject(Tools.translate("Subject is too long", "error"));
+        return Promise.reject(Tools.translate("Subject is too long"));
     if (text.length > board.maxTextFieldLength)
-        return Promise.reject(Tools.translate("Comment is too long", "error"));
+        return Promise.reject(Tools.translate("Comment is too long"));
     if (password.length > board.maxPasswordLength)
-        return Promise.reject(Tools.translate("Password is too long", "error"));
+        return Promise.reject(Tools.translate("Password is too long"));
     if (creatingThread && maxFileCount && !fileCount)
-        return Promise.reject(Tools.translate("Attempt to create a thread without attaching a file", "error"));
+        return Promise.reject(Tools.translate("Attempt to create a thread without attaching a file"));
     if (text.length < 1 && !fileCount)
-        return Promise.reject(Tools.translate("Both file and comment are missing", "error"));
+        return Promise.reject(Tools.translate("Both file and comment are missing"));
     if (fileCount > maxFileCount) {
-        return Promise.reject(Tools.translate("Too many files", "error"));
+        return Promise.reject(Tools.translate("Too many files"));
     } else {
         var err = files.reduce(function(err, file) {
             if (err)
                 return err;
             if (file.size > maxFileSize)
-                return Tools.translate("File is too big", "error");
+                return Tools.translate("File is too big");
             if (board.supportedFileTypes.indexOf(file.mimeType) < 0)
-                return Tools.translate("File type is not supported", "error");
+                return Tools.translate("File type is not supported");
         }, "");
         if (err)
             return Promise.reject(err);
@@ -178,19 +177,16 @@ router.post("/action/markupText", function(req, res) {
         return controller.checkBan(req, res, c.board.name, true);
     }).then(function() {
         if (c.fields.text.length > c.board.maxTextFieldLength)
-            return Promise.reject(Tools.translate("Comment is too long", "error"));
+            return Promise.reject(Tools.translate("Comment is too long"));
         var markupModes = [];
         Tools.forIn(markup.MarkupModes, function(val) {
             if (c.fields.markupMode && c.fields.markupMode.indexOf(val) >= 0)
                 markupModes.push(val);
         });
-        c.isRaw = !!c.fields.raw
-            && Database.compareRegisteredUserLevels(req.level, Database.RegisteredUserLevels.Admin) >= 0;
-        if (c.isRaw)
-            return c.fields.text;
         return markup(c.board.name, c.fields.text, {
             markupModes: markupModes,
-            referencedPosts: {}
+            referencedPosts: {},
+            accessLevel: req.level(c.board.name)
         });
     }).then(function(text) {
         var data = {
@@ -198,9 +194,8 @@ router.post("/action/markupText", function(req, res) {
             text: text || null,
             rawText: c.fields.text || null,
             options: {
-                rawHtml: c.isRaw,
-                signAsOp: !!c.fields.signAsOp,
-                showTripcode: !!req.hashpass && !!c.fields.tripcode
+                signAsOp: ("true" == c.fields.signAsOp),
+                showTripcode: !!req.hashpass && ("true" == c.fields.tripcode)
             },
             createdAt: date.toISOString()
         };
@@ -284,7 +279,10 @@ router.post("/action/editPost", function(req, res) {
     }).then(function() {
         return Database.editPost(req, c.fields);
     }).then(function(result) {
-        res.send({});
+        res.send({
+            boardName: c.boardName,
+            postNumber: c.postNumber
+        });
     }).catch(function(err) {
         controller.error(res, err, true);
     });
@@ -311,15 +309,15 @@ router.post("/action/addFiles", function(req, res) {
         var maxFileSize = c.board.maxFileSize;
         var maxFileCount = c.board.maxFileCount;
         if (fileCount > maxFileCount) {
-            return Promise.reject(Tools.translate("Too many files", "error"));
+            return Promise.reject(Tools.translate("Too many files"));
         } else {
             var err = c.files.reduce(function(err, file) {
                 if (err)
                     return err;
                 if (file.size > maxFileSize)
-                    return Tools.translate("File is too big", "error");
+                    return Tools.translate("File is too big");
                 if (c.board.supportedFileTypes.indexOf(file.mimeType) < 0)
-                    return Tools.translate("File type is not supported", "error");
+                    return Tools.translate("File type is not supported");
             }, "");
             if (err)
                 return Promise.reject(err);
@@ -388,25 +386,24 @@ router.post("/action/editAudioTags", function(req, res) {
 });
 
 router.post("/action/banUser", function(req, res) {
-    if (Database.compareRegisteredUserLevels(req.level, "MODER") < 0)
+    if (!req.isModer())
         return controller.error(res, Tools.translate("Not enough rights"), true);
     var c = {};
     Tools.parseForm(req).then(function(result) {
         c.bans = [];
         c.fields = result.fields;
-        c.boardName = result.fields.boardName;
-        c.postNumber = +result.fields.postNumber;
         c.userIp = result.fields.userIp;
         Tools.forIn(result.fields, function(value, name) {
-            if (name.substr(0, 9) != "banBoard_")
+            if (!/^banBoard_\S+$/.test(name))
                 return;
             var level = result.fields["banLevel_" + value];
             if ("NONE" == level)
                 return;
             var expiresAt = result.fields["banExpires_" + value];
             if (expiresAt) {
-                var timeOffset = ("local" == req.settings.time) ? +req.settings.timeZoneOffset
-                    : config("site.timeOffset", 0);
+                var timeOffset = +c.fields.timeOffset;
+                if (isNaN(timeOffset) || timeOffset < -720 || timeOffset > 840)
+                    timeOffset = config("site.timeOffset", 0);
                 var hours = Math.floor(timeOffset / 60);
                 var minutes = Math.abs(timeOffset) % 60;
                 var tz = ((timeOffset > 0) ? "+" : "") + ((Math.abs(hours) < 10) ? "0" : "") + hours + ":"
@@ -425,8 +422,6 @@ router.post("/action/banUser", function(req, res) {
                 postNumber: +result.fields["banPostNumber_" + value] || null
             });
         });
-        return controller.checkBan(req, res, c.boardName, true);
-    }).then(function() {
         return Database.banUser(req, c.fields.userIp, c.bans);
     }).then(function(result) {
         res.send({});
@@ -436,16 +431,83 @@ router.post("/action/banUser", function(req, res) {
 });
 
 router.post("/action/delall", function(req, res) {
-    if (Database.compareRegisteredUserLevels(req.level, "MODER") < 0)
+    if (!req.isModer())
         return controller.error(res, Tools.translate("Not enough rights"), true);
     var c = {};
     Tools.parseForm(req).then(function(result) {
         c.fields = result.fields;
-        return controller.checkBan(req, res, c.fields.boardName, true);
+        c.boardNames = Tools.toArray(Tools.filterIn(c.fields, function(boardName, key) {
+            return /^board_\S+$/.test(key);
+        }));
+        if (c.boardNames.length < 1)
+            return Promise.reject(Tools.translate("No board specified"));
+        return controller.checkBan(req, res, c.boardNames, true);
     }).then(function() {
-        return Database.delall(req, c.fields);
+        return Database.delall(req, c.fields.userIp, c.boardNames);
     }).then(function(result) {
         res.send({});
+    }).catch(function(err) {
+        controller.error(res, err, true);
+    });
+});
+
+var getRegisteredUserData = function(fields) {
+    var levels = {};
+    var password = fields.password;
+    var ips = Tools.ipList(fields.ips);
+    if (typeof ips == "string")
+        return Promise.reject(ips);
+    Tools.forIn(fields, function(value, name) {
+        if (!/^accessLevelBoard_\S+$/.test(name))
+            return;
+        var level = fields["accessLevel_" + value];
+        if ("NONE" == level)
+            return;
+        levels[value] = level;
+    });
+    return Promise.resolve({
+        password: password,
+        levels: levels,
+        ips: ips
+    });
+};
+
+router.post("/action/registerUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        return getRegisteredUserData(result.fields);
+    }).then(function(result) {
+        return Database.registerUser(result.password, result.levels, result.ips);
+    }).then(function(hashpass) {
+        res.json({ hashpass: hashpass });
+    }).catch(function(err) {
+        controller.error(res, err, true);
+    });
+});
+
+router.post("/action/unregisterUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(res, Tools.translate("Not enough rights"), true);
+    var c = {};
+    Tools.parseForm(req).then(function(result) {
+        return Database.unregisterUser(result.fields.hashpass);
+    }).then(function(result) {
+        res.send({});
+    }).catch(function(err) {
+        controller.error(res, err, true);
+    });
+});
+
+router.post("/action/updateRegisteredUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        return getRegisteredUserData(result.fields);
+    }).then(function(result) {
+        return Database.updateRegisteredUser(result.password, result.levels, result.ips);
+    }).then(function() {
+        res.json({});
     }).catch(function(err) {
         controller.error(res, err, true);
     });
@@ -574,6 +636,8 @@ router.post("/action/search", function(req, res) {
             else
                 c.query.possiblePhrases.push(phrase.toLowerCase());
         });
+        c.model.phrases = c.query.requiredPhrases.concat(c.query.excludedPhrases).concat(c.query.possiblePhrases);
+        c.model.phrases = Tools.withoutDuplicates(c.model.phrases);
         return Database.findPosts(c.query, boardName);
     }).then(function(posts) {
         c.model.searchResults = posts.map(function(post) {
@@ -584,14 +648,6 @@ router.post("/action/search", function(req, res) {
             var subject = post.subject || text;
             if (subject.length > 100)
                 subject = subject.substr(0, 97) + "...";
-            c.query.requiredPhrases.concat(c.query.possiblePhrases).forEach(function(phrase) {
-                var ind = text.toLowerCase().indexOf(phrase);
-                while (ind >= 0) {
-                    var nphrase = "<b><font color=\"red\">" + phrase + "</font></b>";
-                    text = text.substr(0, ind) + nphrase + text.substr(ind + phrase.length);
-                    ind = text.toLowerCase().indexOf(phrase, ind + nphrase.length);
-                }
-            });
             return {
                 boardName: post.boardName,
                 postNumber: post.number,

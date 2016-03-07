@@ -1,7 +1,7 @@
 *
+!custom
 !partials
 !addFilesDialog.jst
-!archiveThread.jst
 !banner.jst
 !boardPageLower.jst
 !boardPageUpper.jst
@@ -18,6 +18,7 @@
 !deletePostDialog.jst
 !dPostBodyPart.jst
 !draft.jst
+!drawingOptionsDialog.jst
 !echoEditPostDialogPart.jst
 !echoPostBodyPart.jst
 !echoPostFormField.jst
@@ -31,16 +32,17 @@
 !googleRecaptchaWidget.jst
 !hiddenPostList.jst
 !hotkeysDialog.jst
+!movablePlayer.jst
 !moveThreadDialog.jst
 !navbar.jst
 !notFoundImage.jst
 !pagination.jst
-!player.jst
-!playlistItem.jst
+!playerTrack.jst
 !post.jst
+!postActionsMenu.jst
 !postForm.jst
-!postingSpeed.jst
 !postReference.jst
+!registeredUser.jst
 !rpgEditPostDialogPart.jst
 !rpgPostBodyPart.jst
 !rpgPostFormField.jst
@@ -54,7 +56,8 @@
 !threadPageLower.jst
 !threadPageUpper.jst
 !toolbar.jst
-!tumb_toolbar.jst
+!tplayer.jst
+!tumbToolbar.jst
 !userBan.jst
 !vkAudioList.jst
 !voteVariant.jst

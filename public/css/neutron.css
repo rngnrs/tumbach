@@ -17,7 +17,39 @@ aside {
 }
 /* /tumb rewrite */
 
-body {
+.ui-tooltip {
+    border: 1px solid #575757 !important;
+}
+
+.ui-tooltip-content {
+    background-color: #2C2C2C;
+    color: #698CC0;
+    /*font-family: "Trebuchet MS",Trebuchet,tahoma,serif;*/
+}
+
+.ui-tooltip-content::after {
+    border-color: #575757 transparent;
+}
+
+.ui-state-active > .ui-button-text > .signImage {
+    -webkit-filter: invert(0);
+    -moz-filter: invert(0);
+    -ms-filter: invert(0);
+    -o-filter: invert(0);
+    filter: invert(0);
+}
+
+.ui-slider {
+    border-radius: 0px !important;
+    border: 1px solid #698CC0 !important;
+}
+
+.ui-slider-handle {
+    border-radius: 0px !important;
+    border: 1px solid #698CC0 !important;
+}
+
+body  {
     background-color: #212121;
     color: #698CC0;
     /*font-family: "Trebuchet MS",Trebuchet,tahoma,serif;*/
@@ -29,7 +61,6 @@ a {
 
 a.expandCollapse {
     color: #444;
-    cursor: pointer;
 }
 
 a:hover {
@@ -38,7 +69,6 @@ a:hover {
 
 a.expandCollapse:hover {
     color: #666;
-    cursor: pointer;
 }
 
 hr {
@@ -54,7 +84,6 @@ hr {
     border: 2px solid #545454;
     border-radius: 5px;
     color: #EEE;
-    cursor: pointer;
 }
 
 .selectOption {
@@ -67,26 +96,10 @@ hr {
     filter: invert(0);
 }
 
-textarea {
+.input {
     background-color: #111;
     border: 2px solid #545454;
     border-radius: 5px;
-    color: #EEE;
-}
-
-input:not([type='image']) { /*Yep, this is NOT a class*/
-    background-color: #111;
-    border: 2px solid #545454;
-    border-radius: 5px;
-    color: #EEE;
-}
-
-.button {
-    cursor: pointer;
-}
-
-.checkbox {
-    cursor: pointer;
 }
 
 .popup {
@@ -95,44 +108,28 @@ input:not([type='image']) { /*Yep, this is NOT a class*/
 
 .favorites {
     background-color: #212121;
-    min-width: 300px;
-    min-height: 400px;
-    padding: 2px;
 }
 
 .favorites > div {
     background-color: #2C2C2C;
     border: 1px solid #575757;
-    padding: 2px;
-    margin-top: 4px;
+}
+
+.scrollAreaH60 {
+    border: 1px solid #698CC0;
 }
 
 .postSequenceNumber {
     color: red;
-    font-size: 75%;
 }
 
 .hiddenPostList > div:nth-child(even) {
     background-color: #212121;
-    margin-top: 3px;
-    margin-bottom: 3px;
 }
-
-/*
-    Ban
-*/
 
 .ban {
     background-color: #2C2C2C;
 }
-
-/*
-    Banner
-*/
-
-/*
-    Board
-*/
 
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #575757;
@@ -155,14 +152,26 @@ span.spoiler:hover .quotation {
     color: #789922;
 }
 
-span.tooltip {
-    color: #E08060;
-    cursor: help;
+.spoilerMarkupButton {
+    background-color: #212121;
+    color: #698CC0;
 }
 
-span.newPostCount {
+.spoilerMarkupButton.spoiler {
+    color: #48B0FD;
+}
+
+span.tooltip {
+    color: #E08060;
+}
+
+span.newPostCount,
+.postLimitReached {
     color: red;
-    font-size: 75%;
+}
+
+.bumpLimitReached {
+    color: olive;
 }
 
 .quotation {
@@ -170,7 +179,6 @@ span.newPostCount {
 }
 
 .cspoilerTitle {
-    cursor: pointer;
     color: #E08060;
 }
 
@@ -178,65 +186,36 @@ span.newPostCount {
     background-color: #DDEDAA;
 }
 
-/*
-    Catalog
-*/
-
 .catalogContainer {
     color: #698CC0;
 }
 
 .catalogItem {
-    background-color: #DDEDAA;
+    background-color: #2C2C2C;
+    border: 1px solid #575757;
     color: #698CC0;
 }
 
 .opSign {
     color: red;
 }
-
-/*
-    Error
-*/
-
 .error {
     background-color: #2C2C2C;
     color: #698CC0;
 }
 
-/*
-    Home
-*/
-
-.rules, .news {
+.sectionBody {
     background-color: #2C2C2C;
 }
-
-/*
-    IP ban
-*/
-
-.ipBan {
-    background-color: #DDEDAA;
-}
-
-/*
-    Not found
-*/
-
-/*.theImage <- Board image*/
-
-/*
-    Post
-*/
 
 .post, .draft {
     background-color: #2C2C2C;
     border: 1px solid #575757;
+    border-radius: 5px;
 }
 
 .post:not(.hidden) {
-    background: url("../favicon.ico") right bottom no-repeat;
+    background: #2C2C2C url("../favicon.ico") no-repeat right bottom;
 }
 
 .newPost {
@@ -252,19 +231,6 @@ span.newPostCount {
     border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts,
-.thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postFileName, .postFileSize {
-    white-space: nowrap;
-}
-
-.postFileName.mobile {
-    font-size: .9em;
-}
-
 .postFileSize {
     color: #698CC0;
 }
@@ -273,29 +239,29 @@ span.newPostCount {
     background: #212121 !important;
     color: #698CC0 !important;
     border: 1px solid #575757 !important;
+    /*font-family: "Trebuchet MS",Trebuchet,tahoma,serif !important;*/
 }
 
-.menu > li > a {
-    color: #698CC0;
+.bannedFor {
+    color: red;
 }
 
-.menu > li:hover {
-    background-color: #666;
+.modificationDateTime {
+    font-style: italic;
 }
 
 .postSubject {
+    font-weight: bold;
     color: #3941AC;
 }
 
-.userName {
-    font-weight: bold;
-    color: #B4B9CD;
+.tripcode {
+    color: green;
 }
 
-.postformFile {
-    border: 1px dashed #777;
-    text-align: justify;
-    cursor: pointer;
+.moderName {
+    font-weight: bold;
+    color: blue;
 }
 
 .postformFile.drag {
@@ -303,44 +269,14 @@ span.newPostCount {
     border: 1px dashed #555;
 }
 
-.postformFile ~ .postformFile {
-    margin-top: 5px;
-}
-
-.postformFileInput {
-    display: inline-block;
-    position: absolute;
-    left: -10px;
-    top: -10px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-}
-
-.postformFileText {
-    display: inline-block;
-    vertical-align: top;
-    white-space: normal;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-}
-
-.postformFileRemoveButton {
-    display: inline-block;
-    vertical-align: top;
-}
-
-.postformFileRemoveImage {
-    vertical-align: top !important;
-}
-
 .referencedBy {
     color: #707070;
 }
 
 ul.tabWidget > li {
-    background-color: #DDEDAA;
+    background-color: #2C2C2C;
+    border: 1px solid #575757;
+    border-radius: 5px;
 }
 
 ul.tabWidget > li > a {
@@ -348,132 +284,31 @@ ul.tabWidget > li > a {
 }
 
 ul.tabWidget > li.activated {
-    background-color: #212121;
+    background-color: #DDEDAA;
 }
 
-/*
-    Rules
-*/
-
-/*.rules <- Home*/
-
-/*
-    Settings bar
-*/
-
-.toolbar {
-    display: block;
-    padding-bottom: 5px;
-    text-align: center;
-    overflow-x: auto;
-    font-size: 1.2em;
-    position: relative;
-    top: -8px;
-    z-index: 1;
+ul.tabWidget > li.activated > a {
+    color: black;
 }
 
 .toolbar.sticky {
-    position: fixed;
-    top: 0;
     background-color: #212121;
-    width: 100%;
-    padding-bottom: 0;
 }
-
-/*
-    Thread
-*/
-
-/*blockquote <- Board*/
-
-blockquote.blockquoteThread {
-    max-height: 800px;
-}
-
-blockquote.blockquoteThread.expand {
-    max-height: none;
-}
-
-.codeBlock {
-    font-family: monospace;
-    white-space: pre;
-    word-break: normal;
-    word-wrap: normal;
-    overflow-wrap: normal;
-    padding-left: 20px !important;
-    overflow-x: auto;
-    max-width: 800px;
-    -ms-hyphens: none;
-    -moz-hyphens: none;
-    -webkit-hyphens: none;
-    hyphens: none;
-}
-
-.codeBlock.mobile {
-    max-width: 300px;
-}
-
-/*span.spoiler, span.spoiler a <- Board*/
-
-/*span.spoiler:hover <- Board*/
-
-/*span.spoiler:hover a <- Board*/
-
-.theMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.threadActions {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-/*
-    Thread echo
-*/
-
-/*
-    Title
-*/
-
-/* Vote */
 
 .vote {
     background-color: #DDEDAA;
 }
 
-/* Playlist */
-
-.track {
-    background-color: #DDEDAA;
+.voteText {
+    font-weight: bold;
 }
 
-#recaptcha_response_field {
-    color: #698CC0;
+.voteCount {
+    font-style: italic;
 }
 
-.buttonImage, .signImage, .boardSelect {
-    -webkit-filter: invert(1);
-    -moz-filter: invert(1);
-    -ms-filter: invert(1);
-    -o-filter: invert(1);
-    filter: invert(1);
-}
-
-.noInvert {
-    -webkit-filter: invert(0);
-    -moz-filter: invert(0);
-    -ms-filter: invert(0);
-    -o-filter: invert(0);
-    filter: invert(0);
+.chatContactList {
+    border: 1px solid #575757;
 }
 
 .chatContact:hover {
@@ -491,44 +326,127 @@ blockquote.blockquoteThread.expand {
     background-color: #575757;
 }
 
+.chatContactNewMessages {
+    color: red;
+}
+
 .chatTarget {
     color: #FFF;
     background-color: #666;
 }
 
+.chatHistory {
+    border: 1px solid #575757;
+}
+
 .chatMessage {
     border: 1px solid #575757;
+    border-radius: 6px;
     color: #698CC0;
     background-color: #2C2C2C;
+}
+
+.chatMessageDate {
+    border-bottom: 1px dotted black;
 }
 
 .bordered {
     border: 1px solid #575757;
 }
 
-.ui-tooltip {
-    border: 1px solid #575757 !important;
-    z-index: 11000 !important;
+.invertableImage, .buttonImage, .signImage, .boardSelect {
+    -webkit-filter: invert(1);
+    -moz-filter: invert(1);
+    -ms-filter: invert(1);
+    -o-filter: invert(1);
+    filter: invert(1);
 }
 
-.ui-tooltip-content {
+.noInvert {
+    -webkit-filter: invert(0);
+    -moz-filter: invert(0);
+    -ms-filter: invert(0);
+    -o-filter: invert(0);
+    filter: invert(0);
+}
+
+input:not([type='image']) { /*Yep, this is NOT a class*/
+    background-color: #111;
+    border: 2px solid #545454;
+    border-radius: 5px;
+    color: #EEE;
+}
+
+textarea {
+    background-color: #111;
+    border: 2px solid #545454;
+    border-radius: 5px;
+    color: #EEE;
+}
+
+.submitContainer > input {
+    border-color: #C9BE89;
+}
+
+.hideReason {
+    font-weight: bold;
+}
+
+#player {
+    background-color: #212121;
+    border: 1px solid #575757;
+    border-radius: 5px;
+}
+
+#player.minimized {
     background-color: #2C2C2C;
-    color: #698CC0;
 }
 
-.ui-tooltip-content::after {
-    content: '';
-    position: absolute;
-    border-style: solid;
-    display: block;
-    width: 0;
-    top: -10px;
-    left: 85px;
-    border-color: #575757 transparent;
-    border-width: 0 10px 10px;
+.track {
+    background-color: #2C2C2C;
 }
 
-.archivalThreadLink {
-    font-size: 1.2em;
-    margin-left: 10px;
+.track:hover {
+    background-color: #AABA77;
+    border: 1px solid #545454;
+}
+
+.track.selected {
+    background-color: #DDEDAA;
+    border: 1px solid #000;
+}
+
+.track:hover > span > a > img,
+.track.selected > span > a > img {
+    -webkit-filter: invert(0);
+    -moz-filter: invert(0);
+    -ms-filter: invert(0);
+    -o-filter: invert(0);
+    filter: invert(0);
+}
+
+.track.selected > .trackInfo {
+    font-weight: bold;
+}
+
+.movablePlayer, .movablePlayerControls {
+    border-radius: 5px;
+}
+
+.bannedUserHeader, .registeredUserHeader {
+    font-weight: bold;
+}
+
+.searchResult {
+    background-color: #2C2C2C;
+    border: 1px solid #575757;
+    border-radius: 5px;
+}
+
+.searchResultHighlighted {
+    background-color: darkred;
+}
+
+.delallHeader {
+    font-weight: bold;
 }

@@ -10,7 +10,7 @@ window.addEventListener("load", function load() {
     formData.append("query", query);
     formData.append("boardName", boardName);
     lord.post("/" + lord.data("sitePathPrefix") + "action/search", formData).then(function(model) {
-        model = merge.recursive(lord.model(["base", "tr"], true), model);
+        model = merge.recursive(lord.model(["base", "tr"]), model);
         var data = lord.template("searchResults", model);
         searchResultsPlaceholder.parentNode.replaceChild(data, searchResultsPlaceholder);
         var inp = lord.queryOne(".searchAction > form > [name='query']");
@@ -29,6 +29,10 @@ window.addEventListener("load", function load() {
                 }
             }
         }
+        $(".searchResultLink, .searchResultText").mark(model.phrases, {
+            markData: { "class": "searchResultHighlighted" },
+            ignoreCase: false
+        });
     }).catch(function(err) {
         lord.handleError(err);
         searchResultsPlaceholder.parentNode.removeChild(searchResultsPlaceholder);

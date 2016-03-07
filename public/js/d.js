@@ -1,4 +1,3 @@
-lord.customPostBodyPart = lord.customPostBodyPart || {};
 lord.customPostBodyPart[20] = function(it, thread, post) {
     if (!post.extraData)
         return "";

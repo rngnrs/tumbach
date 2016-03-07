@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile">
+<body>
 {{#def.customHeader}}
 <div class="wrap" {{#def.baseData}}>
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+    {{#def.toolbar}}
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
+            <div class="theTitle">
+                <h1>
+                    {{=it.title}}
+                </h1>
+            </div>
             {{? it.site.vkontakte.integrationEnabled}}
             <style type="text/css">
                 #vkontakteLoginButton {
                     text-align: center;
                     margin-top: 8px;
                 }
+
                 #vkontakteLoginButton > table {
                     margin: 0 auto;
                 }
@@ -22,11 +28,6 @@
                 VK.init({ apiId: {{=it.site.vkontakte.appId}} });
             </script>
             {{?}}
-            <div class="theTitle">
-                <h1>
-                    {{=it.title}}
-                </h1>
-            </div>
             <div class="login">
                 <form id="loginForm" method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/login"
                       enctype="application/x-www-form-urlencoded" class="inlineForm"
@@ -35,9 +36,13 @@
                            size="30" autofocus="true" />
                     <input type="submit" class="button" name="submit" value="{{=it.tr.loginText}}" />
                 </form>
-                {{? it.site.vkontakte.integrationEnabled}}
-                <div id="vkontakteLoginButton" onclick="lord.vkAuth();"></div>
-                {{?}}
+                <div>
+                    <input type="submit" class="button" value="{{=it.tr.generateHashpassButtonText}}"
+                           onclick="event.preventDefault(); lord.generateHashpass(); return false;" />
+                    {{? it.site.vkontakte.integrationEnabled}}
+                    <div id="vkontakteLoginButton" onclick="lord.vkAuth();"></div>
+                    {{?}}
+                </div>
             </div>
             <div class="loginDescription">
                 {{=it.tr.loginSystemDescriptionText}}

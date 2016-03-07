@@ -11,7 +11,28 @@ aside {
 }
 /* /tumb rewrite */
 
-body {
+.ui-tooltip {
+    border: 1px solid #CCC !important;
+}
+
+.ui-tooltip-content {
+    /*font-family: Verdana,sans-serif;*/
+    background-color: #DDD;
+}
+
+.ui-tooltip-content::after {
+    border-color: #CCC transparent;
+}
+
+.ui-slider {
+    border: 1px solid black !important;
+}
+
+.ui-slider-handle {
+    border: 1px solid black !important;
+}
+
+body  {
     background-color: #EEE;
     /*font-family: Verdana,sans-serif;*/
 }
@@ -22,7 +43,6 @@ a {
 
 a.expandCollapse {
     color: #444;
-    cursor: pointer;
 }
 
 a:hover {
@@ -31,12 +51,11 @@ a:hover {
 
 a.expandCollapse:hover {
     color: #666;
-    cursor: pointer;
 }
 
 hr {
-    color: #CCC; /*IE*/
-    background-color: #CCC; /*Firefox, Opera, Safari*/
+    color: #CCC;
+    background-color: #CCC;
     border: none;
     height: 1px;
     clear: both;
@@ -45,7 +64,6 @@ hr {
 .select {
     background: #EAEAEA;
     border: 1px solid #CCC;
-    cursor: pointer;
 }
 
 .selectOption {
@@ -59,7 +77,6 @@ hr {
 .button, .checkbox {
     background: #EAEAEA;
     border: 1px solid #CCC;
-    cursor: pointer;
 }
 
 .popup {
@@ -69,16 +86,11 @@ hr {
 
 .favorites {
     background-color: #EEE;
-    min-width: 300px;
-    min-height: 400px;
-    padding: 2px;
 }
 
 .favorites > div {
     background-color: #DDD;
     border: 1px solid #CCC;
-    padding: 2px;
-    margin-top: 4px;
 }
 
 .scrollAreaH60 {
@@ -87,30 +99,15 @@ hr {
 
 .postSequenceNumber {
     color: green;
-    font-size: 75%;
 }
 
 .hiddenPostList > div:nth-child(even) {
     background-color: #EEE;
-    margin-top: 3px;
-    margin-bottom: 3px;
 }
-
-/*
-    Ban
-*/
 
 .ban {
     background-color: #DDD;
 }
-
-/*
-    Banner
-*/
-
-/*
-    Board
-*/
 
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #BBB;
@@ -133,18 +130,35 @@ span.spoiler:hover .quotation {
     color: #789922;
 }
 
+.spoilerMarkupButton {
+    background-color: #EEE;
+}
+
+.spoilerMarkupButton.spoiler {
+    color: #333;
+}
+
 span.tooltip {
     color: #304070;
-    cursor: help;
 }
 
 span.newPostCount {
     color: green;
-    font-size: 75%;
+}
+
+.postLimitReached {
+    color: red;
+}
+
+.bumpLimitReached {
+    color: olive;
+}
+
+.quotation {
+    color: #789922;
 }
 
 .cspoilerTitle {
-    cursor: pointer;
     color: #304070;
 }
 
@@ -153,16 +167,13 @@ span.newPostCount {
     border: 1px solid #CCC;
 }
 
-/*
-    Catalog
-*/
-
 .catalogContainer {
     color: #333;
 }
 
 .catalogItem {
     background-color: #DDD;
+    border: 1px solid #CCC;
     color: #333;
 }
 
@@ -170,42 +181,21 @@ span.newPostCount {
     color: green;
 }
 
-/*
-    Error
-*/
-
 .error {
     background-color: #DDD;
 }
 
-/*
-    Home
-*/
-
-.rules, .news {
+.sectionBody {
     background-color: #DDD;
     border: 1px solid #CCC;
 }
 
-/*
-    IP ban
-*/
-
-.ipBan {
+.post {
     background-color: #DDD;
+    border: 1px solid #CCC;
 }
 
-/*
-    Not found
-*/
-
-/*.theImage <- Board image*/
-
-/*
-    Post
-*/
-
-.post, .draft {
+.draft {
     background-color: #DDD;
     border: 1px solid #CCC;
 }
@@ -222,19 +212,6 @@ span.newPostCount {
     border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts,
-.thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postFileName, .postFileSize {
-    white-space: nowrap;
-}
-
-.postFileName.mobile {
-    font-size: .9em;
-}
-
 .postFileSize {
     color: #444;
 }
@@ -242,25 +219,28 @@ span.newPostCount {
 .menu {
     background: #DDD !important;
     border: 1px solid #CCC !important;
+    /*font-family: Verdana,sans-serif !important;*/
 }
 
-.menu > li > a {
-    color: #000;
+.bannedFor {
+    color: red;
 }
 
-.menu > li:hover {
-    background-color: #666;
-    padding-right: 2px;
+.modificationDateTime {
+    font-style: italic;
 }
 
-.menu > li:hover > a {
-    color: #FFF;
+.postSubject {
+    font-weight: bold;
 }
 
-.postformFile {
-    border: 1px dashed #777;
-    text-align: justify;
-    cursor: pointer;
+.tripcode {
+    color: green;
+}
+
+.moderName {
+    font-weight: bold;
+    color: blue;
 }
 
 .postformFile.drag {
@@ -283,113 +263,31 @@ ul.tabWidget > li > a {
 
 ul.tabWidget > li.activated {
     background-color: #AAA;
+    border: 1px solid #666;
 }
 
-/*
-    Rules
-*/
-
-/*.rules <- Home*/
-
-/*
-    Settings bar
-*/
-
-.toolbar {
-    display: block;
-    padding-bottom: 5px;
-    text-align: center;
-    overflow-x: auto;
-    font-size: 1.2em;
-    position: relative;
-    top: -8px;
-    z-index: 1;
+ul.tabWidget > li.activated > a {
+    color: white;
 }
 
 .toolbar.sticky {
-    position: fixed;
-    top: 0;
     background-color: #EEE;
-    width: 100%;
-    padding-bottom: 0;
 }
-
-/*
-    Thread
-*/
-
-/*blockquote <- Board*/
-
-blockquote.blockquoteThread {
-    max-height: 800px;
-}
-
-blockquote.blockquoteThread.expand {
-    max-height: none;
-}
-
-.codeBlock {
-    font-family: monospace;
-    white-space: pre;
-    word-break: normal;
-    word-wrap: normal;
-    overflow-wrap: normal;
-    padding-left: 20px !important;
-    border: 1px solid #AAA;
-    overflow-x: auto;
-    max-width: 800px;
-    -ms-hyphens: none;
-    -moz-hyphens: none;
-    -webkit-hyphens: none;
-    hyphens: none;
-}
-
-.codeBlock.mobile {
-    max-width: 300px;
-}
-
-/*span.spoiler, span.spoiler a <- Board*/
-
-/*span.spoiler:hover <- Board*/
-
-/*span.spoiler:hover a <- Board*/
-
-.theMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.threadActions {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-/*
-    Thread echo
-*/
-
-/*
-    Title
-*/
-
-
-/* Vote */
 
 .vote {
     background-color: #CCC;
     border: 1px solid #BBB;
 }
-/* Playlist */
 
-.track {
-    background-color: #DDD;
+.voteText {
+    font-weight: bold;
+}
+
+.voteCount {
+    font-style: italic;
+}
+
+.chatContactList {
     border: 1px solid #CCC;
 }
 
@@ -408,8 +306,16 @@ blockquote.blockquoteThread.expand {
     background-color: #666;
 }
 
+.chatContactNewMessages {
+    color: red;
+}
+
 .chatTarget {
     background-color: #DDD;
+}
+
+.chatHistory {
+    border: 1px solid #CCC;
 }
 
 .chatMessage {
@@ -417,33 +323,61 @@ blockquote.blockquoteThread.expand {
     background-color: #DDD;
 }
 
+.chatMessageDate {
+    border-bottom: 1px dotted black;
+}
+
 .bordered {
     border: 1px solid #CCC;
 }
 
-.ui-tooltip {
-    border: 1px solid #CCCCCC !important;
-    z-index: 11000 !important;
+.submitContainer > input {
+    border-color: #F60;
 }
 
-.ui-tooltip-content {
-    font-family: Verdana,sans-serif;
+.hideReason {
+    font-weight: bold;
+}
+
+#player {
+    background-color: #EEE;
+    border: 1px solid #CCC;
+}
+
+#player.minimized {
+    background-color: #DDD;
+}
+
+.track {
+    background-color: #DDD;
+    border: 1px solid #CCC;
+}
+
+.track:hover {
+    background-color: #CCC;
+    border: 1px solid #BBB;
+}
+
+.track.selected {
+    background-color: #AAA;
+    border: 1px solid #666;
+}
+
+.track.selected > .trackInfo,
+.bannedUserHeader,
+.registeredUserHeader {
+    font-weight: bold;
+}
+
+.searchResult {
     background-color: #DDDDDD;
+    border: 1px solid #CCCCCC;
 }
 
-.ui-tooltip-content::after {
-    content: '';
-    position: absolute;
-    border-style: solid;
-    display: block;
-    width: 0;
-    top: -10px;
-    left: 85px;
-    border-color: #CCCCCC transparent;
-    border-width: 0 10px 10px;
+.searchResultHighlighted {
+    background-color: yellow;
 }
 
-.archivalThreadLink {
-    font-size: 1.2em;
-    margin-left: 10px;
+.delallHeader {
+    font-weight: bold;
 }

@@ -667,6 +667,11 @@ var convertPostLink = function(info, _, matchs, _, options) {
     }
 };
 
+var convertHtml = function(_, text, _, _, options) {
+    options.type = SkipTypes.HtmlSkip;
+    return Promise.resolve(text);
+};
+
 var convertMarkup = function(_, text, matchs, _, options) {
     options.type = SkipTypes.NoSkip;
     if ("----" == matchs[0])
@@ -773,6 +778,7 @@ var processPostText = function(boardName, text, options) {
         MarkupModes.ExtendedWakabaMark,
         MarkupModes.BBCode
     ];
+    var accessLevel = (options && options.accessLevel) || null;
     var c = {};
     var langs = [];
     Highlight.listLanguages().forEach(function(lang) {
@@ -810,6 +816,14 @@ var processPostText = function(boardName, text, options) {
         });
     }
     if (markupModes.indexOf(MarkupModes.BBCode) >= 0) {
+        if (Database.compareRegisteredUserLevels(accessLevel, Database.RegisteredUserLevels.Moder) >= 0) {
+            p = p.then(function() {
+                return process(info, convertHtml, {
+                    op: "[raw-html]",
+                    cl: "[/raw-html]"
+                });
+            });
+        }
         p = p.then(function() {
             return process(info, convertPre, {
                 op: "[pre]",

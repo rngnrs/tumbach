@@ -28,6 +28,12 @@ lord.doLogin = function(event, form) {
     lord.loginImplementation(form);
 };
 
+lord.generateHashpass = function() {
+    var form = lord.id("loginForm");
+    var hashpass = lord.nameOne("hashpass", form).value;
+    prompt(lord.text("hashpassLabelText"), sha1(hashpass));
+};
+
 lord.vkAuth = function() {
     VK.Auth.login(function(response) {
         if (!response.session)
@@ -36,18 +42,11 @@ lord.vkAuth = function() {
     }, VK.access.AUDIO);
 };
 
-/*window.addEventListener("load", function load() {
+window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     var vkButton = lord.id("vkontakteLoginButton");
     if (!vkButton)
         return;
     VK.UI.button("vkontakteLoginButton");
     vkButton.style.width = "";
-}, false);*/
-(function() {
-    var vkButton = lord.id("vkontakteLoginButton");
-    if (!vkButton)
-        return;
-    VK.UI.button("vkontakteLoginButton");
-    vkButton.style.width = "";
-})();
+}, false);

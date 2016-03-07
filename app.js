@@ -43,8 +43,7 @@ if (count <= 0)
 
 var spawnCluster = function() {
     expressCluster(function(worker) {
-        console.log("[PID:" + process.pid + "] Инициализация...");
-        console.log("Текущая локаль: " + config("site.locale", "en"));
+        console.log("[PID: " + process.pid + "] Инициализация...");
         var express = require("express");
         var controller = require("./helpers/controller");
         var app = express();
@@ -60,14 +59,14 @@ var spawnCluster = function() {
             var sockets = {};
             var nextSocketId = 0;
             var server = app.listen(config("server.port", 8080), function() {
-                console.log("[PID:" + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
+                console.log("[PID: " + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
                 Global.IPC.installHandler("exit", function(status) {
                     process.exit(status);
                 });
                 Global.IPC.installHandler("stop", function() {
                     return new Promise(function(resolve, reject) {
                         server.close(function() {
-                            console.log("[PID:" + process.pid + "] Закрыт!");
+                            console.log("[PID: " + process.pid + "] Закрыт!");
                             resolve();
                         });
                         Tools.forIn(sockets, function(socket, socketId) {
@@ -79,16 +78,10 @@ var spawnCluster = function() {
                 Global.IPC.installHandler("start", function() {
                     return new Promise(function(resolve, reject) {
                         server.listen(config("server.port", 8080), function() {
-                            console.log("[PID:" + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
+                            console.log("[PID: " + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
                             resolve();
                         });
                     });
-                });
-                Global.IPC.installHandler("addToCached", function(data) {
-                    controller.addToCached(data);
-                });
-                Global.IPC.installHandler("removeFromCached", function(data) {
-                    return controller.removeFromCached(data);
                 });
                 Global.IPC.installHandler("doGenerate", function(data) {
                     var f = BoardModel[`do_${data.funcName}`];
@@ -120,75 +113,48 @@ if (cluster.isMaster) {
     Database.initialize().then(function() {
         return controller.initialize();
     }).then(function() {
-        return Tools.series(["JSON", "HTML"], function(type) {
-            console.log(`Генерация ${type} кэша...`);
-            return Tools.series(require("./controllers").routers, function(router) {
-                var f = router[`generate${type}`];
-                if (typeof f != "function")
-                    return Promise.resolve();
-                return f.call(router).then(function(result) {
-                    return Tools.series(result, function(data, id) {
-                        return Cache[`set${type}`](id, data);
-                    });
+        if (config("server.rss.enabled", true)) {
+            setInterval(function() {
+                BoardModel.generateRSS().catch(function(err) {
+                    Global.error(err.stack || err);
                 });
-            });
-        });
-    }).then(function() {
-        return BoardModel.generate();
-    }).then(function() {
-        if (!config("server.rss.enabled", true))
-            return Promise.resolve();
-        console.log("Генерация RSS...");
-        setInterval(function() {
-            BoardModel.generateRss(true).catch(function(err) {
-                Global.error(err.stack || err);
-            });
-        }, config("server.rss.ttl", 60) * Tools.Minute);
-        return BoardModel.generateRss(true).catch(function(err) {
-            Global.error(err.stack || err);
-        }).then(function() {
-            return Promise.resolve();
-        });
+            }, config("server.rss.ttl", 60) * Tools.Minute);
+        }
+        if (config("system.regenerateCacheOnStartup", true))
+            return controller.regenerate();
+        return Promise.resolve();
     }).then(function() {
         console.log("Создание воркеров...");
         spawnCluster();
         var ready = 0;
         Global.IPC.installHandler("ready", function() {
             ++ready;
-            if (ready == count) {
-                var commands = require("./helpers/commands");
-                var rl = commands();
-            }
+            if (ready == count)
+                require("./helpers/commands")();
         });
-        var fileNames = {};
-        var fileName = function(boardName) {
+        var lastFileName;
+        var fileName = function() {
             var fn = "" + Tools.now().valueOf();
-            if (fn != fileNames[boardName]) {
-                fileNames[boardName] = fn;
+            if (fn != lastFileName) {
+                lastFileName = fn;
                 return Promise.resolve(fn);
             }
             return new Promise(function(resolve, reject) {
                 setTimeout(function() {
-                    fileName(boardName).then(function(fn) {
+                    fileName().then(function(fn) {
                         resolve(fn);
                     });
                 }, 1);
             });
         };
-        Global.IPC.installHandler("fileName", function(boardName) {
-            return fileName(boardName);
+        Global.IPC.installHandler("fileName", function() {
+            return fileName();
         });
         Global.IPC.installHandler("generate", function(data) {
             return BoardModel.scheduleGenerate(data.boardName, data.threadNumber, data.postNumber, data.action);
         });
-        Global.IPC.installHandler("addToCached", function(data) {
-            controller.addToCached(data);
-            return Global.IPC.send("addToCached", data);
-        });
-        Global.IPC.installHandler("removeFromCached", function(data) {
-            return Global.IPC.send("removeFromCached", data).then(function() {
-                return controller.removeFromCached(data, true);
-            });
+        Global.IPC.installHandler("generateArchive", function(data) {
+            return BoardModel.scheduleGenerateArchive(data);
         });
     }).catch(function(err) {
         Global.error(err.stack || err);
@@ -205,14 +171,8 @@ if (cluster.isMaster) {
             Global.error(err.stack || err);
         });
     };
-    Global.addToCached = function(keyParts) {
-        controller.addToCached(keyParts);
-        return Global.IPC.send("addToCached", keyParts).catch(function(err) {
-            Global.error(err.stack || err);
-        });
-    };
-    Global.removeFromCached = function(keyParts) {
-        return Global.IPC.send("removeFromCached", ["thread"].concat(keyParts)).catch(function(err) {
+    Global.generateArchive = function(boardName) {
+        return Global.IPC.send("generateArchive", boardName).catch(function(err) {
             Global.error(err.stack || err);
         });
     };

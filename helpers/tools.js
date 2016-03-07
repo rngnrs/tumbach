@@ -155,7 +155,7 @@ module.exports.toUTC = function(date) {
 
 module.exports.hashpass = function(req) {
     var s = req.cookies.hashpass;
-    if (typeof s != "string" || !s.match(/^([0-9a-fA-F]){40}$/))
+    if (!module.exports.mayBeHashpass(s))
         return;
     return s;
 };
@@ -206,8 +206,10 @@ module.exports.styles = function() {
     styles = [];
     var path = __dirname + "/../public/css";
     FSSync.readdirSync(path).forEach(function(fileName) {
-        if (fileName.split(".").pop() != "css")
+        if (fileName.split(".").pop() != "css"
+            || ["base", "desktop", "mobile"].indexOf(fileName.split(".").shift()) >= 0) {
             return;
+        }
         var name = fileName.split(".").shift();
         var str = FSSync.readFileSync(path + "/" + fileName, "utf8");
         var match = /\/\*\s*([^\*]+?)\s*\*\//gi.exec(str);
@@ -247,8 +249,8 @@ module.exports.mimeType = function(fileName) {
         return new Promise(function(resolve, reject) {
             ChildProcess.exec(`file --brief --mime-type ${fileName}`, {
                 timeout: 5000,
-                    encoding: "utf8",
-                    stdio: [
+                encoding: "utf8",
+                stdio: [
                     0,
                     "pipe",
                     null
@@ -369,29 +371,29 @@ module.exports.splitCommand = function(cmd) {
         } else {
             if ("\"" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                    case 1:
-                        quot = 0;
-                        break;
-                    case -1:
-                        arg += c;
-                        break;
-                    case 0:
-                    default:
-                        quot = 1;
-                        break;
+                case 1:
+                    quot = 0;
+                    break;
+                case -1:
+                    arg += c;
+                    break;
+                case 0:
+                default:
+                    quot = 1;
+                    break;
                 }
             } else if ("'" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                    case 1:
-                        arg += c;
-                        break;
-                    case -1:
-                        quot = 0;
-                        break;
-                    case 0:
-                    default:
-                        quot = -1;
-                        break;
+                case 1:
+                    arg += c;
+                    break;
+                case -1:
+                    quot = 0;
+                    break;
+                case 0:
+                default:
+                    quot = -1;
+                    break;
                 }
             } else {
                 if (("\"" == c || "'" == c) && (i > 0 || "\\" == cmd[i - 1]) && arg.length > 0)
@@ -414,13 +416,9 @@ module.exports.splitCommand = function(cmd) {
     };
 };
 
-module.exports.password = function(pwd) {
-    if (!pwd)
-        return null;
-    var sha1 = Crypto.createHash("sha1");
-    sha1.update(pwd);
-    return sha1.digest("hex");
-}
+module.exports.mayBeHashpass = function(password) {
+    return (typeof password == "string") && password.match(/^([0-9a-fA-F]){40}$/);
+};
 
 module.exports.parseForm = function(req) {
     if (req.formFields) {
@@ -468,7 +466,7 @@ module.exports.proxy = function() {
     };
 };
 
-module.exports.correctAddress = function(ip) {
+var correctAddress = function(ip) {
     if (!ip)
         return null;
     if ("::1" == ip)
@@ -495,6 +493,8 @@ module.exports.correctAddress = function(ip) {
     return null;
 };
 
+module.exports.correctAddress = correctAddress;
+
 module.exports.preferIPv4 = function(ip) {
     if (!ip)
         return null;
@@ -514,6 +514,14 @@ module.exports.preferIPv4 = function(ip) {
     return ip;
 };
 
+module.exports.sha1 = function(data) {
+    if (!Util.isString(data) && !Util.isBuffer(data))
+        return null;
+    var sha1 = Crypto.createHash("sha1");
+    sha1.update(data);
+    return sha1.digest("hex");
+};
+
 module.exports.sha256 = function(data) {
     if (!data)
         return null;
@@ -522,13 +530,15 @@ module.exports.sha256 = function(data) {
     return sha256.digest("hex");
 };
 
-module.exports.withoutDuplicates = function(arr) {
+var withoutDuplicates = function(arr) {
     if (!arr || !Util.isArray(arr))
         return arr;
     return arr.filter(function(item, i) {
         return arr.indexOf(item) == i;
     });
 };
+
+module.exports.withoutDuplicates = withoutDuplicates;
 
 module.exports.remove = function(arr, what, both) {
     if (!arr || !Util.isArray(arr))
@@ -620,7 +630,7 @@ module.exports.writeFile = function(path, data) {
 };
 
 module.exports.removeFile = function(path) {
-    var c = { noclose: true };
+    var c = {};
     return openFile(path, "w").then(function(fd) {
         c.fd = fd;
         return flockFile(c.fd, "ex");
@@ -631,23 +641,10 @@ module.exports.removeFile = function(path) {
         return flockFile(c.fd, "un");
     }).then(function() {
         c.locked = false;
+        return closeFile(c.fd);
+    }).then(function() {
         return Promise.resolve();
     }).catch(recover.bind(null, c));
-};
-
-var controller;
-
-module.exports.controllerHtml = function(req, res, f, keys) {
-    if (!controller)
-        controller = require("./controller"); //NOTE: Circular dependency workaround
-    var ifModifiedSince = new Date(req.headers["if-modified-since"]);
-    var args = [f, ifModifiedSince].concat(Array.prototype.slice.call(arguments, 3));
-    return controller.html.apply(controller, args).then(function(data) {
-        res.setHeader("Last-Modified", data.lastModified.toUTCString());
-        if (+ifModifiedSince >= +data.lastModified)
-            res.status(304);
-        res.send(data.data);
-    });
 };
 
 module.exports.series = function(arr, f) {
@@ -685,4 +682,20 @@ module.exports.postSubject = function(post, maxLength) {
     if (!isNaN(maxLength) && maxLength > 3 && title.length > maxLength)
         title = title.substr(0, maxLength - 3) + "...";
     return title;
+};
+
+module.exports.ipList = function(s) {
+    var ips = (s || "").split(/\s+/).filter(function(ip) {
+        return ip;
+    });
+    //TODO: IP ranges
+    var err = ips.some(function(ip, i) {
+        ip = correctAddress(ip);
+        if (!ip)
+            return true;
+        ips[i] = ip;
+    });
+    if (err)
+        return translate("Invalid IP address");
+    return withoutDuplicates(ips);
 };
