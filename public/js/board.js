@@ -3220,7 +3220,7 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = lord.getLocalObject("showFrame", false) ? 21 : '';
+    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 21 : '';
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
         my: "left top",
         at: "left-"+fw+"8px bottom-48px",

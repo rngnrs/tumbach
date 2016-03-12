@@ -1507,7 +1507,7 @@ lord.settings = function() {
         deviceType: lord.getCookie("deviceType", "auto"),
         time: lord.getCookie("time", "local"),
         timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
-        captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
+        captchaEngine: { id: lord.getLocalObject("captchaEngine", "google-recaptcha") },
         style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
