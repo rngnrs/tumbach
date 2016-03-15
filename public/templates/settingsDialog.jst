@@ -94,10 +94,17 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="shrinkPosts" value="true"
-                               {{? it.settings.shrinkPosts}}checked="true"{{?}} /><label>{{=it.tr.postShrinkingLabelText}}</label>
-                        <input type="checkbox" name="stickyToolbar" value="true"
-                               {{? it.settings.stickyToolbar}}checked="true"{{?}} /><label>{{=it.tr.stickyToolbarLabelText}}</label>
+                        <label><input type="checkbox" name="transparentHeader" value="true"
+                                      {{? it.settings.transparentHeader}}checked="true"{{?}} />{{=it.tr.transparentHeaderLabelText}}</label>
+                        <label><input type="checkbox" name="shrinkPosts" value="true"
+                                      {{? it.settings.shrinkPosts}}checked="true"{{?}} />{{=it.tr.postShrinkingLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+
+                        <label><input type="checkbox" name="stickyToolbar" value="true"
+                               {{? it.settings.stickyToolbar}}checked="true"{{?}} />{{=it.tr.stickyToolbarLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
@@ -125,40 +132,40 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="autoUpdateThreadsByDefault"
-                               {{? it.settings.autoUpdateThreadsByDefault}}checked="true"{{?}} /><label>{{=it.tr.autoUpdateThreadsByDefaultLabelText}}</label>
+                        <label><input type="checkbox" name="autoUpdateThreadsByDefault"
+                               {{? it.settings.autoUpdateThreadsByDefault}}checked="true"{{?}} />{{=it.tr.autoUpdateThreadsByDefaultLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="showAutoUpdateDesktopNotifications"
-                               {{? it.settings.showAutoUpdateDesktopNotifications}}checked="true"{{?}} /><label>{{=it.tr.showAutoUpdateDesktopNotificationsLabelText}}</label>
+                        <label><input type="checkbox" name="showAutoUpdateDesktopNotifications"
+                               {{? it.settings.showAutoUpdateDesktopNotifications}}checked="true"{{?}} />{{=it.tr.showAutoUpdateDesktopNotificationsLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="playAutoUpdateSound"
-                               {{? it.settings.playAutoUpdateSound}}checked="false"{{?}} /><label>{{=it.tr.playAutoUpdateSoundLabelText}}</label>
+                        <label><input type="checkbox" name="playAutoUpdateSound"
+                               {{? it.settings.playAutoUpdateSound}}checked="false"{{?}} />{{=it.tr.playAutoUpdateSoundLabelText}}</label>
                         <input type="number" min="0" max="100" name="soundNotificationsVolume" class="numberSize3"
                                value="{{=it.settings.soundNotificationsVolume}}" /> %
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="addExpander"
-                               {{? it.settings.addExpander}}checked="false"{{?}} /><label>{{=it.tr.addExpanderLabelText}}</label>
+                        <label><input type="checkbox" name="addExpander"
+                               {{? it.settings.addExpander}}checked="false"{{?}} />{{=it.tr.addExpanderLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="signOpPostLinks"
-                               {{? it.settings.signOpPostLinks}}checked="true"{{?}} /><label>{{=it.tr.signOpPostLinksLabelText}}</label>
+                        <label><input type="checkbox" name="signOpPostLinks"
+                               {{? it.settings.signOpPostLinks}}checked="true"{{?}} />{{=it.tr.signOpPostLinksLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="signOwnPostLinks"
-                               {{? it.settings.signOwnPostLinks}}checked="true"{{?}} /><label>{{=it.tr.signOwnPostLinksLabelText}}</label>
+                        <label><input type="checkbox" name="signOwnPostLinks"
+                               {{? it.settings.signOwnPostLinks}}checked="true"{{?}} />{{=it.tr.signOwnPostLinksLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
@@ -199,44 +206,44 @@
                     <td class="nowrap">
                         <input type="number" min="0" max="100" name="defaultAudioVideoVolume" class="numberSize3"
                                value="{{=it.settings.defaultAudioVideoVolume}}" /> %
-                        <input type="checkbox" name="rememberAudioVideoVolume"
-                               {{? it.settings.rememberAudioVideoVolume}}checked="true"{{?}} /><label>{{=it.tr.rememberAudioVideoVolumeLabelText}}</label>
+                        <label><input type="checkbox" name="rememberAudioVideoVolume"
+                               {{? it.settings.rememberAudioVideoVolume}}checked="true"{{?}} />{{=it.tr.rememberAudioVideoVolumeLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="closeFilesByClickingOnly"
-                               {{? it.settings.closeFilesByClickingOnly}}checked="true"{{?}} /><label>{{=it.tr.closeFilesByClickingOnlyLabelText}}</label>
+                        <label><input type="checkbox" name="closeFilesByClickingOnly"
+                               {{? it.settings.closeFilesByClickingOnly}}checked="true"{{?}} />{{=it.tr.closeFilesByClickingOnlyLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="resetFileScaleOnOpening"
-                               {{? it.settings.resetFileScaleOnOpening}}checked="true"{{?}} /><label>{{=it.tr.resetFileScaleOnOpeningLabelText}}</label>
+                        <label><input type="checkbox" name="resetFileScaleOnOpening"
+                               {{? it.settings.resetFileScaleOnOpening}}checked="true"{{?}} />{{=it.tr.resetFileScaleOnOpeningLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="playAudioVideoImmediately"
-                               {{? it.settings.playAudioVideoImmediately}}checked="true"{{?}} /><label>{{=it.tr.playAudioVideoImmediatelyLabelText}}</label>
+                        <label><input type="checkbox" name="playAudioVideoImmediately"
+                               {{? it.settings.playAudioVideoImmediately}}checked="true"{{?}} />{{=it.tr.playAudioVideoImmediatelyLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="loopAudioVideo"
-                               {{? it.settings.loopAudioVideo}}checked="true"{{?}} /><label>{{=it.tr.loopAudioVideoLabelText}}</label>
+                        <label><input type="checkbox" name="loopAudioVideo"
+                               {{? it.settings.loopAudioVideo}}checked="true"{{?}} />{{=it.tr.loopAudioVideoLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="showLeafButtons"
-                               {{? it.settings.showLeafButtons}}checked="true"{{?}} /><label>{{=it.tr.showLeafButtonsLabelText}}</label>
+                        <label><input type="checkbox" name="showLeafButtons"
+                               {{? it.settings.showLeafButtons}}checked="true"{{?}} />{{=it.tr.showLeafButtonsLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="leafThroughImagesOnly"
-                               {{? it.settings.leafThroughImagesOnly}}checked="true"{{?}} /><label>{{=it.tr.leafThroughImagesOnlyLabelText}}</label>
+                        <label><input type="checkbox" name="leafThroughImagesOnly"
+                               {{? it.settings.leafThroughImagesOnly}}checked="true"{{?}} />{{=it.tr.leafThroughImagesOnlyLabelText}}</label>
                     </td>
                 </tr>
             </tbody>
@@ -278,50 +285,50 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="hidePostformRules" value="true"
-                               {{? it.settings.hidePostformRules}}checked="true"{{?}} /><label>{{=it.tr.hidePostformRulesLabelText}}</label>
+                        <label><input type="checkbox" name="hidePostformRules" value="true"
+                               {{? it.settings.hidePostformRules}}checked="true"{{?}} />{{=it.tr.hidePostformRulesLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="minimalisticPostform" value="true"
-                               {{? it.settings.minimalisticPostform}}checked="true"{{?}} /><label>{{=it.tr.minimalisticPostformLabelText}}</label>
+                        <label><input type="checkbox" name="minimalisticPostform" value="true"
+                               {{? it.settings.minimalisticPostform}}checked="true"{{?}} />{{=it.tr.minimalisticPostformLabelText}}</label>
                     </td>
                 </tr>        
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="moveToPostOnReplyInThread"
-                               {{? it.settings.moveToPostOnReplyInThread}}checked="true"{{?}} /><label>{{=it.tr.moveToPostOnReplyInThreadLabelText}}</label>
+                        <label><input type="checkbox" name="moveToPostOnReplyInThread"
+                               {{? it.settings.moveToPostOnReplyInThread}}checked="true"{{?}} />{{=it.tr.moveToPostOnReplyInThreadLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="checkFileExistence"
-                               {{? it.settings.checkFileExistence}}checked="true"{{?}} /><label>{{=it.tr.checkFileExistenceLabelText}}</label>
+                        <label><input type="checkbox" name="checkFileExistence"
+                               {{? it.settings.checkFileExistence}}checked="true"{{?}} />{{=it.tr.checkFileExistenceLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="showAttachedFilePreview"
-                               {{? it.settings.showAttachedFilePreview}}checked="true"{{?}} /><label>{{=it.tr.showAttachedFilePreviewLabelText}}</label>
+                        <label><input type="checkbox" name="showAttachedFilePreview"
+                               {{? it.settings.showAttachedFilePreview}}checked="true"{{?}} />{{=it.tr.showAttachedFilePreviewLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="addToFavoritesOnReply"
-                               {{? it.settings.addToFavoritesOnReply}}checked="true"{{?}} /><label>{{=it.tr.addToFavoritesOnReplyLabelText}}</label>
+                        <label><input type="checkbox" name="addToFavoritesOnReply"
+                               {{? it.settings.addToFavoritesOnReply}}checked="true"{{?}} />{{=it.tr.addToFavoritesOnReplyLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="hidePostformMarkup"
-                               {{? it.settings.hidePostformMarkup}}checked="true"{{?}} /><label>{{=it.tr.hidePostformMarkupLabelText}}</label>
+                        <label><input type="checkbox" name="hidePostformMarkup"
+                               {{? it.settings.hidePostformMarkup}}checked="true"{{?}} />{{=it.tr.hidePostformMarkupLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="stripExifFromJpeg"
-                               {{? it.settings.stripExifFromJpeg}}checked="true"{{?}} /><label>{{=it.tr.stripExifFromJpegLabelText}}</label>
+                        <label><input type="checkbox" name="stripExifFromJpeg"
+                               {{? it.settings.stripExifFromJpeg}}checked="true"{{?}} />{{=it.tr.stripExifFromJpegLabelText}}</label>
                     </td>
                 </tr>
             </tbody>
@@ -336,9 +343,9 @@
                         <div class="scrollAreaH60" name="hiddenBoards">
                             {{~it.boards :brd}}
                                 {{? !brd.hidden}}
-                                    <input type="checkbox" name="board_{{=brd.name}}"
+                                    <label><input type="checkbox" name="board_{{=brd.name}}"
                                            {{? it.settings.hiddenBoards.indexOf(brd.name) >= 0}}checked="true"{{?}}
-                                           value="true">[{{=brd.name}}] {{=brd.title}}</input>
+                                           value="true">[{{=brd.name}}] {{=brd.title}}</label>
                                     <br />
                                 {{?}}
                             {{~}}
@@ -347,26 +354,26 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="hideTripcodes"
-                               {{? it.settings.hideTripcodes}}checked="true"{{?}} /><label>{{=it.tr.hideTripcodesLabelText}}</label>
+                        <label><input type="checkbox" name="hideTripcodes"
+                               {{? it.settings.hideTripcodes}}checked="true"{{?}} />{{=it.tr.hideTripcodesLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="hideUserNames"
-                               {{? it.settings.hideUserNames}}checked="true"{{?}} /><label>{{=it.tr.hideUserNamesLabelText}}</label>
+                        <label><input type="checkbox" name="hideUserNames"
+                               {{? it.settings.hideUserNames}}checked="true"{{?}} />{{=it.tr.hideUserNamesLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="strikeOutHiddenPostLinks"
-                               {{? it.settings.strikeOutHiddenPostLinks}}checked="true"{{?}} /><label>{{=it.tr.strikeOutHiddenPostLinksLabelText}}</label>
+                        <label><input type="checkbox" name="strikeOutHiddenPostLinks"
+                               {{? it.settings.strikeOutHiddenPostLinks}}checked="true"{{?}} />{{=it.tr.strikeOutHiddenPostLinksLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="spellsEnabled"
-                               {{? it.settings.spellsEnabled}}checked="true"{{?}} /><label>{{=it.tr.spellsLabelText}}</label>
+                        <label><input type="checkbox" name="spellsEnabled"
+                               {{? it.settings.spellsEnabled}}checked="true"{{?}} />{{=it.tr.spellsLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
@@ -401,59 +408,59 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="showNewPosts"
-                               {{? it.settings.showNewPosts}}checked="true"{{?}} /><label>{{=it.tr.showNewPostsLabelText}}</label>
+                        <label><input type="checkbox" name="showNewPosts"
+                               {{? it.settings.showNewPosts}}checked="true"{{?}} />{{=it.tr.showNewPostsLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="chatEnabled"
-                               {{? it.settings.chatEnabled}}checked="true"{{?}} /><label>{{=it.tr.chatLabelText}}</label>
+                        <label><input type="checkbox" name="chatEnabled"
+                               {{? it.settings.chatEnabled}}checked="true"{{?}} />{{=it.tr.chatLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="drawingEnabled"
-                               {{? it.settings.drawingEnabled}}checked="true"{{?}} /><label>{{=it.tr.drawingLabelText}}</label>
+                        <label><input type="checkbox" name="drawingEnabled"
+                               {{? it.settings.drawingEnabled}}checked="true"{{?}} />{{=it.tr.drawingLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="autoUpdatePlayer"
-                               {{? it.settings.autoUpdatePlayer}}checked="true"{{?}} /><label>{{=it.tr.autoUpdatePlayerLabelText}}</label>
+                        <label><input type="checkbox" name="autoUpdatePlayer"
+                               {{? it.settings.autoUpdatePlayer}}checked="true"{{?}} />{{=it.tr.autoUpdatePlayerLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="hotkeysEnabled"
-                               {{? it.settings.hotkeysEnabled}}checked="true"{{?}} /><label>{{=it.tr.hotkeysLabelText}}</label>
+                        <label><input type="checkbox" name="hotkeysEnabled"
+                               {{? it.settings.hotkeysEnabled}}checked="true"{{?}} />{{=it.tr.hotkeysLabelText}}</label>
                         <button class="button" onclick="lord.editHotkeys();">{{=it.tr.editHotkeysText}}</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="userCssEnabled"
-                               {{? it.settings.userCssEnabled}}checked="true"{{?}} /><label>{{=it.tr.userCssLabelText}}</label>
+                        <label><input type="checkbox" name="userCssEnabled"
+                               {{? it.settings.userCssEnabled}}checked="true"{{?}} />{{=it.tr.userCssLabelText}}</label>
                         <button class="button" onclick="lord.editUserCss();">{{=it.tr.editUserCssText}}</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="userJavaScriptEnabled"
-                               {{? it.settings.userJavaScriptEnabled}}checked="true"{{?}} /><label>{{=it.tr.userJavaScriptLabelText}}</label>
+                        <label><input type="checkbox" name="userJavaScriptEnabled"
+                               {{? it.settings.userJavaScriptEnabled}}checked="true"{{?}} />{{=it.tr.userJavaScriptLabelText}}</label>
                         <button class="button" onclick="lord.editUserJavaScript();">{{=it.tr.editUserJavaScriptText}}</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="sourceHighlightingEnabled"
-                               {{? it.settings.sourceHighlightingEnabled}}checked="true"{{?}} /><label>{{=it.tr.sourceHighlightingLabelText}}</label>
+                        <label><input type="checkbox" name="sourceHighlightingEnabled"
+                               {{? it.settings.sourceHighlightingEnabled}}checked="true"{{?}} />{{=it.tr.sourceHighlightingLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <input type="checkbox" name="apiRequestCachingEnabled"
-                               {{? it.settings.apiRequestCachingEnabled}}checked="true"{{?}} /><label>{{=it.tr.apiRequestCachingLabelText}}</label>
+                        <label><input type="checkbox" name="apiRequestCachingEnabled"
+                               {{? it.settings.apiRequestCachingEnabled}}checked="true"{{?}} />{{=it.tr.apiRequestCachingLabelText}}</label>
                     </td>
                 </tr>
             </tbody>

@@ -946,7 +946,7 @@ lord.deviceType = function(expected) {
 
 lord.showDialog = function(body, options) {
     return new Promise(function(resolve, reject) {
-        var buttons = ((options && options.buttons) || ["cancel", "ok"]).map(function(button) {
+        var buttons = ((options && options.buttons) || ["ok", "cancel"]).map(function(button) {
             if ("ok" == button) {
                 return {
                     text: lord.text("confirmButtonText"),
@@ -1555,7 +1555,9 @@ lord.settings = function() {
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
         hidePostPreviewDelay: lord.getLocalObject("hidePostPreviewDelay", 1000),
         apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
-        bannersMode: lord.getLocalObject("bannersMode", "random")
+        bannersMode: lord.getLocalObject("bannersMode", "random"),
+
+        transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };
 

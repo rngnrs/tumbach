@@ -402,5 +402,7 @@ module.exports = function(tr) {
     translate("Default", "dafaultCanvasBackgroundColorButtonText");
     translate("Show full text", "expandPostTextText");
     translate("Collapse text", "collapsePostTextText");
+
+    translate("Transparent header", "transparentHeaderLabelText");
     return tr;
 };

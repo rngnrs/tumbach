@@ -249,8 +249,8 @@ lord.synchronize = function() {
     lord.showDialog(div, {
         title: "synchronizationText",
         buttons: [
-            "cancel",
-            "ok"
+            "ok",
+            "cancel"
         ]
     }).then(function(accepted) {
         if (!accepted)
@@ -286,8 +286,8 @@ lord.showSettings = function() {
     lord.showDialog(c.div, {
         title: "settingsDialogTitle",
         buttons: [
-            "cancel",
-            "ok"
+            "ok",
+            "cancel"
         ]
     }).then(function(accepted) {
         if (!accepted)
@@ -320,7 +320,7 @@ lord.showFavorites = function() {
     div = lord.template("favoritesDialog", model);
     lord.showDialog(div, {
         title: lord.text("favoriteThreadsText"),
-        buttons: [ "close" ]
+        buttons: []
     }).then(function() {
         var favoriteThreads = lord.getLocalObject("favoriteThreads", {});
         lord.forIn(favoriteThreads, function(fav) {
@@ -989,7 +989,7 @@ lord.editSpells = function() {
     ta.rows = 10;
     ta.cols = 43;
     ta.value = lord.getLocalObject("spells", lord.DefaultSpells);
-    lord.showDialog(ta).then(function(result) {
+    lord.showDialog(ta, {title: "spellsLabelText"}).then(function(result) {
         if (!result)
             return Promise.resolve();
         var spells = ta.value;
@@ -1005,8 +1005,7 @@ lord.showHiddenPostList = function() {
     model.hiddenPosts = lord.toArray(lord.getLocalObject("hiddenPosts", {}));
     var div = lord.template("hiddenPostList", model);
     return lord.showDialog(div, {
-        title: "hiddenPostListText",
-        buttons: ["close"]
+        title: "hiddenPostListText"
     }).catch(lord.handleError);
 };
 
@@ -1391,11 +1390,14 @@ lord.expandCollapseYoutubeVideo = function(a) {
         a.parentNode.removeChild(a.nextSibling);
         a.parentNode.removeChild(a.nextSibling);
         a.replaceChild(lord.node("text", "[" + lord.text("expandVideoText") + "]"), a.childNodes[0]);
-        lord.removeClass(a.parentNode, "expand");
+        $(a).closest("blockquote").removeClass("expand");
     } else {
-        lord.addClass(a.parentNode, "expand");
+        $(a).closest("blockquote").addClass("expand");
         var iframe = lord.node("iframe");
-        iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1";
+        var start = +lord.data("start", a, true);
+        if (isNaN(start) || start <= 0)
+            start = 0;
+        iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&start=" + start;
         iframe.setAttribute('allowfullscreen', ''); /* iframe.allowfullscreen = true; <- Это не работает. Серьёзно? */
         iframe.setAttribute('frameborder', 'none'); /* iframe.frameborder = "0px"; */
         iframe.height = "360";

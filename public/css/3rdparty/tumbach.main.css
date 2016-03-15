@@ -18,6 +18,14 @@ body {
     min-width: 240px;
     font: 15px "PT Sans";
 }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
 .color-prim, .logo {
     transition: .5s opacity, .5s background;
 }
@@ -59,13 +67,13 @@ body {
     top: 0; right: 0;
     z-index: 1;
 }
-#header.fixed .header-wrapper,
-#header.fixed .logo {
+#header.transparent .header-wrapper,
+#header.transparent .logo {
     opacity: .1;
 }
-#header:hover .header-wrapper,
-#header:hover .logo,
-#header .logo:hover {
+#header.transparent:hover .header-wrapper,
+#header.transparent:hover .logo,
+#header.transparent .logo:hover {
     opacity: 1;
 }
 .sidebar {
@@ -255,12 +263,6 @@ footer:after {
 
 
 /* TPLAYER */
-.sticky {position: fixed !important; z-index: 11;}
-.stop {position: relative; z-index: 11;}
-.thread-menu {
-    transition: .1s background;
-    padding: 2px 10px;
-}
 .track > .float-l {
     width: 187px;
     text-overflow: ellipsis;
@@ -269,12 +271,6 @@ footer:after {
 }
 .track .zmdi {
     padding: 2px;
-}
-.player-thread-header {
-    position: relative;
-    width:100%;
-    box-sizing: border-box;
-    padding:7px;
 }
 .frameLabels {
     position: relative;
@@ -866,15 +862,6 @@ ul.tabWidget > li > a {
     box-shadow: 0 0 20px #000;
     opacity: 1;
 }
-.searchAction, .theTitle {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    /*overflow-x: auto;*/
-    position: relative;
-    width: 100%;
-}
 .list-item .newPostCount {
     position: absolute;
     right: 5%;
@@ -984,7 +971,7 @@ input.buttonImage {
     z-index: 100502;
 }
 .numberSize3 {
-    width: 40px;
+    width: 24px;
 }
 .postFormInput {
     width: 100%;

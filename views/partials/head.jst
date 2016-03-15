@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="/{{=it.site.pathPrefix}}assets/favicon-16x16.png" sizes="16x16">
     <link rel="manifest" href="/{{=it.site.pathPrefix}}assets/manifest.json">
     <link rel="mask-icon" href="/{{=it.site.pathPrefix}}assets/safari-pinned-tab.svg" color="#000">
-    <meta name="msapplication-TileColor" content="#99d9ea">
+    <meta id="tileColor" name="msapplication-TileColor" content="#99d9ea">
     <meta name="msapplication-TileImage" content="/{{=it.site.pathPrefix}}assets/mstile-144x144.png">
     <meta name="theme-color" content="#99d9ea">
     <link rel="apple-touch-icon" sizes="57x57" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-57x57.png">
@@ -114,7 +114,7 @@
                     + '.css">');
                 var s = '<style type="text/css">';
                 if (!settings.shrinkPosts)
-                    s += '.post, .opPost, .draft, .searchResult { width: 99%; }';
+                    s += '.post, .opPost, .draft, .searchResult { width: 95%; max-width: 95vw; }';
                 if (settings.addExpander)
                     s += 'blockquote { overflow-y: hidden; }';
                 if (lord.compareRatings(settings.maxAllowedRating, "R-18G") < 0) {

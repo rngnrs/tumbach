@@ -8,7 +8,9 @@
     <div class="wrappie">
         <div id="customHeaderPlaceholder" style="display: none;"></div>
         <div id="wrapper">
-            {{#def.searchAction}}
+            <div class="mobileOnly">
+                {{#def.searchAction}}
+            </div>
             <div class="theTitle">
                 <h1>{{=it.tr.searchResultsMessage}}</h1>
             </div>

@@ -91,12 +91,12 @@ input.buttonImage {
     max-width: 100%;
 }
 
-/*.postFile ~ .postText {
-    max-width: -moz-calc(100% - 220px);
-    max-width: -webkit-calc(100% - 220px);
-    max-width: -o-calc(100% - 220px);
-    max-width: calc(100% - 220px);
-}*/
+.postFile ~ .postText {
+    max-width: -moz-calc(100% - 205px);
+    max-width: -webkit-calc(100% - 205px);
+    max-width: -o-calc(100% - 205px);
+    max-width: calc(100% - 205px);
+}
 
 .postFile ~ .postFile ~ .postText {
     display: block;
