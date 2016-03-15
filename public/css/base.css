@@ -843,6 +843,10 @@ input.buttonImage {
     content: " (You) (OP)";
 }
 
+.hideReason {
+    font-size: 75%;
+}
+
 #player {
     position: fixed;
     height: 80%;
@@ -1102,4 +1106,8 @@ div.registeredUser {
 
 .userBanIpInput {
     width: 280px;
+}
+
+.postTextExpander {
+    margin-left: 20px;
 }

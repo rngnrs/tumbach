@@ -483,6 +483,28 @@ lord.loadingImage = null;
 
 /*Functions*/
 
+lord.checkExpander = function(post) {
+    var bq = $("blockquote", post);
+    if (bq[0].scrollHeight <= bq.innerHeight())
+        return;
+    var a = lord.node("a");
+    a.appendChild(lord.node("text", lord.text("expandPostTextText")));
+    a.href = "javascript:void(0);";
+    lord.addClass(a, "postTextExpander");
+    var expanded = false;
+    a.onclick = function() {
+        expanded = !expanded;
+        bq.css("maxHeight", expanded ? "none" : "");
+        lord.removeChildren(a);
+        a.appendChild(lord.node("text", lord.text(expanded ? "collapsePostTextText" : "expandPostTextText")));
+        if (expanded)
+            a.parentNode.insertBefore(a, a.parentNode.firstChild);
+        else
+            a.parentNode.appendChild(a);
+    };
+    bq.parent()[0].appendChild(a);
+};
+
 lord.postProcessors.push(function(post) {
     if (lord.getLocalObject("mumWatching", false)) {
         var img = lord.queryOne("[data-name='switchMumWatchingButton']");
@@ -494,6 +516,9 @@ lord.postProcessors.push(function(post) {
     }
     return Promise.resolve();
 });
+
+if (lord.getLocalObject("addExpander", true))
+    lord.postProcessors.push(lord.checkExpander);
 
 (function() {
     var settings = lord.settings();
@@ -796,6 +821,8 @@ lord.updatePost = function(postNumber) {
         return lord.createPostNode(model, true);
     }).then(function(newPost) {
         post.parentNode.replaceChild(newPost, post);
+        if (lord.getLocalObject("addExpander", true))
+            lord.checkExpander(newPost);
         return Promise.resolve();
     });
 };
@@ -1120,6 +1147,11 @@ lord.deletePost = function(el) {
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
+        var ownPosts = lord.getLocalObject("ownPosts", {});
+        var key = model.boardName + "/" + postNumber;
+        if (ownPosts.hasOwnProperty(key))
+            delete ownPosts[key];
+        lord.setLocalObject("ownPosts", ownPosts);
         var post = lord.id(postNumber);
         if (!post)
             return Promise.reject("noSuchPostErrorText");
@@ -1555,7 +1587,7 @@ lord.draw = function(options) {
         height: (options && +options.height > 0) ? +options.height : 0
     };
     var div = lord.node("div");
-    $(div).css("background-color", "white");
+    lord.addClass(div, "checkerboardBackground");
     var subdiv = lord.node("div");
     var dwidth = lord.deviceType("mobile") ? 10 : 150;
     var dheight = lord.deviceType("mobile") ? 20 : 150;
@@ -1579,8 +1611,8 @@ lord.draw = function(options) {
                     saveAs(lord.lcToFile(c.lc), "drawn-" + moment().format("YYYY-DD-MM-HH-mm") + ".png");
                 }
             },
-            "cancel",
-            "ok"
+            "ok",
+            "cancel"
         ],
         afterShow: function() {
             $(div).width(width).height(height);
@@ -2549,6 +2581,8 @@ lord.submitted = function(event, form) {
                     }
                     lord.createPostNode(result, true).then(function(post) {
                         threadPosts.appendChild(post);
+                        if (lord.getLocalObject("addExpander", true))
+                            lord.checkExpander(post);
                         lord.initFiles();
                     }).catch(lord.handleError);
                 }
@@ -3583,6 +3617,8 @@ lord.updateThread = function(silent) {
                 lord.removeClass(post, "newPost");
             };
             before.parentNode.insertBefore(post, before);
+            if (lord.getLocalObject("addExpander", true))
+                lord.checkExpander(post);
         });
         lord.initFiles();
         var board = lord.model("board/" + boardName).board;

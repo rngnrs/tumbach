@@ -145,6 +145,12 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="checkbox" name="addExpander"
+                               {{? it.settings.addExpander}}checked="false"{{?}} /><label>{{=it.tr.addExpanderLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <input type="checkbox" name="signOpPostLinks"
                                {{? it.settings.signOpPostLinks}}checked="true"{{?}} /><label>{{=it.tr.signOpPostLinksLabelText}}</label>
                     </td>
@@ -409,6 +415,12 @@
                     <td colspan="2">
                         <input type="checkbox" name="drawingEnabled"
                                {{? it.settings.drawingEnabled}}checked="true"{{?}} /><label>{{=it.tr.drawingLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="autoUpdatePlayer"
+                               {{? it.settings.autoUpdatePlayer}}checked="true"{{?}} /><label>{{=it.tr.autoUpdatePlayerLabelText}}</label>
                     </td>
                 </tr>
                 <tr>

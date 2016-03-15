@@ -804,7 +804,8 @@ lord.checkPlaylist = function() {
         }
     }
     lord.updatePlayerButtons();
-    setTimeout(lord.checkPlaylist, 5 * lord.Second);
+    if (lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")))
+        setTimeout(lord.checkPlaylist, 2 * lord.Second);
 };
 
 lord.expandCollapseSpoiler = function(titleSpan) {

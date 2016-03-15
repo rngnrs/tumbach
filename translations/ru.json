@@ -2823,5 +2823,25 @@
         "dafaultCanvasBackgroundColorButtonText": {
             "value": "По умолчанию"
         }
+    },
+    "Update player automatically": {
+        "autoUpdatePlayerLabelText": {
+            "value": "Автоматически обновлять плеер"
+        }
+    },
+    "Expand long posts on click": {
+        "addExpanderLabelText": {
+            "value": "Раскрывать длинные посты по клику"
+        }
+    },
+    "Show full text": {
+        "expandPostTextText": {
+            "value": "Показать текст полностью"
+        }
+    },
+    "Collapse text": {
+        "collapsePostTextText": {
+            "value": "Свернуть текст"
+        }
     }
 }

@@ -1036,7 +1036,7 @@ lord.showDialog = function(body, options) {
                 body.dialog("option", "width", this.lastWidth);
                 body.dialog("option", "position", this.lastPosition);
             }
-        })
+        });
     });
 };
 
@@ -1505,8 +1505,8 @@ lord.now = function() {
 lord.settings = function() {
     return {
         deviceType: lord.getCookie("deviceType", "auto"),
-        time: lord.getCookie("time", "local"),
-        timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
+        time: lord.getLocalObject("time", "local"),
+        timeZoneOffset: lord.getLocalObject("timeZoneOffset", -lord.now().getTimezoneOffset()),
         captchaEngine: { id: lord.getLocalObject("captchaEngine", "google-recaptcha") },
         style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
@@ -1522,6 +1522,7 @@ lord.settings = function() {
         showAutoUpdateDesktopNotifications: lord.getLocalObject("showAutoUpdateDesktopNotifications", true),
         playAutoUpdateSound: lord.getLocalObject("playAutoUpdateSound", false),
         soundNotificationsVolume: lord.getLocalObject("soundNotificationsVolume", 75),
+        addExpander: lord.getLocalObject("addExpander", true),
         signOpPostLinks: lord.getLocalObject("signOpPostLinks", true),
         signOwnPostLinks: lord.getLocalObject("signOwnPostLinks", true),
         showLeafButtons: lord.getLocalObject("showLeafButtons", true),
@@ -1548,6 +1549,7 @@ lord.settings = function() {
         sourceHighlightingEnabled: lord.getLocalObject("sourceHighlightingEnabled", false),
         chatEnabled: lord.getLocalObject("chatEnabled", true),
         drawingEnabled: lord.getLocalObject("drawingEnabled", true),
+        autoUpdatePlayer: lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")),
         resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", false),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
