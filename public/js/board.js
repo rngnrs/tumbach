@@ -1287,7 +1287,7 @@ lord.banUser = function(el) {
             return Promise.resolve();
         var formData = new FormData(lord.queryOne("form", c.div));
         formData.append("timeOffset", timeOffset);
-        return lord.post(form.action, formData);
+        return lord.post(lord.queryOne("form", c.div).action, formData);
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
