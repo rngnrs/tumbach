@@ -12,10 +12,6 @@
 body {
     position:relative;
     margin: 0;
-    font-smooth: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-width: 240px;
     font: 15px "PT Sans";
 }
 input[type=number]::-webkit-inner-spin-button,
@@ -28,9 +24,6 @@ input[type=number] {
 }
 .color-prim, .logo {
     transition: .5s opacity, .5s background;
-}
-.ui-widget {
-    font-size: 14px !important;
 }
 .tooltip:after {
     background: rgba(0, 0, 0, .9);
@@ -241,7 +234,7 @@ footer div span {
 footer:after {
     display: block;
     content: '';
-    clear:both;
+    clear: both;
 }
 
 /* CSS FILES SELECTOR */
@@ -260,7 +253,6 @@ footer:after {
     font: 15px "PT Sans";
     outline: none;
 }
-
 
 /* TPLAYER */
 .track > .float-l {
@@ -448,25 +440,13 @@ ul.tabWidget > li > a {
 /* JQUERY UI */
 .ui-dialog,
 .ui-dialog-buttonpane,
-.ui-dialog-content {
+.ui-dialog-content,
+.ui-button-icon-only .ui-button-text {
     padding: 0 !important;
     margin: 0 !important;
 }
 
-
-
-
 /* COMMON FOR ALL STYLES */
-.popup {
-    position: fixed;
-    top: 77px;
-    right: 5px;
-    z-index: 9950;
-    vertical-align: middle;
-    text-align: center;
-    padding: 10px;
-    cursor: pointer;
-}
 .critical {
     color: red;
     border: 1px dotted red;
@@ -475,7 +455,7 @@ ul.tabWidget > li > a {
     color: orange;
     border: 1px dotted orange;
 }
-.favorites {
+/*.favorites {
     position: fixed;
     z-index: 9980;
     padding: 2px;
@@ -487,7 +467,7 @@ ul.tabWidget > li > a {
     position: absolute;
     bottom: 10px;
     right: 20px;
-}
+}*/
 .inlineForm {
     display: inline;
 }
