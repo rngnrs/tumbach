@@ -291,6 +291,7 @@ footer:after {
     height:100%;
     display: block !important;
     font-style: normal;
+    cursor: pointer;
 }
 .tabs {
     position: relative;

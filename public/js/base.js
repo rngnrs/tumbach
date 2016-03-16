@@ -388,7 +388,7 @@ lord.setPlayerVisible = function(e, visible) {
         if (lord.playerElement) {
             lord.playerElement.pause();
             lord.playerElement.currentTime = 0;
-            lord.playerElement.src = '';
+            //lord.playerElement.src = '';
         }
     } else
         sb.fadeIn();
@@ -1492,8 +1492,9 @@ lord.initializeOnLoadBase = function() {
         return f();
     }).catch(lord.handleError);
     if (lord.getLocalObject("mumWatching", false)) {
-        var img = lord.queryOne("[name='switchMumWatchingButton'] > img");
-        img.src = "/" + lord.data("sitePathPrefix") + "img/hide.png";
+        var img = lord.queryOne("[name='switchMumWatchingButton']");
+        lord.removeClass(img, "zmdi-eye");
+        lord.addClass(img, "zmdi-eye-off");
     }
     var settings = lord.settings();
     var model = lord.model(["base", "tr", "boards"]);

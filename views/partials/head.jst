@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="/{{=it.site.pathPrefix}}assets/favicon-16x16.png" sizes="16x16">
     <link rel="manifest" href="/{{=it.site.pathPrefix}}assets/manifest.json">
     <link rel="mask-icon" href="/{{=it.site.pathPrefix}}assets/safari-pinned-tab.svg" color="#000">
-    <meta id="tileColor" name="msapplication-TileColor" content="#99d9ea">
+    <meta name="msapplication-TileColor" content="#99d9ea">
     <meta name="msapplication-TileImage" content="/{{=it.site.pathPrefix}}assets/mstile-144x144.png">
     <meta name="theme-color" content="#99d9ea">
     <link rel="apple-touch-icon" sizes="57x57" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-57x57.png">
@@ -75,8 +75,8 @@
             })();
         </script>
         <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/base.js"></script>
-        <script defer src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
-        <script defer src="/{{=it.site.pathPrefix}}js/playlist.js"></script>
+        <script src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
+        <!--<script defer src="/{{=it.site.pathPrefix}}js/playlist.js"></script>-->
         <script defer src="/{{=it.site.pathPrefix}}js/ajax.js"></script>
         {{? it.site.vkontakte.integrationEnabled }}
             <script type="text/javascript" src="//vk.com/js/api/openapi.js"></script>
@@ -103,6 +103,7 @@
         <script type="text/javascript">
             (function() {
                 var settings = lord.settings();
+                tumb.set.tileColor(settings.style.name);
                 document.open();
                 if (lord.deviceType("mobile"))
                     document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, '

@@ -1,10 +1,28 @@
 var tumb = tumb || {};
-tumb.go = {
-	sb: $('#sidebar'),
-	sb2: $('#sidebar2'),
-	ov: $('.overlay'),
-	wr: $('.wrap'),
-	width: $(window).width()
+$(window).load(function(){
+	tumb.go = {
+		sb: $('#sidebar'),
+		sb2: $('#sidebar2'),
+		ov: $('.overlay'),
+		wr: $('.wrap'),
+		width: $(window).width()
+	};
+	tumb.toggle.frame();
+});
+tumb.set = {
+	tileColor: function(style){
+		var hex = {
+			"burichan": "c4c2ee",
+			"futaba": "f0e0d6",
+			"neutron": "2c2c2c",
+			"photon": "ddd",
+			"tumbach": "99d9ea"
+		};
+		return (typeof hex[style] != "undefined") ?
+			lord.query("[name=theme-color],[name=msapplication-TileColor]").forEach(function(meta){
+				meta.content = "#"+hex[style];
+			}) : false;
+	}
 };
 tumb.toggle = {
 	frame: function(toggle) {
@@ -43,20 +61,8 @@ tumb.toggle = {
 			pl.addClass(cl);
 			sr.removeClass(cl);
 		}
-	},
-	tileColor: function(style){
-		var hex = {
-			"burichan": "c4c2ee",
-			"futaba": "f0e0d6",
-			"neutron": "2c2c2c",
-			"photon": "ddd",
-			"tumbach": "99d9ea"
-		};
-		return (typeof hex[style] != "undefined") ?
-			lord.id("tileColor").content = "#"+hex[style] : false;
 	}
 };
-tumb.toggle.frame();
 tumb.dottie = function(floatElement, upperDiv) {
 	var mode = (upperDiv === undefined) ? 1 : 0,
 		maxh = 650,
@@ -115,7 +121,7 @@ tumb.slidy = function(el) {
 	});
 };
 tumb.switchStyle = function(style) {
-	tumb.toggle.tileColor(style);
+	tumb.set.tileColor(style);
 	$('#stylesheet').attr('href','/'+lord.data("sitePathPrefix")+'css/'+style+'.css');
 	$('#jqui-stylesheet').attr('href', '/'+lord.data("sitePathPrefix")+'css/3rdparty/jquery-ui/'+style+'/jquery-ui.min.css');
     lord.setLocalObject("style", style);
@@ -128,7 +134,6 @@ tumb.length = function(obj) {
 	return size;
 };
 tumb.onLoad = function(){
-	tumb.toggle.tileColor(lord.settings().style.name);
     $('.noselect').attr('unselectable', 'on')
         .css('user-select', 'none')
         .on('selectstart', false);
