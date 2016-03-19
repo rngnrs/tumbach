@@ -992,7 +992,7 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            open: (options ? options.afterShow : $('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');}))
+            open: (options ? options.afterShow : undefined)
             ,
             maxHeight: $(window).height() - 20,
             maxWidth: $(window).width() - 40,
@@ -1169,7 +1169,7 @@ lord.activateTab = function(a) {
     lord.arr(widget.childNodes).forEach(function(node) {
         if (node.nodeType != 1) //Element
             return;
-        node.style.display = ((node == page) ? "block" : "none");
+        node.style.display = ((node == page) ? "" : "none");
     });
     lord.query("ul > li", header.parentNode).forEach(function(node) {
         lord.removeClass(node, "activated");
@@ -1515,6 +1515,7 @@ lord.settings = function() {
         stickyToolbar: lord.getLocalObject("stickyToolbar", true),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", false),
+        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),
         minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
         hiddenBoards: lord.getLocalObject("hiddenBoards", []),
         autoUpdateThreadsByDefault: lord.getLocalObject("autoUpdateThreadsByDefault", false),

@@ -80,3 +80,6 @@ ul.tabWidget > li {
 ul.tabWidget > li.activated {
     background-color: #AAA;
 }
+.scrollAreaH60 {
+    border: 1px solid #CCC;
+}

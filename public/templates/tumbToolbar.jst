@@ -2,7 +2,7 @@
     <aside id="sidebar2" class="sidebar sidebar-fixed-right transition">
         <section class="tabs">
             <input id="tab_1" type="radio" name="tab" checked="checked" />
-            <!--<input id="tab_2" type="radio" name="tab" />-->
+            <input id="tab_2" type="radio" name="tab" />
             <div class="tabs_cont">
                 <div id="tab_c1">
                     <div class="frameLabels color-prim">
@@ -38,15 +38,14 @@
                 </div>
                 <div id="tab_c2">
                     <div class="frameLabels color-prim">
-                        <!--<div>
-                            <input type="checkbox" name="mute" id="mute" />
+                        <div>
                             <label for="mute">
                                 <i class="zmdi zmdi-volume-off zmdi-hc-2x" onclick="lord.playerMute(event);"></i>
                             </label>
-                        </div>-->
-                        <!--<div class="stop">
+                        </div>
+                        <div class="stop">
                             <i class="zmdi zmdi-stop zmdi-hc-2x" title="Остановить и скрыть плеер"></i>
-                        </div>-->
+                        </div>
                         <div class="clr"></div>
                     </div>
                     <div class="scroll-window">
@@ -57,63 +56,10 @@
             <div class="clr"></div>
             <div class="dropdown-labels color-prim">
                 <label for="tab_1" class="double-btn" id="tabl1">Музыка</label>
-                <label for="tab_2" class="double-btn" id="tabl2"><!--Радио--></label>
+                <label for="tab_2" class="double-btn" id="tabl2">Радио</label>
                 <div class="clr"></div>
             </div>
         </section>
-        <!--    <script> // TODO: подправить скрипт для работы с динамически подгружаемыми элементами
-                (function(){
-                    var A0 = document.querySelector('.scroll-window'),
-                            A1 = A0.querySelectorAll('.tab-content .player-thread-header');
-                    Array.prototype.slice.call(A1).forEach(function(a, index) {
-                        var b = null, P = 108;
-                        document.querySelector('.scroll-window').addEventListener('scroll', Ascroll, false);
-                        // document.body.addEventListener('scroll', Ascroll, false);
-                        function Ascroll() {
-                            if (b == null) {
-                                var Sa = getComputedStyle(a, ''), s = '';
-                                for (var i = 0; i < Sa.length; i++) {
-                                    if (Sa[i].indexOf('overflow') == 0 || Sa[i].indexOf('padding') == 0 || Sa[i].indexOf('border') == 0 || Sa[i].indexOf('outline') == 0 || Sa[i].indexOf('box-shadow') == 0 || Sa[i].indexOf('background') == 0) {
-                                        s += Sa[i] + ': ' +Sa.getPropertyValue(Sa[i]) + '; '
-                                    }
-                                }
-                                b = document.createElement('div');
-                                b.style.cssText = s + ' box-sizing: border-box; width: ' + a.offsetWidth + 'px;';
-                                a.insertBefore(b, a.firstChild);
-                                var l = a.childNodes.length;
-                                for (var i = 1; i < l; i++) {
-                                    b.appendChild(a.childNodes[1]);
-                                }
-                                a.style.height = b.getBoundingClientRect().height + 'px';
-                                a.style.padding = '0';
-                                a.style.border = '0';
-                            }
-                            console.log(b);
-                            var Ra = a.getBoundingClientRect(), R, Rh = Ra.top + b.getBoundingClientRect().height;
-                            if (A1[index+1] != undefined) {
-                                R = Math.round(Rh - A1[index+1].getBoundingClientRect().top);  // расстояние между блоками, чтобы плавающие элементы не прижимались вплотную друг к другу
-                            } else {
-                                R = Math.round(Rh - A0.getBoundingClientRect().bottom + parseFloat(getComputedStyle(A0, '').paddingBottom.slice(0, -2)));
-                            }
-                            if ((Ra.top - P) <= 0) {
-                                if ((Ra.top - P) <= R) {
-                                    b.className = 'stop';
-                                    b.style.top = - R +'px';
-                                } else {
-                                    b.className = 'sticky';
-                                    b.style.top = P + 'px';
-                                }
-                            } else {
-                                b.className = 'stop';
-                                b.style.top = '0';
-                            }
-                            window.addEventListener('resize', function() {
-                                a.children[0].style.width = getComputedStyle(a, '').width
-                            }, false);
-                        }
-                    })
-                })()
-            </script>-->
     </aside>
     <aside id="sidebar" class="sidebar sidebar-stacked">
         <div class="frameLabels color-prim">

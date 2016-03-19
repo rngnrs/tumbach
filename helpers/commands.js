@@ -53,11 +53,12 @@ read.installHandler(["respawn"], function(args) {
 read.installHandler("help", function() {
     console.log(
         "Подробная информация: https://github.com/ololoepepe/ololord.js/wiki\n\n" +
-        "█████ █   █ █   █ ████  █████ █████ █   █          ███     █    ███ \n" +
-        "  █   █   █ ██ ██ █   █ █   █ █     █   █         █   █   ██   █   █\n" +
-        "  █   █   █ █ █ █ ████  █████ █     █████   █ █   █   █    █   █   █\n" +
-        "  █   █   █ █ █ █ █   █ █   █ █     █   █   █ █   █   █    █   █   █\n" +
-        "  █   █████ █ █ █ ████  █   █ █████ █   █   ██  █  ███  █  █ █  ███ \n\n" +
+        "Сделано в России. 2016 rngnrs <rngnrs@yandex.ru>\n\n" +
+        "█████ █   █ █   █ ████  █████ █████ █   █          ███     █   █ \n" +
+        "  █   █   █ ██ ██ █   █ █   █ █     █   █         █   █   ██   █\n" +
+        "  █   █   █ █ █ █ ████  █████ █     █████   █ █   █   █    █   ███\n" +
+        "  █   █   █ █ █ █ █   █ █   █ █     █   █   █ █   █   █    █   █  █\n" +
+        "  █   █████ █ █ █ ████  █   █ █████ █   █    █  █  ███  █  █   ███ \n\n" +
         "Доступные команды:\n" +
         "q | quit - Выключить движок\n" +
         "help - Вывести эту справку\n" +
@@ -71,6 +72,7 @@ read.installHandler("help", function() {
         "stop - Закрыть все воркеры и предотвратить входящие соединения\n" +
         "start - Открыть воркеры для соединений\n" +
         "regenerate - Регенерировать кэш (при этом воркеры закроются и откроются!)\n" +
+        "reload-boards - Перезагрузить доски" +
         "reload-templates - Перезагрузить шаблоны и их части (включая те, которые находятся в /public/)\n" +
         "rebuild-search-index - Перестроить индекс поиска постов\n" +
         "uptime - Показать время работы движка");
@@ -193,6 +195,31 @@ read.installHandler("start", function(args) {
 read.installHandler("regenerate", function(args) {
     return Global.IPC.send("stop").then(function() {
         return controller.regenerate();
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+});
+
+read.installHandler("reload-boards", function(args) {
+    return Global.IPC.send("stop").then(function() {
+        Board.initialize();
+        return Global.IPC.send("reloadBoards");
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+});
+
+read.installHandler("reload-config", function(args) {
+    return Global.IPC.send("stop").then(function() {
+        if (args)
+            config.setConfigFile(args);
+        else
+            config.reload();
+        return Global.IPC.send("reloadConfig", args);
     }).then(function() {
         return Global.IPC.send("start");
     }).then(function() {

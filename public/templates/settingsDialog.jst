@@ -9,7 +9,7 @@
         <li data-index="4"><a onclick="lord.activateTab(this); return false;">{{=it.tr.hidingTabText}}</a></li>
         <li data-index="5"><a onclick="lord.activateTab(this); return false;">{{=it.tr.otherTabText}}</a></li>
     </ul>
-    <div style="float:left;width:calc(100% - 180px);">
+    <div>
         <table data-index="0">
             <tbody>
                 <tr>
@@ -291,6 +291,12 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <label><input type="checkbox" name="hidePostformMarkup"
+                                      {{? it.settings.hidePostformMarkup}}checked="true"{{?}} />{{=it.tr.hidePostformMarkupLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <label><input type="checkbox" name="minimalisticPostform" value="true"
                                {{? it.settings.minimalisticPostform}}checked="true"{{?}} />{{=it.tr.minimalisticPostformLabelText}}</label>
                     </td>
@@ -317,12 +323,6 @@
                     <td colspan="2">
                         <label><input type="checkbox" name="addToFavoritesOnReply"
                                {{? it.settings.addToFavoritesOnReply}}checked="true"{{?}} />{{=it.tr.addToFavoritesOnReplyLabelText}}</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label><input type="checkbox" name="hidePostformMarkup"
-                               {{? it.settings.hidePostformMarkup}}checked="true"{{?}} />{{=it.tr.hidePostformMarkupLabelText}}</label>
                     </td>
                 </tr>
                 <tr>

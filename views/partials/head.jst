@@ -2,8 +2,6 @@
     <title>{{=it.title}}</title>
     <meta charset="utf-8" />
     <link id="favicon" rel="shortcut icon" href="/{{=it.site.pathPrefix}}favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/base.css">
-    <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/tumbach.main.css">
     <link rel="icon" type="image/png" href="/{{=it.site.pathPrefix}}assets/favicon-96x96.png" sizes="96x96">
     <link rel="icon" type="image/png" href="/{{=it.site.pathPrefix}}assets/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/{{=it.site.pathPrefix}}assets/favicon-16x16.png" sizes="16x16">
@@ -19,6 +17,17 @@
     <link rel="apple-touch-icon" sizes="114x114" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-114x114.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-120x120.png">
     <link rel="apple-touch-icon" sizes="144x144" href="/{{=it.site.pathPrefix}}assets/apple-touch-icon-144x144.png">
+    <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/base.css">
+    <link rel="stylesheet" type="text/css" href="/{{=it.site.pathPrefix}}css/3rdparty/tumbach.main.css">
+    {{? it.extraStylesheets}}
+        {{~it.extraStylesheets :stylesheet}}
+            {{? stylesheet.source}}
+                <link rel="stylesheet" type="text/css"  href="{{=stylesheet.source}}">
+            {{?? stylesheet.fileName}}
+                <link rel="stylesheet" type="text/css"  href="/{{=it.site.pathPrefix}}css/{{=stylesheet.fileName}}">
+            {{?}}
+        {{~}}
+    {{?}}
     {{? !it.noJavaScript}}
         <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.2.0.min.js"></script>
         <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js"></script>
@@ -154,7 +163,7 @@
                     appendScript("js/3rdparty/jquery.datetimepicker.js");
                     lord.createStylesheetLink("3rdparty/jquery.datetimepicker.css", true);
                 }
-                if (settings.sourceHighlightingEnabled) {
+                if (settings.sourceHighlightingEnabled && !/\/manage\.html$/.test(window.location.path)) {
                     appendScript("js/3rdparty/codemirror/codemirror.min.js");
                     appendScript("js/3rdparty/codemirror/javascript.min.js");
                     appendScript("js/3rdparty/codemirror/css.min.js");

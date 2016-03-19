@@ -1,14 +1,4 @@
 var tumb = tumb || {};
-$(window).load(function(){
-	tumb.go = {
-		sb: $('#sidebar'),
-		sb2: $('#sidebar2'),
-		ov: $('.overlay'),
-		wr: $('.wrap'),
-		width: $(window).width()
-	};
-	tumb.toggle.frame();
-});
 tumb.set = {
 	tileColor: function(style){
 		var hex = {

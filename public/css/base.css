@@ -1,5 +1,6 @@
-.ui-widget {
+.ui-widget, input, select, textarea, button {
     font-size: 14.4px !important;
+    font-family: "PT Sans", sans-serif !important;
 }
 
 .ui-menu .ui-menu-item {
@@ -54,7 +55,6 @@ a.expandCollapse:hover,
     display: block;
     text-decoration: none;
     font-size: .7em;
-    margin-left: 30px;
     cursor: pointer;
 }
 
@@ -64,7 +64,7 @@ a.expandCollapse:hover,
     text-align: right;
     font-size: .7em;
     margin-left: auto;
-    margin-right: 5px;
+    /*margin-right: 5px;*/
     cursor: pointer;
 }
 
@@ -108,7 +108,7 @@ blockquote {
     padding-top: 10px;
     overflow-y: auto;
     overflow-x: auto;
-    max-height: 442px;
+    max-height: 240px;
     box-sizing: border-box;
     max-width: 1200px;
     overflow-wrap: break-word;
@@ -499,18 +499,26 @@ span.newPostCount {
     font-size: .8em;
 }
 
+.settingsDialog table {
+    margin: 0 auto;
+    min-width: 75%;
+}
+
 .tabWidget {
     text-align: center;
+    margin: 0 auto;
+    padding: 0;
 }
 
 ul.tabWidget > li {
-    display: inline;
-    padding: 5px 10px ;
+    display: inline-block;
     border-left: none;
 }
 
 ul.tabWidget > li > a {
+    display: block;
     text-decoration: none;
+    padding: 9px 10px;
     cursor: pointer;
 }
 
@@ -707,11 +715,11 @@ input.buttonImage {
 }
 
 .numberSize3 {
-    width: 40px;
+    width: 24px;
 }
 
 .numberSize4 {
-    width: 53px;
+    width: 33px;
 }
 
 .postFormInput {
@@ -1127,4 +1135,8 @@ div.ui-widget-content.ui-dialog-content.checkerboardBackground {
     background-size: 16px 16px;
     -webkit-background-size: 16px 17px;
     background-position: 0 0, 8px 0, 8px -8px, 0px 8px;
+}
+
+.serverActions ~ .serverActions {
+    margin-top: 10px;
 }

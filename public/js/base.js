@@ -285,6 +285,9 @@ lord.showSettings = function() {
     $("[name='exportSettingsButton'], [name='importSettingsButton'], [name='synchronizationButton']", c.div).button();
     lord.showDialog(c.div, {
         title: "settingsDialogTitle",
+        afterShow: function() {
+            $('.ui-widget-overlay').bind('click', function(){$(c.div).dialog('close');});
+        },
         buttons: [
             "ok",
             "cancel"
@@ -320,6 +323,9 @@ lord.showFavorites = function() {
     div = lord.template("favoritesDialog", model);
     lord.showDialog(div, {
         title: lord.text("favoriteThreadsText"),
+        afterShow: function() {
+            $('.ui-widget-overlay').bind('click', function(){$(div).dialog('close');});
+        },
         buttons: []
     }).then(function() {
         var favoriteThreads = lord.getLocalObject("favoriteThreads", {});
@@ -989,7 +995,12 @@ lord.editSpells = function() {
     ta.rows = 10;
     ta.cols = 43;
     ta.value = lord.getLocalObject("spells", lord.DefaultSpells);
-    lord.showDialog(ta, {title: "spellsLabelText"}).then(function(result) {
+    lord.showDialog(ta, {
+        title: "spellsLabelText",
+        afterShow: function() {
+            $('.ui-widget-overlay').bind('click', function(){$(ta).dialog('close');});
+        }
+    }).then(function(result) {
         if (!result)
             return Promise.resolve();
         var spells = ta.value;
@@ -1005,7 +1016,10 @@ lord.showHiddenPostList = function() {
     model.hiddenPosts = lord.toArray(lord.getLocalObject("hiddenPosts", {}));
     var div = lord.template("hiddenPostList", model);
     return lord.showDialog(div, {
-        title: "hiddenPostListText"
+        title: "hiddenPostListText",
+        afterShow: function() {
+            $('.ui-widget-overlay').bind('click', function(){$(div).dialog('close');});
+        }
     }).catch(lord.handleError);
 };
 
@@ -1038,6 +1052,7 @@ lord.editUserCss = function() {
         afterShow: function() {
             if (c.editor)
                 c.editor.refresh();
+            $('.ui-widget-overlay').bind('click', function(){$(c.div).dialog('close');})
         }
     }).then(function(result) {
         if (!result)
@@ -1068,6 +1083,7 @@ lord.editUserJavaScript = function() {
         afterShow: function() {
             if (c.editor)
                 c.editor.refresh();
+            $('.ui-widget-overlay').bind('click', function(){$(c.div).dialog('close');})
         }
     }).then(function(result) {
         if (!result)
@@ -1237,6 +1253,7 @@ lord.showChat = function(key) {
     lord.showDialog(lord.chatDialog, {
         title: "chatText",
         afterShow: function() {
+            $('.ui-widget-overlay').bind('click', function(){$(lord.chatDialog).dialog('close');});
             lord.checkChats();
             if (!key)
                 return;

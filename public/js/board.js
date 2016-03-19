@@ -2207,9 +2207,7 @@ lord.browseFile = function(e, div) {
 
 lord.setPostformRulesVisible = function(visible) {
     var hide = !visible;
-    lord.setCookie("hidePostformRules", hide, {
-        "expires": lord.Billion, "path": "/"
-    });
+    lord.setLocalObject("hidePostformRules", hide);
     lord.query(".postformRules > ul").forEach(function(ul) {
         ul.style.display = hide ? "none" : "";
     });
