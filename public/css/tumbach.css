@@ -69,6 +69,10 @@ span.spoiler:hover {
     background-color: #99D9EA;
     border: 1px solid #7AB;
 }
+.track.selected {
+    background-color: #7AB;
+    border: 1px solid #99D9EA;
+}
 .chatMessage {
     border: 1px solid #CCC;
     background-color: rgba(0, 188, 212, .25);

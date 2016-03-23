@@ -142,7 +142,8 @@ tumb.onLoad = function(){
 		tumb.go.sb2.removeClass('open');
 		tumb.go.ov.removeClass('toggled');
     });
-    $('.player-menu').bind('click', function() {
-		tumb.go.sb2.toggleClass('open');
-    });
+	$(document).on("click", "#tabl2", function() {
+		if ($("#player-radio-list").data("loaded") != true)
+			lord.initRadio();
+	});
 };

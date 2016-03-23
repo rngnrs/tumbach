@@ -418,12 +418,15 @@ lord.durationToString = function(duration) {
     return hours + ":" + minutes + ":" + seconds;
 };
 
-lord.updatePlayerTrackTags = function() {
+lord.updatePlayerTrackTags = function(type) {
+    type = type || "audio";
     var tags = lord.id("playerTrackTags");
     lord.removeChildren(tags);
     tags.style.display = "none";
     /*if (!lord.currentTrack)
         return lord.updatePlayerTracksHeight();*/
+    if(type == "radio")
+        return;
     var t = lord.currentTrack;
     var s = t.artist || "";
     s += (t.artist && t.title) ? " — " : "";
@@ -448,7 +451,7 @@ lord.updatePlayerTrackInfo = function() {
     info.appendChild(lord.node("text", s));
 };
 
-lord.resetPlayerSource = function(track) {
+lord.resetPlayerSource = function(track, url) {
     if (lord.playerElement) {
         if (!lord.playerElement.paused)
             lord.playerElement.pause();
@@ -466,10 +469,14 @@ lord.resetPlayerSource = function(track) {
     var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
     lord.playerElement.volume = lord.getLocalObject("playerVolume", defVol);
     //lord.playerElement.style.display = "none";
-    lord.setLocalObject("playerLastTrack", track);
     var source = lord.node("source");
-    source.type = track.mimeType;
-    source.src = "/" + lord.data("sitePathPrefix") + track.boardName + "/src/" + track.fileName;
+    if (url) {
+        source.src = url;
+    } else {
+        lord.setLocalObject("playerLastTrack", track);
+        source.type = track.mimeType;
+        source.src = "/" + lord.data("sitePathPrefix") + track.boardName + "/src/" + track.fileName;
+    }
     lord.playerElement.appendChild(source);
     lord.playerElement.addEventListener("play", function() {
         lord.setSessionObject("playerPlaying", true);
@@ -644,6 +651,41 @@ lord.playTrack = function(el) {
     lord.playerElement.play();
     lord.updatePlayerButtons();
     lord.updatePlayerTrackTags();
+};
+
+lord.playRadio = function(url, title) {
+    lord.setPlayerVisible(null, true);
+    lord.resetPlayerSource(null, url);
+    lord.playerElement.play();
+    lord.updatePlayerButtons();
+    lord.updatePlayerTrackTags("radio");
+};
+
+lord.initRadio = function() {
+    var file = "/assets/radio.json",
+        ncont = "#player-radio-list",
+        cont = $(ncont),
+        html = "";
+    $.getJSON(file, function (data) {
+        $.each(data, function (key, val) {
+            $.each(val.quality, function (k, v) {
+                html += "<div class='track' data-url='" + v.url + "'><div class='float-l' title='"+ v.prefix +"'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
+            });
+        });
+        cont.html(html);
+        cont.data("loaded", true);
+    });
+    $(document).off("click", ncont + " .track")
+        .on("click", ncont + " .track", function () {
+            var th = $(this);
+            if (th.hasClass("selected"))
+                return;
+            lord.playRadio(th.data("url"), $(this).data("title"));
+            $.each($(".track"), function () {
+                $(this).removeClass("selected");
+            });
+            th.addClass("selected");
+        });
 };
 
 lord.allowTrackDrop = function(e) {
