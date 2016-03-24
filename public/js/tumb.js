@@ -96,18 +96,17 @@ tumb.dottie = function(floatElement, upperDiv) {
 tumb.slidy = function(el) {
 	if(!localStorage["scroll"])
 		localStorage["scroll"] = $("header").offset().top;
-	$(el).bind('mousewheel', function (e) {
-	  if( e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0 ) { //scroll down
-		$('body').stop().animate({
-			scrollTop: localStorage["scroll"]
-		}, 500);
+	$(el).bind('wheel', function (e) {
+		if( e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { //scroll down
+			$('html,body').stop().animate({
+				scrollTop: localStorage["scroll"]
+			}, 500);
+		} else { //scroll up
+			$('html,body').stop().animate({
+				scrollTop: 0
+			}, 500);
+		}
 		e.preventDefault();
-	  } else { //scroll up
-		$('body').stop().animate({
-			scrollTop: 0
-		}, 500);
-		e.preventDefault();
-	  }
 	});
 };
 tumb.switchStyle = function(style) {

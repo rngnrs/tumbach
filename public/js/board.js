@@ -3256,10 +3256,12 @@ lord.showMenu = function(e, input, selector) {
     var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 21 : '';
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
         my: "left top",
-        at: "left-"+fw+"8px bottom-48px",
+        at: "left-"+fw+"0px bottom-48px",
         of: $(input),
         collision: "fit flip"
     }).show();
+    if (/firefox/i.test(navigator.userAgent))
+        lord.currentMenu.css("top", lord.queryOne(selector).parentNode.getBoundingClientRect().top+pageYOffset-24);
 };
 
 lord.hotkey = function(name, hotkeys) {

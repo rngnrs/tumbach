@@ -199,7 +199,6 @@ a {
     width: auto;
 }
 #wrapper {
-    position: relative;
     width: 99%;
     margin: 0 auto;
     padding: 10px 0;
@@ -630,15 +629,6 @@ h1 {
 }
 
 /* Post */
-.post.temporary {
-    display: block;
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-.opPost {
-    overflow-x: auto;
-    display: table;
-}
 .hidden > .postBody,
 .opPost.hidden ~ .post,
 .thread.hidden > .omittedPosts,
