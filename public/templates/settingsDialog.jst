@@ -392,24 +392,38 @@
         <table data-index="5" style="display: none;">
             <tbody>
                 <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="showNewPosts"
+                               {{? it.settings.showNewPosts}}checked="true"{{?}} />{{=it.tr.showNewPostsLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{=it.tr.autoUpdateIntervalLabelText}}
+                    </td>
+                    <td>
+                        <input type="number" min="20" name="showNewPostsInterval" class="numberSize3"
+                               value="{{=it.settings.showNewPostsInterval}}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         {{=it.tr.bannersModeLabelText}}
                     </td>
                     <td>
                         <select name="bannersMode" class="select">
                             <option {{? it.settings.bannersMode == "random"}}selected="true"{{?}}
-                                    value="random">{{=it.tr.bannersModeRandomText}}</option>
+                            value="random">{{=it.tr.bannersModeRandomText}}</option>
                             <option {{? it.settings.bannersMode == "same"}}selected="true"{{?}}
-                                    value="same">{{=it.tr.bannersModeSameText}}</option>
+                            value="same">{{=it.tr.bannersModeSameText}}</option>
                             <option {{? it.settings.bannersMode == "none"}}selected="true"{{?}}
-                                    value="none">{{=it.tr.bannersModeNoneText}}</option>
+                            value="none">{{=it.tr.bannersModeNoneText}}</option>
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label><input type="checkbox" name="showNewPosts"
-                               {{? it.settings.showNewPosts}}checked="true"{{?}} />{{=it.tr.showNewPostsLabelText}}</label>
                     </td>
                 </tr>
                 <tr>

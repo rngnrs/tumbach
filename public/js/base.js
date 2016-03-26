@@ -1592,8 +1592,8 @@ lord.initializeOnLoadBase = function() {
         if (favoritesButton)
             favoritesButton.title += " (" + key("showFavorites") + ")";
     }
-    if (lord.getLocalObject("showNewPosts", true))
-        lord.showNewPosts();
+    if (lord.getLocalObject("showNewPosts", true) && lord.getLocalObject("showNewPostsInterval", 60) >= 20)
+        setInterval(function(){lord.showNewPosts()}, lord.getLocalObject("showNewPostsInterval", 60) * lord.Second);
     if (lord.getLocalObject("chatEnabled", true))
         lord.checkChats();
     if (lord.notificationsEnabled())

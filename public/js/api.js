@@ -1558,6 +1558,7 @@ lord.settings = function() {
         apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
+        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
         transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };
