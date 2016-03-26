@@ -981,6 +981,8 @@ lord.showNewPosts = function() {
                     var a = lord.queryOne("a", item);
                     if (!a)
                         return;
+                    if(lord.queryOne(".newPostCount",a))
+                        a.removeChild(lord.queryOne(".newPostCount",a));
                     var newPostCount = getNewPostCount(lord.data("boardName", a));
                     if (!newPostCount)
                         return;
@@ -1595,8 +1597,12 @@ lord.initializeOnLoadBase = function() {
         if (favoritesButton)
             favoritesButton.title += " (" + key("showFavorites") + ")";
     }
-    if (lord.getLocalObject("showNewPosts", true) && lord.getLocalObject("showNewPostsInterval", 60) >= 20)
-        setInterval(function(){lord.showNewPosts()}, lord.getLocalObject("showNewPostsInterval", 60) * lord.Second);
+    if (lord.getLocalObject("showNewPosts", true) && lord.getLocalObject("showNewPostsInterval", 60) >= 20) {
+        lord.showNewPosts();
+        setInterval(function () {
+            lord.showNewPosts()
+        }, lord.getLocalObject("showNewPostsInterval", 60) * lord.Second);
+    }
     if (lord.getLocalObject("chatEnabled", true))
         lord.checkChats();
     if (lord.notificationsEnabled())
@@ -1652,10 +1658,11 @@ lord.initializeOnLoadBase = function() {
     });
     if (lord.id("tplayer"))
         lord.checkPlaylist();
-    if (lord.queryOne(".track", lord.id("playerTracks")) || lord.getSessionObject("playerPlaying", false))
-        if(lord.getLocalObject("playerMode", "audio") == "audio")
+    if(lord.getLocalObject("playerMode", "audio") == "audio") {
+        if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
             lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
-        else lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
+    }
+    else lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
     /*  var w = $(window);
         w.resize(function() {
         var n = {
