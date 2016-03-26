@@ -395,10 +395,10 @@ lord.setPlayerVisible = function(e, visible) {
             lord.playerElement.pause();
             lord.playerElement.currentTime = 0;
             //lord.playerElement.src = '';
+            lord.removeSessionObject("playerPlaying");
         }
     } else
         sb.fadeIn();
-    lord.removeSessionObject("playerPlaying");
 };
 
 lord.durationToString = function(duration) {
@@ -418,23 +418,25 @@ lord.durationToString = function(duration) {
     return hours + ":" + minutes + ":" + seconds;
 };
 
-lord.updatePlayerTrackTags = function(type) {
-    type = type || "audio";
-    var tags = lord.id("playerTrackTags");
+lord.updatePlayerTrackTags = function() {
+    var type = lord.getLocalObject("playerMode", "audio"),
+        tags = lord.id("playerTrackTags");
     lord.removeChildren(tags);
     tags.style.display = "none";
     /*if (!lord.currentTrack)
         return lord.updatePlayerTracksHeight();*/
     if(type == "radio")
-        return;
-    var t = lord.currentTrack;
-    var s = t.artist || "";
-    s += (t.artist && t.title) ? " — " : "";
-    s += t.title || "";
-    s += ((t.artist || t.title) && t.album) ? " " : "";
-    s += t.album ? ("[" + t.album + "]") : "";
-    s += (s && t.year) ? (" (" + t.year + ")") : "";
-    s += s ? " " : "";
+        var s = lord.getLocalObject("playerLastRadio",[]).title;
+    else {
+        var t = lord.currentTrack;
+        var s = t.artist || "";
+        s += (t.artist && t.title) ? " — " : "";
+        s += t.title || "";
+        s += ((t.artist || t.title) && t.album) ? " " : "";
+        s += t.album ? ("[" + t.album + "]") : "";
+        s += (s && t.year) ? (" (" + t.year + ")") : "";
+        s += s ? " " : "";
+    }
     /*if (!s)
         return lord.updatePlayerTracksHeight();*/
     tags.appendChild(lord.node("text", s));
@@ -443,22 +445,25 @@ lord.updatePlayerTrackTags = function(type) {
 };
 
 lord.updatePlayerTrackInfo = function() {
+    type = lord.getLocalObject("playerMode", "audio");
     var info = lord.id("playerTrackInfo");
     lord.removeChildren(info);
-    if (!lord.currentTrack)
-        return;
-    var s = lord.durationToString(lord.playerElement.currentTime) + " / " + lord.currentTrack.duration;
+    if (type == "radio" || !lord.currentTrack)
+        s = lord.durationToString(lord.playerElement.currentTime);
+    else
+        s = lord.durationToString(lord.playerElement.currentTime) + " / " + lord.currentTrack.duration;
     info.appendChild(lord.node("text", s));
 };
 
 lord.resetPlayerSource = function(track, url) {
+    var slider = $("#playerDurationSlider");
     if (lord.playerElement) {
         if (!lord.playerElement.paused)
             lord.playerElement.pause();
         lord.removeSelf(lord.playerElement);
     }
-    $("#playerDurationSlider").slider("destroy");
-    $("#playerDurationSlider").slider({
+    slider.slider("destroy");
+    slider.slider({
         min: 0,
         max: 0,
         step: 0,
@@ -500,12 +505,12 @@ lord.resetPlayerSource = function(track, url) {
         lord.setSessionObject("playerCurrentTime", lord.playerElement.currentTime);
         if (lord.playerUserSliding)
             return;
-        $("#playerDurationSlider").slider("value", lord.playerElement.currentTime);
+        slider.slider("value", lord.playerElement.currentTime);
         lord.updatePlayerTrackInfo();
     }, false);
     lord.playerElement.addEventListener("durationchange", function() {
-        $("#playerDurationSlider").slider("destroy");
-        $("#playerDurationSlider").slider({
+        slider.slider("destroy");
+        slider.slider({
             min: 0,
             max: lord.playerElement.duration,
             step: 1,
@@ -632,6 +637,7 @@ lord.playerShuffle = function(e) {
 };
 
 lord.playTrack = function(el) {
+    lord.setLocalObject("playerMode", "audio");
     lord.setPlayerVisible(null, true);
     if (lord.hasClass(el, "selected") && lord.playerElement) {
         if (!lord.playerElement.paused)
@@ -642,7 +648,7 @@ lord.playTrack = function(el) {
             return;
         }
     }
-    lord.query(".track.selected", lord.id("playerTracks")).forEach(function(div) {
+    lord.query(".track.selected", lord.id("sidebar2")).forEach(function(div) {
         lord.removeClass(div, "selected");
     });
     lord.addClass(el, "selected");
@@ -654,22 +660,32 @@ lord.playTrack = function(el) {
 };
 
 lord.playRadio = function(url, title) {
+    var r = "radio";
+    lord.setLocalObject("playerMode", r);
+    lord.setLocalObject("playerLastRadio",{"url":url,"title":title});
     lord.setPlayerVisible(null, true);
     lord.resetPlayerSource(null, url);
     lord.playerElement.play();
     lord.updatePlayerButtons();
-    lord.updatePlayerTrackTags("radio");
+    lord.updatePlayerTrackInfo();
+    lord.updatePlayerTrackTags(title);
 };
 
 lord.initRadio = function() {
-    var file = "/assets/radio.json",
+    var file = lord.data("sitePathPrefix")+"/assets/radio.json",
         ncont = "#player-radio-list",
         cont = $(ncont),
         html = "";
     $.getJSON(file, function (data) {
         $.each(data, function (key, val) {
             $.each(val.quality, function (k, v) {
-                html += "<div class='track' data-url='" + v.url + "'><div class='float-l' title='"+ v.prefix +"'>" + val.title + " (" + v.prefix + ")</div><div class='float-r'>" + v.kb + "</div><div class='clr'></div></div>";
+                html += "<div class='track' data-url='" + v.url + "' data-title='"+val.title+" ("+v.bitrate+" КБит/с)'>" +
+                    "<div class='float-l' title='"+ v.prefix +"'>" + val.title;
+                html += (!!v.prefix) ? " (" + v.prefix + ")" : "";
+                html += "</div>" +
+                    "<div class='float-r'>" + v.bitrate + "</div>" +
+                    "<div class='clr'></div></div>";
+
             });
         });
         cont.html(html);
@@ -679,10 +695,10 @@ lord.initRadio = function() {
         .on("click", ncont + " .track", function () {
             var th = $(this);
             if (th.hasClass("selected"))
-                return;
+                return lord.playerPlayPause();
             lord.playRadio(th.data("url"), $(this).data("title"));
-            $.each($(".track"), function () {
-                $(this).removeClass("selected");
+            lord.query(".track.selected", lord.id("sidebar2")).forEach(function(div) {
+                lord.removeClass(div, "selected");
             });
             th.addClass("selected");
         });
@@ -845,7 +861,7 @@ lord.checkPlaylist = function() {
             lord.currentTrack = storedLastTrack;
         else if (tracks.length > 0)
             lord.currentTrack = tracks[0];
-        if (lord.currentTrack) {
+        if (lord.currentTrack && lord.getLocalObject("playerMode", "audio") == "audio") {
             lord.addClass(lord.id("track/" + lord.currentTrack.fileName),
                 "selected");
             lord.updatePlayerTrackTags();
@@ -853,7 +869,7 @@ lord.checkPlaylist = function() {
     }
     lord.updatePlayerButtons();
     if (lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")))
-        setTimeout(lord.checkPlaylist, 2 * lord.Second);
+        setTimeout(lord.checkPlaylist, 3 * lord.Second);
 };
 
 lord.expandCollapseSpoiler = function(titleSpan) {
@@ -1634,7 +1650,9 @@ lord.initializeOnLoadBase = function() {
     if (lord.id("tplayer"))
         lord.checkPlaylist();
     if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
-        lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
+        if(lord.getLocalObject("playerMode", "audio") == "audio")
+            lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
+        else lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
     /*  var w = $(window);
         w.resize(function() {
         var n = {
