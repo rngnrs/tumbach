@@ -1662,7 +1662,8 @@ lord.initializeOnLoadBase = function() {
         if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
             lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
     }
-    else lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
+    else if(lord.getSessionObject("playerPlaying", false))
+        lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
     /*  var w = $(window);
         w.resize(function() {
         var n = {
