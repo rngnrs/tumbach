@@ -394,8 +394,11 @@ lord.setPlayerVisible = function(e, visible) {
         if (lord.playerElement) {
             lord.playerElement.pause();
             lord.playerElement.currentTime = 0;
-            //lord.playerElement.src = '';
             lord.removeSessionObject("playerPlaying");
+            lord.playerElement.src = '';
+            lord.query(".track.selected", lord.id("sidebar2")).forEach(function(div) {
+                lord.removeClass(div, "selected");
+            });
         }
     } else
         sb.fadeIn();
@@ -1649,7 +1652,7 @@ lord.initializeOnLoadBase = function() {
     });
     if (lord.id("tplayer"))
         lord.checkPlaylist();
-    if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
+    if (lord.queryOne(".track", lord.id("playerTracks")) || lord.getSessionObject("playerPlaying", false))
         if(lord.getLocalObject("playerMode", "audio") == "audio")
             lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
         else lord.playRadio(lord.getLocalObject("playerLastRadio",[]).url,lord.getLocalObject("playerLastRadio",[]).title);
