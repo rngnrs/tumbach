@@ -5,12 +5,17 @@ var expressCluster = require("express-cluster");
 var Log4JS = require("log4js");
 var OS = require("os");
 
+var Global = require("./helpers/global");
+Global.Program = require("commander");
+Global.Program.version("1.1.0-beta")
+    .option("-c, --config-file <file>", "Path to the config.json file")
+    .parse(process.argv);
+
 var Cache = require("./helpers/cache");
 var config = require("./helpers/config");
 var controller = require("./helpers/controller");
 var BoardModel = require("./models/board");
 var Database = require("./helpers/database");
-var Global = require("./helpers/global");
 var Tools = require("./helpers/tools");
 
 Global.IPC = require("./helpers/ipc")(cluster);
@@ -50,7 +55,7 @@ var spawnCluster = function() {
         app.use(require("./middlewares"));
         app.use(require("./controllers"));
         app.use("*", function(req, res) {
-            controller.notFound(res);
+            controller.notFound(req, res);
         });
 
         BoardModel.initialize().then(function() {
@@ -174,9 +179,11 @@ if (cluster.isMaster) {
             return Global.IPC.send("start");
         });
         Global.IPC.installHandler("reloadBoards", function() {
+            require("./boards/board").initialize();
             return Global.IPC.send("reloadBoards");
         });
         Global.IPC.installHandler("reloadConfig", function() {
+            config.reload();
             return Global.IPC.send("reloadConfig");
         });
         Global.IPC.installHandler("regenerateCache", function() {

@@ -3,6 +3,8 @@ var FS = require("q-io/fs");
 var FSSync = require("fs");
 var Path = require("path");
 
+var Global = require("./global");
+
 var contains = function(s, subs) {
     if (typeof s == "string" && typeof subs == "string")
         return s.replace(subs, "") != s;
@@ -15,14 +17,16 @@ var contains = function(s, subs) {
     return false;
 };
 
-var configFileName = process.argv[2];
+var configFileName = Global.Program && Global.Program.configFile;
 if (!configFileName)
     configFileName = __dirname + "/../config.json";
 configFileName = Path.resolve(__dirname + "/..", configFileName);
 var config = {};
 if (FSSync.existsSync(configFileName)) {
-    console.log("[PID: " + process.pid + "] Используем файл конфигурации: \"" + configFileName + "\"");
+    console.log("[PID: " + process.pid + "] Используем файл конфигурации: \"" + configFileName + "\"...");
     config = JSON.parse(FSSync.readFileSync(configFileName, "UTF-8"));
+} else {
+    console.log("[PID: " + process.pid + "] Используем стандартную конфигурацию...");
 }
 
 var setHooks = {};
@@ -55,7 +59,7 @@ c.set = function(key, value) {
     var prev = o[p];
     o[p] = value;
     var hook = setHooks[key];
-    if (hook)
+    if (typeof hook == "function")
         hook(value, key);
     FS.write(configFileName, JSON.stringify(config, null, 4));
     return prev;
@@ -90,16 +94,21 @@ c.reload = function() {
     if (FSSync.existsSync(configFileName)) {
         console.log("[PID: " + process.pid + "] Используем файл конфигурации: \"" + configFileName + "\"...");
         config = JSON.parse(FSSync.readFileSync(configFileName, "UTF-8"));
-        for (var key in setHooks) {
-            if (!setHooks.hasOwnProperty(key))
-                return;
-            setHooks[key](c(key));
-        }
+    } else {
+        console.log("[PID: " + process.pid + "] Используем стандартную конфигурацию...");
+    }
+    for (var key in setHooks) {
+        if (!setHooks.hasOwnProperty(key))
+            return;
+        var hook = setHooks[key];
+        if (typeof hook != "function")
+            return;
+        setHooks[key](c(key), key);
     }
 };
 
 c.setConfigFile = function(fileName) {
-    fileName = fileName || process.argv[2];
+    fileName = fileName || (Global.Program && Global.Program.configFile);
     if (!fileName)
         fileName = __dirname + "/../config.json";
     configFileName = Path.resolve(__dirname + "/..", fileName);

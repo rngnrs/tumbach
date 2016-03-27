@@ -9,7 +9,7 @@ tumb.set = {
 			"tumbach": "99d9ea"
 		};
 		return (typeof hex[style] != "undefined") ?
-			lord.query("[name=theme-color],[name=msapplication-TileColor]").forEach(function(meta){
+			lord.queryAll("[name=theme-color],[name=msapplication-TileColor]").forEach(function(meta){
 				meta.content = "#"+hex[style];
 			}) : false;
 	}

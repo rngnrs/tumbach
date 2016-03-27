@@ -68,12 +68,6 @@ if (config("board.useDefaultBoards", true)) {
 
     Board.addBoard(new Board("vg", Tools.translate.noop("Video games", "boardTitle"),
         { defaultUserName: Tools.translate.noop("PC Nobleman", "defaultUserName") }));
-} else {
-    Board.addBoard(new Board("b", Tools.translate.noop("/b/rotherhood", "boardTitle")));
-    Board.addBoard(require("./templates/with-user-agents")("d",
-        Tools.translate.noop("Board /d/iscussion", "boardTitle")));
-    Board.addBoard(new Board("int", "/int/ernational",
-        { defaultUserName: Tools.translate.noop("Vladimir Putin", "defaultUserName") }));
 }
 
 Board._banners = {};

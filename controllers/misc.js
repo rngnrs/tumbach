@@ -5,7 +5,14 @@ var controller = require("../helpers/controller");
 var router = express.Router();
 
 router.get("/misc/base.json", function(req, res) {
-    res.json(controller.baseModel(req));
+    var model = controller.baseModel();
+    model.user = {
+        ip: req.ip,
+        hashpass: req.hashpass,
+        levels: (req.levels || {}),
+        loggedIn: !!req.hashpass
+    };
+    res.json(model);
 });
 
 router.get("/misc/boards.json", function(req, res) {

@@ -251,7 +251,7 @@ lord.loadingImage = null;
 };
 
 /*private*/ lord.MovablePlayer.prototype.updateTrackInfo = function() {
-    lord.removeChildren(this.trackInfo);
+    $(this.trackInfo).empty();
     var s = lord.durationToString(this.content.currentTime) + " / " + lord.durationToString(this.content.duration);
     this.trackInfo.appendChild(lord.node("text", s));
 };
@@ -490,12 +490,12 @@ lord.checkExpander = function(post) {
     var a = lord.node("a");
     a.appendChild(lord.node("text", lord.text("expandPostTextText")));
     a.href = "javascript:void(0);";
-    lord.addClass(a, "postTextExpander");
+    $(a).addClass("postTextExpander");
     var expanded = false;
     a.onclick = function() {
         expanded = !expanded;
         bq.css("maxHeight", expanded ? "none" : "");
-        lord.removeChildren(a);
+        $(a).empty();
         a.appendChild(lord.node("text", lord.text(expanded ? "collapsePostTextText" : "expandPostTextText")));
         if (expanded)
             a.parentNode.insertBefore(a, a.parentNode.firstChild);
@@ -504,18 +504,6 @@ lord.checkExpander = function(post) {
     };
     bq.parent()[0].appendChild(a);
 };
-
-lord.postProcessors.push(function(post) {
-    if (lord.getLocalObject("mumWatching", false)) {
-        var img = lord.queryOne("[data-name='switchMumWatchingButton']");
-        lord.removeClass(img, "zmdi-eye");
-        lord.addClass(img, "zmdi-eye-off");
-        lord.query(".postFileFile > a > img", post).forEach(function(img) {
-            lord.addClass(img, "mumWatching");
-        });
-    }
-    return Promise.resolve();
-});
 
 if (lord.getLocalObject("addExpander", true))
     lord.postProcessors.push(lord.checkExpander);
@@ -578,7 +566,7 @@ lord.getPostData = function(post) {
     var threadNumber = +lord.data("threadNumber");
     var postNumber = +post.id;
     if (!threadNumber) {
-        if (lord.hasClass(post, "opPost"))
+        if ($(post).hasClass("opPost"))
             threadNumber = postNumber;
         else
             threadNumber = +lord.data("threadNumber", post, true);
@@ -591,21 +579,22 @@ lord.getPostData = function(post) {
     if (lord.getLocalObject("spellsEnabled", true)) {
         var blockquote = lord.queryOne("blockquote", post);
         var files = [];
-        lord.query(".postFile", post).forEach(function(file) {
+        lord.queryAll(".postFile", post).forEach(function(file) {
             files.push({
-                "href": lord.data("href", file),
-                "mimeType": lord.data("mimeType", file),
-                "size": +lord.data("sizeKB", file),
-                "sizeText": lord.data("sizeText", file),
-                "width": +lord.data("width", file),
-                "height": +lord.data("height", file)
+                href: lord.data("href", file),
+                mimeType: lord.data("mimeType", file),
+                ihash: +lord.data("ihash", file) || null,
+                size: +lord.data("sizeKB", file),
+                sizeText: lord.data("sizeText", file),
+                width: +lord.data("width", file),
+                height: +lord.data("height", file)
             });
         });
         var mailto = lord.queryOne(".mailtoName", post);
         var trip = lord.queryOne(".tripcode", post);
         data.hidden = !!lord.getLocalObject("hiddenPosts", {})[currentBoardName + "/" + postNumber];
         data.innerHTML = post.innerHTML;
-        data.text = lord.getPlainText(blockquote);
+        data.text = lord.data("plainText", post) || "";
         data.textHTML = blockquote.innerHTML;
         data.mailto = (mailto ? mailto.href : null);
         data.tripcode = (trip ? trip.value : null);
@@ -615,7 +604,7 @@ lord.getPostData = function(post) {
         data.isDefaultSubject = !!lord.queryOne(".defaultPostSubject", post);
         data.files = (files.length > 0) ? files : null;
         var videos = [];
-        lord.query("[data-video-id]", blockquote).forEach(function(span) {
+        lord.queryAll("[data-video-id]", blockquote).forEach(function(span) {
             videos.push({
                 title: lord.data("videoTitle", span),
                 author: lord.data("videoAuthor", span)
@@ -634,7 +623,7 @@ lord.processPost = function(hiddenPosts, post, data) {
         return;
     if (data) {
         if (data.replacements && data.replacements.length > 0) {
-            lord.forIn(data.replacements, function(value) {
+            lord.each(data.replacements, function(value) {
                 if (value.innerHTML)
                     post.innerHTML = value.innerHTML;
             });
@@ -647,25 +636,25 @@ lord.processPost = function(hiddenPosts, post, data) {
     var info = hiddenPosts[boardName + "/" + postNumber];
     if (!info)
         return;
-    lord.addClass(post, "hidden");
+    $(post).addClass("hidden");
     if (info.reason)
         lord.queryOne(".hideReason", post).appendChild(lord.node("text", info.reason));
     var thread = lord.id("thread" + postNumber);
     if (!thread)
         return;
-    lord.addClass(thread, "hidden");
+    $(thread).addClass("hidden");
 }
 
 lord.removeReferences = function(postNumber, referencedOnly) {
     postNumber = +postNumber;
     if (isNaN(postNumber))
         return;
-    var as = lord.query("a[data-board-name='" + lord.data("boardName") + "'][data-post-number='" + postNumber + "']");
+    var as = lord.queryAll("a[data-board-name='" + lord.data("boardName") + "'][data-post-number='" + postNumber + "']");
     if (!as)
         return;
     as.forEach(function(a) {
         var parent = a.parentNode;
-        if (lord.hasClass(parent, "referencedBy")) {
+        if ($(parent).hasClass("referencedBy")) {
             parent.removeChild(a);
             if (parent.children.length <= 1)
                 parent.style.display = "none";
@@ -699,7 +688,7 @@ lord.resetCaptcha = function() {
             if (quota > 0) {
                 hiddenCaptcha.appendChild(captcha);
                 var span = lord.node("span");
-                lord.addClass(span, "noCaptchaText");
+                $(span).addClass("noCaptchaText");
                 var text = lord.text("noCaptchaText") + ". " + lord.text("captchaQuotaText") + " " + quota;
                 span.appendChild(lord.node("text", text));
                 td.appendChild(span);
@@ -758,10 +747,10 @@ lord.createPostNode = function(post, permanent, threadInfo) {
             var qr = lord.nameOne("quickReplyContainer", c.node);
             if (qr)
                 qr.parentNode.removeChild(qr);
-            lord.name("toThread", c.node).forEach(lord.removeSelf.bind(lord));
-            lord.removeClass(c.node, "opPost");
-            lord.addClass(c.node, "post");
-            lord.addClass(c.node, "temporary");
+            lord.nameAll("toThread", c.node).forEach(function(el) {
+                $(el).remove();
+            });
+            $(c.node).removeClass("opPost").addClass("post temporary");
         } else {
             var lastPostNumbers = lord.getLocalObject("lastPostNumbers", {});
             var lastPostNumber = lastPostNumbers[post.boardName];
@@ -782,7 +771,7 @@ lord.createPostNode = function(post, permanent, threadInfo) {
             var targetPost = lord.id(reference.postNumber);
             lord.nameOne("referencedByContainer", targetPost).style.display = "";
             var referencedBy = lord.nameOne("referencedBy", targetPost);
-            var list = lord.query("a", referencedBy);
+            var list = lord.queryAll("a", referencedBy);
             for (var i = 0; i < list.length; ++i) {
                 if (lord.data("boardName", list[i]) == post.boardName
                     && lord.data("postNumber", list[i]) == post.number) {
@@ -831,7 +820,7 @@ lord.clearFileInput = function(div) {
     if (!div)
         return;
     lord.queryOne("img.postformFilePreview", div).src = "/" + lord.data("sitePathPrefix") + "img/addfile.png";
-    lord.removeChildren(lord.queryOne("span.postformFileText", div));
+    $(lord.queryOne("span.postformFileText", div)).empty();
     lord.removeFileHash(div);
     if (div.hasOwnProperty("fileInput"))
         delete div.fileInput;
@@ -877,7 +866,7 @@ lord.hideImage = function() {
         return;
     lord.currentMovablePlayer.hide();
     lord.currentMovablePlayer = null;
-    lord.query(".leafButton").forEach(function(a) {
+    lord.queryAll(".leafButton").forEach(function(a) {
         a.style.display = "none";
     });
 };
@@ -885,7 +874,7 @@ lord.hideImage = function() {
 lord.globalOnclick = function(e) {
     if (e.button)
         return;
-    if (lord.currentMenu && (!e.target || !lord.hasClass(e.target, "ui-widget-header"))) {
+    if (lord.currentMenu && (!e.target || !$(e.target).hasClass("ui-widget-header"))) {
         lord.currentMenu.hide();
         lord.currentMenu = null;
     }
@@ -923,7 +912,7 @@ lord.globalOnclick = function(e) {
 lord.initFiles = function(reset) {
     lord.files = [];
     lord.filesMap = {};
-    lord.query(".postFile").forEach(function(td) {
+    lord.queryAll(".postFile").forEach(function(td) {
         var href = lord.data("href", td);
         var mimeType = lord.data("mimeType", td);
         if ("application/pdf" == mimeType
@@ -1266,7 +1255,7 @@ lord.banUser = function(el) {
         model.postNumber = postNumber;
         c.div = lord.template("userBan", model);
         $(".banLevelSelect", c.div).buttonset();
-        lord.query("[name='expires'], [name^='banExpires_']", c.div).forEach(function(inp) {
+        lord.queryAll("[name='expires'], [name^='banExpires_']", c.div).forEach(function(inp) {
             $(inp).change(function(){
                 $(this).attr("value", $(inp).val());
             });
@@ -1306,14 +1295,14 @@ lord.clearDate = function(a, inputName) {
 lord.bansSelectAll = function(e, btn) {
     e.preventDefault();
     var form = $(btn).closest("form")[0];
-    var level = lord.query("[name='level'] > input", form).filter(function(inp) {
+    var level = lord.queryAll("[name='level'] > input", form).filter(function(inp) {
         return inp.checked;
     })[0].value;
     var expires = lord.nameOne("expires", form).value;
     var reason = lord.nameOne("reason", form).value;
-    lord.name("board", form).forEach(function(div) {
+    lord.nameAll("board", form).forEach(function(div) {
         $(".banLevelSelect > input[value='" + level + "']", div).click();
-        lord.query("input", div).forEach(function(inp) {
+        lord.queryAll("input", div).forEach(function(inp) {
             if (inp.name.substr(0, 11) == "banExpires_") {
                 inp.value = expires;
                 $(inp).attr("value", expires);
@@ -1379,7 +1368,7 @@ lord.addFiles = function(el) {
             return Promise.resolve();
         var form = lord.queryOne("form", c.div);
         var formData = new FormData(form);
-        lord.query(".postformFile", form).forEach(function(div) {
+        lord.queryAll(".postformFile", form).forEach(function(div) {
             if (div.file)
                 formData.append(div.fileName || "file", div.file);
             else if (div.fileUrl)
@@ -1427,7 +1416,12 @@ lord.editPost = function(el) {
         document.body.removeChild(c.div);
         $(c.div).css("visibility", "");
         $(c.div).css("position", "");
-        return lord.showDialog(c.div, { title: "editPostText" });
+        return lord.showDialog(c.div, {
+            title: "editPostText",
+            afterShow: function() {
+                lord.countSymbols(lord.nameOne("text", c.div));
+            }
+        });
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
@@ -1451,13 +1445,13 @@ lord.setPostHidden = function(el) {
     if (!post)
         return;
     var thread = lord.id("thread" + postNumber);
-    var hidden = lord.hasClass(post, "hidden");
-    var f = !hidden ? lord.addClass : lord.removeClass;
-    f(post, "hidden");
+    var hidden = $(post).hasClass("hidden");
+    var fName = !hidden ? "addClass" : "removeClass";
+    $(post)[fName]("hidden");
     if (hidden)
-        lord.removeChildren(lord.queryOne(".hideReason", post));
+        $(lord.queryOne(".hideReason", post)).empty();
     if (thread)
-        f(thread, "hidden");
+        $(thread)[fName]("hidden");
     var list = lord.getLocalObject("hiddenPosts", {});
     if (!hidden) {
         lord.addPostToHidden(null, boardName, postNumber, threadNumber);
@@ -1490,59 +1484,57 @@ lord.applySpells = function(posts, force) {
             lord.strikeOutHiddenPostLinks();
             return Promise.resolve();
         }
-        var list = [];
-        return lord.gently(posts, function(post) {
-            var data = lord.getPostData(post);
-            if (!data)
-                return;
-            list.push(data);
-        }, {
-            delay: 10,
-            n: 10
-        }).then(function() {
+        var promises = lord.chunk(posts, 100).map(function(list, i) {
+            var data = list.map(lord.getPostData.bind(lord));
             return lord.doWork("processPosts", {
-                posts: list,
-                spells: lord.spells
+                posts: data,
+                spells: lord.spells,
+                options: { ihashDistance: lord.getLocalObject("ihashDistance", 10) }
+            }).then(function(result) {
+                var map = (result && result.posts) ? result.posts.reduce(function(acc, data) {
+                    acc[data.postNumber] = data;
+                    return acc;
+                }, {}) : {};
+                list.forEach(function(post) {
+                    lord.processPost(hiddenPosts, post, map[+post.id]);
+                });
+                lord.setLocalObject("hiddenPosts", hiddenPosts);
+                lord.strikeOutHiddenPostLinks();
+                return Promise.resolve();
             });
-        }).then(function(list) {
-            var map = list ? list.reduce(function(acc, data) {
-                acc[data.postNumber] = data;
-                return acc;
-            }, {}) : {};
-            posts.forEach(function(post) {
-                lord.processPost(hiddenPosts, post, map[+post.id]);
-            });
-            lord.setLocalObject("hiddenPosts", hiddenPosts);
-            lord.strikeOutHiddenPostLinks();
-            return Promise.resolve();
         });
+        return Promise.all(promises);
+    }).then(function() {
+        return Promise.resolve();
     });
 };
 
-lord.hideByImage = function(a) {
+lord.hideByImage = function(a, byHash) {
     if (!a)
         return;
     var file = $(a).closest(".postFile")[0];
     if (!file)
         return;
-    var c = {};
-    lord.doWork("getImageHash", {
-        href: lord.data("href", file),
-        width: +lord.data("width", file),
-        height: +lord.data("height", file)
-    }).then(function(hash) {
-        if (!hash)
-            return Promise.reject("failedToGenerateHashErrorText");
-        c.hash = hash;
-        var spells = lord.getLocalObject("spells", lord.DefaultSpells);
-        if (spells && spells[spells.length - 1] != "\n")
-            spells += "\n";
-        spells += "#ihash(" + c.hash + ")";
-        lord.setLocalObject("spells", spells);
-        if (!lord.getLocalObject("spellsEnabled", true))
-            return Promise.resolve();
-        return lord.applySpells(lord.query(".post, .opPost"), true);
-    }).catch(lord.handleError);
+    if (lord.data("mimeType", file).substr(0, 6) != "image/")
+        return;
+    var hash = +lord.data("ihash", file);
+    if (byHash && !hash)
+        return;
+    var spells = lord.getLocalObject("spells", lord.DefaultSpells);
+    if (spells && spells[spells.length - 1] != "\n")
+        spells += "\n";
+    if (byHash) {
+        spells += "#ihash(" + hash + ")";
+    } else {
+        var size = +lord.data("sizeKB", file);
+        var width = +lord.data("width", file);
+        var height = +lord.data("height", file);
+        spells += "#img(=" + size + "@" + width + "x" + height + ")";
+    }
+    lord.setLocalObject("spells", spells);
+    if (!lord.getLocalObject("spellsEnabled", true))
+        return;
+    lord.applySpells(lord.queryAll(".post, .opPost"), true).catch(lord.handleError);
 };
 
 lord.lcToFile = function(lc, fileName) {
@@ -1564,7 +1556,7 @@ lord.lcToFile = function(lc, fileName) {
 };
 
 lord.attachDrawnFile = function(lc, fileName, div) {
-    div = div || lord.query(".postformFile", lord.id("postForm")).pop();
+    div = div || lord.queryAll(".postformFile", lord.id("postForm")).pop();
     if (!div)
         return;
     lord.clearFileInput(div);
@@ -1588,7 +1580,7 @@ lord.draw = function(options) {
         height: (options && +options.height > 0) ? +options.height : 0
     };
     var div = lord.node("div");
-    lord.addClass(div, "checkerboardBackground");
+    $(div).addClass("checkerboardBackground");
     var subdiv = lord.node("div");
     var dwidth = lord.deviceType("mobile") ? 10 : 150;
     var dheight = lord.deviceType("mobile") ? 20 : 150;
@@ -1621,11 +1613,15 @@ lord.draw = function(options) {
                 imageURLPrefix: "/" + lord.data("sitePathPrefix") + "img/3rdparty/literallycanvas",
                 imageSize: imageSize
             };
-            if (backgroundShape)
+            if (backgroundShape && (!options || !options.backgroundDrawable))
                 opt.backgroundShapes = [backgroundShape];
-            else
+            if (options && options.backgroundColor)
                 opt.backgroundColor = options && options.backgroundColor;
+            else
+                opt.backgroundColor = "rgba(255, 255, 255, 0)";
             c.lc = LC.init(div, opt);
+            if (backgroundShape && options && options.backgroundDrawable)
+                c.lc.saveShape(backgroundShape);
         }
     }).then(function(result) {
         return Promise.resolve({
@@ -1648,12 +1644,42 @@ lord.drawOnImage = function(a) {
     var file = $(a).closest(".postFile")[0];
     if (!file)
         return;
-    lord.draw({
-        width: +lord.data("width", file),
-        height: +lord.data("height", file),
-        imageUrl: lord.data("href", file)
+    var model = lord.model(["base", "tr"]);
+    model.options = {
+        backgroundColor: lord.getLocalObject("drawingBackgroundColor", "rgba(255, 255, 255, 1)"),
+        backgroundDrawable: lord.getLocalObject("backgroundDrawable", true)
+    };
+    model.drawingOnImage = true;
+    var dlg = lord.template("drawingOptionsDialog", model);
+    lord.showDialog(dlg, {
+        title: "drawingOptionsDialogTitle",
+        afterShow: function() {
+            $(dlg).css({ minHeight: "180px" });
+            $("button", dlg).button();
+            $("[name='backgroundTypeGroup']", dlg).buttonset();
+            $("input[name='backgroundColor']", dlg).minicolors({
+                control: "wheel",
+                position: "bottom right",
+                format: "rgb",
+                opacity: true
+            });
+        }
     }).then(function(result) {
-        if (!result.accepted)
+        if (!result)
+            return Promise.resolve();
+        var backgroundColor = $("input[name='backgroundColor']", dlg).minicolors("value");
+        var backgroundDrawable = !!lord.queryOne("#checkboxBackgroundDrawable", dlg).checked;
+        lord.setLocalObject("drawingBackgroundColor", backgroundColor);
+        lord.setLocalObject("backgroundDrawable", backgroundDrawable);
+        return lord.draw({
+            width: +lord.data("width", file),
+            height: +lord.data("height", file),
+            imageUrl: lord.data("href", file),
+            backgroundColor: backgroundColor,
+            backgroundDrawable: backgroundDrawable
+        });
+    }).then(function(result) {
+        if (!result || !result.accepted)
             return;
         lord.attachDrawnFile(result.lc, lord.data("fileName", file));
     }).catch(lord.handleError);
@@ -1713,12 +1739,14 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
     var p;
     if (post) {
         post = post.cloneNode(true);
-        lord.removeSelf(lord.queryOne(".hideReason", post));
-        lord.removeSelf(lord.nameOne("postActionsContainer", post));
-        lord.removeSelf(lord.nameOne("quickReplyContainer", post));
-        lord.name("toThread", post).forEach(lord.removeSelf.bind(lord));
-        lord.removeClass(post, "opPost hidden");
-        lord.addClass(post, "post temporary");
+        $(lord.queryOne(".hideReason", post)).remove();
+        $(lord.nameOne("postActionsContainer", post)).remove();
+        $(lord.nameOne("quickReplyContainer", post)).remove();
+        lord.nameAll("toThread", post).forEach(function(el) {
+            $(el).remove();
+        });
+        $(post).removeClass("opPost hidden");
+        $(post).addClass("post temporary");
         p = Promise.resolve(post);
     } else {
         p = lord.api("post", {
@@ -1790,7 +1818,7 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
                 : (scrollTop + coords.top - $(post).height() - 4 + "px");
             post.style.zIndex = previousPostPreview ? previousPostPreview.style.zIndex : (hiddenPost? 11000 : 9001);
         } else {
-            lord.addClass(post, "cursorPointer");
+            $(post).addClass("cursorPointer");
             post.style.position = "fixed";
             lord.toCenter(post, null, null, 1);
             post.style.zIndex = previousPostPreview ? previousPostPreview.style.zIndex : (hiddenPost? 11000 : 9001);
@@ -1805,13 +1833,13 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
 
 lord.fileDragOver = function(e, div) {
     e.preventDefault();
-    lord.addClass(div, "drag");
+    $(div).addClass("drag");
     return false;
 };
 
 lord.fileDragLeave = function(e, div) {
     e.preventDefault();
-    lord.removeClass(div, "drag");
+    $(div).removeClass("drag");
     return false;
 };
 
@@ -1871,6 +1899,24 @@ lord.removeExifData = function(data) {
     });
 };
 
+lord.checkPostformTextareaSize = function() {
+    if (lord.deviceType("mobile"))
+        return;
+    var form = lord.id("postForm");
+    var textarea = lord.nameOne("text", form);
+    var pwidth = $(textarea).width();
+    $(textarea).css("minWidth", 400).width(400).resize();
+    var w = lord.queryAll(".postformFile", form).map(function(div) {
+        return $(div).width();
+    }).sort(function(w1, w2) {
+        return w1 - w2;
+    }).pop();
+    if ($(textarea).width() < (w - 6))
+        $(textarea).width(w).css("minWidth", w).resize();
+    else
+        $(textarea).width(pwidth).resize();
+};
+
 lord.fileAddedCommon = function(div) {
     if (!div || (!div.file && !div.fileUrl))
         return;
@@ -1908,6 +1954,7 @@ lord.fileAddedCommon = function(div) {
     p.then(function(txt) {
         txt = fileName + " " + txt;
         lord.queryOne(".postformFileText", div).appendChild(lord.node("text", txt));
+        lord.checkPostformTextareaSize();
     }).catch(lord.handleError);
     var _uuid = uuid.v1();
     div.fileName = "file_" + (div.fileUrl ? "url_" : "") + _uuid;
@@ -1930,10 +1977,11 @@ lord.fileAddedCommon = function(div) {
                 ratingSelect.name = "file_" + div.fileHash + "_rating";
             var img = lord.node("img");
             img.src = "/" + prefix + "img/storage.png";
-            lord.addClass(img, "signImage");
+            $(img).addClass("signImage");
             img.title = lord.text("fileExistsOnServerText");
             lord.queryOne("span", div).appendChild(lord.node("text", " "));
             lord.queryOne("span", div).appendChild(img);
+            lord.checkPostformTextareaSize();
             var fileHashes = lord.getFileHashes(div);
             if (fileHashes.value.indexOf(div.fileHash) < 0)
                 fileHashes.value = fileHashes.value + (fileHashes.value.length > 0 ? "," : "") + div.fileHash;
@@ -1952,7 +2000,11 @@ lord.fileAddedCommon = function(div) {
             var img = lord.queryOne("img", div);
             img.src = url;
             if ("neutron" == lord.settings().style.name)
-                lord.addClass(img, "noInvert");
+                $(img).addClass("noInvert");
+            img.addEventListener("load", function load() {
+                img.removeEventListener("load", load, false);
+                lord.checkPostformTextareaSize();
+            }, false);
         }).catch(lord.handleError);
     };
     if (fileNameFull.match(/\.(jpe?g|png|gif)$/i) && lord.getLocalObject("showAttachedFilePreview", true)) {
@@ -2011,10 +2063,10 @@ lord.fileAddedCommon = function(div) {
 
 lord.fileDrop = function(e, div) {
     e.preventDefault();
-    lord.removeClass(div, "drag");
+    $(div).removeClass("drag");
     lord.clearFileInput(div);
     var dt = e.dataTransfer;
-    if (lord.in(dt.types, "text/uri-list")) {
+    if (lord.contains(dt.types, "text/uri-list")) {
         div.fileUrl = dt.getData("text/uri-list");
         lord.fileAddedCommon(div);
     } else if (dt.files) {
@@ -2078,12 +2130,44 @@ lord.attachFileByDrawing = function(a) {
                 img.onload = function() {
                     clearTimeout(timer);
                     resolve({
-                        url: url,
+                        imageUrl: url,
                         width: img.width,
                         height: img.height
                     });
                 };
                 img.src = url;
+            });
+        }).then(function(options) {
+            var model = lord.model(["base", "tr"]);
+            model.options = {
+                backgroundColor: lord.getLocalObject("drawingBackgroundColor", "rgba(255, 255, 255, 1)"),
+                backgroundDrawable: lord.getLocalObject("backgroundDrawable", true)
+            };
+            model.drawingOnImage = true;
+            var dlg = lord.template("drawingOptionsDialog", model);
+            return lord.showDialog(dlg, {
+                title: "drawingOptionsDialogTitle",
+                afterShow: function() {
+                    $(dlg).css({ minHeight: "180px" });
+                    $("button", dlg).button();
+                    $("[name='backgroundTypeGroup']", dlg).buttonset();
+                    $("input[name='backgroundColor']", dlg).minicolors({
+                        control: "wheel",
+                        position: "bottom right",
+                        format: "rgb",
+                        opacity: true
+                    });
+                }
+            }).then(function(result) {
+                if (!result)
+                    return Promise.resolve();
+                var backgroundColor = $("input[name='backgroundColor']", dlg).minicolors("value");
+                var backgroundDrawable = !!lord.queryOne("#checkboxBackgroundDrawable", dlg).checked;
+                lord.setLocalObject("drawingBackgroundColor", backgroundColor);
+                lord.setLocalObject("backgroundDrawable", backgroundDrawable);
+                options.backgroundColor = backgroundColor;
+                options.backgroundDrawable = backgroundDrawable;
+                return Promise.resolve(options);
             });
         });
     } else {
@@ -2093,6 +2177,7 @@ lord.attachFileByDrawing = function(a) {
             height: lord.getLocalObject("drawingBackgroundHeight", 0),
             backgroundColor: lord.getLocalObject("drawingBackgroundColor", "rgba(255, 255, 255, 1)")
         };
+        model.drawingOnImage = false;
         var dlg = lord.template("drawingOptionsDialog", model);
         p = lord.showDialog(dlg, {
             title: "drawingOptionsDialogTitle",
@@ -2125,12 +2210,7 @@ lord.attachFileByDrawing = function(a) {
     p.then(function(result) {
         if (!result)
             return Promise.resolve({ accepted: false });
-        return lord.draw({
-            width: result.width,
-            height: result.height,
-            imageUrl: result.url,
-            backgroundColor: result.backgroundColor
-        });
+        return lord.draw(result);
     }).then(function(result) {
         if (!result.accepted)
             return;
@@ -2185,6 +2265,7 @@ lord.removeFile = function(div) {
         lord.clearFileInput(div);
         lord.queryOne("a.postformFileRemoveButton", div).style.display = "none";
     }
+    lord.checkPostformTextareaSize();
 };
 
 lord.browseFile = function(e, div) {
@@ -2208,12 +2289,12 @@ lord.browseFile = function(e, div) {
 lord.setPostformRulesVisible = function(visible) {
     var hide = !visible;
     lord.setLocalObject("hidePostformRules", hide);
-    lord.query(".postformRules > ul").forEach(function(ul) {
+    lord.queryAll(".postformRules > ul").forEach(function(ul) {
         ul.style.display = hide ? "none" : "";
     });
     var a = lord.queryOne("a.hidePostformRulesButton");
     var aa = lord.node("a");
-    lord.addClass(aa, "hidePostformRulesButton");
+    $(aa).addClass("hidePostformRulesButton");
     aa.onclick = lord.setPostformRulesVisible.bind(lord, hide);
     aa.appendChild(lord.node("text", lord.text(hide ? "showPostformRulesText" : "hidePostformRulesText")));
     a.parentNode.replaceChild(aa, a);
@@ -2226,7 +2307,8 @@ lord.quoteSelectedText = function(selection) {
         var pos = 0;
         if (document.getSelection()) {
             value = "";
-            var sel = lord.arr((selection || document.getSelection().toString()).split("\n")).forEach(function(line) {
+            var sel = lord.toArray((selection
+                    || document.getSelection().toString()).split("\n")).forEach(function(line) {
                 if ("" != line)
                     value += ">" + line;
                 value += "\n";
@@ -2291,7 +2373,9 @@ lord.markup = function(tag) {
     case "sup":
     case "sub":
     case "raw-html":
-    case "url": {
+    case "url":
+    case "latex":
+    case "inline-latex": {
         wrap("[" + tag + "]", "[/" + tag + "]");
         break;
     }
@@ -2359,7 +2443,7 @@ lord.setPostformMarkupVisible = function(visible) {
     var a = lord.queryOne("a.hidePostformMarkupButton");
     if (!a)
         return false;
-    lord.removeChildren(a);
+    $(a).empty();
     a.appendChild(lord.node("text", lord.text(hide ? "showPostformMarkupText" : "hidePostformMarkupText")));
     a.onclick = lord.setPostformMarkupVisible.bind(lord, hide);
     return false;
@@ -2406,7 +2490,7 @@ lord.showImage = function(a, mimeType, width, height) {
     lord.currentMovablePlayer.show();
     lord.currentMovablePlayer.showScalePopup();
     if (lord.getLocalObject("showLeafButtons", true)) {
-        lord.query(".leafButton").forEach(function(a) {
+        lord.queryAll(".leafButton").forEach(function(a) {
             a.style.display = "";
         });
     }
@@ -2458,7 +2542,7 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
         img.src = img.src.replace("favorite.png", "favorite_active.png");
         var div = lord.id("favorites");
         var span = lord.queryOne("span", btn);
-        lord.removeChildren(span);
+        $(span).empty();
         span.appendChild(lord.node("text", lord.text("removeThreadFromFavoritesText")));
         if (!div)
             return Promise.resolve();
@@ -2510,11 +2594,11 @@ lord.submitted = function(event, form) {
         form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
-    lord.setCookie("markupMode", markupMode.options[markupMode.selectedIndex].value);
+    lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
     var formData = new FormData(form);
-    lord.query(".postformFile", form).forEach(function(div) {
+    lord.queryAll(".postformFile", form).forEach(function(div) {
         if (div.file)
             formData.append(div.fileName || "file", div.file);
         else if (div.fileUrl)
@@ -2575,7 +2659,7 @@ lord.submitted = function(event, form) {
                     if (!threadPosts) {
                         threadPosts = lord.node("div");
                         threadPosts.setAttribute("id", "threadPosts" + threadId);
-                        lord.addClass(threadPosts, "threadPosts");
+                        $(threadPosts).addClass("threadPosts");
                         thread.appendChild(threadPosts);
                     }
                     lord.createPostNode(result, true).then(function(post) {
@@ -2608,7 +2692,7 @@ lord.switchDraftsVisibility = function(visible) {
     draftsContainer.style.display = (visible ? "" : "none");
     lord.setLocalObject("draftsVisible", visible);
     var sw = lord.id("draftsVisibilitySwitch");
-    lord.removeChildren(sw);
+    $(sw).empty();
     sw.appendChild(lord.node("text", lord.text(visible ? "hideDraftsText" : "showDraftsText")));
 };
 
@@ -2749,7 +2833,7 @@ lord.addToDrafts = function(a) {
 lord.resetPostForm = function() {
     var postForm = lord.id("postForm");
     postForm.reset();
-    var divs = lord.query(".postformFile", postForm);
+    var divs = lord.queryAll(".postformFile", postForm);
     for (var i = divs.length - 1; i >= 0; --i)
     lord.removeFile(lord.queryOne("a", divs[i]));
     var trip = lord.nameOne("tripcode", postForm);
@@ -2760,7 +2844,7 @@ lord.resetPostForm = function() {
     }
     var markupMode = lord.nameOne("markupMode", postForm);
     for (var i = 0; i < markupMode.options.length; ++i) {
-        if (markupMode.options[i].value == lord.getCookie("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
+        if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
             markupMode.selectedIndex = i;
             break;
         }
@@ -2831,15 +2915,15 @@ lord.strikeOutHiddenPostLink = function(a, list) {
     if (!list)
         list = lord.getLocalObject("hiddenPosts", {});
     if (list[boardName + "/" + postNumber])
-        lord.addClass(a, "hiddenPostLink");
+        $(a).addClass("hiddenPostLink");
     else
-        lord.removeClass(a, "hiddenPostLink");
+        $(a).removeClass("hiddenPostLink");
 };
 
 lord.signOpPostLink = function(a, data) {
     if (!a)
         return;
-    if (lord.hasClass(a, "opPostLink"))
+    if ($(a).hasClass("opPostLink"))
         return;
     var postNumber = +lord.data("postNumber", a);
     if (!postNumber)
@@ -2848,23 +2932,23 @@ lord.signOpPostLink = function(a, data) {
     if (!threadNumber)
         return;
     if (postNumber == threadNumber)
-        lord.addClass(a, "opPostLink");
+        $(a).addClass("opPostLink");
 };
 
 lord.signOwnPostLink = function(a, ownPosts) {
     if (!a)
         return;
-    if (lord.hasClass(a, "ownPostLink"))
+    if ($(a).hasClass("ownPostLink"))
         return;
     if (ownPosts.hasOwnProperty(lord.data("boardName", a) + "/" + lord.data("postNumber", a)))
-        lord.addClass(a, "ownPostLink");
+        $(a).addClass("ownPostLink");
 };
 
 lord.strikeOutHiddenPostLinks = function(parent) {
     if (!parent)
         parent = document;
     var list = lord.getLocalObject("hiddenPosts", {});
-    lord.query("a", parent).forEach(function(a) {
+    lord.queryAll("a", parent).forEach(function(a) {
         lord.strikeOutHiddenPostLink(a, list);
     });
 };
@@ -2872,7 +2956,7 @@ lord.strikeOutHiddenPostLinks = function(parent) {
 lord.signOpPostLinks = function(parent) {
     if (!parent)
         parent = document.body;
-    lord.query("a", parent).forEach(function(a) {
+    lord.queryAll("a", parent).forEach(function(a) {
         lord.signOpPostLink(a);
     });
 };
@@ -2881,7 +2965,7 @@ lord.signOwnPostLinks = function(parent, ownPosts) {
     if (!parent)
         parent = document.body;
     ownPosts = ownPosts || lord.getLocalObject("ownPosts", {});
-    lord.query("a", parent).forEach(function(a) {
+    lord.queryAll("a", parent).forEach(function(a) {
         lord.signOwnPostLink(a, ownPosts);
     });
 };
@@ -2891,7 +2975,7 @@ lord.downloadThread = function(el) {
     var p;
     var title;
     if (+lord.data("threadNumber")) {
-        var fileNames = lord.query(".postFile[data-file-name]").map(function(div) {
+        var fileNames = lord.queryAll(".postFile[data-file-name]").map(function(div) {
             return lord.data("fileName", div);
         });
         title = document.title;
@@ -2953,8 +3037,8 @@ lord.processPosts = function(parent) {
     if (!parent)
         parent = document.body;
     $(".postBody", parent).css("maxWidth", ($(window).width() - 30) + "px");
-    var posts = (lord.hasClass(parent, "post") || lord.hasClass(parent, "opPost")) ? [parent]
-        : lord.query(".post, .opPost", parent);
+    var posts = ($(parent).hasClass("post") || $(parent).hasClass("opPost")) ? [parent]
+        : lord.queryAll(".post, .opPost", parent);
     return lord.series(lord.postProcessors, function(f) {
         return lord.series(posts, function(post) {
             return f(post);
@@ -2967,12 +3051,12 @@ lord.processPosts = function(parent) {
         if (lord.getLocalObject("signOwnPostLinks", true))
             lord.signOwnPostLinks(parent);
         if (lord.getLocalObject("hideTripcodes", false)) {
-            lord.query(".tripcode", parent).forEach(function(span) {
+            lord.queryAll(".tripcode", parent).forEach(function(span) {
                 span.style.display = "none";
             });
         }
         if (lord.getLocalObject("hideUserNames", false)) {
-            lord.query(".someName", parent).forEach(function(span) {
+            lord.queryAll(".someName", parent).forEach(function(span) {
                 span.style.display = "none";
             });
         }
@@ -3026,7 +3110,7 @@ lord.hotkey_previousPageImage = function() {
     if (+lord.data("threadNumber"))
         return;
     var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.query(".pagesItem:not(.metaPage)");
+    var list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 1; i < list.length; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i - 1]).href;
@@ -3043,7 +3127,7 @@ lord.hotkey_nextPageImage = function() {
     if (+lord.data("threadNumber"))
         return;
     var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.query(".pagesItem:not(.metaPage)");
+    var list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 0; i < list.length - 1; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i + 1]).href;
@@ -3148,7 +3232,7 @@ lord.hotkey_expandImage = function() {
     if (lord.currentMovablePlayer && lord.currentMovablePlayer.visible) {
         lord.hideImage();
     } else {
-        var f = lord.query(".postFile", p);
+        var f = lord.queryAll(".postFile", p);
         if (!f)
             return;
         f = f[0];
@@ -3253,15 +3337,10 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 21 : '';
-    lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
-        my: "left top",
-        at: "left-"+fw+"0px bottom-48px",
-        of: $(input),
-        collision: "fit flip"
-    }).show();
-    if (/firefox/i.test(navigator.userAgent))
-        lord.currentMenu.css("top", lord.queryOne(selector).parentNode.getBoundingClientRect().top+pageYOffset-24);
+    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 210 : 0;
+    lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
+    lord.currentMenu.css("top", lord.queryOne(selector).parentNode.getBoundingClientRect().top+pageYOffset-24);
+    lord.currentMenu.css("left", input.getBoundingClientRect().left+pageXOffset-fw);
 };
 
 lord.hotkey = function(name, hotkeys) {
@@ -3273,25 +3352,26 @@ lord.hotkey = function(name, hotkeys) {
 
 lord.showPostActionsMenu = function(e, input, postNumber) {
     var id = "post" + postNumber + "ActionsMenu";
-    lord.removeSelf(lord.id(id));
+    $(lord.id(id)).remove();
     var post = lord.id(postNumber);
     if (!post)
         return;
+    var boardName = lord.data("boardName");
     var fav = lord.getLocalObject("favoriteThreads", {});
     var model = {
         post: {
             number: postNumber,
             rawText: lord.queryOne("blockquote", post).textContent,
-            fileInfos: lord.query(".postFile", post),
-            isOp: lord.hasClass(post, "opPost"),
-            hidden: !!lord.getLocalObject("hiddenPosts", {})[lord.data("boardName") + "/" + postNumber]
+            fileInfos: lord.queryAll(".postFile", post),
+            isOp: $(post).hasClass("opPost"),
+            hidden: lord.getLocalObject("hiddenPosts", {}).hasOwnProperty(boardName + "/" + postNumber)
         },
         thread: {
             fixed: lord.data("fixed", post),
             closed: lord.data("closed", post),
             unbumpable: lord.data("unbumpable", post),
             expanded: lord.data("expanded", post),
-            isInFavorites: fav.hasOwnProperty(lord.data("boardName") + "/" + lord.data("threadNumber", post))
+            isInFavorites: fav.hasOwnProperty(boardName + "/" + lord.data("threadNumber", post))
         },
         customPostMenuAction: lord.customPostMenuAction,
         isThreadPage: +lord.data("threadNumber"),
@@ -3318,8 +3398,8 @@ lord.selectCaptchaEngine = function() {
         return false;
     };
     if (!ceid || !isSupported(ceid)) {
-        if (isSupported("google-recaptcha"))
-            ceid = "google-recaptcha";
+        if (isSupported("node-captcha"))
+            ceid = "node-captcha";
         else
             ceid = supportedCaptchaEngines[0].id;
     }
@@ -3338,10 +3418,10 @@ lord.appendHotkeyShortcuts = function() {
     btn = lord.queryOne(".leafButton.leafButtonNext");
     if (btn)
         btn.title += " (" + lord.hotkey("nextPageImage", hotkeys) + ")";
-    lord.query("[name='quickReply']").forEach(function(a) {
+    lord.queryAll("[name='quickReply']").forEach(function(a) {
         a.title += " (" + lord.hotkey("quickReply", hotkeys) + ")";
     });
-    lord.query("[name='toThreadLink']").forEach(function(a) {
+    lord.queryAll("[name='toThreadLink']").forEach(function(a) {
         a.title += "(" + lord.hotkey("goToThread", hotkeys) + ")";
     });
     var table = lord.queryOne(".postformMarkup");
@@ -3355,7 +3435,7 @@ lord.appendHotkeyShortcuts = function() {
             btn.title += " (" + lord.hotkey(s, hotkeys) + ")";
         });
     }
-    lord.query("[name='updateThreadButton']").forEach(function(a) {
+    lord.queryAll("[name='updateThreadButton']").forEach(function(a) {
         a.title += " (" + lord.hotkey("updateThread", hotkeys) + ")";
     });
     btn = lord.nameOne("submit", lord.id("postForm"));
@@ -3384,14 +3464,31 @@ lord.initializeOnLoadBoard = function() {
         c.model.customPostFormField = lord.customPostFormField;
         c.model.customPostFormOption = lord.customPostFormOption;
         c.model.postformRules = JSON.parse(lord.id("model-postformRules").innerHTML);
-        lord.id("hiddenPostForm").appendChild(lord.template("postForm", c.model));
-        lord.arr(lord.id("options").childNodes).forEach(function(node) {
+        var form = lord.template("postForm", c.model);
+        lord.id("hiddenPostForm").appendChild(form);
+        lord.toArray(lord.id("options").childNodes).forEach(function(node) {
             if (3 != node.nodeType)
                 return;
             node.parentNode.removeChild(node);
         });
         $("#options").buttonset();
         $("[name='markupHtml'], [name='optionDraft']").button();
+        var textarea = lord.nameOne("text", form);
+        if (!lord.deviceType("mobile")) {
+            $(textarea).bind("mouseup mousemove", function() {
+                if (this.oldwidth === null)
+                    this.oldwidth = this.style.width;
+                if (this.oldheight === null)
+                    this.oldheight = this.style.height;
+                if (this.style.width != this.oldwidth || this.style.height != this.oldheight) {
+                    $(this).resize();
+                    this.oldwidth  = this.style.width;
+                    this.oldheight = this.style.height;
+                }
+            }).resize(function() {
+                $("#markup").width($(this).width() + 8);
+            }).width(400).resize();
+        }
         var captcha = lord.selectCaptchaEngine();
         var appendCaptchaWidgetToContainer = function(container) {
             if (captcha && captcha.widgetHtml)
@@ -3427,7 +3524,7 @@ lord.initializeOnLoadBoard = function() {
         }).catch(lord.handleError);
     }
     if (lord.queryOne(".opPost[data-archived='true']")) {
-        lord.name("backButton").forEach(function(btn) {
+        lord.nameAll("backButton").forEach(function(btn) {
             btn.href += "/archive.html";
         });
     }
@@ -3462,7 +3559,7 @@ lord.initializeOnLoadBoard = function() {
     var lastLang = lord.getLocalObject("lastCodeLang", "-");
     var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
     if (sel) {
-        lord.arr(sel.options).forEach(function(opt) {
+        lord.toArray(sel.options).forEach(function(opt) {
             if (opt.value == lastLang)
                 opt.selected = true;
         });
@@ -3557,7 +3654,7 @@ lord.blinkFaviconNewMessage = function() {
 lord.updateThread = function(silent) {
     var boardName = lord.data("boardName");
     var threadNumber = +lord.data("threadNumber");
-    var posts = lord.query(".opPost:not(.temporary), .post:not(.temporary)");
+    var posts = lord.queryAll(".opPost:not(.temporary), .post:not(.temporary)");
     if (!posts)
         return;
     var lastPost = posts[posts.length - 1];
@@ -3612,10 +3709,10 @@ lord.updateThread = function(silent) {
         posts.forEach(function(post) {
             if (lord.id(post.id))
                 return;
-            lord.addClass(post, "newPost");
+            $(post).addClass("newPost");
             post.onmouseover = function() {
                 post.onmouseover = undefined;
-                lord.removeClass(post, "newPost");
+                $(post).removeClass("newPost");
             };
             before.parentNode.insertBefore(post, before);
             if (lord.getLocalObject("addExpander", true))
@@ -3642,7 +3739,7 @@ lord.updateThread = function(silent) {
             bl = lord.nameOne("bumpLimitReached");
             if (bl)
                 bl.parentNode.removeChild(bl);
-            lord.query(".createAction").forEach(function(act) {
+            lord.queryAll(".createAction").forEach(function(act) {
                 act.parentNode.removeChild(act);
             });
         }

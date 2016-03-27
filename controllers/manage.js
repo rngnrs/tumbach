@@ -10,7 +10,7 @@ var router = express.Router();
 
 router.get("/manage.html", function(req, res) {
     if (!req.isModer())
-        return controller.error(res, Tools.translate("Not enough rights"));
+        return controller.error(req, res, Tools.translate("Not enough rights"));
     var superuserContentVisible = req.isSuperuser();
     controller.sendCachedHTML(req, res, `manage-${superuserContentVisible ? "superuser" : "moder"}`);
 });
@@ -24,9 +24,10 @@ var generateHTML = function(superuserContentVisible) {
         model.extraScripts.push({ fileName: "3rdparty/codemirror/codemirror.min.js" });
         model.extraScripts.push({ fileName: "3rdparty/codemirror/javascript.min.js" });
         model.extraScripts.push({ fileName: "3rdparty/codemirror/css.min.js" });
+        model.extraScripts.push({ fileName: "3rdparty/codemirror/xml.min.js" });
         model.extraScripts.push({ fileName: "3rdparty/codemirror/htmlmixed.min.js" });
         model.extraStylesheets = [
-            { fileName: "3rdparty/jQueryFileTree/jQueryFileTree.min.css" },
+            { fileName: "3rdparty/jQueryFileTree/jQueryFileTree.min.css", noEmbed: true },
             { fileName: "3rdparty/codemirror.css" }
         ];
     }

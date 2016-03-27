@@ -11,7 +11,9 @@ module.exports = function(tr) {
     translate("Version without frame", "normalVersionText");
     translate("F.A.Q.", "toFaqPageText");
     translate("Management", "toManagePageText");
-    translate("Hide by image hash", "hideByImageText");
+    translate("Hide by image", "hideByImageText");
+    translate("Hide by image hash", "hideByImageHashText");
+    translate("Hide by image size", "hideByImageSizeText");
     translate("Draw on this image", "drawOnImageText");
     translate("Answer", "toThread");
     translate("Answers:", "referencedByText");
@@ -122,7 +124,6 @@ module.exports = function(tr) {
     translate("Other", "otherTabText");
     translate("Bans", "bansTabText");
     translate("Users", "usersTabText");
-    translate("Boards", "boardsTabText");
     translate("Content", "contentTabText");
     translate("Auto update threads by default", "autoUpdateThreadsByDefaultLabelText");
     translate("Auto update interval (sec):", "autoUpdateIntervalLabelText");
@@ -191,6 +192,8 @@ module.exports = function(tr) {
     translate("Ordered list", "markupOrderedList");
     translate("List item", "markupListItem");
     translate("Raw HTML", "markupHtml");
+    translate("Inline LaTeX", "markupInlineLatex");
+    translate("LaTeX", "markupLatex");
     translate("Markup mode:", "postFormLabelMarkupMode");
     translate("Options:", "postFormLabelOptions");
     translate("OP", "postFormLabelSignAsOp");
@@ -391,6 +394,9 @@ module.exports = function(tr) {
     translate("Hashpass:", "hashpassLabelText");
     translate("Generate hashpass", "generateHashpassButtonText");
     translate("Are you sure?", "confirmationText");
+    translate("Background type:", "canvasBackgroundTypeLabelText");
+    translate("Drawable", "checkboxBackgroundDrawableLabel");
+    translate("Not drawable", "checkboxBackgroundNotDrawableLabel");
     translate("Dimensions:", "canvasDimensionsLabelText");
     translate("0 — determine automatically", "canvasDimensionsDescriptionText");
     translate("Background color:", "canvasBackgroundColorLabelText");
@@ -404,6 +410,7 @@ module.exports = function(tr) {
     translate("Collapse text", "collapsePostTextText");
     translate("Current directory:", "currentDirectoryLabelText");
     translate("Current file:", "currentFileLabelText");
+    translate("Frequently used files", "frequentlyUsedFilesLabelText");
     translate("Add file", "addFileButtonText");
     translate("Add directory", "addDirectoryButtonText");
     translate("Rename directory", "renameDirectoryButtonText");
@@ -430,6 +437,7 @@ module.exports = function(tr) {
     translate("Reload config", "reloadConfigButtonText");
     translate("Reload templates", "reloadTemplatesButtonText");
     translate("Reload everything", "reloadAllButtonText");
+    translate("Image similarity:", "ihashDistanceLabelText");
 
     translate("Transparent header", "transparentHeaderLabelText");
     return tr;

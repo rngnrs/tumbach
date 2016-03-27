@@ -48,6 +48,32 @@ controller = function(templateName, modelData) {
     baseModelData.formattedDate = function(date) {
         return moment(date).utcOffset(timeOffset).locale(locale).format(format);
     };
+    baseModelData.script = function(name, noEmbed) {
+        if (!noEmbed && config("system.embedScripts", true)) {
+            try {
+                var data = FSSync.readFileSync(__dirname + "/../public/js/" + name, "utf8");
+                return `<script type="text/javascript">${data}</script>`;
+            } catch (err) {
+                console.error(err);
+                return "";
+            }
+        } else {
+            return `<script type="text/javascript" src="/${baseModelData.site.pathPrefix}js/${name}"></script>`;
+        }
+    };
+    baseModelData.stylesheet = function(name, noEmbed) {
+        if (!noEmbed && config("system.embedStylesheets", true)) {
+            try {
+                var data = FSSync.readFileSync(__dirname + "/../public/css/" + name, "utf8");
+                return `<style type="text/css">${data}</style>`;
+            } catch (err) {
+                console.error(err);
+                return "";
+            }
+        } else {
+            return `<link rel="stylesheet" type="text/css" href="/${baseModelData.site.pathPrefix}css/${name}">`;
+        }
+    };
     if (!modelData)
         modelData = {};
     var template = templates[templateName];
@@ -82,14 +108,11 @@ controller.sync = function(templateName, modelData) {
     return template(modelData);
 };
 
-controller.error = function(res, error, ajax) {
-    if (error) {
-        Global.error(error);
-        if (error.stack)
-            Global.error(error.stack);
-    }
+controller.error = function(req, res, error, ajax) {
     if (!ajax && Util.isNumber(error) && 404 == error)
-        return controller.notFound(res);
+        return controller.notFound(req, res);
+    if (error)
+        Global.error(Tools.preferIPv4(req.ip), req.path, error.stack || error);
     var f = function(error) {
         var model = {};
         model.title = Tools.translate("Error", "pageTitle");
@@ -142,11 +165,12 @@ controller.error = function(res, error, ajax) {
     }
 };
 
-controller.notFound = function(res) {
+controller.notFound = function(req, res) {
     Cache.getHTML("notFound").then(function(data) {
         res.status(404).send(data.data);
+        Global.error(Tools.preferIPv4(req.ip), req.baseUrl, 404);
     }).catch(function(err) {
-        controller.error(res, err);
+        controller.error(req, res, err);
     });
 };
 
@@ -172,7 +196,7 @@ controller.checkBan = function(req, res, boardNames, write) {
     });
 };
 
-controller.baseModel = function(req) {
+controller.baseModel = function() {
     return {
         server: {
             uptime: process.uptime()
@@ -192,16 +216,8 @@ controller.baseModel = function(req) {
                 integrationEnabled: !!config("site.twitter.integrationEnabled", true)
             }
         },
-        user: {
-            ip: (req ? req.ip : undefined),
-            hashpass: (req ? req.hashpass : undefined),
-            levels: (req ? (req.levels || {}) : undefined),
-            loggedIn: (req ? !!req.hashpass : undefined),
-            vkAuth: (req ? req.vkAuth : undefined)
-        },
         styles: Tools.styles(),
         codeStyles: Tools.codeStyles(),
-        deviceType: ((req && req.device.type == "desktop") ? "desktop" : "mobile"),
         availableCodeLangs: Highlight.listLanguages().map(function(lang) {
             return {
                 id: lang,
@@ -241,10 +257,6 @@ controller.boardModel = function(board) {
     if (Util.isString(board))
         board = Board.board(board);
     return board ? { board: board.info() } : null;
-};
-
-controller.settingsModel = function(req) {
-    return { settings: (req ? { deviceType: req.deviceType } : {}) };
 };
 
 controller.translationsModel = function() {
@@ -407,7 +419,7 @@ var sendCachedContent = function(req, res, id, type, ajax) {
         res.send(result.data);
     }).catch(function(err) {
         if ("ENOENT" == err.code)
-            controller.notFound(res);
+            controller.notFound(req, res);
         else
             controller.error(res, err, ajax);
     });

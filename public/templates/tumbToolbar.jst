@@ -73,7 +73,7 @@
                 <i class="zmdi zmdi-star-outline zmdi-hc-2x" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
             </div>
             <div>
-                <i class="zmdi zmdi-eye zmdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
+                <i class="zmdi zmdi-eye{{? it.mumWatching}}-off{{?}} zmdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
             </div>
             <div class="clr"></div>
         </div>
