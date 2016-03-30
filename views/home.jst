@@ -2,25 +2,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{#def.customHeader}}
+{{#def.header}}
 <div class="wrap" {{#def.baseData}}>
     {{#def.toolbar}}
     <div class="wrappie">
+        {{#def.customHeader}}
         <div id="wrapper">
-<script type="text/javascript">
-    (function() {
-        if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst")))
-            return;
-        var model = lord.model(["base", "tr", "boards"]);
-        model.settings = lord.settings();
-        var data = lord.template("custom-home", model, true);
-        if (!data)
-            return;
-        document.open();
-        document.write(data);
-        document.close();
-    })();
-</script>
+            <script type="text/javascript">
+                (function() {
+                    if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst")))
+                        return;
+                    var model = lord.model(["base", "tr", "boards"]);
+                    model.settings = lord.settings();
+                    var data = lord.template("custom-home", model, true);
+                    if (!data)
+                        return;
+                    document.open();
+                    document.write(data);
+                    document.close();
+                })();
+            </script>
         </div>
     </div>
     {{#def.customFooter}}

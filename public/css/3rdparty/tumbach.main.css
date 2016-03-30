@@ -134,7 +134,7 @@ header i:hover,
 .tumb-menu {
     position: relative;
     width: 100%;
-    height: calc(100vh - 129px);
+    height: calc(100vh - 128px);
     overflow-y: auto;
 }
 .list-item {

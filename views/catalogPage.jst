@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{#def.customHeader}}
+{{#def.header}}
 <a id="top"></a>
 <div class="wrap" {{#def.baseData}} data-sort-mode="{{=it.sortMode}}">
     {{#def.toolbar}}
     <div class="wrappie">
-        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        {{#def.customHeader}}
         <div id="wrapper">
             <br />
             {{~["top", "bottom"] :target}}

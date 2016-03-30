@@ -2,16 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{#def.customHeader}}
+{{#def.header}}
 <div class="wrap" {{#def.baseData}}>
     {{#def.toolbar}}
     <div class="wrappie">
-        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        {{#def.customHeader}}
         <div id="wrapper">
             <div class="mobileOnly">
                 {{#def.searchAction}}
             </div>
-            <div class="theTitle">
+            <div class="theTitle desktopOnly">
                 <h1>{{=it.tr.searchResultsMessage}}</h1>
             </div>
             <div id="searchResultsPlaceholder" class="loadingMessage">

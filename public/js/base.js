@@ -392,7 +392,7 @@ lord.setPlayerVisible = function(e, visible) {
             lord.removeSessionObject("playerPlaying");
             lord.playerElement.src = '';
             lord.queryAll(".track.selected", lord.id("sidebar2")).forEach(function(div) {
-                lord.removeClass(div, "selected");
+                $(div).removeClass("selected");
             });
         }
     } else
@@ -615,6 +615,8 @@ lord.playerMute = function(e) {
         lord.playerElement.volume = 0;
         $("#playerVolumeSlider").slider("value", 0);
     } else {
+        if (typeof lord.lastPlayerVolume != "number")
+            lord.lastPlayerVolume = lord.getLocalObject("playerVolume", 1);
         lord.playerElement.volume = lord.lastPlayerVolume;
         $("#playerVolumeSlider").slider("value", lord.lastPlayerVolume);
     }
@@ -696,7 +698,7 @@ lord.initRadio = function() {
                 return lord.playerPlayPause();
             lord.playRadio(th.data("url"), $(this).data("title"));
             lord.queryAll(".track.selected", lord.id("sidebar2")).forEach(function(div) {
-                lord.removeClass(div, "selected");
+                $(div).removeClass("selected");
             });
             th.addClass("selected");
         });
@@ -1230,7 +1232,7 @@ lord.updateChat = function(keys) {
             else
             if (!img) {
                 var img = lord.node("img");
-                lord.addClass(img, "buttonImage");
+                $(img).addClass("buttonImage");
                 img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
                 a.appendChild(img);
             }

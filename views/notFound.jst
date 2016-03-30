@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{#def.customHeader}}
+{{#def.header}}
 <div class="wrap" {{#def.baseData}}>
     {{#def.toolbar}}
     <script id="model-notFoundImageFileNames"
             type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
     <div class="wrappie">
-        <div id="customHeaderPlaceholder" style="display: none;"></div>
+        {{#def.customHeader}}
         <div id="wrapper">
             <div class="theTitle">
                 <h1>{{=it.notFoundMessage}}</h1>
