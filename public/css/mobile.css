@@ -10,6 +10,12 @@
 header .searchAction, .desktopOnly {
     display: none;
 }
+#playerTrackTags {
+    width: calc(100% - 70px);
+}
+#playerTrackInfo {
+    width: 60px;
+}
 /* /tumb rewrite */
 
 body {

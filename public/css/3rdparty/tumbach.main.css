@@ -109,7 +109,7 @@ input[type=number] {
 }
 .header-wrapper_container > div {
     position: relative;
-    width: calc(100% - 32px);
+    width: calc(100% - 33px);
     margin: 0 auto;
 }
 .header-wrapper {
@@ -254,6 +254,11 @@ footer:after {
 }
 
 /* TPLAYER */
+#playerTrackTags, #playerTrackInfo {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .track > .float-l {
     width: 187px;
     text-overflow: ellipsis;
@@ -624,23 +629,8 @@ h1 {
     margin-left: 4px;
     font-size: 1em;
 }
-.navbarItem, .postHeader, .postFileName, .postFileSize {
-    white-space: nowrap;
-}
 
 /* Post */
-.hidden > .postBody,
-.opPost.hidden ~ .post,
-.thread.hidden > .omittedPosts,
-.thread.hidden > .threadPosts {
-    display: none;
-}
-.postFileSize {
-    font-size: .8em;
-}
-.postFileFile > a > img.mumWatching:not(:hover) {
-    opacity: .05;
-}
 .postFileSearch {
     padding-bottom: 4px;
 }

@@ -16,6 +16,9 @@
 .mobileOnly {
     display: none;
 }
+#playerTrackTags {
+    width: 68%;
+}
 /* /tumb rewrite */
 
 body, input, select {
@@ -128,12 +131,6 @@ input.buttonImage {
     width: -webkit-calc(75% - 12px);
     width: -o-calc(75% - 12px);
     width: calc(75% - 12px);
-}
-#playerTrackTags {
-    width: 68%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #playerVolumeSlider {
