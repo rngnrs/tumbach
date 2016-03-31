@@ -4,6 +4,7 @@
 !customFooter.jst
 !customHeader.jst
 !head.jst
+!header.jst
 !leafButton.jst
 !navbar.jst
 !navigationButton.jst
