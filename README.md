@@ -1,5 +1,5 @@
-Just another imageboard engine in JavaScript to rule them all.
+#### Модификация движка [ololord.js](https://github.com/ololoepepe/ololord.js) версии 0.1-beta1 (основана на версии 1.1.0-beta).
 
-Модификация движка [ololord.js](https://github.com/ololoepepe/ololord.js). В разработке.
+В активной разработке. Использовать только в ознакомительных целях.
 
-Пожалуйста, ознакомьтесь с [полной документацией](https://github.com/ololoepepe/ololord.js/wiki) прежде, чем Вы приступите к установке/модификации.
+Пожалуйста, прочтите [полную документацию оригинального движка](https://github.com/ololoepepe/ololord.js/wiki) прежде, чем Вы приступите к установке/модификации.

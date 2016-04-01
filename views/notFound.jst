@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}}>
-<script id="model-notFoundImageFileNames"
-        type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
-<div class="wrap">
-    <div id="customHeaderPlaceholder" style="display: none;"></div>
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+<body>
+{{#def.header}}
+<div class="wrap" {{#def.baseData}}>
+    {{#def.toolbar}}
+    <script id="model-notFoundImageFileNames"
+            type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
     <div class="wrappie">
-        <div class="main">
+        {{#def.customHeader}}
+        <div id="wrapper">
             <div class="theTitle">
                 <h1>{{=it.notFoundMessage}}</h1>
             </div>
-            <div id="notFoundImagePlaceholder" style="display: none;"></div>
+            <script type="text/javascript">
+                (function() {
+                    var notFoundImageFileNames = JSON.parse(lord.id("model-notFoundImageFileNames").innerHTML);
+                    if (notFoundImageFileNames.length > 0) {
+                        var model = lord.model("base");
+                        model.imageFileName = notFoundImageFileNames[Math.floor(Math.random() * notFoundImageFileNames.length)];
+                        document.open();
+                        document.write(lord.template("notFoundImage", model, true));
+                        document.close();
+                    }
+                })();
+            </script>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>

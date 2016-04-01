@@ -1,9 +1,16 @@
 *
+!banner.jst
 !baseData.jst
 !customFooter.jst
 !customHeader.jst
 !head.jst
+!header.jst
 !leafButton.jst
+!navbar.jst
 !navigationButton.jst
+!player.jst
+!postingSpeed.jst
+!searchAction.jst
 !threadActions.jst
+!toolbar.jst
 !.gitignore

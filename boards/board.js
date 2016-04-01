@@ -1,10 +1,8 @@
 var Address6 = require("ip-address").Address6;
-var Canvas = require("canvas");
 var Crypto = require("crypto");
 var ffmpeg = require("fluent-ffmpeg");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
-var Image = Canvas.Image;
 var Path = require("path");
 var promisify = require("promisify-node");
 var Util = require("util");
@@ -17,46 +15,6 @@ var Tools = require("../helpers/tools");
 
 var ImageMagick = promisify("imagemagick");
 var musicMetadata = promisify("musicmetadata");
-
-var defineSetting = function(o, name, def) {
-    Object.defineProperty(o, name, {
-        get: function() {
-            return config("board." + o.name + "." + name, config("board." + name, def));
-        },
-        configurable: true
-    });
-};
-
-var boards = {};
-
-var generateRandomImage = function(hash, mimeType, thumbPath) {
-    var canvas = new Canvas(200, 200);
-    var list = [
-        { x: 0, y: 0, w: 200, h: 200 },
-        { x: 25, y: 25, w: 50, h: 50 },
-        { x: 125, y: 25, w: 50, h: 50 },
-        { x: 25, y: 125, w: 50, h: 50 },
-        { x: 125, y: 125, w: 50, h: 50 }
-    ];
-    var ctx = canvas.getContext("2d");
-    for (var i = 0; i < 20; i += 4) {
-        var r = parseInt(hash.substr(i, 2), 16);
-        var g = parseInt(hash.substr(i + 2, 2), 16);
-        var b = parseInt(hash.substr(i + 4, 2), 16);
-        var a = i ? 0.7 : 1;
-        var rect = list.shift();
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-        ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
-    }
-    return FS.read(__dirname + "/../public/img/" + mimeType.replace("/", "_") + "_logo.png", "b").then(function(data) {
-        var img = new Image;
-        img.src = data;
-        ctx.drawImage(img, 0, 0, 200, 200);
-        return new Promise(function(resolve, reject) {
-            canvas.pngStream().pipe(FSSync.createWriteStream(thumbPath).on("error", reject).on("finish", resolve));
-        });
-    });
-};
 
 var durationToString = function(duration) {
     duration = Math.floor(+duration);
@@ -74,49 +32,38 @@ var durationToString = function(duration) {
 };
 
 var Board = function(name, title, options) {
-    Object.defineProperty(this, "name", {
-        value: name,
-        configurable: true
+    this.defineProperty("name", name);
+    this.defineSetting("title", function() {
+        return Tools.translate(title);
     });
-    Object.defineProperty(this, "title", {
-        get: function() {
-            return Tools.translate(title);
-        },
-        configurable: true
+    this.defineProperty("defaultUserName", function() {
+        var def;
+        if (options && options.defaultUserName)
+            def = Tools.translate(options && options.defaultUserName);
+        else
+            def = Tools.translate("Anonymous", "defaultUserName");
+        return config("board." + name + ".defaultUserName", config("board.defaultUserName", def));
     });
-    Object.defineProperty(this, "defaultUserName", {
-        get: function() {
-            if (options && options.defaultUserName)
-                return Tools.translate(options && options.defaultUserName);
-            else
-                return Tools.translate("Anonymous", "defaultUserName");
-        },
-        configurable: true
+    this.defineProperty("captchaEnabled", function() {
+        return config("board.captchaEnabled", true) && config("board." + name + ".captchaEnabled", true);
     });
-    Object.defineProperty(this, "captchaEnabled", {
-        get: function() {
-            return config("board.captchaEnabled", true) && config("board." + name + ".captchaEnabled", true);
-        },
-        configurable: true
+    this.defineProperty("bannerFileNames", function() {
+        return Board._banners[name];
     });
-    Object.defineProperty(this, "bannerFileNames", {
-        get: function() {
-            return Board._banners[name];
-        },
-        configurable: true
-    });
-    defineSetting(this, "captchaQuota", 0);
-    defineSetting(this, "enabled", true);
-    defineSetting(this, "hidden", false);
-    defineSetting(this, "maxEmailLength", 150);
-    defineSetting(this, "maxNameLength", 50);
-    defineSetting(this, "maxSubjectLength", 150);
-    defineSetting(this, "maxTextLength", 15000);
-    defineSetting(this, "maxPasswordLength", 50);
-    defineSetting(this, "maxFileCount", 1);
-    defineSetting(this, "maxFileSize", 10 * 1024 * 1024);
-    defineSetting(this, "maxLastPosts", 3);
-    defineSetting(this, "markupElements", [
+    this.defineSetting("skippedGetOrder", 0);
+    this.defineSetting("opModeration", false);
+    this.defineSetting("captchaQuota", 0);
+    this.defineSetting("enabled", true);
+    this.defineSetting("hidden", false);
+    this.defineSetting("maxEmailLength", 150);
+    this.defineSetting("maxNameLength", 50);
+    this.defineSetting("maxSubjectLength", 150);
+    this.defineSetting("maxTextLength", 15000);
+    this.defineSetting("maxPasswordLength", 50);
+    this.defineSetting("maxFileCount", 1);
+    this.defineSetting("maxFileSize", 10 * 1024 * 1024);
+    this.defineSetting("maxLastPosts", 3);
+    this.defineSetting("markupElements", [
         Board.MarkupElements.BoldMarkupElement,
         Board.MarkupElements.ItalicsMarkupElement,
         Board.MarkupElements.StrikedOutMarkupElement,
@@ -130,21 +77,26 @@ var Board = function(name, title, options) {
         Board.MarkupElements.SuperscriptMarkupElement,
         Board.MarkupElements.UrlMarkupElement
     ]);
-    defineSetting(this, "postingEnabled", true);
-    defineSetting(this, "showWhois", false);
-    Object.defineProperty(this, "supportedCaptchaEngines", {
-        get: function() {
-            var ids = config("board." + name + ".supportedCaptchaEngines",
-                config("board.supportedCaptchaEngines", Captcha.captchaIds()));
-            if (!Util.isArray(ids))
-                ids = [];
-            return ids.map(function(id) {
-                return Captcha.captcha(id).info();
-            });
-        },
-        configurable: true
+    this.defineSetting("postingEnabled", true);
+    this.defineSetting("showWhois", false);
+    this.defineProperty("supportedCaptchaEngines", function() {
+        var ids = config("board." + name + ".supportedCaptchaEngines",
+            config("board.supportedCaptchaEngines", Captcha.captchaIds()));
+        if (!Util.isArray(ids))
+            ids = [];
+        return ids.map(function(id) {
+            return Captcha.captcha(id).info();
+        });
     });
-    defineSetting(this, "supportedFileTypes", [
+    this.defineProperty("permissions", function() {
+        var p = {};
+        Tools.forIn(require("../helpers/permissions").Permissions, function(defLevel, key) {
+            p[key] = config("board." + name + ".permissions." + key, config("permissions." + key, defLevel));
+        });
+        return p;
+    });
+    this.defineSetting("supportedFileTypes", [
+        "application/ogg",
         "application/pdf",
         "audio/mpeg",
         "audio/ogg",
@@ -156,17 +108,75 @@ var Board = function(name, title, options) {
         "video/ogg",
         "video/webm"
     ]);
-    defineSetting(this, "bumpLimit", 500);
-    defineSetting(this, "postLimit", 1000);
-    defineSetting(this, "threadLimit", 200);
-    defineSetting(this, "archiveLimit", 0);
-    defineSetting(this, "threadsPerPage", 20);
-    Object.defineProperty(this, "launchDate", {
+    this.defineSetting("bumpLimit", 500);
+    this.defineSetting("postLimit", 1000);
+    this.defineSetting("threadLimit", 200);
+    this.defineSetting("archiveLimit", 0);
+    this.defineSetting("threadsPerPage", 20);
+    this.defineProperty("launchDate", function() {
+        return new Date(config("board." + name + ".launchDate", config("board.launchDate", new Date())));
+    });
+};
+
+Board.boards = {};
+
+/*public*/ Board.prototype.defineSetting = function(name, def) {
+    var _this = this;
+    Object.defineProperty(this, name, {
         get: function() {
-            return new Date(config("board." + name + ".launchDate", config("board.launchDate")));
+            return config("board." + _this.name + "." + name,
+                config("board." + name, (typeof def == "function") ? def() : def));
         },
         configurable: true
     });
+};
+
+/*public*/ Board.prototype.defineProperty = function(name, value) {
+    var _this = this;
+    if (typeof value == "function") {
+        Object.defineProperty(this, name, {
+            get: value,
+            configurable: true
+        });
+    } else {
+        Object.defineProperty(this, name, {
+            value: value,
+            configurable: true
+        });
+    }
+};
+
+/*public*/ Board.prototype.info = function() {
+    var model = {
+        name: this.name,
+        title: this.title,
+        defaultUserName: this.defaultUserName,
+        showWhois: this.showWhois,
+        hidden: this.hidden,
+        postingEnabled: this.postingEnabled,
+        captchaEnabled: this.captchaEnabled,
+        maxEmailLength: this.maxEmailLength,
+        maxNameLength: this.maxNameLength,
+        maxSubjectLength: this.maxSubjectLength,
+        maxTextLength: this.maxTextLength,
+        maxPasswordLength: this.maxPasswordLength,
+        maxFileCount: this.maxFileCount,
+        maxFileSize: this.maxFileSize,
+        maxLastPosts: this.maxLastPosts,
+        markupElements: this.markupElements,
+        supportedFileTypes: this.supportedFileTypes,
+        supportedCaptchaEngines: this.supportedCaptchaEngines,
+        bumpLimit: this.bumpLimit,
+        postLimit: this.postLimit,
+        bannerFileNames: this.bannerFileNames,
+        launchDate: this.launchDate.toISOString(),
+        permissions: this.permissions,
+        opModeration: this.opModeration
+    };
+    this.customBoardInfoFields().forEach(function(field) {
+        model[field] = board[field];
+    });
+    return model;
 };
 
 /*public*/ Board.prototype.customBoardInfoFields = function() {
@@ -220,30 +230,38 @@ var Board = function(name, title, options) {
     return [];
 };
 
-/*public*/ Board.prototype.testParameters = function(fields, files, creatingThread) {
-    //
+/*public*/ Board.prototype.extraStylesheets = function() {
+    return [];
 };
 
-/*public*/ Board.prototype.defineSetting = function(name, def) {
-    return defineSetting(this, name, def);
+/*public*/ Board.prototype.testParameters = function(req, fields, files, creatingThread) {
+    return Promise.resolve();
 };
 
 /*public*/ Board.prototype.addTranslations = function(translate) {
     //
 };
 
+/*public*/ Board.prototype.customPostHeaderPart = function() {
+    //
+};
+
+/*public*/ Board.prototype.customPostBodyPart = function() {
+    //
+};
+
 var renderFileInfo = function(fi) {
     fi.sizeKB = fi.size / 1024;
     fi.sizeText = fi.sizeKB.toFixed(2) + "KB";
-    if (fi.mimeType.substr(0, 6) == "image/" || fi.mimeType.substr(0, 6) == "video/") {
+    if (Tools.isImageType(fi.mimeType) || Tools.isVideoType(fi.mimeType)) {
         if (fi.dimensions)
             fi.sizeText += ", " + fi.dimensions.width + "x" + fi.dimensions.height;
     }
-    if (fi.mimeType.substr(0, 6) == "audio/" || fi.mimeType.substr(0, 6) == "video/") {
+    if (Tools.isAudioType(fi.mimeType) || Tools.isVideoType(fi.mimeType)) {
         var ed = fi.extraData;
         if (ed.duration)
             fi.sizeText += ", " + ed.duration;
-        if (fi.mimeType.substr(0, 6) == "audio/") {
+        if (Tools.isAudioType(fi.mimeType)) {
             if (ed.bitrate)
                 fi.sizeText += ", " + ed.bitrate + Tools.translate("kbps", "kbps");
             fi.sizeTooltip = ed.artist ? ed.artist : Tools.translate("Unknown artist", "unknownArtist");
@@ -254,7 +272,7 @@ var renderFileInfo = function(fi) {
             fi.sizeTooltip += "]";
             if (ed.year)
                 fi.sizeTooltip += " (" + ed.year + ")";
-        } else if (fi.mimeType.substr(0, 6) == "video/") {
+        } else if (Tools.isVideoType(fi.mimeType) && ed.bitrate) {
             fi.sizeTooltip = ed.bitrate + Tools.translate("kbps", "kbps");
         }
     }
@@ -267,11 +285,8 @@ var renderFileInfo = function(fi) {
     post.rawSubject = post.subject;
     post.isOp = (post.number == post.threadNumber);
     post.opIp = (opPost && post.user.ip == opPost.user.ip);
-    if (post.options.showTripcode) {
-        var md5 = Crypto.createHash("md5");
-        md5.update(post.user.hashpass + config("site.tripcodeSalt", ""));
-        post.tripcode = "!" + md5.digest("base64").substr(0, 10);
-    }
+    if (post.options.showTripcode)
+        post.tripcode = Tools.generateTripcode(post.user.hashpass);
     delete post.user.ip;
     delete post.user.hashpass;
     delete post.user.password;
@@ -304,6 +319,8 @@ var getRules = function(boardName) {
 };
 
 /*public*/ Board.prototype.postformRules = function() {
+    if (this._postformRules)
+        return Promise.resolve(this._postformRules);
     var c = {};
     var _this = this;
     return getRules().then(function(rules) {
@@ -313,20 +330,35 @@ var getRules = function(boardName) {
         c.specific = rules;
         for (var i = c.specific.length - 1; i >= 0; --i) {
             var rule = c.specific[i];
+            var rxExcept = /^#include\s+except(\((\d+(\,\d+)*)\))$/;
+            var rxSeveral = /^#include\s+(\d+(\,\d+)*)$/;
             if ("#include all" == rule) {
                 Array.prototype.splice.apply(c.specific, [i, 1].concat(c.common));
-            } else if (/^#include\s+\d+$/.test(rule)) {
-                var n = +rule.replace(/#include\s+/, "");
-                if (n >= 0 && n < c.common.length)
-                    c.specific.splice(i, 1, c.common[n]);
+            } else if (rxExcept.test(rule)) {
+                var excluded = rule.match(rxExcept)[2].split(",").map(function(n) {
+                    return +n;
+                });
+                Array.prototype.splice.apply(c.specific, [i, 1].concat(c.common.filter(function(_, i) {
+                    return excluded.indexOf(i) < 0;
+                })));
+            } else if (rxSeveral.test(rule)) {
+                var included = rule.match(rxSeveral)[1].split(",").map(function(n) {
+                    return +n;
+                }).filter(function(n) {
+                    return n >= 0 && n < c.common.length;
+                }).map(function(n) {
+                    return c.common[n];
+                });
+                Array.prototype.splice.apply(c.specific, [i, 1].concat(included));
             }
         };
-        return Promise.resolve((c.specific.length > 0) ? c.specific : c.common);
+        _this._postformRules = (c.specific.length > 0) ? c.specific : c.common;
+        return Promise.resolve(_this._postformRules);
     });
 };
 
 /*public*/ Board.prototype.generateFileName = function(file) {
-    return Global.IPC.send("fileName", this.name).then(function(base) {
+    return Global.IPC.send("fileName").then(function(base) {
         var ext = Path.extname(file.name);
         if (Util.isString(ext))
             ext = ext.substr(1);
@@ -343,9 +375,8 @@ var getRules = function(boardName) {
     var p;
     if (!file.hash) {
         p = FS.read(file.path, "b").then(function(data) {
-            var sha1 = Crypto.createHash("sha1");
-            sha1.update(data);
-            file.hash = sha1.digest("hex");
+            file.hash = Tools.sha1(data);
+            return Promise.resolve();
         });
     } else {
         p = Promise.resolve();
@@ -383,7 +414,7 @@ var getRules = function(boardName) {
                 if (metadata && metadata.picture && metadata.picture.length > 0)
                     return FS.write(thumbPath, metadata.picture[0].data);
                 else
-                    return generateRandomImage(file.hash, file.mimeType, thumbPath);
+                    return Tools.generateRandomImage(file.hash, file.mimeType, thumbPath);
             }).then(function() {
                 return ImageMagick.identify(thumbPath);
             }).then(function(info) {
@@ -412,20 +443,23 @@ var getRules = function(boardName) {
                     resolve(metadata);
                 });
             }).then(function(metadata) {
-                file.dimensions = {
-                    width: metadata.streams[0].width,
-                    height: metadata.streams[0].height
-                };
-                file.extraData.duration = durationToString(metadata.format.duration);
-                file.extraData.bitrate = Math.floor(+metadata.format.bit_rate / 1024);
+                if (!isNaN(+metadata.streams[0].width) && !isNaN(+metadata.streams[0].height)) {
+                    file.dimensions = {
+                        width: metadata.streams[0].width,
+                        height: metadata.streams[0].height
+                    };
+                }
+                file.extraData.duration = +metadata.format.duration ? durationToString(metadata.format.duration)
+                    : metadata.format.duration;
+                file.extraData.bitrate = +metadata.format.bit_rate ? Math.floor(+metadata.format.bit_rate / 1024) : 0;
                 file.thumbPath += ".png";
                 return new Promise(function(resolve, reject) {
                     ffmpeg(file.path).frames(1).on("error", reject).on("end", resolve).save(file.thumbPath);
-                })
+                });
             }).catch(function(err) {
                 Global.error(err.stack || err);
                 file.thumbPath = thumbPath;
-                return generateRandomImage(file.hash, file.mimeType, thumbPath);
+                return Tools.generateRandomImage(file.hash, file.mimeType, thumbPath);
             }).then(function() {
                 return ImageMagick.identify(file.thumbPath);
             }).then(function(info) {
@@ -467,6 +501,11 @@ var getRules = function(boardName) {
                     width: info.width,
                     height: info.height
                 };
+                if ("image/gif" != file.mimeType) {
+                    return Tools.generateImageHash(file.path + suffix).then(function(hash) {
+                        file.ihash = hash;
+                    });
+                }
             });
         } else if (Tools.isPdfType(file.mimeType)) {
             file.dimensions = null;
@@ -508,7 +547,9 @@ Board.MarkupElements = {
     SubscriptMarkupElement: "SUBSCRIPT",
     SuperscriptMarkupElement: "SUPERSCRIPT",
     UrlMarkupElement: "URL",
-    CodeMarkupElement: "CODE"
+    CodeMarkupElement: "CODE",
+    LatexMarkupElement: "LATEX",
+    InlineLatexMarkupElement: "INLINE_LATEX"
 };
 
 Board.MimeTypesForExtensions = {};
@@ -522,6 +563,7 @@ var defineMimeTypeExtensions = function(mimeType) {
     Board.DefaultExtensions[mimeType] = extensions[0];
 };
 
+defineMimeTypeExtensions("application/ogg", "ogg");
 defineMimeTypeExtensions("application/pdf", "pdf");
 defineMimeTypeExtensions("audio/mpeg", "mpeg", "mp1", "m1a", "mp3", "m2a", "mpa", "mpg");
 defineMimeTypeExtensions("audio/ogg", "ogg");
@@ -533,6 +575,7 @@ defineMimeTypeExtensions("video/mp4", "mp4");
 defineMimeTypeExtensions("video/webm", "webm");
 
 Board.ThumbExtensionsForMimeType = {
+    "application/ogg": "png",
     "application/pdf": "png",
     "audio/mpeg": "png",
     "audio/ogg": "png",
@@ -542,19 +585,19 @@ Board.ThumbExtensionsForMimeType = {
 };
 
 Board.board = function(name) {
-    return boards[name];
+    return Board.boards[name];
 };
 
 Board.addBoard = function(board) {
     if (!Board.prototype.isPrototypeOf(board))
         return;
-    boards[board.name] = board;
+    Board.boards[board.name] = board;
 };
 
 Board.boardInfos = function(includeHidden) {
     includeHidden = (includeHidden || (typeof includeHidden == "undefined"));
     var list = [];
-    Tools.toArray(boards).sort(function(b1, b2) {
+    Tools.toArray(Board.boards).sort(function(b1, b2) {
         return (b1.name < b2.name) ? -1 : 1;
     }).forEach(function(board) {
         if (!board.enabled || (!includeHidden && board.hidden))
@@ -570,7 +613,7 @@ Board.boardInfos = function(includeHidden) {
 Board.boardNames = function(includeHidden) {
     includeHidden = (includeHidden || (typeof includeHidden == "undefined"));
     var list = [];
-    Tools.toArray(boards).sort(function(b1, b2) {
+    Tools.toArray(Board.boards).sort(function(b1, b2) {
         return (b1.name < b2.name) ? -1 : 1;
     }).forEach(function(board) {
         if (!board.enabled || (!includeHidden && board.hidden))
@@ -611,6 +654,90 @@ Board.sortThreadsByPostCount = function(a, b) {
         return 1;
     else
         return 0;
+};
+
+Board.initialize = function() {
+    var reinit = Tools.hasOwnProperties(Board.boards);
+    Board.boards = {};
+
+    FSSync.readdirSync(__dirname).forEach(function(file) {
+        if ("index.js" == file || "board.js" == file || "js" != file.split(".").pop())
+            return;
+        var id = "./" + file.split(".").shift();
+        if (reinit)
+            delete require.cache[require.resolve(id)];
+        var board = require(id);
+        if (Util.isArray(board)) {
+            board.forEach(function(board) {
+                Board.addBoard(board);
+            });
+        } else {
+            Board.addBoard(board);
+        }
+    });
+
+    if (config("board.useDefaultBoards", true)) {
+        Board.addBoard(new Board("3dpd", Tools.translate.noop("3D pron", "boardTitle")));
+
+        Board.addBoard(new Board("a", Tools.translate.noop("/a/nime", "boardTitle"),
+            { defaultUserName: Tools.translate.noop("Kamina", "defaultUserName") }));
+
+        Board.addBoard(new Board("b", Tools.translate.noop("/b/rotherhood", "boardTitle")));
+
+        Board.addBoard(new Board("cg", Tools.translate.noop("Console games", "boardTitle")));
+
+        Board.addBoard(require("./templates/with-user-agents")("d",
+            Tools.translate.noop("Board /d/iscussion", "boardTitle")));
+        Board.addBoard(require("./templates/with-external-links")("echo",
+            Tools.translate.noop("Boardsphere echo", "boardTitle")));
+
+        Board.addBoard(new Board("h", Tools.translate.noop("/h/entai", "boardTitle")));
+
+        Board.addBoard(new Board("int", "/int/ernational",
+            { defaultUserName: Tools.translate.noop("Vladimir Putin", "defaultUserName") }));
+
+        Board.addBoard(new Board("mlp", Tools.translate.noop("My Little Pony", "boardTitle")));
+
+        Board.addBoard(new Board("po", Tools.translate.noop("/po/litics", "boardTitle"),
+            { defaultUserName: Tools.translate.noop("Armchair warrior", "defaultUserName") }));
+
+        board = new Board("pr", Tools.translate.noop("/pr/ogramming", "boardTitle"));
+        board.defineProperty("supportedCaptchaEngines", function() {
+            var ids = config("board.pr.supportedCaptchaEngines",
+                config("board.supportedCaptchaEngines", ["codecha"]));
+            if (!Util.isArray(ids))
+                ids = [];
+            return ids.map(function(id) {
+                return Captcha.captcha(id).info();
+            });
+        });
+        board.defineSetting("markupElements", board.markupElements.concat(Board.MarkupElements.CodeMarkupElement,
+            Board.MarkupElements.LatexMarkupElement, Board.MarkupElements.InlineLatexMarkupElement));
+        Board.addBoard(board);
+
+        Board.addBoard(new Board("rf", Tools.translate.noop("Refuge", "boardTitle"),
+            { defaultUserName: Tools.translate.noop("Whiner", "defaultUserName") }));
+
+        Board.addBoard(require("./templates/with-votings")("rpg",
+            Tools.translate.noop("Role-playing games", "boardTitle")));
+        Board.addBoard(require("./templates/with-likes")("soc", Tools.translate.noop("Social life", "boardTitle"),
+            { defaultUserName: Tools.translate.noop("Life of the party", "defaultUserName") }));
+
+        Board.addBoard(new Board("vg", Tools.translate.noop("Video games", "boardTitle"),
+            { defaultUserName: Tools.translate.noop("PC Nobleman", "defaultUserName") }));
+    }
+
+    Board._banners = {};
+    Board.boardNames().forEach(function(boardName) {
+        var path = __dirname + "/../public/img/banners/" + boardName;
+        if (FSSync.existsSync(path)) {
+            Board._banners[boardName] = FSSync.readdirSync(path).filter(function(fileName) {
+                return ".gitignore" != fileName;
+            });
+        } else {
+            Board._banners[boardName] = [];
+        }
+    });
 };
 
 module.exports = Board;

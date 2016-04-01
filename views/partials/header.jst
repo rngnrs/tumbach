@@ -1,0 +1,24 @@
+<header id="header" class="default">
+    <div class="float-l logo">
+        <a href="/{{=it.site.pathPrefix}}" class="ajax"><div class="kek"></div></a>
+    </div>
+    <div class="header-wrapper color-prim">
+        <div class="header-wrapper_container">
+            <button class="float-r player-menu color-prim" onclick="lord.setSidebarVisible(event);">
+                <i class="zmdi zmdi-playlist-audio zmdi-hc-2x"
+                   title="{{=it.tr.maximizePlayerText}}"></i>
+            </button>
+            <script>
+                (function() {
+                    var model = lord.model(["base", "tr", "boards"]);
+                    if (lord.data("boardName"))
+                        model.board = lord.model("board/" + lord.data("boardName")).board;
+                    document.open();
+                    document.write(lord.template("searchAction", model, true));
+                    document.write(lord.template("tplayer", model, true));
+                    document.close();
+                })();
+            </script>
+        </div>
+    </div>
+</header>

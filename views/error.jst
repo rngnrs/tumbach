@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}}>
-<div class="wrap">
-    <div id="customHeaderPlaceholder" style="display: none;"></div>
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+<body>
+{{#def.header}}
+<div class="wrap" {{#def.baseData}}>
+    {{#def.toolbar}}
     <div class="wrappie">
-        <div class="main">
+        {{#def.customHeader}}
+        <div id="wrapper">
             <div class="theTitle">
                 <h1 id="errorMessage">{{=it.errorMessage}}</h1>
             </div>
@@ -15,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>

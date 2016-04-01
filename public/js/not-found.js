@@ -17,7 +17,7 @@
     }, lord.partials);
 })();
 
-window.addEventListener("load", function load() {
+/*window.addEventListener("load", function load() {
     window.removeEventListener("load", load, false);
     var notFoundImageFileNames = JSON.parse(lord.id("model-notFoundImageFileNames").innerHTML);
     if (notFoundImageFileNames.length > 0) {
@@ -27,7 +27,14 @@ window.addEventListener("load", function load() {
         var banner = lord.template("notFoundImage", model);
         notFoundImagePlaceholder.parentNode.replaceChild(banner, notFoundImagePlaceholder);
     }
-}, false);
-
-
-
+}, false);*/
+(function() {
+    var notFoundImageFileNames = JSON.parse(lord.id("model-notFoundImageFileNames").innerHTML);
+    if (notFoundImageFileNames.length > 0) {
+        var notFoundImagePlaceholder = lord.id("notFoundImagePlaceholder");
+        var model = lord.model("base");
+        model.imageFileName = notFoundImageFileNames[Math.floor(Math.random() * notFoundImageFileNames.length)];
+        var banner = lord.template("notFoundImage", model);
+        notFoundImagePlaceholder.parentNode.replaceChild(banner, notFoundImagePlaceholder);
+    }
+})();

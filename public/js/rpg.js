@@ -2,7 +2,7 @@ lord.customResetForm = function(form) {
     var parent = lord.nameOne("voteVariants", form);
     if (!parent)
         return;
-    lord.arr(parent.children).forEach(function(el) {
+    lord.toArray(parent.children).forEach(function(el) {
         parent.removeChild(el);
     });
     var text = lord.nameOne("voteText", form);
@@ -12,14 +12,14 @@ lord.customResetForm = function(form) {
 lord.addVoteVariant = function(el) {
     var form = el.parentNode.parentNode;
     var parent = lord.nameOne("voteVariants", form);
-    var variants = lord.query("div > input", parent);
+    var variants = lord.queryAll("div > input", parent);
     var lastN = 0;
-    lord.query("div > input", parent).forEach(function(inp) {
+    lord.queryAll("div > input", parent).forEach(function(inp) {
         if (isNaN(inp.name.substr(12)))
             return;
         ++lastN;
     });
-    var model = lord.model(["base", "tr"], true);
+    var model = lord.model(["base", "tr"]);
     model.number = lastN + 1;
     parent.appendChild(lord.template("voteVariant", model));
 };
@@ -29,7 +29,7 @@ lord.removeVoteVariant = function(el) {
     var parent = div.parentNode;
     parent.removeChild(div);
     var i = 0;
-    lord.query("div > input", parent).forEach(function(inp) {
+    lord.queryAll("div > input", parent).forEach(function(inp) {
         if (isNaN(inp.name.substr(12)))
             return;
         ++i;
@@ -44,11 +44,11 @@ lord.vote = function(event, form) {
         var postNumber = +lord.nameOne("postNumber", form).value;
         if (form.action.split("/").pop() == "vote") {
             var ids = {};
-            lord.query("[type='checkbox']", form).forEach(function(cbox) {
+            lord.queryAll("[type='checkbox']", form).forEach(function(cbox) {
                 if (cbox.checked)
                     ids[cbox.value] = 1;
             });
-            lord.query("[type='radio']", form).forEach(function(radio) {
+            lord.queryAll("[type='radio']", form).forEach(function(radio) {
                 if (radio.checked)
                     ids[radio.value] = 1;
             });
@@ -64,7 +64,7 @@ lord.vote = function(event, form) {
 lord.setVotingOpened = function(el, opened) {
     var c = {};
     var postNumber = +lord.data("number", el, true);
-    c.model = lord.model(["base", "tr", "board/rpg"], true);
+    c.model = lord.model(["base", "tr", "board/rpg"]);
     c.model.showSubmitButton = false;
     c.model.opened = opened;
     c.model.postNumber = postNumber;
@@ -82,14 +82,14 @@ lord.setVotingOpened = function(el, opened) {
 };
 
 lord.customPostFormField[50] = function(it) {
-    if (it.includeThreadScripts) {
+    if (it.isThreadPage) {
         var ownPosts = lord.getLocalObject("ownPosts", {});
-        var opPost = it.thread.opPost;
-        if (!ownPosts[opPost.boardName + "/" + opPost.number])
+        if (!ownPosts["rpg/" + it.thread.number])
             return "";
     }
     var model = {
         site: it.site,
+        settings: it.settings,
         tr: merge.clone(it.tr),
         board: merge.clone(it.board),
         minimalisticPostform: it.minimalisticPostform
@@ -114,11 +114,37 @@ lord.customPostBodyPart[20] = function(it, thread, post) {
     var model = merge.recursive(it, post.extraData);
     model.thread = thread;
     model.post = post;
-    var ownVotes = lord.getLocalObject("ownVotes", {});
-    model.voted = !!ownVotes[post.number];
-    model.checkOwnVoteVariant = function(variant) {
-        var ids = ownVotes[post.number];
-        return ids && ids[variant.id];
-    };
     return lord.template("rpgPostBodyPart", model, true);
 };
+
+lord.postProcessors.push(function(post) {
+    var postNumber = lord.data("number", post);
+    var ownPosts = lord.getLocalObject("ownPosts", {});
+    var ownVotes = lord.getLocalObject("ownVotes", {});
+    var ids = ownVotes[postNumber];
+    var form = lord.queryOne(".vote > form", post);
+    var voteVariants = lord.nameOne("voteVariants", post);
+    if (!voteVariants)
+        return;
+    if (ownPosts["rpg/" + postNumber]) {
+        if (form)
+            form.parentNode.replaceChild(voteVariants, form);
+        lord.queryAll("input", voteVariants).forEach(function(input) {
+            input.setAttribute("disabled", true);
+        });
+    }
+    if (ids) {
+        lord.queryAll("input", voteVariants).forEach(function(input) {
+            input.setAttribute("disabled", true);
+            if (ids[input.value])
+                input.setAttribute("checked", true);
+        });
+        if (form) {
+            form.action = form.action.replace(/\/vote$/, "/unvote");
+            var btn = lord.nameOne("buttonVote", form);
+            btn.setAttribute("name", "buttonUnvote");
+            btn.src = btn.src.replace(/\/vote\.png$/, "/unvote.png");
+            btn.title = lord.text("unvoteActionText");
+        }
+    }
+});

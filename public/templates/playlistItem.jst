@@ -1,8 +1,40 @@
-<div class="track" id="track/{{=it.boardName}}/{{=it.fileName}}" class="track"
-     ondragstart="lord.trackDrag(event);" ondragover="lord.allowTrackDrop(event);" ondrop="lord.trackDrop(event);"
+<div class="track"
+     draggable="true"
+     id="track/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
+     data-url="/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
+     ondragstart="lord.trackDrag(event);"
+     ondragover="lord.allowTrackDrop(event);"
+     ondrop="lord.trackDrop(event);"
+     data-board-name="{{=it.boardName}}"
+     data-file-name="{{=it.fileName}}"
+     data-thread="{{=it.thread}}">
+    <div class="float-l"
+         title="{{? it.artist}}{{=it.artist}}{{?}} {{? it.artist || it.title}}—{{??}}Untitled{{?}} {{? it.title}}{{=it.title}}{{?}}">
+        {{? it.artist}}{{=it.artist}}{{?}}
+        {{? it.artist || it.title}}—{{??}}Untitled{{?}}
+        {{? it.title}}{{=it.title}}{{?}}
+    </div>
+    <div class="float-r">
+        <div class="float-l">{{=it.duration}}</div>
+        <a class="float-l" title="{{=it.tr.downloadPlaylistFileText}}"
+           href="/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
+           download="{{=it.fileName}}">
+            <i class="zmdi zmdi-download"></i>
+        </a>
+        <a class="float-l" title="{{=it.tr.removeFromPlaylistText}}" href="javascript:void(0);"
+           onclick="lord.removeFromPlaylist(this);return false;">
+            <i class="zmdi zmdi-close"></i>
+        </a>
+    </div>
+    <div class="clr"></div>
+</div>
+<!--<div class="track" id="track/{{=it.boardName}}/{{=it.fileName}}" class="track"
+     ondragstart="lord.trackDrag(event);"
+     ondragover="lord.allowTrackDrop(event);"
+     ondrop="lord.trackDrop(event);"
      data-board-name="{{=it.boardName}}"
      data-file-name="{{=it.fileName}}">
-    <div draggable="true">
+    <div >
         {{? it.artist}}{{=it.artist}}{{?}}
         {{? it.artist || it.title}}—{{?}}
         {{? it.title}}{{=it.title}}{{?}}
@@ -17,4 +49,4 @@
        download="{{=it.fileName}}"><img src="/{{=it.site.pathPrefix}}img/playlist_download.png"></a>
     <a title="{{=it.tr.removeFromPlaylistText}}" href="javascript:void(0);"
        onclick="lord.removeFromPlaylist(this);"><img src="/{{=it.site.pathPrefix}}img/playlist_delete.png"></a>
-</div>
+</div>-->

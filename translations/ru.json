@@ -27,6 +27,9 @@
     "Posting is disabled at this board": {
         "postingDisabledBoardText": {
             "value": "На этой доске постинг запрещен"
+        },
+        "_default": {
+            "value": "На этой доске постинг запрещен"
         }
     },
     "Internal error": {
@@ -46,36 +49,27 @@
         }
     },
     "E-mail is too long": {
-        "error": {
-            "value": "Эл. почта слишком длинная"
-        },
         "_default": {
-            "value": "E-mail is too long"
+            "value": "Эл. почта слишком длинная"
         }
     },
     "Name is too long": {
-        "error": {
-            "value": "Имя слишком длинное"
-        },
         "_default": {
-            "value": "Name is too long"
+            "value": "Имя слишком длинное"
         }
     },
     "Subject is too long": {
-        "error": {
-            "value": "Тема слишком длинная"
-        },
         "_default": {
-            "value": "Subject is too long"
+            "value": "Тема слишком длинная"
         }
     },
     "Comment is too long": {
-        "error": {
+        "_default": {
             "value": "Комментарий слишком длинный"
         }
     },
     "Password is too long": {
-        "error": {
+        "_default": {
             "value": "Пароль слишком длинный"
         }
     },
@@ -170,33 +164,27 @@
         }
     },
     "Attempt to create a thread without attaching a file": {
-        "error": {
+        "_default": {
             "value": "Попытка создать тред без прикрепления файла"
         }
     },
     "Both file and comment are missing": {
-        "error": {
-            "value": "Отсутствуют и файл, и комментарий"
-        },
         "_default": {
-            "value": "Both file and comment are missing"
+            "value": "Отсутствуют и файл, и комментарий"
         }
     },
     "Too many files": {
-        "error": {
-            "value": "Слишком много файлов"
-        },
         "_default": {
-            "value": "Too many files"
+            "value": "Слишком много файлов"
         }
     },
     "File is too big": {
-        "error": {
+        "_default": {
             "value": "Файл слишком большой"
         }
     },
     "File type is not supported": {
-        "error": {
+        "_default": {
             "value": "Тип файла не поддерживается"
         }
     },
@@ -230,14 +218,23 @@
             "value": "Диванный эксперт"
         }
     },
-    "Edit post": {
+    "Edit": {
+        "editHotkeysText": {
+            "value": "Редактировать"
+        },
+        "editUserCssText": {
+            "value": "Редактировать"
+        },
+        "editUserJavaScriptText": {
+            "value": "Редактировать"
+        },
         "editPostText": {
-            "value": "Редактировать пост"
+            "value": "Редактировать"
         }
     },
-    "Add to drafts": {
+    "To drafts": {
         "addToDraftsText": {
-            "value": "Добавить в черновики"
+            "value": "В черновики"
         }
     },
     "E-mail:": {
@@ -263,6 +260,11 @@
     "Threads catalog": {
         "boardCatalogLinkText": {
             "value": "Каталог тредов"
+        }
+    },
+    "Thread archive": {
+        "boardArchiveLinkText": {
+            "value": "Архив тредов"
         }
     },
     "Reply count:": {
@@ -325,11 +327,6 @@
             "value": "Добавить файлы"
         }
     },
-    "Ban user": {
-        "banUserText": {
-            "value": "Забанить пользователя"
-        }
-    },
     "All boards": {
         "allBoardsText": {
             "value": "Все доски"
@@ -355,14 +352,37 @@
             "value": "Запрещены постинг и чтение"
         }
     },
+    "No level": {
+        "accessLevelNoneDescription": {
+            "value": "Уровень не задан"
+        }
+    },
+    "User": {
+        "accessLevelUserDescription": {
+            "value": "Пользователь"
+        },
+        "postMenuCategoryUserText": {
+            "value": "Пользователь"
+        }
+    },
+    "Moderator": {
+        "accessLevelModerDescription": {
+            "value": "Модератор"
+        }
+    },
+    "Administrator": {
+        "accessLevelAdminDescription": {
+            "value": "Администратор"
+        }
+    },
     "Reason:": {
         "banReasonLabelText": {
             "value": "Причина:"
         }
     },
-    "Delete all user posts on selected board": {
-        "delallButtonText": {
-            "value": "Удалить все посты пользователя на выбранной доске"
+    "Delete all user posts on boards:": {
+        "delallHeaderText": {
+            "value": "Удалить все посты пользователя на досках:"
         }
     },
     "Codecha - programmers' CAPTCHA": {
@@ -448,17 +468,17 @@
             "value": "Наши друзья"
         }
     },
-    "User management": {
+    "Management": {
         "pageTitle": {
-            "value": "Управление пользователями"
+            "value": "Управление"
         },
         "toManagePageText": {
-            "value": "Управление пользователями"
+            "value": "Управление"
         }
     },
-    "Select all": {
+    "All": {
         "selectAllText": {
-            "value": "Выбрать все"
+            "value": "Все"
         }
     },
     "Board:": {
@@ -649,17 +669,9 @@
             "value": "слово"
         }
     },
-    "Move thread": {
+    "Move": {
         "moveThreadText": {
-            "value": "Перенести тред"
-        }
-    },
-    "Playlist": {
-        "pageTitle": {
-            "value": "Плей-лист"
-        },
-        "toPlaylistPageText": {
-            "value": "Плей-лист"
+            "value": "Перенести"
         }
     },
     "Remove from playlist": {
@@ -711,6 +723,11 @@
     "Thread link:": {
         "postFormLabelLink": {
             "value": "Ссылка на тред:"
+        }
+    },
+    "Thread link": {
+        "postFormPlaceholderLink": {
+            "value": "Ссылка на тред"
         }
     },
     "Home": {
@@ -796,8 +813,16 @@
             "value": "Избранное"
         }
     },
+    "Remove": {
+        "removeButtonText": {
+            "value": "Убрать"
+        }
+    },
     "Close": {
         "closeButtonText": {
+            "value": "Закрыть"
+        },
+        "closeThreadText": {
             "value": "Закрыть"
         }
     },
@@ -901,17 +926,6 @@
             "value": "Пользовательский JavaScript"
         }
     },
-    "Edit": {
-        "editHotkeysText": {
-            "value": "Редактировать"
-        },
-        "editUserCssText": {
-            "value": "Редактировать"
-        },
-        "editUserJavaScriptText": {
-            "value": "Редактировать"
-        }
-    },
     "Hide tripcodes": {
         "hideTripcodesLabelText": {
             "value": "Скрывать трипкоды"
@@ -1003,11 +1017,13 @@
         }
     },
     "Expand thread": {
-        "expandThreadText": {
-            "value": "Развернуть тред"
-        },
         "hotkeyExpandThreadLabelText": {
             "value": "Развернуть тред"
+        }
+    },
+    "Expand": {
+        "expandThreadText": {
+            "value": "Развернуть"
         }
     },
     "Go to thread": {
@@ -1194,6 +1210,11 @@
             "value": "Задержка появления превью постов (мс):"
         }
     },
+    "Post preview disappearance delay (ms):": {
+        "hidePostPreviewDelayLabelText": {
+            "value": "Задержка исчезновения превью постов (мс):"
+        }
+    },
     "Maximum simultaneous AJAX requests:": {
         "maxSimultaneousAjaxLabelText": {
             "value": "Максимум одновременных AJAX-запросов:"
@@ -1219,11 +1240,6 @@
             "value": "Тред закрыт"
         }
     },
-    "Close thread": {
-        "closeThreadText": {
-            "value": "Закрыть тред"
-        }
-    },
     "If password is empty, current hashpass will be used": {
         "enterPasswordText": {
             "value": "Если пароль пуст, будет использован текущий хешпасс"
@@ -1239,9 +1255,9 @@
             "value": "Закрепленный"
         }
     },
-    "Fix thread": {
+    "Fix": {
         "fixThreadText": {
-            "value": "Закрепить тред"
+            "value": "Закрепить"
         }
     },
     "Hide post form": {
@@ -1249,9 +1265,9 @@
             "value": "Скрыть форму постинга"
         }
     },
-    "Open thread": {
+    "Open": {
         "openThreadText": {
-            "value": "Открыть тред"
+            "value": "Открыть"
         }
     },
     "Submit": {
@@ -1272,6 +1288,11 @@
             "value": "Posting is disabled in this thread"
         }
     },
+    "This thread is archived. Posting is disabled": {
+        "archivedThreadText": {
+            "value": "Это архивный тред. Постинг запрещен"
+        }
+    },
     "Post limit reached": {
         "postLimitReachedText": {
             "value": "Достигнут лимит постов"
@@ -1285,14 +1306,29 @@
             "value": "Этот пользователь зарегистрирован"
         }
     },
-    "Unfix thread": {
+    "Unfix": {
         "unfixThreadText": {
-            "value": "Открепить тред"
+            "value": "Открепить"
         }
     },
-    "Hide/show": {
-        "showHidePostText": {
-            "value": "Скрыть/показать"
+    "Hide": {
+        "hidePostText": {
+            "value": "Скрыть"
+        }
+    },
+    "Show": {
+        "showPostText": {
+            "value": "Показать"
+        }
+    },
+    "Minimize player": {
+        "minimizePlayerText": {
+            "value": "Свернуть плеер"
+        }
+    },
+    "Maximize player": {
+        "maximizePlayerText": {
+            "value": "Развернуть плеер"
         }
     },
     "You don't have to enter captcha": {
@@ -1325,16 +1361,6 @@
             "value": "Убрать этот файл"
         }
     },
-    "Complain": {
-        "complainText": {
-            "value": "Пожаловаться"
-        }
-    },
-    "Go complain to your mum, you whiner!": {
-        "complainMessage": {
-            "value": "Мамке своей пожалуйся, нытик!"
-        }
-    },
     "MB": {
         "megabytesText": {
             "value": "МБ"
@@ -1360,9 +1386,9 @@
             "value": "Найти соус..."
         }
     },
-    "Download all thread files as a .zip archive": {
+    "Download all files as a .zip archive": {
         "downloadThreadText": {
-            "value": "Скачать все файлы из треда в виде .zip-архива"
+            "value": "Скачать все файлы в виде .zip-архива"
         }
     },
     "Last modified:": {
@@ -1370,18 +1396,16 @@
             "value": "Последнее изменение:"
         }
     },
-    "Delete post": {
+    "Delete": {
         "deletePostText": {
-            "value": "Удалить пост"
-        }
-    },
-    "Delete thread": {
-        "deleteThreadText": {
-            "value": "Удалить тред"
+            "value": "Удалить"
         }
     },
     "Delete file": {
         "deleteFileText": {
+            "value": "Удалить файл"
+        },
+        "deleteFileButtonText": {
             "value": "Удалить файл"
         }
     },
@@ -1425,12 +1449,12 @@
             "value": "Добавить в плей-лист"
         }
     },
-    "Add thread to favorites": {
+    "Add to favorites": {
         "addThreadToFavoritesText": {
-            "value": "Добавить тред в избранные"
+            "value": "Добавить в избранные"
         }
     },
-    "Post actions": {
+    "Actions": {
         "postActionsText": {
             "value": "Действия над постом"
         }
@@ -1511,9 +1535,6 @@
         }
     },
     "Loading posts...": {
-        "loadingPostsText": {
-            "value": "Загрузка постов..."
-        },
         "loadingPostsMessage": {
             "value": "Загрузка постов..."
         }
@@ -1521,11 +1542,6 @@
     "Searching for posts...": {
         "searchingMessage": {
             "value": "Поиск постов..."
-        }
-    },
-    "Hide by image hash": {
-        "hideByImageText": {
-            "value": "Скрывать по хешу картинки"
         }
     },
     "Rating:": {
@@ -1536,6 +1552,11 @@
     "Specify file URL": {
         "attachFileByLinkText": {
             "value": "Указать ссылку на файл"
+        }
+    },
+    "Specify file by drawing or draw on attached image": {
+        "attachFileByDrawingText": {
+            "value": "Указать файл, нарисовав картинку, либо рисовать на прикрепленной картинке"
         }
     },
     "Specify Vkontakte audio file": {
@@ -1578,9 +1599,9 @@
             "value": "Тема"
         }
     },
-    "Show user IP": {
+    "Show IP": {
         "showUserIpText": {
-            "value": "Показать IP-адрес пользователя"
+            "value": "Показать IP-адрес"
         }
     },
     "Options:": {
@@ -1588,14 +1609,14 @@
             "value": "Опции:"
         }
     },
-    "Sign as OP": {
+    "OP": {
         "postFormLabelSignAsOp": {
-            "value": "ОП треда"
+            "value": "ОП"
         }
     },
-    "Enable tripcode": {
+    "Tripcode": {
         "postFormLabelTripcode": {
-            "value": "Включить трипкод"
+            "value": "Трипкод"
         }
     },
     "Posts left:": {
@@ -1603,9 +1624,9 @@
             "value": "Осталось постов:"
         }
     },
-    "Post source text": {
+    "Source text": {
         "postSourceText": {
-            "value": "Исходный текст поста"
+            "value": "Исходный текст"
         }
     },
     "Enable private chat": {
@@ -1661,6 +1682,9 @@
     "Ban": {
         "pageTitle": {
             "value": "Бан"
+        },
+        "banUserText": {
+            "value": "Забанить"
         }
     },
     "never": {
@@ -1694,6 +1718,11 @@
     "Add variant": {
         "addVoteVariantText": {
             "value": "Добавить вариант"
+        }
+    },
+    "Remove this variant": {
+        "removeVoteVariantText": {
+            "value": "Удалить этот вариант"
         }
     },
     "Multiple variants allowed:": {
@@ -1782,19 +1811,19 @@
             "value": "Комментарий. Макс. длина:"
         }
     },
-    "\"Log in\", you say? On an imageboard? I am out!<br />Please, wait a sec. The login systyem does NOT store any data on the server. It only stores a cookie on your PC to allow post editing, deleting, etc. without entering password every time, and nothing else.<br />Well, actually, the admin may register someone manually (if he is a fag), but there is no way to register through the web.": {
+    "The login systyem does NOT store any data on the server. It only stores a cookie on your PC to allow post deleting, etc. without entering password every time.<br />It is also used for moderator/administrator authentication.": {
         "loginSystemDescriptionText": {
-            "value": "\"Залогиниться\", говоришь? На имиджборде? Я сваливаю!<br />Погоди секундочку. Система логина НЕ СОХРАНЯЕТ никаких данных на сервере. Она только хранит cookie на вашем ПК, что позволяет редактировать, удалять посты и т.д. без ввода пароля каждый раз, и ничего более.<br />Ну, на самом деле админ может кого-то зарегистрировать вручную (если он мудак), но способ зарегистрироваться через веб-интерфейс отсутствует."
+            "value": "Система логина НЕ СОХРАНЯЕТ никаких данных на сервере. Она только хранит cookie на вашем ПК, что позволяет удалять посты и т.д. без ввода пароля каждый раз.<br />Она также используется для аутентификации модераторов/администраторов."
         }
     },
-    "When logging in with Vkontakte, you may omit the login, but to be logged in with the same login on each browser, you have to specify it.<br />When logged in with Vkontakte, you are able to attach your VK audio.<br />This does not affect your anonymity in any way.": {
+    "When logging in with Vkontakte, you may omit the login, but to be logged in with the same login on each browser, you have to specify it.<br />When logged in with Vkontakte, you are able to attach your VK audio.<br />This does not affect your anonymity in any way (the files are downloaded by the server and no links to your VK page are shown).": {
         "loginSystemVkontakteDescriptionText": {
-            "value": "При входе в систему через Вкотнакте можно не указывать логин, но, чтобы быть залогиненым во всех браузерах под одним логином, его потребуется указать.<br />Когда вы залогинены через Вконтакте, вы можете прикреплять к посту свои аудиозаписи из ВК.<br />Это никак не влияет на вашу анонимность."
+            "value": "При входе в систему через Вкотнакте можно не указывать логин, но, чтобы быть залогиненым во всех браузерах под одним логином, его потребуется указать.<br />Когда вы залогинены через Вконтакте, вы можете прикреплять к посту свои аудиозаписи из ВК.<br />Это никак не влияет на вашу анонимность (файлы скачиваются сервером, и никакие ссылки на вашу страницу ВК не отображаются)."
         }
     },
-    "Chat privately with this user": {
+    "Chat privately": {
         "chatWithUserText": {
-            "value": "Приватный чат с этим пользователем"
+            "value": "Приватный чат"
         }
     },
     "Code style:": {
@@ -1810,6 +1839,11 @@
     "Go": {
         "goText": {
             "value": "Перейти"
+        }
+    },
+    "logged in as superuser": {
+        "loginMessageSuperuserText": {
+            "value": "залогинен в качестве суперпользователя"
         }
     },
     "logged in as administrator": {
@@ -1832,9 +1866,9 @@
             "value": "не зарегистрирован"
         }
     },
-    "monospace \\\\`` font with escaped \\\\`` characters": {
+    "monospace \\`` font with escaped \\`` characters": {
         "monospaceEscaped": {
-            "value": "моноширинный шрифт \\\\`` с экранированными \\\\`` символами"
+            "value": "моноширинный шрифт \\`` с экранированными \\`` символами"
         }
     },
     "Google reCAPTCHA v1": {
@@ -1879,7 +1913,7 @@
     },
     "Tripcode activated for THIS THREAD only": {
         "threadTripcodeActivatedText": {
-            "value": "Трипкод активирован только в этом ЭТОМ ТРЕДЕ"
+            "value": "Трипкод активирован только в ЭТОМ ТРЕДЕ"
         }
     },
     "Tripcode deactivated for THIS THREAD only": {
@@ -1927,9 +1961,9 @@
             "value": "Скрыть черновики"
         }
     },
-    "Collapse thread": {
+    "Collapse": {
         "collapseThreadText": {
-            "value": "Свернуть тред"
+            "value": "Свернуть"
         }
     },
     "Redirecting to thread...": {
@@ -2240,11 +2274,6 @@
             "value": "Не удалось скопировать файл"
         }
     },
-    "Posting is disabled on this board": {
-        "_default": {
-            "value": "На этой доске постинг запрещен"
-        }
-    },
     "Invalid captcha engine": {
         "_default": {
             "value": "Недействительный движок капчи"
@@ -2285,9 +2314,9 @@
             "value": "Файл не является аудио-файлом"
         }
     },
-    "Invalid PID": {
+    "Invalid worker ID": {
         "_default": {
-            "value": "Недействительный PID"
+            "value": "Недействительный идентификатор воркера"
         }
     },
     "Failed to get Twitter embedded HTML": {
@@ -2438,6 +2467,705 @@
     "Disallow bumping": {
         "setThreadUnbumpableText": {
             "value": "Запретить бампать"
+        }
+    },
+    "Use this button to jump between boards": {
+        "boardSelectTooltip": {
+            "value": "Используйте эту кнопку для перехода между досками"
+        }
+    },
+    "Thread link is empty": {
+        "error": {
+            "value": "Отсутствует ссылка на тред"
+        }
+    },
+    "Thread link is too long": {
+        "error": {
+            "value": "Ссылка на тред слишком длинная"
+        }
+    },
+    "This board/thread may not be accepted": {
+        "error": {
+            "value": "Эта доска/тред не может быть принята"
+        }
+    },
+    "Neither file name nor hash is specified": {
+        "error": {
+            "value": "Не указано ни имя файла, ни хеш"
+        }
+    },
+    "Banners mode:": {
+        "bannersModeLabelText": {
+            "value": "Режим баннеров:"
+        }
+    },
+    "Show random board banner": {
+        "bannersModeRandomText": {
+            "value": "Показывать баннер случайной доски"
+        }
+    },
+    "Show current board banner": {
+        "bannersModeSameText": {
+            "value": "Показывать баннер текущей доски"
+        }
+    },
+    "Do not show banners": {
+        "bannersModeNoneText": {
+            "value": "Не показывать баннеры"
+        }
+    },
+    "Synchronize": {
+        "synchronizationText": {
+            "value": "Синхронизировать"
+        }
+    },
+    "Synchronize settings": {
+        "synchronizeSettingsLabelText": {
+            "value": "Синхронизировать настройки"
+        }
+    },
+    "Synchronize CSS and JS": {
+        "synchronizeCssAndJsLabelText": {
+            "value": "Синхронизировать CSS и JS"
+        }
+    },
+    "No password specified, and not logged in": {
+        "noPasswordNotLoggedInError": {
+            "value": "Пароль не указан, и вы не залогинены"
+        }
+    },
+    "Synchronization data will be available within 5 minutes": {
+        "synchronizationTimeoutText": {
+            "value": "Данные синхронизации будут доступны в течение 5 минут"
+        }
+    },
+    "Synchronization completed successfully": {
+        "synchronizationSuccessfulText": {
+            "value": "Синхронизация успешно завершена"
+        }
+    },
+    "No key specified": {
+        "_default": {
+            "value": "Не указан ключ"
+        }
+    },
+    "Supported languages": {
+        "supportedCodeLanguagesText": {
+            "value": "Поддерживаемые языки"
+        }
+    },
+    "Language name": {
+        "codeLanguageNameText": {
+            "value": "Имя языка"
+        }
+    },
+    "Language ID": {
+        "codeLanguageIdText": {
+            "value": "Идентификатор языка"
+        }
+    },
+    "Device type:": {
+        "deviceTypeLabelText": {
+            "value": "Тип устройства:"
+        }
+    },
+    "Detect automatically": {
+        "deviceTypeAutoText": {
+            "value": "Определять автоматически"
+        }
+    },
+    "Desktop": {
+        "deviceTypeDesktopText": {
+            "value": "Настольный компьютер"
+        }
+    },
+    "Mobile": {
+        "deviceTypeMobileText": {
+            "value": "Мобильное устройство"
+        }
+    },
+    "Post": {
+        "postMenuCategoryPostText": {
+            "value": "Пост"
+        }
+    },
+    "Thread": {
+        "postMenuCategoryThreadText": {
+            "value": "Тред"
+        }
+    },
+    "Somebody is chatting here already": {
+        "_default": {
+            "value": "Здесь уже кто-то чатится"
+        }
+    },
+    "You can not participate in your own voting": {
+        "_default": {
+            "value": "Вы не можете участвовать в собственном голосовании"
+        }
+    },
+    "Play": {
+        "playerPlayText": {
+            "value": "Воспроизвести"
+        }
+    },
+    "Pause": {
+        "playerPauseText": {
+            "value": "Приостановить"
+        }
+    },
+    "Previous track": {
+        "playerPreviousTrackText": {
+            "value": "Предыдущий трек"
+        }
+    },
+    "Next track": {
+        "playerNextTrackText": {
+            "value": "Следующий трек"
+        }
+    },
+    "Mute": {
+        "playerMuteText": {
+            "value": "Выключить звук"
+        }
+    },
+    "Unmute": {
+        "playerUnmuteText": {
+            "value": "Включить звук"
+        }
+    },
+    "Enable drawing tools": {
+        "drawingLabelText": {
+            "value": "Включить инструменты для рисования"
+        }
+    },
+    "Draw on this image": {
+        "drawOnImageText": {
+            "value": "Рисовать на этой картинке"
+        }
+    },
+    "Drawing": {
+        "drawingDialogTitle": {
+            "value": "Рисование"
+        }
+    },
+    "Save the drawing": {
+        "saveDrawingButtonText": {
+            "value": "Сохранить рисунок"
+        }
+    },
+    "Your browser can not play files of this type": {
+        "unsupportedMediaTypeText": {
+            "value": "Ваш браузер не может проигрывать файлы этого типа"
+        }
+    },
+    "No board specified": {
+        "_default": {
+            "value": "Не указана доска"
+        }
+    },
+    "Invalid password": {
+        "_default": {
+            "value": "Недействительный пароль"
+        }
+    },
+    "Enter superuser IP list (separate by spaces): ": {
+        "_default": {
+            "value": "Введите список IP суперпользователя (разделяйте пробелами): "
+        }
+    },
+    "Bans": {
+        "bansTabText": {
+            "value": "Баны"
+        }
+    },
+    "Users": {
+        "usersTabText": {
+            "value": "Пользователи"
+        }
+    },
+    "Content": {
+        "contentTabText": {
+            "value": "Контент"
+        }
+    },
+    "Loading bans...": {
+        "loadingBansMessage": {
+            "value": "Загрузка банов..."
+        }
+    },
+    "Loading users...": {
+        "loadingUsersMessage": {
+            "value": "Загрузка пользователей..."
+        }
+    },
+    "New ban...": {
+        "newBanText": {
+            "value": "Новый бан..."
+        }
+    },
+    "New user...": {
+        "newUserText": {
+            "value": "Новый пользователь..."
+        }
+    },
+    "A user with this hashpass is already registered": {
+        "_default": {
+            "value": "Пользователь с таким хешпассом уже зарегистрирован"
+        }
+    },
+    "No user with this hashpass": {
+        "_default": {
+            "value": "Нет пользователя с таким хешпассом"
+        }
+    },
+    "Access level is not specified for any board": {
+        "_default": {
+            "value": "Уровень доступа не указан ни для одной доски"
+        }
+    },
+    "Invalid access level": {
+        "_default": {
+            "value": "Недействительный уровень доступа"
+        }
+    },
+    "A user with this hashpass is already registered as superuser": {
+        "_default": {
+            "value": "Пользователь с таким хешпассом уже зарегистрирован как суперпользователь"
+        }
+    },
+    "Invalid ban level": {
+        "_default": {
+            "value": "Недействительный уровень бана"
+        }
+    },
+    "Ban reason": {
+        "editBanReasonText": {
+            "value": "Причина бана"
+        }
+    },
+    "Hashpass:": {
+        "hashpassLabelText": {
+            "value": "Хешпасс:"
+        }
+    },
+    "Generate hashpass": {
+        "generateHashpassButtonText": {
+            "value": "Сгенерировать хешпасс"
+        }
+    },
+    "Invalid hashpass": {
+        "_default": {
+            "value": "Недействительный хешпасс"
+        }
+    },
+    "Are you sure?": {
+        "confirmationText": {
+            "value": "Вы уверены?"
+        }
+    },
+    "Deleting posts from archived threads is not allowed": {
+        "_default": {
+            "value": "Удаление постов из архивных тредов запрещено"
+        }
+    },
+    "Enter password: ": {
+        "_default": {
+            "value": "Введите пароль: "
+        }
+    },
+    "That is a hashpass, isn't it? [Yes/no]: ": {
+        "_default": {
+            "value": "Это хешпасс, верно? [Yes/no]: "
+        },
+        "_obsolete": true
+    },
+    "Dimensions:": {
+        "canvasDimensionsLabelText": {
+            "value": "Размеры:"
+        }
+    },
+    "Background color:": {
+        "canvasBackgroundColorLabelText": {
+            "value": "Цвет фона:"
+        }
+    },
+    "Drawing options": {
+        "drawingOptionsDialogTitle": {
+            "value": "Параметры рисования"
+        }
+    },
+    "0 — determine automatically": {
+        "canvasDimensionsDescriptionText": {
+            "value": "0 — определять автоматически"
+        }
+    },
+    "Auto": {
+        "canvasBackgroundAutoSizeButtonText": {
+            "value": "Авто"
+        }
+    },
+    "Drawing is disabled. Enable it in the \"Other\" tab of the settings dialog (the \"Enable drawing tools\" checkbox).": {
+        "drawingDisabledWarningText": {
+            "value": "Рисование отключено. Включите его на вкладке \"Прочее\" диалога настроек (флажок \"Включить инструменты для рисования\")."
+        }
+    },
+    "Reset image scale on every opening": {
+        "resetFileScaleOnOpeningLabelText": {
+            "value": "Сбрасывать масштаб картинок при каждом открытии"
+        }
+    },
+    "Default": {
+        "dafaultCanvasBackgroundColorButtonText": {
+            "value": "По умолчанию"
+        }
+    },
+    "Update player automatically": {
+        "autoUpdatePlayerLabelText": {
+            "value": "Автоматически обновлять плеер"
+        }
+    },
+    "Expand long posts on click": {
+        "addExpanderLabelText": {
+            "value": "Раскрывать длинные посты по клику"
+        }
+    },
+    "Show full text": {
+        "expandPostTextText": {
+            "value": "Показать текст полностью"
+        }
+    },
+    "Collapse text": {
+        "collapsePostTextText": {
+            "value": "Свернуть текст"
+        }
+    },
+    "Current directory:": {
+        "currentDirectoryLabelText": {
+            "value": "Текущая папка:"
+        }
+    },
+    "Current file:": {
+        "currentFileLabelText": {
+            "value": "Текущий файл:"
+        }
+    },
+    "Add file": {
+        "addFileButtonText": {
+            "value": "Добавить файл"
+        }
+    },
+    "Add directory": {
+        "addDirectoryButtonText": {
+            "value": "Добавить папку"
+        }
+    },
+    "Rename directory": {
+        "renameDirectoryButtonText": {
+            "value": "Переименовать папку"
+        }
+    },
+    "Delete directory": {
+        "deleteDirectoryButtonText": {
+            "value": "Удалить папку"
+        }
+    },
+    "Edit file": {
+        "editFileButtonText": {
+            "value": "Редактировать файл"
+        }
+    },
+    "Rename file": {
+        "renameFileButtonText": {
+            "value": "Переименовать файл"
+        }
+    },
+    "Adding file": {
+        "addFileDialogTitle": {
+            "value": "Добавление файла"
+        }
+    },
+    "File name:": {
+        "fileNameLabelText": {
+            "value": "Имя файла:"
+        }
+    },
+    "File:": {
+        "fileLabelText": {
+            "value": "Файл:"
+        }
+    },
+    "Adding directory": {
+        "addDirectoryDialogTitle": {
+            "value": "Добавление папки"
+        }
+    },
+    "Renaming file": {
+        "renameFileDialogTitle": {
+            "value": "Переименование файла"
+        }
+    },
+    "Renaming directory": {
+        "renameDirectoryDialogTitle": {
+            "value": "Переименование папки"
+        }
+    },
+    "Deleting file": {
+        "deleteFileDialogTitle": {
+            "value": "Удаление файла"
+        }
+    },
+    "Deleting directory": {
+        "deleteDirectoryDialogTitle": {
+            "value": "Удаление папки"
+        }
+    },
+    "Directory name:": {
+        "directoryNameLabelText": {
+            "value": "Имя папки:"
+        }
+    },
+    "Server actions": {
+        "serverActionLabelText": {
+            "value": "Действия над сервером"
+        }
+    },
+    "Connection with the server will be lost, and the server will become unavailable for some time. You will have to reload the page manually.": {
+        "reloadWarningText": {
+            "value": "Соединение с сервером будет потеряно, и сервер будет недоступен в течение некоторого времени. Вам придется перезагрузить страницу вручную."
+        }
+    },
+    "Regenerate cache": {
+        "regenerateCacheButtonText": {
+            "value": "Сгенерировать кеш заново"
+        }
+    },
+    "Rerender posts": {
+        "rerenderPostsButtonText": {
+            "value": "Отрендерить посты заново"
+        }
+    },
+    "Rebuild post search index": {
+        "rebuildSearchIndexButtonText": {
+            "value": "Пересоздать индекс поиска постов"
+        }
+    },
+    "Reload boards": {
+        "reloadBoardsButtonText": {
+            "value": "Перезагрузить доски"
+        }
+    },
+    "Reload config": {
+        "reloadConfigButtonText": {
+            "value": "Перезагрузить конфиг"
+        }
+    },
+    "Reload templates": {
+        "reloadTemplatesButtonText": {
+            "value": "Перезагрузить шаблоны"
+        }
+    },
+    "Reload everything": {
+        "reloadAllButtonText": {
+            "value": "Перезагрузить все"
+        }
+    },
+    "Not a directory": {
+        "_default": {
+            "value": "Объект не является папкой"
+        }
+    },
+    "Not a file": {
+        "_default": {
+            "value": "Объект не является файлом"
+        }
+    },
+    "Frequently used files": {
+        "frequentlyUsedFilesLabelText": {
+            "value": "Часто используемые файлы"
+        }
+    },
+    "Node captcha": {
+        "_default": {
+            "value": "Node captcha"
+        }
+    },
+    "Inline LaTeX": {
+        "markupInlineLatex": {
+            "value": "Встраиваемый LaTeX"
+        },
+        "inlineLatexText": {
+            "value": "Встраиваемый LaTeX"
+        }
+    },
+    "LaTeX": {
+        "markupLatex": {
+            "value": "LaTeX"
+        }
+    },
+    "LaTeX code markup": {
+        "latexMarkup": {
+            "value": "Разметка LaTeX-кода"
+        }
+    },
+    "Block LaTeX": {
+        "latexText": {
+            "value": "Блочный LaTeX"
+        }
+    },
+    "Background type:": {
+        "canvasBackgroundTypeLabelText": {
+            "value": "Тип фона:"
+        }
+    },
+    "Drawable": {
+        "checkboxBackgroundDrawableLabel": {
+            "value": "Часть рисунка"
+        }
+    },
+    "Not drawable": {
+        "checkboxBackgroundNotDrawableLabel": {
+            "value": "Фон"
+        }
+    },
+    "That is a hashpass, isn't it? ": {
+        "_default": {
+            "value": "Это хешпасс, верно? "
+        }
+    },
+    "Respawns worker processes with the passed exit code.": {
+        "_default": {
+            "value": "Респавнит рабочие процессы с использованием указанного кода выхода."
+        }
+    },
+    "Invalid command. Type 'help' for commands": {
+        "_default": {
+            "value": "Недействительная команда. Введите 'help', чтобы посмотреть список команд"
+        }
+    },
+    "Enter value for": {
+        "_default": {
+            "value": "Введите значение для"
+        }
+    },
+    "Sets the option (config.json) at the key specified. If no value is specified, prompts to enter it.": {
+        "_default": {
+            "value": "Устанавливает опцию (config.json), соответствующую ключу. Если значение не указано, предлагается ввести его."
+        }
+    },
+    "Value for": {
+        "_default": {
+            "value": "Значение для"
+        }
+    },
+    "Prints the option (config.json) at the key specified.": {
+        "_default": {
+            "value": "Выводит опцию (config.json), соответствующую ключу."
+        }
+    },
+    "Removes the option (config.json) at the key specified.": {
+        "_default": {
+            "value": "Удаляет опцию (config.json), соответствующую ключу."
+        }
+    },
+    "Registers a superuser.": {
+        "_default": {
+            "value": "Регистрирует суперпользователя."
+        }
+    },
+    "Unregisters a superuser.": {
+        "_default": {
+            "value": "Удаляет суперпользователя."
+        }
+    },
+    "Are you sure? ": {
+        "_default": {
+            "value": "Вы уверены? "
+        }
+    },
+    "Rerenders all posts (workers are closed and then opened again).": {
+        "_default": {
+            "value": "Рендерит все посты заново (рабочие процессы закрываются, а затем открываются снова)."
+        }
+    },
+    "Closes all workers, preventing incoming connections.": {
+        "_default": {
+            "value": "Закрывает рабочие процессы, предотвращая новые входящие подключения."
+        }
+    },
+    "Opens workers for connections if closed.": {
+        "_default": {
+            "value": "Открывает рабочие процессы для соединений, если они закрыты."
+        }
+    },
+    "Regenerates the cache (workers are closed and then opened again).": {
+        "_default": {
+            "value": "Заново генерирует кеш (рабочие процессы закрываются, а затем открываются снова)."
+        }
+    },
+    "Reloads the boards.": {
+        "_default": {
+            "value": "Перезагружает доски."
+        }
+    },
+    "Reloads the config file.": {
+        "_default": {
+            "value": "Перезагружает конфигурационный файл."
+        }
+    },
+    "Reloads the templates and the partials (including public ones).": {
+        "_default": {
+            "value": "Перезагружает шаблоны (включая публичные)."
+        }
+    },
+    "Rebuilds post search index.": {
+        "_default": {
+            "value": "Пересоздает индекс посика постов."
+        }
+    },
+    "Shows server uptime.": {
+        "_default": {
+            "value": "Показывает время работы сервера."
+        }
+    },
+    "Type 'help' for commands": {
+        "_default": {
+            "value": "Введите 'help', чтобы посмотреть список команд"
+        }
+    },
+    "Cancelled": {
+        "_default": {
+            "value": "Отменено"
+        }
+    },
+    "Quits the application.": {
+        "_default": {
+            "value": "Завершает выполнение приложения."
+        }
+    },
+    "Image similarity:": {
+        "ihashDistanceLabelText": {
+            "value": "Схожесть картинок:"
+        }
+    },
+    "Hide by image hash": {
+        "hideByImageHashText": {
+            "value": "Скрывать по хешу картинки"
+        }
+    },
+    "Hide by image": {
+        "hideByImageText": {
+            "value": "Скрывать по картинке"
+        }
+    },
+    "Hide by image size": {
+        "hideByImageSizeText": {
+            "value": "Скрывать по размеру картинки"
+        }
+    },
+    "Transparent header": {
+        "transparentHeaderLabelText": {
+            "value": "Прозрачная шапка"
         }
     }
 }

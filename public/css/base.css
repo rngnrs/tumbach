@@ -1,0 +1,1184 @@
+.ui-widget, input, select, textarea, button {
+    font-size: 14.4px !important;
+    font-family: "PT Sans", sans-serif !important;
+}
+
+.ui-menu .ui-menu-item {
+    list-style-image: none !important;
+}
+
+.ui-slider-handle {
+    width: 8px !important;
+}
+
+a.expandCollapse,
+a.expandCollapse:hover,
+.select,
+.button,
+.checkbox {
+    cursor: pointer;
+}
+
+.popup {
+    position: fixed;
+    top: 55px;
+    right: 5px;
+    z-index: 9950;
+    vertical-align: middle;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.favorites {
+    min-width: 300px;
+    min-height: 400px;
+    padding: 2px;
+}
+
+.favorites > div {
+    padding: 2px;
+    margin-top: 4px;
+}
+
+.inlineForm {
+    display: inline;
+}
+
+.scrollAreaH60 {
+    overflow-y: auto;
+    max-height: 60px;
+    max-width: 300px;
+}
+
+.hidePostformRulesButton {
+    display: block;
+    text-decoration: none;
+    font-size: .7em;
+    cursor: pointer;
+}
+
+.hidePostformMarkupButton {
+    display: block;
+    text-decoration: none;
+    text-align: right;
+    font-size: .7em;
+    margin-left: auto;
+    /*margin-right: 5px;*/
+    cursor: pointer;
+}
+
+.hiddenPostLink {
+    text-decoration: line-through;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.wrap {
+    white-space: normal;
+}
+
+.postSequenceNumber {
+    font-size: 75%;
+}
+
+.hiddenPostList > div:nth-child(even) {
+    margin: 3px 0;
+}
+
+.ban {
+    margin: 0 80px;
+}
+
+.banner {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#postForm {
+    overflow-x: auto;
+}
+
+blockquote {
+    margin: 10px 20px;
+    padding-top: 10px;
+    overflow-y: auto;
+    overflow-x: auto;
+    max-height: 240px;
+    box-sizing: border-box;
+    max-width: 1200px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+blockquote.draftBlockquote {
+    max-height: none;
+    overflow-y: none;
+}
+
+blockquote.expand {
+    max-height: none;
+}
+
+.spoilerMarkupButton {
+    border: none;
+    height: 20px;
+    vertical-align: middle;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+span.tooltip {
+    cursor: help;
+}
+
+span.newPostCount {
+    font-size: 75%;
+}
+
+.pages {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 70%;
+}
+
+.pagesItem {
+    white-space: nowrap;
+}
+
+.postingDisabledMessage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.postformMarkup {
+    text-align: left;
+	white-space: normal;
+}
+
+.postformRules {
+    text-align: left;
+    font-size: .7em;
+    max-width: 400px;
+    white-space: normal;
+}
+
+.fileByLinkButton, .cspoilerTitle {
+    cursor: pointer;
+}
+
+.catalogContainer {
+    box-sizing: border-box;
+    padding: 0;
+    text-align: center;
+}
+
+.catalogItem {
+    box-sizing: border-box;
+    display: inline-block;
+    /*height: 450px;*/
+    min-height: 450px;
+    margin: 10px;
+    overflow: hidden;
+    padding: 5px;
+    position: relative;
+    text-align: center;
+    vertical-align: top;
+    width: 240px;
+    word-wrap: break-word;
+}
+
+.catalogItem:hover {
+    height: auto;
+}
+
+.notFoundImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.hiddenElement {
+    display: none;
+}
+
+.createAction {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.createAction > div {
+    display: inline-block;
+}
+
+.createAction > div > div {
+    display: block;
+}
+
+.postFormVisible {
+    display: block;
+}
+
+.postFormTextarea {
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.postFormTable {
+    display: inline;
+}
+
+.postformLabel {
+    text-align: right;
+}
+
+.postformField {
+    text-align: left;
+}
+
+.symbolCounter {
+    font-size: .8em;
+    position: absolute;
+    right: 12px;
+    bottom: 7px;
+    color: #333;
+    opacity: .6;
+}
+
+.symbolCounterContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.codechaContainer {
+    white-space: normal;
+}
+
+.error {
+    margin-left: 80px;
+    margin-right: 80px;
+    text-align: center;
+}
+
+.sectionBody {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 10px;
+}
+
+.sectionHeader {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.navbar {
+    font-size: 1.2em;
+}
+.navbar, .postingSpeedBar, .friendsBar {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 70%;
+}
+
+.navbar.navbarFrame {
+    text-align: left;
+    margin-left: 4px;
+}
+
+.navbarItem {
+    white-space: nowrap;
+}
+
+.post, .draft {
+    margin: 4px 0;
+    padding: 10px 4px 4px 10px;
+    overflow-x: auto;
+    display: table;
+}
+
+.opPost {
+    overflow-x: auto;
+    display: table;
+    padding-bottom: 4px;
+}
+
+.hidden > .postBody,
+.opPost.hidden ~ .post,
+.thread.hidden > .omittedPosts,
+.thread.hidden > .threadPosts {
+    display: none;
+}
+
+.post.temporary {
+    display: block;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.postFileName, .postFileSize {
+    white-space: nowrap;
+}
+
+.postFileSearch {
+    padding-bottom: 4px;
+}
+
+.postToThread > a > button {
+    font-size: 1.2em;
+}
+
+.menu {
+    white-space: nowrap;
+    box-sizing: border-box;
+    position: absolute;
+    width: auto;
+    display: none;
+    list-style-type: none;
+    padding: 2px;
+    z-index: 5;
+}
+
+.menu > li {
+    padding: 2px;
+}
+
+.menu > li > a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+}
+
+#markupUnorderedListActionsMenu {
+    padding-left: 20px;
+}
+
+#markupOrderedListActionsMenu {
+    padding-left: 30px;
+}
+
+.postBody {
+    text-align: left;
+}
+
+.postFile {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.shrink {
+    width: 100%;
+}
+
+.postFile ~ .postFile {
+    padding-left: 20px;
+}
+
+.postText {
+    box-sizing: border-box;
+    vertical-align: top;
+    white-space: normal;
+    min-width: 200px;
+}
+
+.postSubject, .someName {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.navigationButton {
+    position: fixed;
+    right: 20px;
+    z-index: 7;
+    opacity: .5;
+}
+
+.navigationButton:hover {
+    opacity: 1;
+}
+
+.navigationButtonBottom {
+    bottom: 30px;
+}
+
+.navigationButtonTop {
+    top: 80px;
+}
+
+.leafButton {
+    position: fixed;
+    height: 32px;
+    top: -moz-calc(50% - 16px);
+    top: -webkit-calc(50% - 16px);
+    top: -o-calc(50% - 16px);
+    top: calc(50% - 16px);
+    z-index: 9910;
+    opacity: .5;
+}
+
+.leafButton:hover {
+    opacity: 1;
+}
+
+.leafButtonPrevious {
+    left: 20px;
+}
+
+.leafButtonNext {
+    right: 20px;
+}
+
+.postformFile {
+    border: 1px dashed #777;
+    text-align: justify;
+    cursor: pointer;
+}
+
+.postformFile ~ .postformFile {
+    margin-top: 5px;
+}
+
+.postformFilePreview {
+    max-width: 100px;
+    max-height: 100px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.postformFileInput {
+    display: inline-block;
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.postformFileText {
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
+}
+
+.postformFileRemoveButton {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.postformFileRemoveImage {
+    vertical-align: top !important;
+}
+
+.referencedBy {
+    font-size: .8em;
+}
+
+.settingsDialog table {
+    margin: 0 auto;
+    min-width: 75%;
+}
+
+.tabWidget {
+    text-align: center;
+    margin: 0 auto;
+    padding: 0;
+}
+
+ul.tabWidget > li {
+    display: inline-block;
+    border-left: none;
+}
+
+ul.tabWidget > li > a {
+    display: block;
+    text-decoration: none;
+    padding: 9px 10px;
+    cursor: pointer;
+}
+
+.searchAction {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+}
+
+/*.searchAction > form {
+    display: inline-block;
+}*/
+
+.searchActionInput {
+    width: 55%;
+    padding: 9px 0;
+}
+
+.searchActionSelect {
+    width: 37%;
+    padding: 8px 0;
+}
+
+.toolbar {
+    display: block;
+    padding-bottom: 5px;
+    text-align: center;
+    overflow-x: auto;
+    font-size: 1.2em;
+    position: relative;
+    top: -8px;
+    z-index: 1;
+}
+
+.toolbar.sticky {
+    position: fixed;
+    top: 0;
+    width: 99%;
+    padding-bottom: 0;
+}
+
+blockquote.blockquoteThread,
+blockquote.blockquoteThread.expand {
+    max-height: none;
+}
+
+.codeBlock {
+    font-family: monospace;
+    white-space: pre;
+    word-break: normal;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    padding-left: 20px !important;
+    overflow-x: auto;
+    -ms-hyphens: none;
+    -moz-hyphens: none;
+    -webkit-hyphens: none;
+    hyphens: none;
+}
+
+.theMessage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.threadActions {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.externalThreadFrame {
+    width: 300px;
+    height: 400px;
+    float: right;
+    position: fixed;
+    top: 200px;
+    right: 0;
+    z-index: 9920;
+    opacity: .5;
+    transition: .1s all;
+}
+
+.externalThreadFrame:hover {
+    width: 90%;
+    height: 100%;
+    top: 0;
+    box-shadow: 0 0 20px #000;
+    opacity: 1;
+}
+
+.theTitle {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.vote {
+    display: table;
+}
+
+#recaptcha_image_cell,
+#recaptcha_response_field {
+    background-color: inherit;
+}
+
+.login {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.loginDescription {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.buttonImage {
+    vertical-align: middle;
+    opacity: .65;
+}
+
+.buttonImage:hover {
+    opacity: 1;
+}
+
+.buttonImage:disabled,
+.buttonImage:disabled:hover {
+    opacity: .4;
+}
+
+input.buttonImage {
+    background-color: transparent;
+}
+
+.signImage {
+    vertical-align: middle;
+}
+
+.alignCenter {
+    text-align: center;
+}
+
+.temporaryPostOverlayMask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9000;
+    background-color: #000;
+    opacity: .6;
+}
+
+.overlayMask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100500;
+    background-color: #000;
+    opacity: .6;
+}
+
+.overlayProgressBar {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 400px;
+    height: 50px;
+    margin-top: -25px;
+    margin-left: -200px;
+    z-index: 100501;        
+}
+
+.overlayProgressBarCancelButton {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: -15px;
+    margin-left: -40px;
+    width: 80px;
+    height: 30px;
+    z-index: 100502;
+}
+
+.numberSize3 {
+    width: 24px;
+}
+
+.numberSize4 {
+    width: 33px;
+}
+
+.postFormInput {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.submitContainer {
+    text-align: center;
+}
+
+.submitContainer > input {
+    font-size: 1.2em;
+    width: 100%;
+}
+
+.cursorPointer {
+	cursor: pointer;
+}
+
+.chatContactList {
+    overflow-y: auto;
+    height: 100%;
+    padding: 4px;
+}
+
+.chatContact {
+    cursor: pointer;
+}
+
+.chatContact > input[type="image"] {
+    float: right;
+    margin-top: 2px;
+}
+
+.chatContact ~ .chatContact {
+    margin-top: 2px;
+}
+
+.chatTarget {
+    white-space: nowrap;
+}
+
+.chatHistory {
+    padding: 5px 4px 5px 8px;
+    border: 1px solid black;
+    overflow-y: auto;
+    min-height:100px;
+    height: calc(100% - 42px);
+}
+
+.chatMessage {
+    margin-bottom: 4px;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.chatMessageDate {
+    margin-bottom: 8px;
+}
+
+.chatMessageText {
+    padding-left: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.chatInput,
+.chatSendButton {
+    box-sizing: border-box;
+    width: -moz-calc(100% - 4px);
+    width: -webkit-calc(100% - 4px);
+    width: -o-calc(100% - 4px);
+    width: calc(100% - 4px);
+}
+
+.loadingMessage {
+    text-align: center;
+    width:100%;
+    margin: calc(50vh - 165px) auto;
+}
+
+[id^="vk_post_"] {
+    padding: 4px 5px;
+}
+
+.overflowContainer {
+    overflow-x: auto;
+}
+
+.select[name="codeLang"] {
+    height: 20px;
+    vertical-align: middle;
+}
+
+.ui-tooltip {
+    z-index: 11000 !important;
+}
+
+.ui-tooltip-content::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+    top: -10px;
+    left: 85px;
+    border-width: 0 10px 10px;
+}
+
+.archivalThreadLink {
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.ownPostLink:after {
+    content: " (You)";
+}
+
+.opPostLink:after {
+    content: " (OP)";
+}
+
+.ownPostLink.opPostLink:after {
+    content: " (You) (OP)";
+}
+
+.hideReason {
+    font-size: 75%;
+}
+
+#player {
+    position: fixed;
+    height: 80%;
+    bottom: 10%;
+    right: 0;
+    z-index: 1;
+}
+
+#player.minimized {
+    width: 24px;
+    height: auto;
+    cursor: pointer;
+}
+
+#player > .playerMinimized {
+    display: none;
+}
+
+#player > .playerMaximized {
+    display: block;
+    padding: 4px;
+    height: 100%;
+    position: relative;
+}
+
+#player.minimized > .playerMinimized {
+    display: block;
+    float: left;
+}
+
+#player.minimized > .playerMinimized > div {
+    display: inline-block;
+    overflow: hidden;
+    width: 1.5em;
+    padding: 6px;
+}
+
+#player.minimized > .playerMinimized > div > span {
+    white-space: nowrap;
+    -webkit-transform: translate(1.1em,0) rotate(90deg);
+    -moz-transform: translate(1.1em,0) rotate(90deg);
+    -o-transform: translate(1.1em,0) rotate(90deg);
+    transform: translate(1.1em,0) rotate(90deg);
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -ms-transform: none;
+    -ms-transform-origin: none;
+    -ms-writing-mode: tb-rl;
+    *writing-mode: tb-rl;
+}
+
+#player.minimized > .playerMinimized > div > span:before {
+    content: "";
+    float: left;
+    margin-top: 100%;
+}
+
+#player.minimized > .playerMaximized {
+    display: none;
+}
+
+.playerHeader {
+    padding: 2px;
+}
+
+.playerSliderContainer {
+    text-align: center;
+}
+
+#playerDurationSlider {
+    display: inline-block;
+    margin: 0 6px;
+}
+
+#playerTrackInfo {
+    display: inline-block;
+    padding: 2px;
+}
+
+.playerHeader > input[name="playerMuteButton"] {
+    float: right;
+}
+
+.track {
+    padding: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.trackActions {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: 4px;
+}
+
+#playerMinimizeButton {
+    display: inline-block;
+    position: absolute;
+    right: 8px;
+    bottom: 16px;
+}
+
+#playerTracks {
+    overflow-y: auto;
+}
+
+#playerTracks:empty:after {
+    content: "Плейлист пуст. Добавьте музыку в треде путём нажатия соответствующей кнопки около аудиофайла.";
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    margin-top: -1.5em;
+}
+
+#player-radio-list:empty:after {
+    content: "Список радио пуст. Проверьте Интернет-соединение. Если оно хорошее, то попросите админа добавить парочку радиостанций.";
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    margin-top: -1.5em;
+}
+
+.trackInfo {
+    display: inline-block;
+}
+
+.movablePlayer {
+    position: fixed;
+    z-index: 9905;
+    border: 5px solid #777;
+    padding: 0;
+    line-height: 0;
+}
+.movablePlayer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .2;
+    background: url(../img/3rdparty/literallycanvas/checkerboard-8x8.png);
+    z-index: -1;
+}
+
+.movablePlayerTrackInfo {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    right: 4px;
+    font-size: 1.2em;
+    color: white;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+    -webkit-font-smoothing: antialiased;
+}
+
+.movablePlayerContent > * {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+.movablePlayerControls {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    background-color: #F1F1F1;
+    height: 22px;
+    padding-left: 4px;
+}
+
+.movablePlayerConstrolsSliders {
+    display: inline-block;
+    position: relative;
+    top: 4px;
+    text-align: center;
+}
+
+.movablePlayerConstrolsSliders > .ui-slider {
+    height: 12px;
+}
+
+.movablePlayerConstrolsSliders > .ui-slider > .ui-slider-handle {
+    height: 16px;
+    top: -3px;
+}
+
+.movablePlayerDurationSlider {
+    display: inline-block;
+    margin: 0 6px;
+}
+
+.bannedUserHeader {
+    padding: 4px;
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.delallHeader {
+    margin-bottom: 4px;
+}
+
+.registeredUserHeader {
+    padding: 4px;
+    display: block;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+div.bannedUser {
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+.banLevelSelect {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+div.registeredUser {
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+#vkontakteLoginButton {
+    display: inline-block;
+    position: relative;
+    top: 5px;
+}
+
+.searchResult {
+    margin-top: -16px;
+    margin-bottom: 4px;
+    padding: 4px;
+    overflow-x: auto;
+    display: table;
+}
+
+.searchResultLink, .searchResultThread, .searchResultText {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+.searchResultText {
+    margin: 14.4px 25px;
+    padding-top: 10px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.userBanIpInput {
+    width: 280px;
+}
+
+.postTextExpander {
+    margin-left: 20px;
+}
+
+div.ui-widget-content.ui-dialog-content.checkerboardBackground {
+    background-image:
+        -moz-linear-gradient(45deg, #666666 25%, transparent 25%), 
+        -moz-linear-gradient(-45deg, #666666 25%, transparent 25%),
+        -moz-linear-gradient(45deg, transparent 75%, #666666 75%),
+        -moz-linear-gradient(-45deg, #999999 75%, #666666 75%);
+    background-image:
+        -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, #666666), color-stop(.25, transparent)), 
+        -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.25, #666666), color-stop(.25, transparent)),
+        -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.75, transparent), color-stop(.75, #666666)),
+        -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.75, #999999), color-stop(.75, #666666));
+    -moz-background-size: 16px 16px;
+    background-size: 16px 16px;
+    -webkit-background-size: 16px 17px;
+    background-position: 0 0, 8px 0, 8px -8px, 0px 8px;
+}
+
+.serverActions ~ .serverActions {
+    margin-top: 10px;
+}
+
+#frequentlyUsedFileActions {
+    max-width: 500px;
+}
+
+#markup {
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.frameList {
+    display: inline-block;
+    overflow-x: auto;
+}
+
+.frameContent {
+    display: inline-block;
+}
+
+.frameContent > iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.blockLatex {
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 8px;
+    padding-bottom: 0px;
+    max-width: 100%;
+    overflow-x: auto;
+}

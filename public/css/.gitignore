@@ -1,7 +1,11 @@
 *
 !3rdparty
+!base.css
 !burichan.css
+!desktop.css
 !futaba.css
+!mobile.css
 !neutron.css
 !photon.css
+!tumbach.css
 !.gitignore

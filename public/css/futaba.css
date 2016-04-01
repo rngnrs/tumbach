@@ -1,14 +1,37 @@
 /*Futaba*/
 /* tumb rewrite */
-.color-def {
+.color-prim {
     background-color: #F0E0D6;
+    color: #800000;
+}
+.color-prim-inv {
+    background-color: #800000;
+    color: #F0E0D6;
 }
 aside {
     background-color: #FFE;
 }
 /* /tumb rewrite */
 
-body {
+
+.ui-tooltip {
+    border: none !important;
+}
+
+.ui-tooltip-content {
+    background-color: #F0E0D6;
+    color: #800000;
+}
+
+.ui-tooltip-content::after {
+    border-color: #F0E0D6 transparent;
+}
+
+.ui-slider-handle {
+    border: 1px solid #800000 !important;
+}
+
+body  {
     background-color: #FFE;
     color: #800000;
 }
@@ -19,7 +42,6 @@ a {
 
 a.expandCollapse {
     color: #444;
-    cursor: pointer;
 }
 
 a:hover {
@@ -28,7 +50,6 @@ a:hover {
 
 a.expandCollapse:hover {
     color: #666;
-    cursor: pointer;
 }
 
 hr {
@@ -36,16 +57,17 @@ hr {
     clear: both;
 }
 
-.select, .button, .checkbox {
-    cursor: pointer;
+.popup {
+    background-color: #F0E0D6;
+    border: 1px solid #800000;
 }
 
-.popup, .favorites {
-    background-color: #F0E0D6;
+.favorites {
+    background-color: #FFE;
 }
 
 .favorites > div {
-    background-color: #FBFBEA;
+    background-color: #F0E0D6;
 }
 
 .scrollAreaH60 {
@@ -54,30 +76,15 @@ hr {
 
 .postSequenceNumber {
     color: red;
-    font-size: 75%;
 }
 
 .hiddenPostList > div:nth-child(even) {
     background-color: #FFE;
-    margin-top: 3px;
-    margin-bottom: 3px;
 }
-
-/*
-    Ban
-*/
 
 .ban {
     background-color: #F0E0D6;
 }
-
-/*
-    Banner
-*/
-
-/*
-    Board
-*/
 
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #F0D0B6;
@@ -100,14 +107,26 @@ span.spoiler:hover .quotation {
     color: #789922;
 }
 
-span.tooltip {
-    color: #E08060;
-    cursor: help;
+.spoilerMarkupButton {
+    background-color: #FFE;
+    color: #800000;
 }
 
-span.newPostCount {
+.spoilerMarkupButton.spoiler {
+    color: #800000;
+}
+
+span.tooltip {
+    color: #E08060;
+}
+
+span.newPostCount,
+.postLimitReached {
     color: red;
-    font-size: 75%;
+}
+
+.bumpLimitReached {
+    color: olive;
 }
 
 .quotation {
@@ -115,17 +134,12 @@ span.newPostCount {
 }
 
 .cspoilerTitle {
-    cursor: pointer;
     color: #E08060;
 }
 
 .cspoilerBody {
     background-color: #F0D0B6;
 }
-
-/*
-    Catalog
-*/
 
 .catalogContainer {
     color: #800000;
@@ -140,42 +154,12 @@ span.newPostCount {
     color: red;
 }
 
-/*
-    Error
-*/
-
 .error {
     background-color: #F0E0D6;
     color: #800000;
 }
 
-/*
-    Home
-*/
-
-.rules, .news {
-    background-color: #F0E0D6;
-}
-
-/*
-    IP ban
-*/
-
-.ipBan {
-    background-color: #F0E0D6;
-}
-
-/*
-    Not found
-*/
-
-/*.theImage <- Board image*/
-
-/*
-    Post
-*/
-
-.post, .draft {
+.sectionBody, .post, .draft {
     background-color: #F0E0D6;
 }
 
@@ -191,19 +175,6 @@ span.newPostCount {
     border: 1px solid #000;
 }
 
-.thread.hidden > .omittedPosts,
-.thread.hidden > .threadPosts {
-    display: none;
-}
-
-.postFileName, .postFileSize {
-    white-space: nowrap;
-}
-
-.postFileName.mobile {
-    font-size: .9em;
-}
-
 .postFileSize {
     color: #800000;
 }
@@ -212,18 +183,29 @@ span.newPostCount {
     background: #F0E0D6 !important;
     border: 1px solid #000000 !important;
     color: #800000 !important;
+    /*font-family: Verdana,sans-serif !important;*/
 }
 
-.menu > li > a {
-    color: #800000;
+.bannedFor {
+    color: red;
 }
 
-.menu > li:hover {
-    background-color: #444;
+.modificationDateTime {
+    font-style: italic;
 }
 
 .postSubject {
+    font-weight: bold;
     color: #CC1105;
+}
+
+.tripcode {
+    color: green;
+}
+
+.moderName {
+    font-weight: bold;
+    color: blue;
 }
 
 .userName {
@@ -231,12 +213,9 @@ span.newPostCount {
     color: #117743;
 }
 
-.postformFile {
-    border: 1px dashed #777;
-}
-
 .postformFile.drag {
     background-color: #F0E0D6;
+
     border: 1px dashed #555;
 }
 
@@ -254,140 +233,27 @@ ul.tabWidget > li > a {
 
 ul.tabWidget > li.activated {
     background-color: #FFE;
-}
-
-/*
-    Rules
-*/
-
-/*.rules <- Home*/
-
-/*
-    Settings bar
-*/
-
-.toolbar {
-    display: block;
-    padding-bottom: 5px;
-    text-align: center;
-    overflow-x: auto;
-    font-size: 1.2em;
-    position: relative;
-    top: -8px;
-    z-index: 1;
+    border: 1px solid #800000;
 }
 
 .toolbar.sticky {
-    position: fixed;
-    top: 0;
     background-color: #FFE;
-    width: 100%;
-    padding-bottom: 0;
 }
-
-/*
-    Thread
-*/
-
-/*blockquote <- Board*/
-
-blockquote.blockquoteThread {
-    max-height: 800px;
-}
-
-blockquote.blockquoteThread.expand {
-    max-height: none;
-}
-
-.codeBlock {
-    font-family: monospace;
-    white-space: pre;
-    word-break: normal;
-    word-wrap: normal;
-    overflow-wrap: normal;
-    padding-left: 20px !important;
-    overflow-x: auto;
-    max-width: 800px;
-    -ms-hyphens: none;
-    -moz-hyphens: none;
-    -webkit-hyphens: none;
-    hyphens: none;
-}
-
-.codeBlock.mobile {
-    max-width: 300px;
-}
-
-/*span.spoiler, span.spoiler a <- Board*/
-
-/*span.spoiler:hover <- Board*/
-
-/*span.spoiler:hover a <- Board*/
-
-.theMessage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.threadActions {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-/*
-    Thread echo
-*/
-
-.externalThreadFrame {
-    width: 300px;
-    height: 400px;
-    float: right;
-    position: fixed;
-    top: 200px;
-    right: 0;
-    z-index: 9920;
-}
-
-.externalThreadFrame.mobile {
-    width: 120px;
-    height: 240px;
-}
-
-.externalThreadFrame:hover {
-    width: 90%;
-    height: 100%;
-    top: 0;
-}
-
-/*
-    Title
-*/
-
-
-/* Vote */
 
 .vote {
     background-color: #F0D0B6;
 }
 
-/* Settings dialog */
-
-
-/* Playlist */
-
-.track {
-    background-color: #F0E0D6;
+.voteText {
+    font-weight: bold;
 }
 
-.imageCheckBox:checked + label {
-    box-shadow: inset 0 1px 5px #800000;
+.voteCount {
+    font-style: italic;
+}
+
+.chatContactList {
+    border: 1px solid #800000;
 }
 
 .chatContact:hover {
@@ -405,16 +271,81 @@ blockquote.blockquoteThread.expand {
     background: #F0D0B6;
 }
 
+.chatContactNewMessages {
+    color: red;
+}
+
 .chatTarget {
     background-color: #F0E0D6;
 }
 
+.chatHistory {
+    border: 1px solid #800000;
+}
+
 .chatMessage {
     border: 1px solid black;
+    border-radius: 6px;
     background-color: #F0E0D6;
     color: #800000;
 }
 
+.chatMessageDate {
+    border-bottom: 1px dotted black;
+}
+
 .bordered {
     border: 1px solid #F0E0D6;
+}
+
+.submitContainer > input {
+    border-color: #00E;
+}
+
+.hideReason {
+    font-weight: bold;
+}
+
+#player {
+    background-color: #FFE;
+    border: 1px solid #800000;
+}
+
+#player.minimized {
+    background-color: #F0E0D6;
+}
+
+.track {
+    background-color: #F0E0D6;
+    border: 1px solid #800000;
+}
+
+.track:hover {
+    background-color: #DDC;
+}
+
+.track.selected {
+    background-color: #FFE;
+}
+
+.track.selected > .trackInfo,
+.bannedUserHeader,
+.registeredUserHeader {
+    font-weight: bold;
+}
+
+.searchResult {
+    background-color: #F0E0D6;
+}
+
+.searchResultHighlighted {
+    background-color: yellow;
+}
+
+.delallHeader {
+    font-weight: bold;
+}
+
+ul.jqueryFileTree a {
+    color: #800000 !important;
 }

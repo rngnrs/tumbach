@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}}>
-<div class="wrap">
-    <div id="customHeaderPlaceholder" style="display: none;"></div>
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+<body>
+{{#def.header}}
+<div class="wrap" {{#def.baseData}}>
+    {{#def.toolbar}}
     <div class="wrappie">
-        <div class="main">
+        {{#def.customHeader}}
+        <div id="wrapper">
             <div class="theTitle">
                 <h1>
                     {{=it.title}}
@@ -19,7 +20,11 @@
                 <b>{{=it.tr.banBoardLabelText}}</b>
             </td>
             <td>
-                {{=it.ban.boardName}}
+                {{? it.ban.boardName}}
+                    {{=it.ban.boardName}}
+                {{??}}
+                    {{=it.tr.allBoardsText}}
+                {{?}}
             </td>
         </tr>
         <tr>
@@ -34,14 +39,16 @@
                 {{?}}
             </td>
         </tr>
-        <tr>
-            <td>
-                <b>{{=it.tr.banDateTimeLabelText}}</b>
-            </td>
-            <td>
-                {{ out += it.formattedDate(it.ban.createdAt); }}
-            </td>
-        </tr>
+        {{? it.ban.createdAt}}
+            <tr>
+                <td>
+                    <b>{{=it.tr.banDateTimeLabelText}}</b>
+                </td>
+                <td name="formattedDate">
+                    {{ out += it.formattedDate(it.ban.createdAt); }}
+                </td>
+            </tr>
+        {{?}}
         {{? it.ban.reason}}
             <tr>
                 <td>
@@ -52,21 +59,23 @@
                 </td>
             </tr>
         {{?}}
-        {{? it.ban.expiresAt}}
-            <tr>
-                <td>
-                    <b>{{=it.tr.banExpiresLabelText}}</b>
-                </td>
-                <td>
-                    {{ out += it.formattedDate(ban.expiresAt); }}
-                </td>
-            </tr>
-        {{?}}
+        <tr>
+            <td>
+                <b>{{=it.tr.banExpiresLabelText}}</b>
+            </td>
+            <td {{? it.ban.expiresAt}}name="formattedDate"{{?}}>
+                {{? it.ban.expiresAt}}
+                    {{ out += it.formattedDate(it.ban.expiresAt); }}
+                {{??}}
+                    {{=it.tr.banExpiresNeverText}}
+                {{?}}
+            </td>
+        </tr>
     </table>
 </div>
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
 </body>
 </html>

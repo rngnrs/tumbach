@@ -1,68 +1,79 @@
 var Address4 = require("ip-address").Address4;
 var Address6 = require("ip-address").Address6;
 var bigInt = require("big-integer");
+var Crypto = require("crypto");
+var Elasticsearch = require("elasticsearch");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
-var moment = require("moment");
 var Path = require("path");
 var promisify = require("promisify-node");
-var Redis = require("then-redis");
+var Redis = require("ioredis");
 var SQLite3 = require("sqlite3");
 var Util = require("util");
-XML2JS = require("xml2js");
 
 var mkpath = promisify("mkpath");
 
 var Board = require("../boards");
 var BoardModel = require("../models/board");
+var Cache = require("./cache");
 var Captcha = require("../captchas");
 var config = require("./config");
 var controller = require("./controller");
 var Global = require("./global");
 var markup = require("./markup");
+var Permissions = require("./permissions");
 var Tools = require("./tools");
 
 var Ratings = {};
 var RegisteredUserLevels = {};
+var BanLevels = {};
 
-var db = Redis.createClient();
+var db = new Redis({
+    port: config("system.redis.port", 6379),
+    host: config("system.redis.host", "127.0.0.1"),
+    family: config("system.redis.family", 4),
+    password: config("system.redis.password", ""),
+    db: config("system.redis.db", 0)
+});
 var dbGeo = new SQLite3.Database(__dirname + "/../geolocation/ip2location.sqlite");
+var es = new Elasticsearch.Client({ host: config("system.elasticsearch.host", "localhost:9200") });
 
 module.exports.db = db;
+module.exports.es = es;
 
 db.tmp_hmget = db.hmget;
 db.hmget = function(key, hashes) {
     if (!hashes || (Util.isArray(hashes) && hashes.length <= 0))
         return Promise.resolve([]);
-    return db.tmp_hmget.apply(db, [key].concat(hashes));
+    return db.tmp_hmget.apply(db, arguments);
 };
 
 db.tmp_sadd = db.sadd;
 db.sadd = function(key, members) {
-    return db.tmp_sadd.apply(db, [key].concat(members));
+    if (!members || (Util.isArray(members) && members.length <= 0))
+        return Promise.resolve(0);
+    return db.tmp_sadd.apply(db, arguments);
 };
 
 db.tmp_srem = db.srem;
 db.srem = function(key, members) {
-    return db.tmp_srem.apply(db, [key].concat(members));
+    if (!members || (Util.isArray(members) && members.length <= 0))
+        return Promise.resolve(0);
+    return db.tmp_srem.apply(db, arguments);
 };
-
-var rss = {};
-
-Object.defineProperty(module.exports, "rss", {
-    get: function() {
-        return rss;
-    }
-});
 
 Ratings["SafeForWork"] = "SFW";
 Ratings["Rating15"] = "R-15";
 Ratings["Rating18"] = "R-18";
 Ratings["Rating18G"] = "R-18G";
 
+RegisteredUserLevels["Superuser"] = "SUPERUSER";
 RegisteredUserLevels["Admin"] = "ADMIN";
 RegisteredUserLevels["Moder"] = "MODER";
 RegisteredUserLevels["User"] = "USER";
+
+BanLevels["ReadOnly"] = "READ_ONLY";
+BanLevels["NoAccess"] = "NO_ACCESS";
 
 Object.defineProperty(module.exports, "Ratings", { value: Ratings });
 Object.defineProperty(module.exports, "RegisteredUserLevels", { value: RegisteredUserLevels });
@@ -96,28 +107,31 @@ var sortedReferensces = function(references) {
     });
 };
 
-var addPostToIndex = function(post) {
-    var p = Promise.resolve();
-    Tools.forIn(Tools.indexPost(post), function(index, word) {
-        p = p.then(function() {
-            return db.sadd("postSearchIndex:" + word, index.map(function(item) {
-                return JSON.stringify(item);
-            }));
-        });
+var checkPermissions = function(req, board, post, permission, password) {
+    if (req.isSuperuser())
+        return Promise.resolve(true);
+    if (compareRegisteredUserLevels(req.level(board.name), Permissions[permission]()) >= 0) {
+        if (compareRegisteredUserLevels(req.level(board.name), post.user.level) > 0)
+            return Promise.resolve(true);
+        if (req.hashpass && req.hashpass == post.user.hashpass)
+            return Promise.resolve(true);
+        if (password && password == post.user.password)
+            return Promise.resolve(true);
+    }
+    if (!board.opModeration)
+        return Promise.resolve(false);
+    return db.hget("threads:" + board.name, post.threadNumber).then(function(thread) {
+        thread = JSON.parse(thread);
+        if (thread.user.ip != req.ip && (!req.hashpass || req.hashpass != thread.user.hashpass))
+            return Promise.resolve(false);
+        if (compareRegisteredUserLevels(req.level(board.name), post.user.level) >= 0)
+            return Promise.resolve(true);
+        if (req.hashpass && req.hashpass == post.user.hashpass)
+            return Promise.resolve(true);
+        if (password && password == post.user.password)
+            return Promise.resolve(true);
+        return Promise.resolve(false);
     });
-    return p;
-};
-
-var removePostFromIndex = function(post) {
-    var p = Promise.resolve();
-    Tools.forIn(Tools.indexPost(post), function(index, word) {
-        p = p.then(function() {
-            return db.srem("postSearchIndex:" + word, index.map(function(item) {
-                return JSON.stringify(item);
-            }));
-        });
-    });
-    return p;
 };
 
 var threadPostNumbers = function(boardName, threadNumber) {
@@ -208,11 +222,12 @@ var getThreads = function(boardName, options) {
 
 module.exports.getThreads = getThreads;
 
-module.exports.getThread = function(boardName, threadNumber) {
+module.exports.getThread = function(boardName, threadNumber, archived) {
     if (!Tools.contains(Board.boardNames(), boardName))
         return Promise.reject(Tools.translate("Invalid board"));
     var c = {};
-    return db.hget("threads:" + boardName, threadNumber).then(function(thread) {
+    var key = archived ? "archivedThreads" : "threads";
+    return db.hget(key + ":" + boardName, threadNumber).then(function(thread) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         c.thread = JSON.parse(thread);
@@ -352,7 +367,7 @@ var getPost = function(boardName, postNumber, options) {
     }).then(function(banned) {
         c.post.bannedFor = banned;
         return Promise.resolve(c.post);
-    });;
+    });
     if (!opts || (!options.withFileInfos && !options.withReferences && !options.withExtraData))
         return p;
     return p.then(function() {
@@ -362,6 +377,7 @@ var getPost = function(boardName, postNumber, options) {
         var promises = [];
         if (options.withFileInfos) {
             promises.push(postFileInfoNames(boardName, postNumber).then(function(names) {
+                c.names = names;
                 return Promise.all(names.map(function(name) {
                     return db.hget("fileInfos", name);
                 }));
@@ -425,69 +441,295 @@ module.exports.threadPostCount = function(boardName, threadNumber) {
     return db.scard("threadPostNumbers:" + boardName + ":" + threadNumber);
 };
 
-var registeredUser = function(reqOrHashpass) {
-    if (reqOrHashpass && typeof reqOrHashpass == "object" && reqOrHashpass.cookies)
-        reqOrHashpass = Tools.hashpass(reqOrHashpass);
-    if (!reqOrHashpass)
-        return Promise.resolve(null);
-    return db.hget("registeredUsers", reqOrHashpass).then(function(user) {
-        return Promise.resolve(user ? JSON.parse(user) : null);
+var toHashpass = function(password, notHashpass) {
+    if (notHashpass || !Tools.mayBeHashpass(password))
+        password = Tools.sha1(password);
+    return password;
+};
+
+module.exports.addSuperuser = function(password, ips, notHashpass) {
+    if (!password)
+        return Promise.reject(Tools.translate("Invalid password"));
+    var invalidIp;
+    if (Util.isArray(ips)) {
+        invalidIp = ips.some(function(ip, i) {
+            ip = Tools.correctAddress(ip);
+            if (!ip)
+                return true;
+            ips[i] = ip;
+        });
+    }
+    if (invalidIp)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    var hashpass = toHashpass(password, notHashpass);
+    return db.exists("registeredUserLevels:" + hashpass).then(function(result) {
+        if (result)
+            return Promise.reject(Tools.translate("A user with this hashpass is already registered"));
+        return db.sadd("superuserHashes", hashpass);
+    }).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("A user with this hashpass is already registered"));
+        return Tools.series(ips, function(ip) {
+            return db.hset("registeredUserHashes", ip, hashpass).then(function() {
+                return db.sadd("registeredUserIps:" + hashpass, ip);
+            });
+        });
+        return Promise.resolve();
+    });
+};
+
+module.exports.removeSuperuser = function(password, notHashpass) {
+    if (!password)
+        return Promise.reject(Tools.translate("Invalid password"));
+    var hashpass = toHashpass(password, notHashpass);
+    return db.srem("superuserHashes", hashpass).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("No user with this hashpass"));
+    }).then(function() {
+        return db.smembers("registeredUserIps:" + hashpass);
+    }).then(function(ips) {
+        if (!ips)
+            return Promise.resolve();
+        return Tools.series(ips, function(ip) {
+            return db.hdel("registeredUserHashes", ip);
+        });
+    }).then(function() {
+        return db.del("registeredUserIps:" + hashpass);
+    }).then(function() {
+        return Promise.resolve();
+    });
+};
+
+module.exports.registerUser = function(password, levels, ips, notHashpass) {
+    if (!password)
+        return Promise.reject(Tools.translate("Invalid password"));
+    var hashpass = toHashpass(password, notHashpass);
+    if (!Tools.hasOwnProperties(levels))
+        return Promise.reject(Tools.translate("Access level is not specified for any board"));
+    var invalidBoard = Object.keys(levels).some(function(boardName) {
+        if (!Board.board(boardName))
+            return true;
+    });
+    if (invalidBoard)
+        return Promise.reject(Tools.translate("Invalid board"));
+    var invalidLevel = Tools.toArray(levels).some(function(level) {
+        if (compareRegisteredUserLevels(level, RegisteredUserLevels.User) < 0
+            || compareRegisteredUserLevels(level, RegisteredUserLevels.Superuser) >= 0) {
+            return true;
+        }
+    });
+    if (invalidLevel)
+        return Promise.reject(Tools.translate("Invalid access level"));
+    var invalidIp;
+    if (Util.isArray(ips)) {
+        invalidIp = ips.some(function(ip, i) {
+            ip = Tools.correctAddress(ip);
+            if (!ip)
+                return true;
+            ips[i] = ip;
+        });
+    }
+    if (invalidIp)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    return db.exists("registeredUserLevels:" + hashpass).then(function(result) {
+        if (result)
+            return Promise.reject(Tools.translate("A user with this hashpass is already registered"));
+        return db.sismember("superuserHashes", hashpass);
+    }).then(function(result) {
+        if (result)
+            return Promise.reject(Tools.translate("A user with this hashpass is already registered as superuser"));
+        return db.hmset("registeredUserLevels:" + hashpass, levels);
+    }).then(function() {
+        if (!Util.isArray(ips))
+            return Promise.resolve();
+        return Tools.series(ips, function(ip) {
+            return db.hset("registeredUserHashes", ip, hashpass).then(function() {
+                return db.sadd("registeredUserIps:" + hashpass, ip);
+            });
+        });
+    }).then(function() {
+        return Promise.resolve(hashpass);
+    });
+};
+
+module.exports.unregisterUser = function(hashpass) {
+    if (!hashpass || !Tools.mayBeHashpass(hashpass))
+        return Promise.reject(Tools.translate("Invalid hashpass"));
+    return db.del("registeredUserLevels:" + hashpass).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("No user with this hashpass"));
+        return db.smembers("registeredUserIps:" + hashpass);
+    }).then(function(ips) {
+        if (!ips)
+            return Promise.resolve();
+        return Tools.series(ips, function(ip) {
+            return db.hdel("registeredUserHashes", ip);
+        });
+    }).then(function() {
+        return db.del("registeredUserIps:" + hashpass);
+    }).then(function() {
+        return Promise.resolve();
+    });
+};
+
+module.exports.updateRegisteredUser = function(hashpass, levels, ips, notHashpass) {
+    if (!hashpass || !Tools.mayBeHashpass(hashpass))
+        return Promise.reject(Tools.translate("Invalid hashpass"));
+    if (!Tools.hasOwnProperties(levels))
+        return Promise.reject(Tools.translate("Access level is not specified for any board"));
+    var invalidBoard = Object.keys(levels).some(function(boardName) {
+        if (!Board.board(boardName))
+            return true;
+    });
+    if (invalidBoard)
+        return Promise.reject(Tools.translate("Invalid board"));
+    var invalidLevel = Tools.toArray(levels).some(function(level) {
+        if (compareRegisteredUserLevels(level, RegisteredUserLevels.User) < 0
+            || compareRegisteredUserLevels(level, RegisteredUserLevels.Superuser) >= 0) {
+            return true;
+        }
+    });
+    if (invalidLevel)
+        return Promise.reject(Tools.translate("Invalid access level"));
+    var invalidIp;
+    if (Util.isArray(ips)) {
+        invalidIp = ips.some(function(ip, i) {
+            ip = Tools.correctAddress(ip);
+            if (!ip)
+                return true;
+            ips[i] = ip;
+        });
+    }
+    if (invalidIp)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    return db.del("registeredUserLevels:" + hashpass).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("No user with this hashpass"));
+        return db.hmset("registeredUserLevels:" + hashpass, levels);
+    }).then(function() {
+        return db.smembers("registeredUserIps:" + hashpass);
+    }).then(function(ips) {
+        if (!ips)
+            return Promise.resolve();
+        return Tools.series(ips, function(ip) {
+            return db.hdel("registeredUserHashes", ip);
+        });
+    }).then(function() {
+        return db.del("registeredUserIps:" + hashpass);
+    }).then(function() {
+        if (!Util.isArray(ips))
+            return Promise.resolve();
+        return Tools.series(ips, function(ip) {
+            return db.hset("registeredUserHashes", ip, hashpass).then(function() {
+                return db.sadd("registeredUserIps:" + hashpass, ip);
+            });
+        });
+    }).then(function() {
+        return Promise.resolve();
+    });
+};
+
+var registeredUser = function(hashpass) {
+    var user = { hashpass: hashpass };
+    return db.hgetall("registeredUserLevels:" + hashpass).then(function(levels) {
+        if (!levels || !Tools.hasOwnProperties(levels))
+            return Promise.reject(Tools.translate("No user with this hashpass"));
+        user.levels = levels;
+        return db.smembers("registeredUserIps:" + hashpass);
+    }).then(function(ips) {
+        user.ips = ips || [];
+        return Promise.resolve(user);
     });
 };
 
 module.exports.registeredUser = registeredUser;
 
-module.exports.registerUser = function(hashpass, level, boardNames, ips) {
-    return db.hset("registeredUsers", hashpass, JSON.stringify({
-        hashpass: hashpass,
-        level: level,
-        boardNames: boardNames,
-        createdAt: Tools.now().toISOString()
-    })).then(function() {
-        var promises = ips.map(function(ip) {
-            var address = Tools.correctAddress(ip);
-            if (!address)
-                return Promise.reject(Tools.translate("Invalid IP address"));
-            return db.hset("registeredUserHashes", address, hashpass);
+module.exports.registeredUsers = function() {
+    var users = [];
+    return db.keys("registeredUserLevels:*").then(function(keys) {
+        return Tools.series(keys.map(function(key) {
+            return key.split(":")[1];
+        }), function(hashpass) {
+            return registeredUser(hashpass).then(function(user) {
+                users.push(user);
+                return Promise.resolve();
+            });
         });
-        return Promise.resolve(promises);
+    }).then(function() {
+        return Promise.resolve(users);
     });
 };
 
-var registeredUserLevel = function(reqOrHashpass) {
-    return module.exports.registeredUser(reqOrHashpass).then(function(user) {
-        if (!user)
-            return null;
-        return user.level;
+var registeredUserLevel = function(password, boardName, notHashpass) {
+    if (!password)
+        return Promise.reject(Tools.translate("Invalid password"));
+    if (!Board.board(boardName))
+        return Promise.reject(Tools.translate("Invalid board"));
+    var hashpass = toHashpass(password, notHashpass);
+    return db.sismember("superuserHashes", hashpass).then(function(result) {
+        if (!result)
+            return db.hgetall("registeredUserLevels:" + hashpass);
+        return Promise.resolve({ boardName: RegisteredUserLevels.Superuser });
+    }).then(function(levels) {
+        levels = levels || {};
+        return Promise.resolve(levels[boardName] || null);
     });
 };
 
 module.exports.registeredUserLevel = registeredUserLevel;
 
-module.exports.registeredUserBoards = function(reqOrHashpass) {
-    return module.exports.registeredUser(reqOrHashpass).then(function(user) {
-        if (!user)
-            return null;
-        return user.boardNames;
+var registeredUserLevelByIp = function(ip, boardName) {
+    ip = Tools.correctAddress(ip);
+    if (!ip)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    return db.hget("registeredUserHashes", ip).then(function(hashpass) {
+        if (!hashpass)
+            return Promise.resolve(null);
+        return registeredUserLevel(hashpass, boardName);
     });
 };
 
-module.exports.moderOnBoard = function(reqOrHashpass, boardName1, boardName2) {
-    return module.exports.registeredUser(reqOrHashpass).then(function(user) {
-        if (!user)
-            return false;
-        if (user.level < RegisteredUserLevels.Moder)
-            return false;
-        if (user.level >= RegisteredUserLevels.Admin)
-            return true;
-        var boardNames = user.boardNames;
-        if (Tools.contains(boardNames, "*"))
-            return true;
-        if (Tools.contains(boardNames, boardName1))
-            return true;
-        if (boardName2 && Tools.contains(boardNames, boardName2))
-            return true;
-        return false;
+module.exports.registeredUserLevelByIp = registeredUserLevelByIp;
+
+var registeredUserLevels = function(reqOrHashpass) {
+    if (reqOrHashpass && typeof reqOrHashpass == "object" && reqOrHashpass.cookies)
+        reqOrHashpass = Tools.hashpass(reqOrHashpass);
+    if (!reqOrHashpass)
+        return Promise.resolve(null);
+    return db.sismember("superuserHashes", reqOrHashpass).then(function(result) {
+        if (!result)
+            return db.hgetall("registeredUserLevels:" + reqOrHashpass);
+        return Promise.resolve(Board.boardNames().reduce(function(acc, boardName) {
+            acc[boardName] = RegisteredUserLevels.Superuser;
+            return acc;
+        }, {}));
+    }).then(function(levels) {
+        return Promise.resolve(levels || {});
+    });
+};
+
+module.exports.registeredUserLevels = registeredUserLevels;
+
+var registeredUserLevelsByIp = function(ip) {
+    ip = Tools.correctAddress(ip);
+    if (!ip)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    return db.hget("registeredUserHashes", ip).then(function(hashpass) {
+        if (!hashpass)
+            return Promise.resolve({});
+        return registeredUserLevels(hashpass);
+    });
+};
+
+module.exports.registeredUserLevelsByIp = registeredUserLevelsByIp;
+
+module.exports.registeredUserIps = function(reqOrHashpass) {
+    if (reqOrHashpass && typeof reqOrHashpass == "object" && reqOrHashpass.cookies)
+        reqOrHashpass = Tools.hashpass(reqOrHashpass);
+    if (!reqOrHashpass)
+        return Promise.resolve(null);
+    return db.smembers("registeredUserIps:" + reqOrHashpass).then(function(ips) {
+        return Promise.resolve(ips || []);
     });
 };
 
@@ -504,7 +746,8 @@ var lastPostNumber = function(boardName) {
 module.exports.lastPostNumber = lastPostNumber;
 
 var nextPostNumber = function(boardName, incrby) {
-    if (!Tools.contains(Board.boardNames(), boardName))
+    var board = Board.board(boardName);
+    if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
     incrby = +incrby;
     if (isNaN(incrby) || incrby < 1)
@@ -512,6 +755,8 @@ var nextPostNumber = function(boardName, incrby) {
     return db.hincrby("postCounters", boardName, incrby).then(function(number) {
         if (!number)
             return 0;
+        if (1 == incrby && board.skippedGetOrder > 0 && !(number % Math.pow(10, board.skippedGetOrder)))
+            return nextPostNumber(boardName, incrby);
         return number;
     });
 };
@@ -564,12 +809,13 @@ var processFile = function(board, file, transaction) {
                     dimensions: fileInfo.dimensions,
                     extraData: fileInfo.extraData,
                     hash: fileInfo.hash,
+                    ihash: fileInfo.ihash || null,
                     mimeType: fileInfo.mimeType,
                     name: fn.name,
                     rating: file.rating,
                     size: fileInfo.size,
                     thumb: {
-                        dimensions: fileInfo.thumb,
+                        dimensions: fileInfo.thumb.dimensions,
                         name: fn.thumbName
                     }
                 };
@@ -591,6 +837,7 @@ var processFile = function(board, file, transaction) {
                     dimensions: file.dimensions,
                     extraData: file.extraData,
                     hash: file.hash,
+                    ihash: file.ihash || null,
                     mimeType: file.mimeType,
                     name: fn.name,
                     rating: file.rating,
@@ -682,7 +929,7 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
     if (!board.postingEnabled)
-        return Promise.reject(Tools.translate("Posting is disabled on this board"));
+        return Promise.reject(Tools.translate("Posting is disabled at this board"));
     date = date || Tools.now();
     var c = {};
     if (threadNumber)
@@ -692,7 +939,7 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
     var rawText = (fields.text || null);
     var markupModes = [];
     var referencedPosts = {};
-    var password = Tools.password(fields.password);
+    var password = Tools.sha1(fields.password);
     var hashpass = (req.hashpass || null);
     var ip = (req.ip || null);
     Tools.forIn(markup.MarkupModes, function(val) {
@@ -710,22 +957,20 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
         if (threads[0].closed)
             return Promise.reject(Tools.translate("Posting is disabled in this thread"));
         c.unbumpable = !!threads[0].unbumpable;
-        c.level = req.level || null;
-        c.isRaw = !!fields.raw && compareRegisteredUserLevels(c.level, RegisteredUserLevels.Admin) >= 0;
+        c.level = req.level(board.name) || null;
         return db.scard("threadPostNumbers:" + board.name + ":" + threadNumber);
     }).then(function(postCount) {
         c.postCount = postCount;
         if (c.postCount >= board.postLimit)
             return Promise.reject(Tools.translate("Post limit reached"));
-        if (c.isRaw)
-            return rawText;
         return markup(board.name, rawText, {
             markupModes: markupModes,
-            referencedPosts: referencedPosts
+            referencedPosts: referencedPosts,
+            accessLevel: c.level
         });
     }).then(function(text) {
         c.text = text;
-        return board.postExtraData(req, fields, files)
+        return board.postExtraData(req, fields, files);
     }).then(function(extraData) {
         c.extraData = !Util.isNullOrUndefined(extraData) ? extraData : null;
         return getGeolocationInfo(ip);
@@ -741,19 +986,19 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
             bannedFor: false,
             boardName: board.name,
             createdAt: date.toISOString(),
-            email: (fields.email || null),
+            email: fields.email || null,
             geolocation: c.geo,
             markup: markupModes,
-            name: (fields.name || null),
+            name: fields.name || null,
             number: c.postNumber,
             options: {
-                rawHtml: c.isRaw,
-                showTripcode: !!req.hashpass && !!fields.tripcode,
+                showTripcode: !!req.hashpass && ("true" == fields.tripcode),
                 signAsOp: ("true" == fields.signAsOp)
             },
             rawText: rawText,
-            subject: (fields.subject || null),
-            text: (c.text || null),
+            subject: fields.subject || null,
+            text: c.text || null,
+            plainText: (c.text ? Tools.plainText(c.text, { brToNewline: true }) : null),
             threadNumber: threadNumber,
             updatedAt: null,
             user: {
@@ -784,12 +1029,17 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
     }).then(function() {
         return addFileHashes(files);
     }).then(function() {
-        return addPostToIndex({
-            boardName: board.name,
-            number: c.postNumber,
-            rawText: rawText,
-            subject: (fields.subject || null)
-        });
+        return es.index({
+            index: "ololord.js",
+            type: "posts",
+            id: board.name + ":" + c.postNumber,
+            body: {
+                plainText: c.post.plainText,
+                subject: c.post.subject,
+                boardName: board.name,
+                threadNumber: c.post.threadNumber
+            }
+        })
     }).then(function() {
         return db.sadd("threadPostNumbers:" + board.name + ":" + threadNumber, c.postNumber);
     }).then(function() {
@@ -827,8 +1077,8 @@ var checkCaptcha = function(req, fields) {
             return false;
         };
         if (!ceid || !isSupported(ceid)) {
-            if (isSupported("google-recaptcha"))
-                ceid = "google-recaptcha";
+            if (isSupported("node-captcha"))
+                ceid = "node-captcha";
             else
                 ceid = supportedCaptchaEngines[0].id;
         }
@@ -858,21 +1108,21 @@ module.exports.createPost = function(req, fields, files, transaction) {
     });
 };
 
-var rerenderReferringPosts = function(boardName, postNumber) {
-    return db.hgetall("referringPosts:" + boardName + ":" + postNumber).then(function(referringPosts) {
-        var p = Promise.resolve();
-        Tools.forIn(referringPosts, function(ref) {
+var rerenderReferringPosts = function(post, options) {
+    return db.hgetall("referringPosts:" + post.boardName + ":" + post.number).then(function(referringPosts) {
+        return Tools.series(referringPosts, function(ref) {
             ref = JSON.parse(ref);
-            p = p.then(function() {
-                return rerenderPost(ref.boardName, ref.postNumber, true);
-            });
+            if (options && options.removingThread
+                    && ref.boardName == post.boardName && ref.threadNumber == post.threadNumber) {
+                return Promise.resolve();
+            }
+            return rerenderPost(ref.boardName, ref.postNumber, true);
         });
-        return p;
     });
 };
 
-var removeReferencedPosts = function(boardName, postNumber, nogenerate) {
-    var key = boardName + ":" + postNumber;
+var removeReferencedPosts = function(post, nogenerate) {
+    var key = post.boardName + ":" + post.number;
     var c = {};
     return db.hgetall("referencedPosts:" + key).then(function(referencedPosts) {
         c.referencedPosts = {};
@@ -886,7 +1136,8 @@ var removeReferencedPosts = function(boardName, postNumber, nogenerate) {
     }).then(function() {
         if (!nogenerate) {
             Tools.forIn(c.referencedPosts, function(ref, refKey) {
-                Global.generate(ref.boardName, ref.threadNumber, ref.postNumber, "edit");
+                if (ref.boardName != post.boardName || ref.threadNumber != post.threadNumber)
+                    Global.generate(ref.boardName, ref.threadNumber, ref.postNumber, "edit");
             });
         }
         return db.del("referencedPosts:" + key);
@@ -902,7 +1153,8 @@ var addReferencedPosts = function(post, referencedPosts, nogenerate) {
     return Promise.all(promises).then(function() {
         if (!nogenerate) {
             Tools.forIn(referencedPosts, function(ref, refKey) {
-                Global.generate(ref.boardName, ref.threadNumber, ref.postNumber, "edit");
+                if (ref.boardName != post.boardName || ref.threadNumber != post.threadNumber)
+                    Global.generate(ref.boardName, ref.threadNumber, ref.postNumber, "edit");
             });
         }
         var promises = [];
@@ -918,7 +1170,7 @@ var addReferencedPosts = function(post, referencedPosts, nogenerate) {
     });
 };
 
-var removePost = function(boardName, postNumber, leaveFileInfos) {
+var removePost = function(boardName, postNumber, options) {
     var board = Board.board(boardName);
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
@@ -931,11 +1183,15 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
     }).then(function() {
         return db.hdel("posts", boardName + ":" + postNumber);
     }).then(function() {
-        return rerenderReferringPosts(boardName, postNumber);
+        if (options && options.leaveReferences)
+            return Promise.resolve();
+        return rerenderReferringPosts(c.post, { removingThread: options && options.removingThread });
     }).catch(function(err) {
         Global.error(err);
     }).then(function() {
-        return removeReferencedPosts(boardName, postNumber);
+        if (options && options.leaveReferences)
+            return Promise.resolve();
+        return removeReferencedPosts(c.post);
     }).catch(function(err) {
         Global.error(err);
     }).then(function() {
@@ -948,7 +1204,7 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
             return db.hget("fileInfos", name);
         }));
     }).then(function(fileInfos) {
-        if (leaveFileInfos)
+        if (options && options.leaveFileInfos)
             return Promise.resolve();
         c.fileInfos = [];
         c.paths = [];
@@ -962,26 +1218,25 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
         });
         return db.del("postFileInfoNames:" + boardName + ":" + postNumber);
     }).then(function() {
-        if (leaveFileInfos)
+        if (options && options.leaveFileInfos)
             return Promise.resolve();
         return Promise.all(c.fileInfoNames.map(function(name) {
             return db.hdel("fileInfos", name);
         }));
     }).then(function() {
-        if (leaveFileInfos)
+        if (options && options.leaveFileInfos)
             return Promise.resolve();
         return removeFileHashes(c.fileInfos);
     }).then(function() {
         return board.removeExtraData(postNumber);
     }).then(function() {
-        return removePostFromIndex({
-            boardName: boardName,
-            number: postNumber,
-            rawText: c.post.rawText,
-            subject: c.post.subject
+        return es.delete({
+            index: "ololord.js",
+            type: "posts",
+            id: boardName + ":" + postNumber
         });
     }).then(function() {
-        if (!leaveFileInfos) {
+        if (!options || !options.leaveFileInfos) {
             c.paths.forEach(function(path) {
                 return FS.remove(path).catch(function(err) {
                     Global.error(err.stack || err);
@@ -994,8 +1249,8 @@ var removePost = function(boardName, postNumber, leaveFileInfos) {
 
 module.exports.removePost = removePost;
 
-var removeThread = function(boardName, threadNumber, archived, leaveFileInfos) {
-    var key = (archived ? "archivedThreads:" : "threads:") + boardName;
+var removeThread = function(boardName, threadNumber, options) {
+    var key = ((options && options.archived) ? "archivedThreads:" : "threads:") + boardName;
     return db.sadd("threadsPlannedForDeletion", boardName + ":" + threadNumber).then(function() {
         return db.hdel(key, threadNumber);
     }).then(function() {
@@ -1007,13 +1262,13 @@ var removeThread = function(boardName, threadNumber, archived, leaveFileInfos) {
                 c.postNumbers = result;
                 return db.del("threadPostNumbers:" + boardName + ":" + threadNumber);
             }).then(function() {
-                var p = Promise.resolve();
-                c.postNumbers.forEach(function(postNumber) {
-                    p = p.then(function() {
-                        return removePost(boardName, postNumber, leaveFileInfos);
+                return Tools.series(c.postNumbers, function(postNumber) {
+                    return removePost(boardName, postNumber, {
+                        leaveFileInfos: options && options.leaveFileInfos,
+                        leaveReferences: options && options.leaveReferences,
+                        removingThread: true
                     });
                 });
-                return p;
             }).then(function() {
                 return db.srem("threadsPlannedForDeletion", boardName + ":" + threadNumber);
             }).catch(function(err) {
@@ -1031,15 +1286,12 @@ module.exports.createThread = function(req, fields, files, transaction) {
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
     if (!board.postingEnabled)
-        return Promise.reject(Tools.translate("Posting is disabled on this board"));
+        return Promise.reject(Tools.translate("Posting is disabled at this board"));
     var c = {};
     var date = Tools.now();
     var hashpass = req.hashpass || null;
-    var password = Tools.password(fields.password);
+    var password = Tools.sha1(fields.password);
     return checkCaptcha(req, fields).then(function() {
-        return registeredUserLevel(hashpass);
-    }).then(function(level) {
-        c.level = level;
         return getThreads(board.name);
     }).then(function(threads) {
         c.threads = threads;
@@ -1051,17 +1303,38 @@ module.exports.createThread = function(req, fields, files, transaction) {
             c.archivedThreads.sort(Board.sortThreadsByDate);
             if (c.archivedThreads.length <= 0 || c.archivedThreads.length < board.archiveLimit)
                 return Promise.resolve();
-            return removeThread(board.name, c.archivedThreads.pop().number, true);
+            return removeThread(board.name, c.archivedThreads.pop().number, { archived: true });
         }).then(function() {
             c.thread = c.threads.pop();
             if (board.archiveLimit <= 0)
                 return removeThread(board.name, c.thread.number);
-            return db.hdel("threads:" + board.name, c.thread.number);
-        }).then(function() {
-            if (board.archiveLimit <= 0)
+            return db.hdel("threads:" + board.name, c.thread.number).then(function() {
+                c.thread.archived = true;
+                return db.hset("archivedThreads:" + board.name, c.thread.number, JSON.stringify(c.thread));
+            }).then(function() {
+                c.archPath = `${__dirname}/../public/${board.name}/arch`;
+                //NOTE: Yep, no return here for the sake of speed
+                var oldThreadNumber = c.thread.number;
+                mkpath(c.archPath).then(function() {
+                    c.sourceId = `thread-${board.name}-${oldThreadNumber}`;
+                    return Cache.getJSON(c.sourceId);
+                }).then(function(data) {
+                    c.model = JSON.parse(data.data);
+                    c.model.thread.archived = true;
+                    return Tools.writeFile(`${c.archPath}/${oldThreadNumber}.json`, JSON.stringify(c.model));
+                }).then(function() {
+                    return BoardModel.generateThreadHTML(board, oldThreadNumber, c.model, true);
+                }).then(function(data) {
+                    return Tools.writeFile(`${c.archPath}/${oldThreadNumber}.html`, data);
+                }).then(function() {
+                    return Cache.removeJSON(c.sourceId);
+                }).then(function() {
+                    return Cache.removeHTML(c.sourceId);
+                }).catch(function(err) {
+                    Global.error(err);
+                });
                 return Promise.resolve();
-            c.thread.archived = true;
-            return db.hset("archivedThreads:" + board.name, c.thread.number, JSON.stringify(c.thread));
+            });
         });
     }).then(function() {
         return nextPostNumber(board.name);
@@ -1078,7 +1351,7 @@ module.exports.createThread = function(req, fields, files, transaction) {
             user: {
                 hashpass: hashpass,
                 ip: (req.ip || null),
-                level: c.level,
+                level: req.level(board.name),
                 password: password
             }
         };
@@ -1096,50 +1369,22 @@ module.exports.createThread = function(req, fields, files, transaction) {
     });
 };
 
-module.exports.compareRatings = function(r1, r2) {
-    if (["SFW", "R-15", "R-18", "R-18G"].indexOf(r2) < 0)
-        throw "Invalid rating r2: " + r2;
-    switch (r1) {
-    case "SFW":
-        return (r1 == r2) ? 0 : -1;
-    case "R-15":
-        if (r1 == r2)
-            return 0;
-        return ("SFW" == r2) ? 1 : -1;
-    case "R-18":
-        if (r1 == r2)
-            return 0;
-        return ("R-18G" == r2) ? -1 : 1;
-    case "R-18G":
-        return (r1 == r2) ? 0 : 1;
-    default:
-        throw "Invalid rating r1: " + r1;
-    }
-};
+var userLevels = [
+    "USER",
+    "MODER",
+    "ADMIN",
+    "SUPERUSER"
+];
 
 var compareRegisteredUserLevels = function(l1, l2) {
-    if (!l1)
-        l1 = null;
-    if (!l2)
-        l2 = null;
-    if (["ADMIN", "MODER", "USER", null].indexOf(l2) < 0)
-        throw "Invalid registered user level l2: " + l2;
-    switch (l1) {
-    case "ADMIN":
-        return (l1 == l2) ? 0 : 1;
-    case "MODER":
-        if (l1 == l2)
-            return 0;
-        return ("ADMIN" == l2) ? -1 : 1;
-    case "USER":
-        if (l1 == l2)
-            return 0;
-        return (null == l2) ? 1 : -1;
-    case null:
-        return (l1 == l2) ? 0 : -1;
-    default:
-        throw "Invalid reistered user level l1: " + l1;
-    }
+    l1 = userLevels.indexOf(l1);
+    l2 = userLevels.indexOf(l2);
+    if (l1 < l2)
+        return -1;
+    else if (l1 > l2)
+        return 1;
+    else
+        return 0;
 };
 
 module.exports.compareRegisteredUserLevels = compareRegisteredUserLevels;
@@ -1207,212 +1452,45 @@ Transaction.prototype.rollback = function() {
 
 module.exports.Transaction = Transaction;
 
-module.exports.generateRss = function() {
-    var site = {
-        protocol: config("site.protocol", "http"),
-        domain: config("site.domain", "localhost:8080"),
-        pathPrefix: config("site.pathPrefix", ""),
-        locale: config("site.locale", "en"),
-        dateFormat: config("site.dateFormat", "MM/DD/YYYY hh:mm:ss")
-    };
-    var rssPostCount = config("server.rss.postCount", 500);
-    Board.boardNames().forEach(function(boardName) {
-        var board = Board.board(boardName);
-        var title = Tools.translate("Feed", "channelTitle") + " " + site.domain + "/" + site.pathPrefix + boardName;
-        var link = site.protocol + "://" + site.domain + "/" + site.pathPrefix + boardName;
-        var description = Tools.translate("Last posts from board", "channelDescription") + " /" + boardName + "/";
-        var atomLink = site.protocol + "://" + site.domain + "/" + site.pathPrefix + boardName + "/rss.xml";
-        var posts = [];
-        var c = {};
-        var f = function() {
-            if (posts.length >= rssPostCount || c.threads.length < 1)
-                return Promise.resolve();
-            return threadPosts(boardName, c.threads.shift().number, {
-                limit: (rssPostCount - posts.length),
-                withFileInfos: true
-            }).then(function(result) {
-                posts = posts.concat(result);
-                return f();
-            });
-        };
-        var doc = {
-            $: {
-                version: "2.0",
-                "xmlns:dc": "http://purl.org/dc/elements/1.1/",
-                "xmlns:atom": "http://www.w3.org/2005/Atom"
-            },
-            channel: {
-                title: title,
-                link: link,
-                description: description,
-                language: site.locale,
-                pubDate: moment(Tools.now()).utc().locale("en").format("ddd, DD MMM YYYY hh:mm:ss +0000"),
-                ttl: ("" + config("server.rss.ttl", 60)),
-                "atom:link": {
-                    $: {
-                        href: atomLink,
-                        rel: "self",
-                        type: "application/rss+xml"
-                    }
-                }
-            }
-        };
-        getThreads(boardName).then(function(threads) {
-            threads.sort(Board.sortThreadsByDate);
-            c.threads = threads;
-            return f();
-        }).then(function() {
-            doc.channel.item = posts.map(function(post) {
-                var title;
-                var isOp = post.number == post.threadNumber;
-                if (isOp)
-                    title = "[" + Tools.translate("New thread", "itemTitle") + "]";
-                else
-                    title = Tools.translate("Reply to thread", "itemTitle");
-                title += " ";
-                if (!post.subject && post.rawText)
-                    post.subject = post.rawText.substr(0, 150);
-                if (post.subject) {
-                    if (!isOp)
-                        title += "\"";
-                    title += post.subject;
-                    if (!isOp)
-                        title += "\"";
-                } else {
-                    title += post.number;
-                }
-                var link = site.protocol + "://" + site.domain + "/" + site.pathPrefix + boardName + "/res/"
-                    + post.threadNumber + ".html";
-                var description = "\n" + post.fileInfos.map(function(fileInfo) {
-                    return"<img src=\"" + site.protocol + "://" + site.domain + "/" + site.pathPrefix + boardName
-                        + "/thumb/" + fileInfo.thumb.name + "\"><br />";
-                }) + (post.text || "") + "\n";
-                return {
-                    title: title,
-                    link: link,
-                    description: description,
-                    pubDate: moment(post.createdAt).utc().locale("en").format("ddd, DD MMM YYYY hh:mm:ss +0000"),
-                    guid: {
-                        _: link + "#" + post.number,
-                        $: { isPermalink: true }
-                    },
-                    "dc:creator": (post.name || board.defaultUserName)
-                };
-            });
-        }).then(function() {
-            var builder = new XML2JS.Builder({
-                rootName: "rss",
-                renderOpts: {
-                    pretty: true,
-                    indent: "    ",
-                    newline: "\n"
-                },
-                cdata: true
-            });
-            rss[boardName] = builder.buildObject(doc);
-        });
-    });
-};
-
-var findPhrase = function(phrase, boardName) {
-    var results = [];
-    var p = Promise.resolve();
-    Tools.getWords(phrase).forEach(function(word) {
-        p = p.then(function() {
-            return db.smembers("postSearchIndex:" + word.word);
-        }).then(function(result) {
-            results.push(result.map(function(post) {
-                return JSON.parse(post);
-            }).filter(function(post) {
-                return !boardName || (post.boardName == boardName);
-            }));
-            return Promise.resolve();
-        });
-    });
-    var f = function(chain, ind) {
-        if (!Util.isArray(chain))
-            chain = [chain];
-        ind = ind || 0;
-        var lastPost = chain[chain.length - 1];
-        if (ind > 0) {
-            var nextChain = [];
-            for (var i = 0; i < results[ind].length; ++i) {
-                var post = results[ind][i];
-                if (post.boardName != lastPost.boardName || post.number != lastPost.number
-                    || post.source != lastPost.source || post.position != (lastPost.position + 1)) {
-                    continue;
-                }
-                if (ind < (results.length - 1))
-                    nextChain = f(chain.concat(post), ind + 1);
-                else
-                    nextChain = chain.concat(post);
-                if (nextChain.length > 0)
-                    break;
-            }
-            return nextChain;
-        } else {
-            if (1 == results.length)
-                return [lastPost];
-            return f(chain, ind + 1);
+var mapPhrase = function(phrase) {
+    return {
+        bool: {
+            should: [
+                { match_phrase: { plainText: phrase } },
+                { match_phrase: { subject: phrase } }
+            ]
         }
     };
-    return p.then(function() {
-        if (results.length < 1)
-            return {};
-        return results[0].map(function(result) {
-            return f(result);
-        }).filter(function(chain) {
-            return chain.length > 0;
-        }).reduce(function(map, chain) {
-            var post = chain[0];
-            map[post.boardName + ":" + post.postNumber] = post;
-            return map;
-        }, {});
-    });
 };
 
 module.exports.findPosts = function(query, boardName) {
-    var c = {};
-    var promises = query.possiblePhrases.map(function(phrase) {
-        return findPhrase(phrase, boardName).then(function(m) {
-            c.map = Tools.sum(c.map || {}, m);
-        });
-    });
-    return Promise.all(promises).then(function() {
-        var promises = query.requiredPhrases.map(function(phrase) {
-            return findPhrase(phrase, boardName).then(function(m) {
-                c.map = Tools.intersection(c.map, m);
-            });
-        });
-        return Promise.all(promises);
-    }).then(function() {
-        var promises = query.excludedPhrases.map(function(phrase) {
-            return findPhrase(phrase, boardName).then(function(m) {
-                c.map = Tools.complement(c.map, m);
-            });
-        });
-        return Promise.all(promises);
-    }).then(function() {
-        var keys = Tools.toArray(c.map).slice(0, config("system.searchLimit", 100)).sort(function(p1, p2) {
-            if (p1.boardName < p2.boardName)
-                return -1;
-            else if (p1.boardName > p2.boardName)
-                return 1;
-            if (p1.postNumber < p2.postNumber)
-                return -1;
-            else if (p1.postNumber > p2.postNumber)
-                return 1;
-            else
-                return 0;
-        }).map(function(post) {
-            return post.boardName + ":" + post.postNumber;
-        });
-        if (keys.length < 1)
-            return Promise.resolve([]);
-        return db.hmget("posts", keys);
-    }).then(function(posts) {
-        return posts.map(function(post) {
-            return JSON.parse(post);
+    var q = { bool: {} };
+    if (query.requiredPhrases && query.requiredPhrases.length > 0)
+        q.bool.must = query.requiredPhrases.map(mapPhrase);
+    if (boardName)
+        q.bool.must = (q.bool.must || []).concat({ match_phrase: { boardName: boardName } });
+    if (query.excludedPhrases && query.excludedPhrases.length > 0)
+        q.bool.must_not = query.excludedPhrases.map(mapPhrase);
+    if (query.possiblePhrases && query.possiblePhrases.length > 0) {
+        if (query.requiredPhrases && query.requiredPhrases.length > 0)
+            q.bool.should = query.possiblePhrases.map(mapPhrase);
+        else
+            q.bool.must = (q.bool.must || []).concat({ bool: { should: query.possiblePhrases.map(mapPhrase) } });
+    }
+    return es.search({
+        index: "ololord.js",
+        type: "posts",
+        size: config("system.searchLimit", 100),
+        body: { query: q }
+    }).then(function(result) {
+        return result.hits.hits.map(function(hit) {
+            return {
+                boardName: hit._id.split(":").shift(),
+                number: +hit._id.split(":").pop(),
+                threadNumber: +hit._source.threadNumber,
+                plainText: hit._source.plainText,
+                subject: hit._source.subject
+            };
         });
     });
 };
@@ -1463,18 +1541,16 @@ var rerenderPost = function(boardName, postNumber, silent) {
     var referencedPosts = {};
     return getPost(boardName, postNumber).then(function(post) {
         c.post = post;
-        if (c.post.rawHtml)
-            return Promise.resolve();
         return markup(c.post.boardName, c.post.rawText, {
             markupModes: c.post.markup,
-            referencedPosts: referencedPosts
+            referencedPosts: referencedPosts,
+            accessLevel: c.post.user.level
         });
     }).then(function(text) {
-        if (!c.post.options.rawHtml)
-            c.post.text = text;
+        c.post.text = text;
         return db.hset("posts", key, JSON.stringify(c.post));
     }).then(function() {
-        return removeReferencedPosts(boardName, postNumber, !silent);
+        return removeReferencedPosts(c.post, !silent);
     }).then(function() {
         return addReferencedPosts(c.post, referencedPosts, !silent);
     }).then(function() {
@@ -1500,14 +1576,21 @@ var rerenderBoardPosts = function(boardName, posts) {
 
 var rebuildPostSearchIndex = function(boardName, postNumber) {
     var key = boardName + ":" + postNumber;
-    console.log(`Rebuilding post search index: [${boardName}] ${postNumber}`);
+    if (!boardName || !postNumber)
+        return Promise.resolve();
+    console.log(`Rebuilding post search index: >>/${boardName}/${postNumber}`);
     return getPost(boardName, postNumber).then(function(post) {
-        return addPostToIndex({
-            boardName: boardName,
-            number: postNumber,
-            rawText: post.rawText,
-            subject: (post.subject || null)
-        });
+        return es.index({
+            index: "ololord.js",
+            type: "posts",
+            id: boardName + ":" + postNumber,
+            body: {
+                plainText: post.plainText,
+                subject: post.subject,
+                boardName: boardName,
+                threadNumber: post.threadNumber
+            }
+        })
     });
 };
 
@@ -1557,17 +1640,7 @@ module.exports.rerenderPosts = function(boardNames) {
 
 module.exports.rebuildSearchIndex = function() {
     var posts = {};
-    return db.keys("postSearchIndex:*").then(function(keys) {
-        var p = (keys.length > 0) ? db.del(keys[0]) : Promise.resolve();
-        keys.slice(1).forEach(function(key) {
-            p = p.then(function() {
-                return db.del(key);
-            });
-        });
-        return p;
-    }).then(function() {
-        return db.hkeys("posts");
-    }).then(function(keys) {
+    return db.hkeys("posts").then(function(keys) {
         keys.forEach(function(key) {
             var boardName = key.split(":").shift();
             var postNumber = +key.split(":").pop();
@@ -1604,11 +1677,11 @@ module.exports.addFiles = function(req, fields, files, transaction) {
     if (isNaN(postNumber) || postNumber <= 0)
         return Promise.reject(Tools.translate("Invalid post number"));
     return getPost(board.name, postNumber, { withExtraData: true }).then(function(post) {
-        if ((!req.hashpass || req.hashpass != post.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
-            return Promise.reject(Tools.translate("Not enough rights"));
-        }
         c.post = post;
+        return checkPermissions(req, board, post, "addFilesToPost");
+    }).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("Not enough rights"));
         return postFileInfoNames(board.name, c.post.number);
     }).then(function(names) {
         if (names.length + files.length > board.maxFileCount)
@@ -1644,7 +1717,6 @@ module.exports.editPost = function(req, fields) {
     var email = fields.email || null;
     var name = fields.name || null;
     var subject = fields.subject || null;
-    var isRaw = fields.raw && compareRegisteredUserLevels(req.level, RegisteredUserLevels.Admin) >= 0;
     var markupModes = [];
     var referencedPosts = {};
     Tools.forIn(markup.MarkupModes, function(val) {
@@ -1654,12 +1726,12 @@ module.exports.editPost = function(req, fields) {
     return getPost(board.name, postNumber, { withExtraData: true }).then(function(post) {
         if (!post)
             return Promise.reject(Tools.translate("Invalid post"));
-        if ((!req.hashpass || req.hashpass != post.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
-            return Promise.reject(Tools.translate("Not enough rights"));
-        }
         c.post = post;
-        return postFileInfoNames(post.boardName, post.number);
+        return checkPermissions(req, board, post, "editPost");
+    }).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("Not enough rights"));
+        return postFileInfoNames(c.post.boardName, c.post.number);
     }).then(function(numbers) {
         if (!rawText && numbers.length < 1)
             return Promise.reject(Tools.translate("Both file and comment are missing"));
@@ -1671,28 +1743,21 @@ module.exports.editPost = function(req, fields) {
             return Promise.reject(Tools.translate("Name is too long"));
         if (subject && subject.length > board.maxSubjectLength)
             return Promise.reject(Tools.translate("Subject is too long"));
-        if (isRaw)
-            return Promise.resolve(rawText);
         return markup(board.name, rawText, {
             markupModes: markupModes,
-            referencedPosts: referencedPosts
+            referencedPosts: referencedPosts,
+            accessLevel: req.level(board.name)
         });
     }).then(function(text) {
         c.text = text;
+        c.plainText = (c.text ? Tools.plainText(c.text, { brToNewline: true }) : null);
         return board.postExtraData(req, fields, null, c.post)
     }).then(function(extraData) {
         c.extraData = extraData;
-        return removePostFromIndex({
-            boardName: c.post.boardName,
-            number: c.post.number,
-            rawText: c.post.rawText,
-            subject: c.post.subject
-        });
-    }).then(function() {
         c.post.email = email || null;
         c.post.markup = markupModes;
         c.post.name = name || null;
-        c.post.options.rawHtml = isRaw;
+        c.post.plainText = c.plainText;
         c.post.rawText = rawText;
         c.post.subject = subject || null;
         c.post.text = c.text || null;
@@ -1704,15 +1769,20 @@ module.exports.editPost = function(req, fields) {
     }).then(function() {
         return board.storeExtraData(c.post.number, c.extraData);
     }).then(function() {
-        return removeReferencedPosts(board.name, c.post.number);
+        return removeReferencedPosts(c.post);
     }).then(function() {
         return addReferencedPosts(c.post, referencedPosts);
     }).then(function() {
-        return addPostToIndex({
-            boardName: board.name,
-            number: c.post.number,
-            rawText: rawText,
-            subject: subject
+        return es.index({
+            index: "ololord.js",
+            type: "posts",
+            id: board.name + ":" + c.post.number,
+            body: {
+                plainText: c.plainText,
+                subject: subject,
+                boardName: board.name,
+                threadNumber: c.post.threadNumber
+            }
         });
     }).then(function() {
         Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
@@ -1721,11 +1791,11 @@ module.exports.editPost = function(req, fields) {
 };
 
 module.exports.setThreadFixed = function(req, fields) {
-    if (compareRegisteredUserLevels(req.level, "MODER") < 0)
-        return Promise.reject(Tools.translate("Not enough rights"));
     var board = Board.board(fields.boardName);
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
+    if (!req.isModer(board.name))
+        return Promise.reject(Tools.translate("Not enough rights"));
     var date = Tools.now();
     var c = {};
     var threadNumber = +fields.threadNumber;
@@ -1735,7 +1805,7 @@ module.exports.setThreadFixed = function(req, fields) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         thread = JSON.parse(thread);
-        var fixed = (fields.fixed == "true");
+        var fixed = ("true" == fields.fixed);
         if (thread.fixed == fixed)
             return Promise.resolve();
         thread.fixed = fixed;
@@ -1751,11 +1821,11 @@ module.exports.setThreadFixed = function(req, fields) {
 };
 
 module.exports.setThreadClosed = function(req, fields) {
-    if (compareRegisteredUserLevels(req.level, "MODER") < 0)
-        return Promise.reject(Tools.translate("Not enough rights"));
     var board = Board.board(fields.boardName);
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
+    if (!req.isModer(board.name))
+        return Promise.reject(Tools.translate("Not enough rights"));
     var date = Tools.now();
     var c = {};
     var threadNumber = +fields.threadNumber;
@@ -1765,7 +1835,7 @@ module.exports.setThreadClosed = function(req, fields) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         thread = JSON.parse(thread);
-        var closed = (fields.closed == "true");
+        var closed = ("true" == fields.closed);
         if (thread.closed == closed)
             return Promise.resolve();
         thread.closed = closed;
@@ -1781,11 +1851,11 @@ module.exports.setThreadClosed = function(req, fields) {
 };
 
 module.exports.setThreadUnbumpable = function(req, fields) {
-    if (compareRegisteredUserLevels(req.level, "MODER") < 0)
-        return Promise.reject(Tools.translate("Not enough rights"));
     var board = Board.board(fields.boardName);
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
+    if (!req.isModer(board.name))
+        return Promise.reject(Tools.translate("Not enough rights"));
     var date = Tools.now();
     var c = {};
     var threadNumber = +fields.threadNumber;
@@ -1795,7 +1865,7 @@ module.exports.setThreadUnbumpable = function(req, fields) {
         if (!thread)
             return Promise.reject(Tools.translate("No such thread"));
         thread = JSON.parse(thread);
-        var unbumpable = (fields.unbumpable == "true");
+        var unbumpable = ("true" == fields.unbumpable);
         if (!!thread.unbumpable == unbumpable)
             return Promise.resolve();
         thread.unbumpable = unbumpable;
@@ -1817,7 +1887,6 @@ module.exports.deletePost = function(req, res, fields) {
     var postNumber = +fields.postNumber;
     if (isNaN(postNumber) || postNumber <= 0)
         return Promise.reject(Tools.translate("Invalid post number"));
-    var password = Tools.password(fields.password);
     var c = {};
     return controller.checkBan(req, res, board.name, true).then(function() {
         return getPost(board.name, postNumber);
@@ -1825,18 +1894,30 @@ module.exports.deletePost = function(req, res, fields) {
         if (!post)
             return Promise.reject(Tools.translate("Invalid post"));
         c.post = post;
-        if ((!password || password != post.user.password)
-            && (!req.hashpass || req.hashpass != post.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
-            return Promise.reject(Tools.translate("Not enough rights"));
-        }
         c.isThread = post.threadNumber == post.number;
-        return (c.isThread) ? removeThread(board.name, postNumber) : removePost(board.name, postNumber);
+        c.archived = ("true" == fields.archived);
+        if (c.archived && !c.isThread)
+            return Promise.reject(Tools.translate("Deleting posts from archived threads is not allowed"));
+        return checkPermissions(req, board, post, "deletePost", Tools.sha1(fields.password));
+    }).then(function(result) {
+        if (!result)
+            return Promise.reject(Tools.translate("Not enough rights"));
+        return (c.isThread) ? removeThread(board.name, postNumber, { archived: c.archived })
+            : removePost(board.name, postNumber);
     }).then(function() {
-        var p = Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "delete");
-        if (c.isThread)
-            Global.removeFromCached([c.post.boardName, c.post.threadNumber]);
-        return c.isThread ? p : Promise.resolve();
+        var p;
+        if (c.isThread && c.archived) {
+            var path = `${__dirname}/../public/${board.name}/arch/${postNumber}.`;
+            p = Tools.removeFile(path + "json").then(function() {
+                return Tools.removeFile(path + "html");
+            }).then(function() {
+                return Global.generateArchive(board.name);
+            });
+        } else if (!c.archived) {
+            p = c.isThread ? Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "delete")
+                : Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
+        }
+        return p;
     }).then(function() {
         return {
             boardName: board.name,
@@ -1850,14 +1931,14 @@ module.exports.moveThread = function(req, fields) {
     var targetBoard = Board.board(fields.targetBoardName);
     if (!sourceBoard || !targetBoard)
         return Promise.reject(Tools.translate("Invalid board"));
-    if (fields.boardName == fields.targetBoardName)
+    if (sourceBoard.name == targetBoard.name)
         return Promise.reject(Tools.translate("Source and target boards are the same"));
     var threadNumber = +fields.threadNumber;
     if (isNaN(threadNumber) || threadNumber <= 0)
         return Promise.reject(Tools.translate("Invalid thread number"));
-    if (compareRegisteredUserLevels(req.level, RegisteredUserLevels.Moder) < 0)
+    if (!req.isModer(sourceBoard.name) || !req.isModer(targetBoard.name))
         return Promise.reject(Tools.translate("Not enough rights"));
-    var password = Tools.password(fields.password);
+    var password = Tools.sha1(fields.password);
     var c = {};
     var sourcePath = __dirname + "/../public/" + sourceBoard.name + "/src"
     var sourceThumbPath = __dirname + "/../public/" + sourceBoard.name + "/thumb";
@@ -1874,7 +1955,8 @@ module.exports.moveThread = function(req, fields) {
         c.thread = thread[0];
         if ((!password || password != c.thread.user.password)
             && (!req.hashpass || req.hashpass != c.thread.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, c.thread.user.level) <= 0)) {
+            && !req.isSuperuser()
+            && (compareRegisteredUserLevels(req.level(sourceBoard.name), c.thread.user.level) <= 0)) {
             return Promise.reject(Tools.translate("Not enough rights"));
         }
         delete c.thread.updatedAt;
@@ -1903,23 +1985,16 @@ module.exports.moveThread = function(req, fields) {
     }).then(function() {
         return mkpath(targetThumbPath);
     }).then(function() {
-        var promises = c.posts.map(function(post) {
+        return Tools.series(c.posts, function(post) {
+            var oldPostNumber = post.number;
             post.number = c.postNumberMap[post.number];
             post.threadNumber = c.thread.number;
             post.boardName = targetBoard.name;
             var referencedPosts = post.referencedPosts;
-            referencedPosts.forEach(function(ref) {
-                if (ref.boardName != sourceBoard.name)
-                    return;
-                var newPostNumber = c.postNumberMap[ref.postNumber];
-                if (!newPostNumber)
-                    return;
-                ref.postNumber = newPostNumber;
-                ref.threadNumber = c.thread.number;
-            });
             delete post.referencedPosts;
             var extraData = post.extraData;
             delete post.extraData;
+            var referringPosts = post.referringPosts;
             delete post.referringPosts;
             var fileInfos = post.fileInfos;
             fileInfos.forEach(function(fileInfo) {
@@ -1927,6 +2002,8 @@ module.exports.moveThread = function(req, fields) {
                 fileInfo.postNumber = post.number;
             });
             delete post.fileInfos;
+            c.toRerender = {};
+            c.toUpdate = {};
             if (post.rawText) {
                 Tools.forIn(c.postNumberMap, function(newPostNumber, previousPostNumber) {
                     var rx = new RegExp(`>>/${sourceBoard.name}/${previousPostNumber}`, "g");
@@ -1934,11 +2011,63 @@ module.exports.moveThread = function(req, fields) {
                     rx = new RegExp(`>>${previousPostNumber}`, "g");
                     post.rawText = post.rawText.replace(rx, `>>${newPostNumber}`);
                 });
+                referencedPosts.forEach(function(ref) {
+                    if (ref.boardName != sourceBoard.name)
+                        return;
+                    var rx = new RegExp(`>>${ref.postNumber}`, "g");
+                    post.rawText = post.rawText.replace(rx, `>>/${sourceBoard.name}/${ref.postNumber}`);
+                });
             }
             return db.hset("posts", targetBoard.name + ":" + post.number, JSON.stringify(post)).then(function() {
                 return targetBoard.storeExtraData(post.number, extraData);
             }).then(function() {
-                return addReferencedPosts(post, referencedPosts);
+                return Tools.series(referencedPosts, function(ref) {
+                    var nref;
+                    if (ref.boardName == sourceBoard.name && ref.threadNumber == threadNumber) {
+                        nref = {
+                            boardName: targetBoard.name,
+                            threadNumber: post.threadNumber,
+                            postNumber: c.postNumberMap[ref.postNumber]
+                        };
+                    } else {
+                        c.toUpdate[ref.boardName + ":" + ref.threadNumber] = {
+                            boardName: ref.boardName,
+                            threadNumber: ref.threadNumber
+                        };
+                        nref = ref;
+                    }
+                    return db.hdel(`referencedPosts:${sourceBoard.name}:${oldPostNumber}`,
+                            `${ref.boardName}:${ref.postNumber}`).then(function() {
+                        return db.hset(`referencedPosts:${targetBoard.name}:${post.number}`,
+                                `${nref.boardName}:${nref.postNumber}`, JSON.stringify(nref));
+                    });
+                });
+            }).then(function() {
+                return Tools.series(referringPosts, function(ref) {
+                    var nref;
+                    if (ref.boardName == sourceBoard.name && ref.threadNumber == threadNumber) {
+                        nref = {
+                            boardName: targetBoard.name,
+                            threadNumber: post.threadNumber,
+                            postNumber: c.postNumberMap[ref.postNumber]
+                        };
+                    } else {
+                        c.toRerender[ref.boardName + ":" + ref.postNumber] = {
+                            boardName: ref.boardName,
+                            postNumber: ref.postNumber
+                        };
+                        c.toUpdate[ref.boardName + ":" + ref.threadNumber] = {
+                            boardName: ref.boardName,
+                            threadNumber: ref.threadNumber
+                        };
+                        nref = ref;
+                    }
+                    return db.hdel(`referringPosts:${sourceBoard.name}:${oldPostNumber}`,
+                            `${ref.boardName}:${ref.postNumber}`).then(function() {
+                        return db.hset(`referringPosts:${targetBoard.name}:${post.number}`,
+                                `${nref.boardName}:${nref.postNumber}`, JSON.stringify(nref));
+                    });
+                });
             }).then(function() {
                 return db.sadd("userPostNumbers:" + post.user.ip + ":" + targetBoard.name, post.number);
             }).then(function() {
@@ -1955,31 +2084,71 @@ module.exports.moveThread = function(req, fields) {
             }).then(function() {
                 return addFileHashes(fileInfos);
             }).then(function() {
-                return addPostToIndex({
-                    boardName: targetBoard.name,
-                    number: post.number,
-                    rawText: post.rawText,
-                    subject: (post.subject || null)
-                });
+                return es.index({
+                    index: "ololord.js",
+                    type: "posts",
+                    id: targetBoard.name + ":" + post.number,
+                    body: {
+                        plainText: post.plainText,
+                        subject: post.subject,
+                        boardName: targetBoard.name,
+                        threadNumber: post.threadNumber
+                    }
+                })
             });
         });
-        return Promise.all(promises);
-    }).then(function() {
-        var promises = c.posts.map(function(post) {
-            return rerenderPost(targetBoard.name, post.number, true);
-        });
-        return Promise.all(promises);
     }).then(function() {
         return db.hset("threads:" + targetBoard.name, c.thread.number, JSON.stringify(c.thread));
     }).then(function() {
         return db.hset("threadUpdateTimes:" + targetBoard.name, c.thread.number, Tools.now().toISOString());
     }).then(function() {
-        return db.sadd("threadPostNumbers:" + targetBoard.name + ":" + c.thread.number, Tools.toArray(c.postNumberMap));
+        return db.sadd("threadPostNumbers:" + targetBoard.name + ":" + c.thread.number,
+            Tools.toArray(c.postNumberMap));
     }).then(function() {
-        return removeThread(sourceBoard.name, threadNumber, false, true);
+        return Tools.series(c.posts, function(post) {
+            return markup(post.boardName, post.rawText, {
+                markupModes: post.markup,
+                referencedPosts: {},
+                accessLevel: post.user.level
+            }).then(function(text) {
+                post.text = text;
+                return db.hset("posts", post.boardName + ":" + post.postNumber, JSON.stringify(post));
+            });
+        });
     }).then(function() {
-        Global.generate(sourceBoard.name, threadNumber, threadNumber, "delete");
-        Global.removeFromCached([sourceBoard.name, threadNumber]);
+        return Tools.series(c.toRerender, function(o) {
+            return getPost(o.boardName, o.postNumber).then(function(p) {
+                if (!p.rawText)
+                    return Promise.resolve();
+                Tools.forIn(c.postNumberMap, function(newPostNumber, previousPostNumber) {
+                    var rx = new RegExp(`>>/${sourceBoard.name}/${previousPostNumber}`, "g");
+                    p.rawText = p.rawText.replace(rx, `>>/${targetBoard.name}/${newPostNumber}`);
+                    if (o.boardName == sourceBoard.name) {
+                        rx = new RegExp(`>>${previousPostNumber}`, "g");
+                        p.rawText = p.rawText.replace(rx, `>>/${targetBoard.name}/${newPostNumber}`);
+                    }
+                });
+                return markup(p.boardName, p.rawText, {
+                    markupModes: p.markup,
+                    referencedPosts: {},
+                    accessLevel: p.user.level
+                }).then(function(text) {
+                    p.text = text;
+                    return db.hset("posts", p.boardName + ":" + p.number, JSON.stringify(p));
+                });
+            });
+        });
+    }).then(function() {
+        return Tools.series(c.toUpdate, function(o) {
+            return Global.generate(o.boardName, o.threadNumber, o.threadNumber, "create");
+        });
+    }).then(function() {
+        return removeThread(sourceBoard.name, threadNumber, {
+            leaveFileInfos: true,
+            leaveReferences: true
+        });
+    }).then(function() {
+        Global.generate(sourceBoard.name, threadNumber, threadNumber, "delete")
         return Global.generate(targetBoard.name, c.thread.number, c.thread.number, "create");
     }).then(function() {
         return {
@@ -1993,7 +2162,6 @@ module.exports.deleteFile = function(req, res, fields) {
     var fileName = fields.fileName;
     if (!fileName)
         return Promise.reject(Tools.translate("Invalid file name"));
-    var password = Tools.password(fields.password);
     var c = {};
     return db.hget("fileInfos", fileName).then(function(fileInfo) {
         if (!fileInfo)
@@ -2002,11 +2170,10 @@ module.exports.deleteFile = function(req, res, fields) {
         return getPost(c.fileInfo.boardName, c.fileInfo.postNumber);
     }).then(function(post) {
         c.post = post;
-        if ((!password || password != post.user.password)
-            && (!req.hashpass || req.hashpass != post.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
+        return checkPermissions(req, board, post, "deleteFile", Tools.sha1(fields.password));
+    }).then(function(result) {
+        if (!result)
             return Promise.reject(Tools.translate("Not enough rights"));
-        }
         return controller.checkBan(req, res, c.post.boardName, true);
     }).then(function() {
         return postFileInfoNames(c.post.boardName, c.post.number);
@@ -2038,9 +2205,9 @@ module.exports.deleteFile = function(req, res, fields) {
 
 module.exports.editAudioTags = function(req, res, fields) {
     var c = {};
-    var password = Tools.password(fields.password);
+    var password = Tools.sha1(fields.password);
     return getFileInfo({ fileName: fields.fileName }).then(function(fileInfo) {
-        if (fileInfo.mimeType.substr(0, 6) != "audio/")
+        if (!Tools.isAudioType(fileInfo.mimeType))
             return Promise.reject(Tools.translate("Not an audio file"));
         c.fileInfo = fileInfo;
         return controller.checkBan(req, res, c.fileInfo.boardName, true);
@@ -2052,7 +2219,8 @@ module.exports.editAudioTags = function(req, res, fields) {
         c.post = post;
         if ((!password || password != post.user.password)
             && (!req.hashpass || req.hashpass != post.user.hashpass)
-            && (compareRegisteredUserLevels(req.level, post.user.level) <= 0)) {
+            && !req.isSuperuser()
+            && (compareRegisteredUserLevels(req.level(c.fileInfo.boardName), post.user.level) <= 0)) {
             return Promise.reject(Tools.translate("Not enough rights"));
         }
         ["album", "artist", "title", "year"].forEach(function(tag) {
@@ -2073,198 +2241,265 @@ module.exports.editAudioTags = function(req, res, fields) {
     });
 };
 
-module.exports.userBans = function(ip, boardNames) {
+var userBans = function(ip, boardNames) {
     if (!ip) {
         var users = {};
-        return db.keys("userBans:*").then(function(keys) {
-            var ips = {};
-            keys.forEach(function(key) {
-                var sl = key.split(":");
-                var boardName = sl.pop();
-                var ip = sl.slice(1, sl.length).join(":");
-                if (!ips.hasOwnProperty(ip))
-                    ips[ip] = {};
-            });
-            ips = Tools.mapIn(ips, function(_, key) {
-                return key;
-            });
-            var p = Promise.resolve();
-            ips.forEach(function(ip) {
-                p = p.then(function() {
-                    return module.exports.userBans(ip, boardNames);
-                }).then(function(bans) {
+        return db.smembers("bannedUserIps").then(function(ips) {
+            return Tools.series(ips, function(ip) {
+                return userBans(ip, boardNames).then(function(bans) {
                     users[ip] = bans;
+                    return Promise.resolve();
                 });
             });
-            return p;
         }).then(function() {
             return Promise.resolve(users);
         });
     }
-    var p = Promise.resolve();
-    var bans = {};
-    var address = Tools.correctAddress(ip);
+    ip = Tools.correctAddress(ip);
     if (!boardNames)
         boardNames = Board.boardNames();
     else if (!Util.isArray(boardNames))
         boardNames = [boardNames];
-    boardNames.forEach(function(boardName) {
-        p = p.then(function() {
-            return db.get("userBans:" + address + ":" + boardName);
-        }).then(function(ban) {
+    var bans = {};
+    return Tools.series(boardNames, function(boardName) {
+        return db.get(`userBans:${ip}:${boardName}`).then(function(ban) {
             if (!ban)
                 return Promise.resolve();
             bans[boardName] = JSON.parse(ban);
             return Promise.resolve();
         });
-    });
-    return p.then(function() {
+    }).then(function() {
         return Promise.resolve(bans);
     });
 };
 
-var updatePostBanInfo = function(boardName, ban) {
-    return db.hget("posts", boardName + ":" + ban.postNumber).then(function(post) {
+module.exports.userBans = userBans;
+
+var updatePostBanInfo = function(boardName, postNumber) {
+    if (!Board.board(boardName))
+        return Promise.reject(Tools.translate("Invalid board"));
+    postNumber = +postNumber;
+    if (isNaN(postNumber) || postNumber <= 0)
+        return Promise.resolve();
+    return db.hget("posts", boardName + ":" + postNumber).then(function(post) {
         if (!post)
             return Promise.resolve();
-        if (Global.Generate)
-            return Global.generate(boardName, JSON.parse(post).threadNumber, ban.postNumber, "edit");
+        if (Global.generate)
+            return Global.generate(boardName, JSON.parse(post).threadNumber, postNumber, "edit");
         else
-            return BoardModel.scheduleGenerate(boardName, JSON.parse(post).threadNumber, ban.postNumber, "edit");
+            return BoardModel.scheduleGenerate(boardName, JSON.parse(post).threadNumber, postNumber, "edit");
+    });
+};
+
+var updateBan = function(ip, boardName, postNumber) {
+    ip = Tools.correctAddress(ip);
+    if (!ip)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    if (!Board.board(boardName))
+        return Promise.reject(Tools.translate("Invalid board"));
+    return db.keys(`userBans:${ip}:*`).then(function(keys) {
+        if (keys && keys.length > 0)
+            return Promise.resolve();
+        return db.srem("bannedUserIps", ip);
+    }).then(function() {
+        return updatePostBanInfo(boardName, postNumber);
     });
 };
 
 module.exports.banUser = function(req, ip, bans) {
-    var address = Tools.correctAddress(ip);
-    if (!address)
+    ip = Tools.correctAddress(ip);
+    if (!ip)
         return Promise.reject(Tools.translate("Invalid IP address"));
-    if (address == req.ip)
+    if (ip == req.ip)
         return Promise.reject(Tools.translate("Not enough rights"));
-    var err = bans.reduce(function(err, ban) {
-        if (err)
-            return err;
-        if (!ban.boardName || !Board.board(ban.boardName))
-            return "Invalid board";
-        if (["NO_ACCESS", "READ_ONLY"].indexOf(ban.level) < 0)
-            return "Invalid level";
-        return null;
-    }, null);
+    var err;
+    var banLevels = Tools.toArray(BanLevels).reduce(function(acc, level) {
+        acc[level] = {};
+        return acc;
+    }, {});
+    bans.some(function(ban) {
+        if (!Board.board(ban.boardName)) {
+            err = Tools.translate("Invalid board");
+            return true;
+        }
+        if (!banLevels.hasOwnProperty(ban.level)) {
+            err = Tools.translate("Invalid ban level");
+            return true;
+        }
+    });
     if (err)
         return Promise.reject(err);
-    return db.hget("registeredUserHashes", address).then(function(hash) {
-        if (!hash)
-            return Promise.resolve();
-        return db.hget("registeredUsers", hash);
-    }).then(function(user) {
-        user = user ? JSON.parse(user) : null;
-        if (user && compareRegisteredUserLevels(req.level, user.level) <= 0)
-            return Promise.reject(Tools.translate("Not enough rights"));
+    if (!req.isModer())
+        return Promise.reject(Tools.translate("Not enough rights"));
+    bans = bans.reduce(function(acc, ban) {
+        acc[ban.boardName] = ban;
+        return acc;
+    }, {});
+    var modified = [];
+    var newBans;
+    var c = {};
+    return userBans(ip).then(function(oldBans) {
+        c.oldBans = oldBans;
         var date = Tools.now();
-        bans = bans.reduce(function(acc, ban) {
-            ban.createdAt = date;
-            acc[ban.boardName] = ban;
+        newBans = Board.boardNames().reduce(function(acc, boardName) {
+            if (req.isModer(boardName)) {
+                if (bans.hasOwnProperty(boardName)) {
+                    var ban = bans[boardName];
+                    ban.createdAt = date;
+                    acc[boardName] = ban;
+                    modified.push(boardName);
+                } else if (oldBans.hasOwnProperty(boardName)) {
+                    modified.push(boardName);
+                }
+            } else {
+                if (oldBans.hasOwnProperty(boardName))
+                    acc[boardName] = oldBans[boardName];
+            }
             return acc;
         }, {});
-        var p = Promise.resolve();
-        Board.boardNames().forEach(function(boardName) {
-            p = p.then(function() {
-                var key = "userBans:" + address + ":" + boardName;
-                var ban = bans[boardName];
-                if (!ban) {
-                    return db.get(key).then(function(banString) {
-                        if (banString)
-                            ban = JSON.parse(banString);
-                        return db.del(key);
-                    }).then(function() {
-                        if (!ban || !ban.postNumber)
-                            return Promise.resolve();
-                        return updatePostBanInfo(boardName, ban);
-                    });
-                }
-                return db.set(key, JSON.stringify(ban)).then(function() {
-                    if (!ban.expiresAt)
-                        return Promise.resolve();
-                    var ttl = Math.ceil((+ban.expiresAt - +Tools.now()) / 1000);
-                    if (ban.postNumber) {
-                        setTimeout(function() {
-                            updatePostBanInfo(boardName, ban).catch(function(err) {
-                                Global.error(err.stack || err);
-                            });
-                        }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
-                    }
-                    return db.expire(key, ttl);
-                }).then(function() {
-                    if (!ban.postNumber)
-                        return Promise.resolve();
-                    return updatePostBanInfo(boardName, ban);
+        return registeredUserLevelsByIp(ip);
+    }).then(function(levels) {
+        modified.some(function(boardName) {
+            var level = req.level(boardName);
+            if (!req.isSuperuser(boardName) && compareRegisteredUserLevels(level, levels[boardName]) <= 0) {
+                err = Promise.reject(Tools.translate("Not enough rights"));
+                return true;
+            }
+        });
+        if (err)
+            return Promise.reject(err);
+        return Tools.series(Board.boardNames(), function(boardName) {
+            var key = `userBans:${ip}:${boardName}`;
+            var ban = newBans[boardName];
+            if (!ban) {
+                ban = c.oldBans[boardName];
+                if (!ban)
+                    return Promise.resolve();
+                return db.del(key).then(function() {
+                    return updatePostBanInfo(boardName, ban.postNumber);
                 });
+            }
+            return db.set(key, JSON.stringify(ban)).then(function() {
+                if (!ban.expiresAt)
+                    return Promise.resolve();
+                var ttl = Math.ceil((+ban.expiresAt - +Tools.now()) / 1000);
+                setTimeout(function() {
+                    updateBan(ip, boardName, ban.postNumber).catch(function(err) {
+                        Global.error(err.stack || err);
+                    });
+                }, Math.ceil(ttl * Tools.Second + Tools.Second)); //NOTE: Adding extra delay
+                return db.expire(key, ttl);
+            }).then(function() {
+                if (!ban.postNumber)
+                    return Promise.resolve();
+                return updatePostBanInfo(boardName, ban.postNumber);
             });
         });
-        return p;
+    }).then(function() {
+        return db[Tools.hasOwnProperties(newBans) ? "sadd" : "srem"]("bannedUserIps", ip);
+    }).then(function() {
+        return Promise.resolve();
     });
 };
 
-module.exports.delall = function(req, fields) {
-    var address = Tools.correctAddress(fields.userIp);
-    var boards = ("*" == fields.boardName) ? Board.boardNames().map(function(boardName) {
-        return Board.board(boardName);
-    }) : [Board.board(fields.boardName)];
-    var err = boards.reduce(function(err, board) {
-        if (err)
-            return err;
-        return !board;
+module.exports.delall = function(req, ip, boardNames) {
+    ip = Tools.correctAddress(ip);
+    if (!ip)
+        return Promise.reject(Tools.translate("Invalid IP address"));
+    if (ip == req.ip)
+        return Promise.reject(Tools.translate("Not enough rights"));
+    if (!boardNames || boardNames.length < 1)
+        return Promise.reject(Tools.translate("No board specified"));
+    var err = boardNames.some(function(boardName) {
+        if (!Board.board(boardName))
+            return true;
     }, false);
     if (err)
         return Promise.reject(Tools.translate("Invalid board"));
-    if (!address)
-        return Promise.reject(Tools.translate("Invalid IP address"));
-    if (address == req.ip)
+    err = boardNames.some(function(boardName) {
+        if (!req.isModer(boardName))
+            return true;
+    });
+    if (err)
         return Promise.reject(Tools.translate("Not enough rights"));
-    var posts = [];
-    return db.hget("registeredUserHashes", address).then(function(hash) {
-        if (!hash)
-            return Promise.resolve();
-        return db.hget("registeredUsers", hash);
-    }).then(function(user) {
-        user = user ? JSON.parse(user) : null;
-        if (user && compareRegisteredUserLevels(req.level, user.level) <= 0)
+    var deletedThreads = {};
+    var updatedThreads = {};
+    var deletedPosts = {};
+    return registeredUserLevelsByIp(ip).then(function(levels) {
+        err = boardNames.some(function(boardName) {
+            var level = req.level(boardName);
+            if (!req.isSuperuser(boardName) && compareRegisteredUserLevels(level, levels[boardName]) <= 0)
+                return true;
+        });
+        if (err)
             return Promise.reject(Tools.translate("Not enough rights"));
-        var promises = boards.map(function(board) {
-            return db.smembers("userPostNumbers:" + address + ":" + board.name).then(function(numbers) {
-                return Promise.all(numbers.map(function(postNumber) {
-                    return getPost(board.name, postNumber).then(function(post) {
+        return Tools.series(boardNames, function(boardName) {
+            return db.smembers(`userPostNumbers:${ip}:${boardName}`).then(function(postNumbers) {
+                var posts = [];
+                return Tools.series(postNumbers, function(postNumber) {
+                    return getPost(boardName, postNumber).then(function(post) {
                         posts.push(post);
                         return Promise.resolve();
                     });
-                }));
+                }).then(function() {
+                    posts.forEach(function(post) {
+                        if (post.threadNumber == post.number) {
+                            deletedThreads[post.boardName + ":" + post.threadNumber] = {
+                                boardName: post.boardName,
+                                number: post.threadNumber
+                            };
+                        }
+                    });
+                    posts.forEach(function(post) {
+                        var key = `${post.boardName}:${post.threadNumber}`;
+                        if (deletedThreads.hasOwnProperty(key))
+                            return;
+                        updatedThreads[key] = {
+                            boardName: post.boardName,
+                            number: post.threadNumber
+                        };
+                        deletedPosts[`${post.boardName}:${post.number}`] = {
+                            boardName: post.boardName,
+                            number: post.number
+                        };
+                    });
+                    return Promise.resolve();
+                });
             });
         });
-        return Promise.all(promises);
     }).then(function() {
-        var promises = posts.map(function(post) {
-            return (post.threadNumber == post.number) ? removeThread(post.boardName, post.number)
-                : removePost(post.boardName, post.number);
+        return Tools.series(deletedPosts, function(post) {
+            return removePost(post.boardName, post.number);
         });
+    }).then(function() {
+        return Tools.series(deletedThreads, function(thread) {
+            return removeThread(thread.boardName, thread.number);
+        });
+    }).then(function() {
+        return Tools.series(updatedThreads, function(thread) {
+            return Global.generate(thread.boardName, thread.number, thread.postNumber, "edit");
+        });
+    }).then(function() {
+        return Tools.series(deletedThreads, function(thread) {
+            return Global.generate(thread.boardName, thread.number, thread.number, "delete");
+        });
+    }).then(function() {
+        return Promise.resolve();
     });
 };
 
 module.exports.initialize = function() {
-    return module.exports.userBans().then(function(users) {
-        var p = Promise.resolve();
-        Tools.forIn(users, function(bans, ip) {
-            Tools.forIn(bans, function(ban, boardName) {
-                if (!ban.postNumber)
-                    return;
-                p = p.then(function() {
-                    return db.ttl("userBans:" + ip + ":" + boardName);
-                }).then(function(ttl) {
+    return userBans().then(function(users) {
+        return Tools.series(users, function(bans, ip) {
+            return Tools.series(bans, function(ban, boardName) {
+                return db.ttl(`userBans:${ip}:${boardName}`).then(function(ttl) {
                     if (ttl <= 0)
                         return Promise.resolve();
                     setTimeout(function() {
-                        updatePostBanInfo(boardName, ban).catch(function(err) {
+                        updateBan(ip, boardName, ban.postNumber).catch(function(err) {
                             Global.error(err.stack || err);
                         });
-                    }, Math.ceil(ttl * Tools.Second * 1.002)); //NOTE: Adding extra delay
+                    }, Math.ceil(ttl * Tools.Second + Tools.Second)); //NOTE: Adding extra delay
                     return Promise.resolve();
                 });
             });

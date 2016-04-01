@@ -1,4 +1,3 @@
-var Crypto = require("crypto");
 var express = require("express");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
@@ -12,6 +11,7 @@ var Chat = require("../helpers/chat");
 var config = require("../helpers/config");
 var controller = require("../helpers/controller");
 var Database = require("../helpers/database");
+var Global = require("../helpers/global");
 var markup = require("../helpers/markup");
 var Tools = require("../helpers/tools");
 var vk = require("../helpers/vk")(config("site.vkontakte.accessToken", ""));
@@ -28,14 +28,13 @@ var getFiles = function(fields, files, transaction) {
     var tmpFiles = Tools.filterIn(files, function(file) {
         if (file.size < 1) {
             FS.remove(file.path).catch(function(err) {
-                Global.error(err.stack || err);
+                Global.error(req, err.stack || err);
             });
             return false;
         }
         return true;
     });
     var promises = Tools.mapIn(tmpFiles, function(file, fieldName) {
-        file.fieldName = fieldName;
         setFileRating(file, file.fieldName.substr(5));
         transaction.filePaths.push(file.path);
         return Tools.mimeType(file.path).then(function(mimeType) {
@@ -47,7 +46,7 @@ var getFiles = function(fields, files, transaction) {
         tmpFiles = files;
         var urls = [];
         Tools.forIn(fields, function(url, key) {
-            if (key.substr(0, 9) != "file_url_")
+            if (!/^file_url_\S+$/.test(key))
                 return;
             urls.push({
                 url: url,
@@ -109,8 +108,8 @@ var getFiles = function(fields, files, transaction) {
         var hashes = fields.fileHashes ? fields.fileHashes.split(",") : [];
         return Database.getFileInfosByHashes(hashes);
     }).then(function(fileInfos) {
-        return tmpFiles.concat(fileInfos.map(function(fileInfo) {
-            return {
+        return tmpFiles.concat(fileInfos.map(function(fileInfo, i) {
+            var fi = {
                 name: fileInfo.name,
                 thumbName: fileInfo.thumb.name,
                 size: fileInfo.size,
@@ -119,6 +118,8 @@ var getFiles = function(fields, files, transaction) {
                 rating: fileInfo.rating,
                 copy: true
             };
+            setFileRating(fi, fields.fileHashes.split(",")[i]);
+            return fi;
         }));
     });
 };
@@ -126,7 +127,7 @@ var getFiles = function(fields, files, transaction) {
 var testParameters = function(fields, files, creatingThread) {
     var board = Board.board(fields.boardName);
     if (!board)
-        return { error: 404 };
+        return Promise.reject(404);
     var email = fields.email || "";
     var name = fields.name || "";
     var subject = fields.subject || "";
@@ -136,34 +137,34 @@ var testParameters = function(fields, files, creatingThread) {
     var maxFileSize = board.maxFileSize;
     var maxFileCount = board.maxFileCount;
     if (email.length > board.maxEmailLength)
-        return { error: Tools.translate("E-mail is too long", "error") };
+        return Promise.reject(Tools.translate("E-mail is too long"));
     if (name.length > board.maxNameLength)
-        return { error: Tools.translate("Name is too long", "error") };
+        return Promise.reject(Tools.translate("Name is too long"));
     if (subject.length > board.maxSubjectLength)
-        return { error: Tools.translate("Subject is too long", "error") };
+        return Promise.reject(Tools.translate("Subject is too long"));
     if (text.length > board.maxTextFieldLength)
-        return { error: Tools.translate("Comment is too long", "error") };
+        return Promise.reject(Tools.translate("Comment is too long"));
     if (password.length > board.maxPasswordLength)
-        return { error: Tools.translate("Password is too long", "error") };
+        return Promise.reject(Tools.translate("Password is too long"));
     if (creatingThread && maxFileCount && !fileCount)
-        return { error: Tools.translate("Attempt to create a thread without attaching a file", "error") };
+        return Promise.reject(Tools.translate("Attempt to create a thread without attaching a file"));
     if (text.length < 1 && !fileCount)
-        return { error: Tools.translate("Both file and comment are missing", "error") };
+        return Promise.reject(Tools.translate("Both file and comment are missing"));
     if (fileCount > maxFileCount) {
-        return { error: Tools.translate("Too many files", "error") };
+        return Promise.reject(Tools.translate("Too many files"));
     } else {
         var err = files.reduce(function(err, file) {
             if (err)
                 return err;
             if (file.size > maxFileSize)
-                return Tools.translate("File is too big", "error");
+                return Tools.translate("File is too big");
             if (board.supportedFileTypes.indexOf(file.mimeType) < 0)
-                return Tools.translate("File type is not supported", "error");
+                return Tools.translate("File type is not supported");
         }, "");
         if (err)
-            return { error: err };
+            return Promise.reject(err);
     }
-    //NOTE: Yep, return nothing
+    return Promise.resolve();
 };
 
 router.post("/action/markupText", function(req, res) {
@@ -177,19 +178,16 @@ router.post("/action/markupText", function(req, res) {
         return controller.checkBan(req, res, c.board.name, true);
     }).then(function() {
         if (c.fields.text.length > c.board.maxTextFieldLength)
-            return Promise.reject(Tools.translate("Comment is too long", "error"));
+            return Promise.reject(Tools.translate("Comment is too long"));
         var markupModes = [];
         Tools.forIn(markup.MarkupModes, function(val) {
             if (c.fields.markupMode && c.fields.markupMode.indexOf(val) >= 0)
                 markupModes.push(val);
         });
-        c.isRaw = !!c.fields.raw
-            && Database.compareRegisteredUserLevels(req.level, Database.RegisteredUserLevels.Admin) >= 0;
-        if (c.isRaw)
-            return c.fields.text;
         return markup(c.board.name, c.fields.text, {
             markupModes: markupModes,
-            referencedPosts: {}
+            referencedPosts: {},
+            accessLevel: req.level(c.board.name)
         });
     }).then(function(text) {
         var data = {
@@ -197,20 +195,16 @@ router.post("/action/markupText", function(req, res) {
             text: text || null,
             rawText: c.fields.text || null,
             options: {
-                rawHtml: c.isRaw,
-                signAsOp: !!c.fields.signAsOp,
-                showTripcode: !!req.hashpass && !!c.fields.tripcode
+                signAsOp: ("true" == c.fields.signAsOp),
+                showTripcode: !!req.hashpass && ("true" == c.fields.tripcode)
             },
             createdAt: date.toISOString()
         };
-        if (req.hashpass && c.fields.tripcode) {
-            var md5 = Crypto.createHash("md5");
-            md5.update(req.hashpass + config("site.tripcodeSalt", ""));
-            data.tripcode = "!" + md5.digest("base64").substr(0, 10);
-        }
+        if (req.hashpass && c.fields.tripcode)
+            data.tripcode = Tools.generateTripcode(req.hashpass);
         res.send(data);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -229,9 +223,10 @@ router.post("/action/createPost", function(req, res) {
         return getFiles(c.fields, c.files, transaction);
     }).then(function(files) {
         c.files = files;
-        var testResult = testParameters(c.fields, c.files) || c.board.testParameters(c.fields, c.files);
-        if (testResult)
-            return Promise.reject(testResult.error);
+        return testParameters(c.fields, c.files);
+    }).then(function() {
+        return c.board.testParameters(req, c.fields, c.files);
+    }).then(function() {
         return Database.createPost(req, c.fields, c.files, transaction);
     }).then(function(post) {
         res.send({
@@ -240,7 +235,7 @@ router.post("/action/createPost", function(req, res) {
         });
     }).catch(function(err) {
         transaction.rollback();
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -259,9 +254,10 @@ router.post("/action/createThread", function(req, res) {
         return getFiles(c.fields, c.files, transaction);
     }).then(function(files) {
         c.files = files;
-        var testResult = testParameters(c.fields, c.files, true) || c.board.testParameters(c.fields, c.files, true);
-        if (testResult)
-            return Promise.reject(testResult.error);
+        return testParameters(c.fields, c.files, true);
+    }).then(function() {
+        return c.board.testParameters(req, c.fields, c.files, true);
+    }).then(function() {
         return Database.createThread(req, c.fields, c.files, transaction);
     }).then(function(thread) {
         res.send({
@@ -270,7 +266,7 @@ router.post("/action/createThread", function(req, res) {
         });
     }).catch(function(err) {
         transaction.rollback();
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -284,9 +280,12 @@ router.post("/action/editPost", function(req, res) {
     }).then(function() {
         return Database.editPost(req, c.fields);
     }).then(function(result) {
-        res.send({});
+        res.send({
+            boardName: c.boardName,
+            postNumber: c.postNumber
+        });
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -311,15 +310,15 @@ router.post("/action/addFiles", function(req, res) {
         var maxFileSize = c.board.maxFileSize;
         var maxFileCount = c.board.maxFileCount;
         if (fileCount > maxFileCount) {
-            return Promise.reject(Tools.translate("Too many files", "error"));
+            return Promise.reject(Tools.translate("Too many files"));
         } else {
             var err = c.files.reduce(function(err, file) {
                 if (err)
                     return err;
                 if (file.size > maxFileSize)
-                    return Tools.translate("File is too big", "error");
+                    return Tools.translate("File is too big");
                 if (c.board.supportedFileTypes.indexOf(file.mimeType) < 0)
-                    return Tools.translate("File type is not supported", "error");
+                    return Tools.translate("File type is not supported");
             }, "");
             if (err)
                 return Promise.reject(err);
@@ -333,7 +332,7 @@ router.post("/action/addFiles", function(req, res) {
         });
     }).catch(function(err) {
         transaction.rollback();
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -347,7 +346,7 @@ router.post("/action/deletePost", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -357,7 +356,7 @@ router.post("/action/deleteFile", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -373,7 +372,7 @@ router.post("/action/moveThread", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -383,30 +382,29 @@ router.post("/action/editAudioTags", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
 router.post("/action/banUser", function(req, res) {
-    if (Database.compareRegisteredUserLevels(req.level, "MODER") < 0)
-        return controller.error(res, Tools.translate("Not enough rights"), true);
+    if (!req.isModer())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
     var c = {};
     Tools.parseForm(req).then(function(result) {
         c.bans = [];
         c.fields = result.fields;
-        c.boardName = result.fields.boardName;
-        c.postNumber = +result.fields.postNumber;
         c.userIp = result.fields.userIp;
         Tools.forIn(result.fields, function(value, name) {
-            if (name.substr(0, 9) != "banBoard_")
+            if (!/^banBoard_\S+$/.test(name))
                 return;
             var level = result.fields["banLevel_" + value];
             if ("NONE" == level)
                 return;
             var expiresAt = result.fields["banExpires_" + value];
             if (expiresAt) {
-                var timeOffset = ("local" == req.settings.time) ? +req.settings.timeZoneOffset
-                    : config("site.timeOffset", 0);
+                var timeOffset = +c.fields.timeOffset;
+                if (isNaN(timeOffset) || timeOffset < -720 || timeOffset > 840)
+                    timeOffset = config("site.timeOffset", 0);
                 var hours = Math.floor(timeOffset / 60);
                 var minutes = Math.abs(timeOffset) % 60;
                 var tz = ((timeOffset > 0) ? "+" : "") + ((Math.abs(hours) < 10) ? "0" : "") + hours + ":"
@@ -425,9 +423,76 @@ router.post("/action/banUser", function(req, res) {
                 postNumber: +result.fields["banPostNumber_" + value] || null
             });
         });
-        return controller.checkBan(req, res, c.boardName, true);
-    }).then(function() {
         return Database.banUser(req, c.fields.userIp, c.bans);
+    }).then(function(result) {
+        res.send({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/delall", function(req, res) {
+    if (!req.isModer())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    var c = {};
+    Tools.parseForm(req).then(function(result) {
+        c.fields = result.fields;
+        c.boardNames = Tools.toArray(Tools.filterIn(c.fields, function(boardName, key) {
+            return /^board_\S+$/.test(key);
+        }));
+        if (c.boardNames.length < 1)
+            return Promise.reject(Tools.translate("No board specified"));
+        return controller.checkBan(req, res, c.boardNames, true);
+    }).then(function() {
+        return Database.delall(req, c.fields.userIp, c.boardNames);
+    }).then(function(result) {
+        res.send({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+var getRegisteredUserData = function(fields) {
+    var levels = {};
+    var password = fields.password;
+    var ips = Tools.ipList(fields.ips);
+    if (typeof ips == "string")
+        return Promise.reject(ips);
+    Tools.forIn(fields, function(value, name) {
+        if (!/^accessLevelBoard_\S+$/.test(name))
+            return;
+        var level = fields["accessLevel_" + value];
+        if ("NONE" == level)
+            return;
+        levels[value] = level;
+    });
+    return Promise.resolve({
+        password: password,
+        levels: levels,
+        ips: ips
+    });
+};
+
+router.post("/action/registerUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        return getRegisteredUserData(result.fields);
+    }).then(function(result) {
+        return Database.registerUser(result.password, result.levels, result.ips);
+    }).then(function(hashpass) {
+        res.json({ hashpass: hashpass });
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/unregisterUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    var c = {};
+    Tools.parseForm(req).then(function(result) {
+        return Database.unregisterUser(result.fields.hashpass);
     }).then(function(result) {
         res.send({});
     }).catch(function(err) {
@@ -435,19 +500,17 @@ router.post("/action/banUser", function(req, res) {
     });
 });
 
-router.post("/action/delall", function(req, res) {
-    if (Database.compareRegisteredUserLevels(req.level, "MODER") < 0)
-        return controller.error(res, Tools.translate("Not enough rights"), true);
-    var c = {};
+router.post("/action/updateRegisteredUser", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
     Tools.parseForm(req).then(function(result) {
-        c.fields = result.fields;
-        return controller.checkBan(req, res, c.fields.boardName, true);
-    }).then(function() {
-        return Database.delall(req, c.fields);
+        return getRegisteredUserData(result.fields);
     }).then(function(result) {
-        res.send({});
+        return Database.updateRegisteredUser(result.password, result.levels, result.ips);
+    }).then(function() {
+        res.json({});
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -463,7 +526,7 @@ router.post("/action/setThreadFixed", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -479,7 +542,7 @@ router.post("/action/setThreadClosed", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -495,7 +558,7 @@ router.post("/action/setThreadUnbumpable", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -506,7 +569,7 @@ router.post("/action/sendChatMessage", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
     });
 });
 
@@ -517,7 +580,29 @@ router.post("/action/deleteChatMessages", function(req, res) {
     }).then(function(result) {
         res.send(result);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/synchronize", function(req, res) {
+    var c = {};
+    Tools.parseForm(req).then(function(result) {
+        c.key = result.fields.key;
+        if (!c.key)
+            return Promise.reject(Tools.translate("No key specified"));
+        var data = result.fields.data;
+        try {
+            data = JSON.parse(data);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+        return Database.db.set("synchronizationData:" + c.key, JSON.stringify(data));
+    }).then(function() {
+        return Database.db.expire("synchronizationData:" + c.key, 300); //NOTE: 5 minutes
+    }).then(function() {
+        res.send({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
     });
 });
 
@@ -552,24 +637,18 @@ router.post("/action/search", function(req, res) {
             else
                 c.query.possiblePhrases.push(phrase.toLowerCase());
         });
+        c.model.phrases = c.query.requiredPhrases.concat(c.query.excludedPhrases).concat(c.query.possiblePhrases);
+        c.model.phrases = Tools.withoutDuplicates(c.model.phrases);
         return Database.findPosts(c.query, boardName);
     }).then(function(posts) {
         c.model.searchResults = posts.map(function(post) {
-            var text = post.rawText;
+            var text = post.plainText || "";
             text = text.replace(/\r*\n+/g, " ");
             if (text.length > 300)
                 text = text.substr(0, 297) + "...";
             var subject = post.subject || text;
             if (subject.length > 100)
                 subject = subject.substr(0, 97) + "...";
-            c.query.requiredPhrases.concat(c.query.possiblePhrases).forEach(function(phrase) {
-                var ind = text.toLowerCase().indexOf(phrase);
-                while (ind >= 0) {
-                    var nphrase = "<b><font color=\"red\">" + phrase + "</font></b>";
-                    text = text.substr(0, ind) + nphrase + text.substr(ind + phrase.length);
-                    ind = text.toLowerCase().indexOf(phrase, ind + nphrase.length);
-                }
-            });
             return {
                 boardName: post.boardName,
                 postNumber: post.number,
@@ -580,7 +659,177 @@ router.post("/action/search", function(req, res) {
         });
         res.send(c.model);
     }).catch(function(err) {
-        controller.error(res, err, true);
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserAddFile", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        var dir = result.fields.dir;
+        if (dir.slice(-1)[0] != "/")
+            dir += "/";
+        var path = __dirname + "/../" + dir + result.fields.fileName;
+        var files = Tools.toArray(result.files);
+        if ("true" == result.fields.isDir)
+            return FS.makeDirectory(path);
+        else if (files.length < 1)
+            return FS.write(path, "");
+        else
+            return FS.move(files[0].path, path);
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        if ("ENOENT" == err.code)
+            controller.notFound(req, res);
+        else if ("ENOTDIR" == err.code)
+            controller.error(req, res, Tools.translate("Not a directory"), true);
+        else
+            controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserEditFile", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        var path = __dirname + "/../" + result.fields.fileName;
+        return FS.write(path, result.fields.content);
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        if ("ENOENT" == err.code)
+            controller.notFound(req, res);
+        else if ("EISDIR" == err.code)
+            controller.error(req, res, Tools.translate("Not a file"), true);
+        else
+            controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserRenameFile", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        var oldPath = __dirname + "/../" + result.fields.oldFileName;
+        var newPath = oldPath.split("/").slice(0, -1).join("/") + "/" + result.fields.fileName;
+        return FS.rename(oldPath, newPath);
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        if ("ENOENT" == err.code)
+            controller.notFound(req, res);
+        else
+            controller.error(res, err, true);
+    });
+});
+
+router.post("/action/superuserDeleteFile", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Tools.parseForm(req).then(function(result) {
+        var path = __dirname + "/../" + result.fields.fileName;
+        return FS.removeTree(path);
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        if ("ENOENT" == err.code)
+            controller.notFound(req, res);
+        else
+            controller.error(res, err, true);
+    });
+});
+
+router.post("/action/superuserRegenerateCache", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Global.IPC.send("stop").then(function() {
+        return Global.IPC.send("regenerateCache");
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserRerenderPosts", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    var c = { boardNames: [] };
+    Tools.parseForm(req).then(function(result) {
+        Tools.forIn(result.fields, function(value, name) {
+            if (!/^board_\S+$/.test(name))
+                return;
+            c.boardNames.push(value);
+        });
+        if (c.boardNames.length < 1)
+            c.boardNames = Board.boardNames();
+        return Global.IPC.send("stop");
+    }).then(function() {
+        return Database.rerenderPosts(c.boardNames);
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserRebuildSearchIndex", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    Global.IPC.send("stop").then(function() {
+        return Database.rebuildSearchIndex();
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
+    });
+});
+
+router.post("/action/superuserReload", function(req, res) {
+    if (!req.isSuperuser())
+        return controller.error(req, res, Tools.translate("Not enough rights"), true);
+    var c = { list: [] };
+    Tools.parseForm(req).then(function(result) {
+        if ("true" == result.fields.boards)
+            c.list.push("boards");
+        if ("true" == result.fields.config)
+            c.list.push("config");
+        if ("true" == result.fields.templates)
+            c.list.push("templates");
+        if (c.list.length < 1)
+            return Promise.resolve();
+        return Global.IPC.send("stop");
+    }).then(function() {
+        return Tools.series(c.list, function(action) {
+            switch (action) {
+            case "boards":
+                return Global.IPC.send("reloadBoards");
+            case "config":
+                return Global.IPC.send("reloadConfig");
+            case "controller":
+                return controller.initialize();
+            default:
+                return Promise.resolve();
+            }
+        });
+    }).then(function() {
+        if (c.list.length < 1)
+            return Promise.resolve();
+        return Global.IPC.send("start");
+    }).then(function() {
+        res.json({});
+    }).catch(function(err) {
+        controller.error(req, res, err, true);
     });
 });
 

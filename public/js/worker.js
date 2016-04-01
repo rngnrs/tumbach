@@ -1,6 +1,9 @@
-/*ololord global object*/
+/*Importing scripts*/
 
-var lord = lord || {};
+importScripts("3rdparty/Promise.min.js");
+importScripts("3rdparty/underscore-min.js");
+importScripts("3rdparty/BigInteger.min.js");
+importScripts("api.js");
 
 /*Constants*/
 
@@ -61,27 +64,15 @@ lord.TokenTypes = [{
 
 /*Functions*/
 
-lord.getImageHash = function(url, width, height) {
-    width = +width;
-    height = +height;
-    if (!url || isNaN(width) || width <= 0 || isNaN(height) || height < 0)
-        return Promise.resolve(null);
-    var xhr = new XMLHttpRequest();
-    xhr.open("get", url, true);
-    xhr.responseType = "arraybuffer";
-    return new Promise(function(resolve, reject) {
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState != 4)
-                return;
-            if (xhr.status != 200)
-                return resolve(null);
-            var response = xhr.response;
-            if (!response)
-                return resolve(null);
-            resolve(lord.generateImageHash(response, width, height));
-        };
-        xhr.send(null);
-    });
+lord.hammingDistance = function(hash1, hash2, max) {
+    max = max || 1000;
+    var dist = 0;
+    var val = bigInt(hash1).xor(bigInt(hash2));
+    while (dist < max && val.toString() !== "0") {
+        ++dist;
+        val = val.and(val.subtract(1));
+    }
+    return dist;
 };
 
 lord.parseSpells = function(text) {
@@ -354,17 +345,17 @@ lord.spell_words = function(post, args) {
     if (!post || !args || !post.text)
         return Promise.resolve(null);
     if (post.text.toLowerCase().indexOf(args.toLowerCase()) >= 0)
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#words(" + args + ")" });
     return Promise.resolve(null);
 };
 
 lord.spell_all = function() {
-    return Promise.resolve({ "hidden": true });
+    return Promise.resolve({ "hidden": "#all" });
 };
 
 lord.spell_op = function(post) {
     if (post && post.isOp)
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#op" });
     return Promise.resolve(null);
 };
 
@@ -387,7 +378,7 @@ lord.spell_wipe = function(post, args) {
                     while (lines[i++] === line)
                         ++j;
                     if (j > 4 && j > n && line)
-                        return Promise.resolve({ "hidden": true });
+                        return Promise.resolve({ "hidden": "#samelines" });
                 }
             }
             break;
@@ -406,24 +397,24 @@ lord.spell_wipe = function(post, args) {
                         if (j > pop && word.length > 2)
                             pop = j;
                          if (pop >= n)
-                            return Promise.resolve({ "hidden": true });
+                            return Promise.resolve({ "hidden": "#samewords" });
                     }
                 }
                 if ((keys / len) < 0.25)
-                    return Promise.resolve({ "hidden": true });
+                    return Promise.resolve({ "hidden": "#samewords" });
             }
             break;
         }
         case "longwords": {
             var words = text.replace(/https*:\/\/.*?(\s|$)/g, "").replace(/[\s\.\?!,>:;-]+/g, " ").split(" ");
             if (words[0].length > 50 || words.length > 1 && (words.join("").length / words.length) > 10)
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#longwords" });
             break;
         }
         case "symbols": {
             var txt = text.replace(/\s+/g, "");
             if (txt.length > 30 && (txt.replace(/[0-9a-zа-я\.\?!,]/ig, "").length / txt.length) > 0.4)
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#symbols" });
             break;
         }
         case "capslock": {
@@ -443,21 +434,21 @@ lord.spell_wipe = function(post, args) {
                     n++;
                 }
                 if ((capsw / n >= 0.3) && n > 4)
-                    return Promise.resolve({ "hidden": true });
+                    return Promise.resolve({ "hidden": "#capslock" });
                 else if ((casew / n) >= 0.3 && n > 8)
-                    return Promise.resolve({ "hidden": true });
+                    return Promise.resolve({ "hidden": "#capslock" });
             }
             break;
         }
         case "numbers": {
             var txt = text.replace(/\s+/g, " ").replace(/>>\d+|https*:\/\/.*?(?: |$)/g, "");
             if (txt.length > 30 && (txt.length - txt.replace(/\d/g, "").length) / words.length > 0.4)
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#numbers" });
             break;
         }
         case "whitespace": {
             if (/(?:\n\s*){10}/i.test(text))
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#whitespace" });
             break;
         }
         default: {
@@ -476,9 +467,9 @@ lord.spell_subj = function(post, args) {
         if (!rx)
             return Promise.resolve(null);
         if (post.subject.search(rx) >= 0)
-            return Promise.resolve({ "hidden": true });
+            return Promise.resolve({ "hidden": "#subj(" + args + "): " + post.subject });
     } else if (!post.isDefaultSubject) {
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#subj" });
     }
     return Promise.resolve(null);
 };
@@ -486,16 +477,20 @@ lord.spell_subj = function(post, args) {
 lord.spell_name = function(post, args) {
     if (!post || !post.name)
         return Promise.resolve(null);
-    if ((args && post.userName.toLowerCase().indexOf(args.toLowerCase()) >= 0) || !post.isDefaultUserName)
-        return Promise.resolve({ "hidden": true });
+    if (args && post.userName.toLowerCase().indexOf(args.toLowerCase()) >= 0)
+        return Promise.resolve({ "hidden": "#name(" + args + "): " + post.userName });
+    if (!args && !post.isDefaultUserName)
+        return Promise.resolve({ "hidden": "#name" });
     return Promise.resolve(null);
 };
 
 lord.spell_trip = function(post, args) {
     if (!post || !post.tripcode)
         return Promise.resolve(null);
-    if (!args || post.tripcode.toLowerCase().indexOf(args.toLowerCase()) >= 0)
-        return Promise.resolve({ "hidden": true });
+    if (!args)
+        return Promise.resolve({ "hidden": "#trip" });
+    if (post.tripcode.toLowerCase().indexOf(args.toLowerCase()) >= 0)
+        return Promise.resolve({ "hidden": "#trip(" + args + "): " + post.tripcode });
     return Promise.resolve(null);
 };
 
@@ -503,7 +498,7 @@ lord.spell_sage = function(post) {
     if (!post || !post.mailto)
         return Promise.resolve(null);
     if (post.mailto.toLowerCase() == "mailto:sage")
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#sage" });
     return Promise.resolve(null);
 };
 
@@ -512,9 +507,9 @@ lord.spell_tlen = function(post, args) {
         return Promise.resolve(null);
     if (!args) {
         if (post.text.length > 0)
-            return Promise.resolve({ "hidden": true });
+            return Promise.resolve({ "hidden": "#tlen" });
     } else if (lord.inRanges(args, post.text.length)) {
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#tlen(" + args + "): " + post.text.length });
     }
     return Promise.resolve(null);
 };
@@ -523,7 +518,7 @@ lord.spell_num = function(post, args) {
     if (!post || !args)
         return Promise.resolve(null);
     if (lord.inRanges(args, post.number))
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#num(" + args + "): " + post.number });
     return Promise.resolve(null);
 };
 
@@ -557,11 +552,11 @@ lord.spell_img = function(post, args) {
             var f = post.files[i];
             if ((sizes && lord.inRanges(sizes, f.size, pred)) || (widths && lord.inRanges(widths, f.width, pred))
                 || (heights && lord.inRanges(heights, f.height, pred))) {
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#img(" + args + "): " + f.href.split("/").pop() });
             }
         }
     } else if (post.files.length > 0) {
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#img" });
     }
     return Promise.resolve(null);
 };
@@ -575,12 +570,12 @@ lord.spell_imgn = function(post, args) {
     for (var i = 0; i < post.files.length; ++i) {
         var f = post.files[i];
         if (f.sizeText.search(rx) >= 0)
-            return Promise.resolve({ "hidden": true });
+            return Promise.resolve({ "hidden": "#imgn(" + args + "): " + f.href.split("/").pop() });
     }
     return Promise.resolve(null);
 };
 
-lord.spell_ihash = function(post, args) {
+lord.spell_ihash = function(post, args, options) {
     args = +args;
     if (!post || !args || args <= 0 || !post.files)
         return Promise.resolve(null);
@@ -590,11 +585,9 @@ lord.spell_ihash = function(post, args) {
         var f = post.files[i];
         if (!f)
             return f(i + 1);
-        return lord.getImageHash(f.href, f.width, f.height).then(function(hash) {
-            if (hash && hash == args)
-                return Promise.resolve({ "hidden": true });
-            return Promise.resolve(null);
-        });
+        if (f.ihash && lord.hammingDistance(f.ihash, args, options.ihashDistance + 1) <= options.ihashDistance)
+            return Promise.resolve({ "hidden": "#ihash(" + args + "): " + f.href.split("/").pop() });
+        return Promise.resolve(null);
     };
     return f(0);
 };
@@ -606,7 +599,7 @@ lord.spell_exp = function(post, args) {
     if (!rx)
         return Promise.resolve(null);
     if (post.text.search(rx) >= 0)
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#exp(" + args + ")" });
     return Promise.resolve(null);
 };
 
@@ -617,7 +610,7 @@ lord.spell_exph = function(post, args) {
     if (!rx)
         return Promise.resolve(null);
     if (post.textHTML.search(rx) >= 0)
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#exph(" + args + ")" });
     return Promise.resolve(null);
 };
 
@@ -631,10 +624,10 @@ lord.spell_video = function(post, args) {
         for (var i = 0; i < post.videos.length; ++i) {
             var video = post.videos[i];
             if (video.title && video.title.search(rx) >= 0)
-                return Promise.resolve({ "hidden": true });
+                return Promise.resolve({ "hidden": "#video(" + args + "): " + video.title });
         }
     } else {
-        return Promise.resolve({ "hidden": true });
+        return Promise.resolve({ "hidden": "#video" });
     }
     return Promise.resolve(null);
 };
@@ -645,7 +638,7 @@ lord.spell_vauthor = function(post, args) {
     for (var i = 0; i < post.videos.length; ++i) {
         var video = post.videos[i];
         if (video && video.author && video.author == args)
-            return Promise.resolve({ "hidden": true });
+            return Promise.resolve({ "hidden": "#vauthor(" + args + "): " + video.author });
     }
     return Promise.resolve(null);
 };
@@ -663,25 +656,25 @@ lord.spell_rep = function(post, args) {
     return Promise.resolve({ "replacements": [ { "innerHTML": nih } ] });
 };
 
-lord.applySpell = function(post, spell) {
+lord.applySpell = function(post, spell, options) {
     if (!post || !spell)
         return Promise.resolve(null);
     switch (spell.type) {
     case "SPELL": {
-        return lord.applySpell(post, spell.value);
+        return lord.applySpell(post, spell.value, options);
     }
     case "spell": {
         if (spell.board && post.board != spell.board)
             return Promise.resolve(null);
         if (spell.thread && post.thread != spell.thread)
             return Promise.resolve(null);
-        return lord["spell_" + spell.name](post, spell.args);
+        return lord["spell_" + spell.name](post, spell.args, options);
     }
     case "|": {
         var f = function(i) {
             if (i >= spell.value.length)
                 return Promise.resolve(null);
-            return lord.applySpell(post, spell.value[i].value).then(function(result) {
+            return lord.applySpell(post, spell.value[i].value, options).then(function(result) {
                 if (result && result.hidden)
                     return Promise.resolve(result);
                 return f(i + 1);
@@ -693,17 +686,17 @@ lord.applySpell = function(post, spell) {
         var f = function(i) {
             if (i >= spell.value.length)
                 return Promise.resolve(null);
-            return lord.applySpell(post, spell.value[i].value).then(function(result) {
+            return lord.applySpell(post, spell.value[i].value, options).then(function(result) {
                 if (!result || !result.hidden)
                     return Promise.resolve(null);
-                return f(i + 1);
+                return (i < spell.value.length - 1) ? f(i + 1) : result;
             });
         };
         return f(0);
     }
     case "!": {
-        var result = lord.applySpell(post, spell.value);
-        return Promise.resolve({ "hidden": (!result || !hidden) });
+        var result = lord.applySpell(post, spell.value, options);
+        return Promise.resolve((!result || !result.hidden) ? { "hidden": "!not" } : null);
     }
     default: {
         break;
@@ -712,14 +705,14 @@ lord.applySpell = function(post, spell) {
     return Promise.resolve(null);
 };
 
-lord.applySpells = function(post, spells) {
+lord.applySpells = function(post, spells, options) {
     if (!post || !spells || spells.length < 1)
         return Promise.resolve(null);
     var npost = { replacements: [] };
     var promises = spells.map(function(spell) {
         if (npost.hidden && ("SPELL" != spell.value.type || "rep" != spell.value.value.name))
             return Promise.resolve();
-        return lord.applySpell(post, spell.value).then(function(result) {
+        return lord.applySpell(post, spell.value, options).then(function(result) {
             if (!result)
                 return Promise.resolve();
             npost.hidden = result.hidden;
@@ -733,10 +726,11 @@ lord.applySpells = function(post, spells) {
     });
 };
 
-lord.processPosts = function(posts, spells) {
+lord.processPosts = function(posts, spells, options) {
     if (!posts)
         return Promise.reject("internalErrorText");
-    var promises = posts.map(function(post) {
+    var data = { posts: [] };
+    return lord.series(posts, function(post) {
         var npost = {
             "boardName": post.boardName,
             "postNumber": post.postNumber
@@ -744,7 +738,7 @@ lord.processPosts = function(posts, spells) {
         var p = Promise.resolve();
         if (spells && !post.hidden) {
             p = p.then(function() {
-                return lord.applySpells(post, spells);
+                return lord.applySpells(post, spells, options);
             }).then(function(result) {
                 if (result) {
                     npost.hidden = result.hidden;
@@ -754,10 +748,12 @@ lord.processPosts = function(posts, spells) {
             });
         }
         return p.then(function() {
-            return Promise.resolve(npost);
+            data.posts.push(npost);
+            return Promise.resolve();
         });
+    }).then(function() {
+        return Promise.resolve(data);
     });
-    return Promise.all(promises);
 };
 
 lord.message_parseSpells = function(data) {
@@ -769,17 +765,9 @@ lord.message_parseSpells = function(data) {
 lord.message_processPosts = function(data) {
     if (!data)
         return Promise.reject("invalidDataErrorText");
-    return lord.processPosts(data.posts, data.spells);
+    var options = { ihashDistance: (data.options && data.options.ihashDistance) || 15 };
+    return lord.processPosts(data.posts, data.spells, options);
 };
-
-lord.message_getImageHash = function(data) {
-    if (!data)
-        return Promise.reject("invalidDataErrorText");
-    return lord.getImageHash(data.href, data.width, data.height);
-};
-
-importScripts("3rdparty/Promise.min.js");
-importScripts("api.js");
 
 self.addEventListener("message", function(message) {
     try {
@@ -787,7 +775,7 @@ self.addEventListener("message", function(message) {
     } catch (err) {
         self.postMessage(JSON.stringify({
             id: "_error",
-            error: error
+            error: err
         }));
         return;
     }

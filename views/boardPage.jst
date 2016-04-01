@@ -1,57 +1,101 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
-<body class="mobile" {{#def.baseData}} data-current-page="{{=it.currentPage}}">
-<script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
-{{? it.site.vkontakte.integrationEnabled }}
-    <script type="text/javascript">
-        VK.init({ apiId: {{=it.site.vkontakte.appId}} });
-    </script>
-{{?}}
-<div id="hiddenPostForm" style="display: none;"></div>
-{{? it.board.captchaEnabled}}
-    <div id="hiddenCaptcha" style="display: none;"></div>
-{{?}}
-<div class="wrap">
-    <div id="customHeaderPlaceholder" style="display: none;"></div>
-    {{~["top", "bottom"] :target}}
-    {{#def.navigationButton}}
-    {{~}}
-    {{~["previous", "next"] :target}}
-    {{#def.leafButton}}
-    {{~}}
-    <div id="toolbarPlaceholder" style="display: none;"></div>
+<body>
+{{#def.header}}
+<a id="top"></a>
+<div class="wrap" {{#def.baseData}} data-current-page="{{=it.currentPage}}" data-page-count="{{=it.pageCount}}">
+    {{#def.toolbar}}
     <div class="wrappie">
-        <div class="main">
-            <a id="top"></a>
-            <div id="searchPlaceholder" style="display: none;"></div>
-            <div id="bannerPlaceholder" style="display: none;"></div>
+        {{#def.customHeader}}
+        <div id="wrapper">
+            <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
+            {{? it.site.vkontakte.integrationEnabled }}
+                <script type="text/javascript">
+                    VK.init({ apiId: {{=it.site.vkontakte.appId}} });
+                </script>
+            {{?}}
+            <div id="hiddenPostForm" style="display: none;"></div>
+            {{? it.board.captchaEnabled}}
+                <div id="hiddenCaptcha" style="display: none;"></div>
+            {{?}}
+            {{~["top", "bottom"] :target}}
+                {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+                {{#def.leafButton}}
+            {{~}}
+            {{#def.banner}}
             <div class="theTitle">
                 <h1>
                     {{=it.board.title}}
-                    <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html"
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html"
                        title="{{=it.tr.boardCatalogLinkText}}"><img src="/{{=it.site.pathPrefix}}img/catalog.png"
+                                                                    class="buttonImage" width="24" height="24"></a>
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/archive.html"
+                       title="{{=it.tr.boardArchiveLinkText}}"><img src="/{{=it.site.pathPrefix}}img/archive.png"
                                                                     class="buttonImage" width="24" height="24"></a>
                     <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/rss.xml" target="_blank"
                        title="{{=it.tr.boardRssLinkText}}"><img src="/{{=it.site.pathPrefix}}img/rss.png" class="buttonImage"
                                                                 width="24" height="24"></a>
                 </h1>
             </div>
-            <div id="upperPlaceholder" style="display: none;"></div>
-            <div id="threads" class="loadingMessage">
-                <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">
-                <h1 style="display: inline;">{{=it.tr.loadingThreadsMessage}}</h1>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["tr", "board/" + lord.data("boardName")]);
+                    model.settings = lord.settings();
+                    document.open();
+                    document.write(lord.template("boardPageUpper", model, true));
+                    document.close();
+                })();
+            </script>
+            <div id="threads">
+                {{~it.threads :thread}}
+                    <hr />
+                    <div id="thread{{=thread.opPost.number}}" class="thread"{{? thread.expanded}} data-expanded="true"{{?}}>
+                        {{~[thread.opPost] :post}}
+                            {{#def.post}}
+                        {{~}}
+                        {{? thread.omittedPosts > 0}}
+                            <div class="omittedPosts">
+                                {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
+                            </div>
+                        {{?}}
+                        <div class="threadPosts">
+                            {{~thread.lastPosts :post}}
+                                {{#def.post}}
+                            {{~}}
+                        </div>
+                    </div>
+                {{~}}
             </div>
-            <div id="lowerPlaceholder" style="display: none;"></div>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["tr", "board/" + lord.data("boardName")]);
+                    model.settings = lord.settings();
+                    document.open();
+                    document.write(lord.template("boardPageLower", model, true));
+                    document.close();
+                })();
+            </script>
             <hr />
-            <div id="pagesPlaceholder" style="display: none;"></div>
-            <div id="navbarPlaceholder" style="display: none;"></div>
+            <script type="text/javascript">
+                (function() {
+                    var model = lord.model(["base", "tr", "board/" + lord.data("boardName")]);
+                    model.pageCount = +lord.data("pageCount");
+                    model.currentPage = +lord.data("currentPage");
+                    document.open();
+                    document.write(lord.template("pagination", model, true));
+                    document.close();
+                })();
+            </script>
+            {{#def.navbar}}
             <hr />
-            <div id="postingSpeedPlaceholder" style="display: none;"></div>
-            <a id="bottom"></a>
+            {{#def.postingSpeed}}
         </div>
     </div>
-    <div id="customFooterPlaceholder" style="display: none;"></div>
+    {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>

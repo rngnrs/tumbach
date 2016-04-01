@@ -1,11 +1,14 @@
 var Highlight = require("highlight.js");
 var HTTP = require("q-io/http");
+var URL = require("url");
 var XRegExp = require("xregexp");
 
 var Board = require("../boards");
 var config = require("./config");
 var controller = require("./controller");
 var Database = require("./database");
+var Global = require("./global");
+var Permissions = require("./permissions");
 var Tools = require("./tools");
 
 var langNames = require("../misc/lang-names.json");
@@ -157,8 +160,29 @@ var getTwitterEmbeddedHtml = function(href, defaultHtml) {
     });
 };
 
+var youtubeVideoStartTime = function(href) {
+    if (!href)
+        return null;
+    var t = URL.parse(href, true).query.t;
+    if (!t)
+        return null;
+    var match = t.match(/((\d+)h)?((\d+)m)?((\d+)s)?/);
+    if (!match)
+        return null;
+    var start = 0;
+    if (match[2])
+        start += +match[2] * 3600;
+    if (match[4])
+        start += +match[4] * 60;
+    if (match[6])
+        start += +match[6];
+    if (isNaN(start) || start <= 0)
+        return null;
+    return start;
+};
+
 var getYoutubeEmbeddedHtml = function(href, defaultHtml) {
-    var match = href.match(/^https?\:\/\/.*youtube\.com\/.*v\=([^\/#\?]+).*$/);
+    var match = href.match(/^https?\:\/\/.*youtube\.com\/.*v\=([^\/#\?&]+).*$/);
     var videoId = match ? match[1] : null;
     if (!videoId) {
         match = href.match(/^https?\:\/\/youtu\.be\/([^\/#\?]+).*$/);
@@ -183,6 +207,7 @@ var getYoutubeEmbeddedHtml = function(href, defaultHtml) {
             var info = response.items[0].snippet;
             info.id = videoId;
             info.href = href;
+            info.start = youtubeVideoStartTime(href);
             var html = controller.sync("youtubeVideoLink", { info: info });
             if (!html)
                 return Promise.reject(Tools.translate("Failed to create YouTube video link"));
@@ -205,7 +230,7 @@ var getCoubEmbeddedHtml = function(href, defaultHtml) {
         return Promise.resolve(defaultHtml);
     return HTTP.request({
         method: "GET",
-        url: `https://coub.com/api/oembed.json?url=coub.com/view/${videoId}`,
+        url: `https://coub.com/api/oembed.json?url=http://coub.com/view/${videoId}`,
         timeout: Tools.Minute
     }).then(function(response) {
         if (response.status != 200)
@@ -590,7 +615,7 @@ var convertCode = function(_, text, matchs, _, options) {
     lang = result.language || lang;
     var langClass = lang ? (" " + lang) : "";
     var langName = langNames.hasOwnProperty(lang) ? langNames[lang] : lang;
-    options.op = `<div class="codeBlock${langClass} hljs" title="${langName}">`;
+    options.op = `<div class="codeBlock${langClass} hljs" title="${langName || ''}">`;
     options.cl = "</div>";
     return Promise.resolve(Highlight.fixMarkup(text));
 };
@@ -604,7 +629,7 @@ var convertExternalLink = function(info, text, matchs, _, options) {
     if (!text)
         return Promise.resolve("");
     options.type = SkipTypes.HtmlSkip;
-    if (info.isIn(matchs.index + matchs[0].length, text.length, SkipTypes.HtmlSkip))
+    if (info.isIn(matchs.index, matchs[0].length, SkipTypes.HtmlSkip))
         return Promise.resolve(text);
     var href = matchs[0];
     if (href.lastIndexOf("http", 0) && href.lastIndexOf("ftp", 0))
@@ -666,6 +691,11 @@ var convertPostLink = function(info, _, matchs, _, options) {
     }
 };
 
+var convertHtml = function(_, text, _, _, options) {
+    options.type = SkipTypes.HtmlSkip;
+    return Promise.resolve(text);
+};
+
 var convertMarkup = function(_, text, matchs, _, options) {
     options.type = SkipTypes.NoSkip;
     if ("----" == matchs[0])
@@ -680,11 +710,16 @@ var convertMarkup = function(_, text, matchs, _, options) {
     return Promise.resolve(text);
 };
 
+var convertLatex = function(inline, _, text, matchs, _, options) {
+    options.type = SkipTypes.HtmlSkip;
+    return Tools.markupLatex(text, inline);
+};
+
 var convertUrl = function(info, text, matchs, matche, options) {
     if (!text)
         return Promise.resolve("");
     options.type = SkipTypes.HtmlSkip;
-    if (info.isIn(matchs.index + matchs[0].length, text.length, SkipTypes.HtmlSkip))
+    if (info.isIn(matchs.index, matchs[0].length, SkipTypes.HtmlSkip))
         return Promise.resolve(text);
     var href = text;
     if (href.lastIndexOf("http", 0) && href.lastIndexOf("ftp", 0))
@@ -772,6 +807,7 @@ var processPostText = function(boardName, text, options) {
         MarkupModes.ExtendedWakabaMark,
         MarkupModes.BBCode
     ];
+    var accessLevel = (options && options.accessLevel) || null;
     var c = {};
     var langs = [];
     Highlight.listLanguages().forEach(function(lang) {
@@ -806,9 +842,21 @@ var processPostText = function(boardName, text, options) {
                 op: new RegExp("/\\-\\-code\\s+(" + langs + ")\\s+", "gi"),
                 cl: /\s+\\\\\\-\\-/g
             });
+        }).then(function() {
+            return process(info, convertLatex.bind(null, false), { op: "$$$" });
+        }).then(function() {
+            return process(info, convertLatex.bind(null, true), { op: "$$" });
         });
     }
     if (markupModes.indexOf(MarkupModes.BBCode) >= 0) {
+        if (Database.compareRegisteredUserLevels(accessLevel, Permissions.useRawHTMLMarkup()) >= 0) {
+            p = p.then(function() {
+                return process(info, convertHtml, {
+                    op: "[raw-html]",
+                    cl: "[/raw-html]"
+                });
+            });
+        }
         p = p.then(function() {
             return process(info, convertPre, {
                 op: "[pre]",
@@ -838,6 +886,16 @@ var processPostText = function(boardName, text, options) {
             return process(info, convertNomarkup, {
                 op: "[n]",
                 cl: "[/n]"
+            });
+        }).then(function() {
+            return process(info, convertLatex.bind(null, false), {
+                op: "[latex]",
+                cl: "[/latex]"
+            });
+        }).then(function() {
+            return process(info, convertLatex.bind(null, true), {
+                op: "[l]",
+                cl: "[/l]"
             });
         });
     }

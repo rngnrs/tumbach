@@ -1,5 +1,4 @@
 config.json
-config-dev.json
 node_modules
-.idea
-tmp
+npm-debug.log
+.idea/

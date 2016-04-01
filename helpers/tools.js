@@ -1,17 +1,25 @@
 var Address4 = require("ip-address").Address4;
 var Address6 = require("ip-address").Address6;
+var Canvas = require("canvas");
 var ChildProcess = require("child_process");
 var Crypto = require("crypto");
+var du = require("du");
 var equal = require("deep-equal");
 var escapeHtml = require("escape-html");
-var Formidable = require("formidable");
 var FS = require("q-io/fs");
 var FSSync = require("fs-ext");
+var HTMLToText = require("html-to-text");
+var Image = Canvas.Image;
+var Jdenticon = require("jdenticon");
+var MathJax = require("mathjax-node/lib/mj-single.js");
 var merge = require("merge");
 var mkpath = require("mkpath");
+var Multiparty = require("multiparty");
 var Path = require("path");
+var phash = require("phash-image");
 var promisify = require("promisify-node");
 var Util = require("util");
+var UUID = require("uuid");
 var XRegExp = require("xregexp");
 
 var config = require("./config");
@@ -31,16 +39,19 @@ var rootZones = require("../misc/root-zones.json").reduce(function(acc, zone) {
     return acc;
 }, {});
 
-mkpath.sync(config("system.tmpPath", __dirname + "/../tmp") + "/formidable");
+MathJax.config({ MathJax: {} });
+MathJax.start();
+
+mkpath.sync(config("system.tmpPath", __dirname + "/../tmp") + "/form");
 
 var ExternalLinkRegexpPattern = (function() {
     var schema = "https?:\\/\\/|ftp:\\/\\/";
     var ip = "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}"
-        + "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])";
+        + "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])";
     var hostname = "([\\w\\p{L}\\.\\-]+)\\.([\\p{L}]{2,17}\\.?)";
     var port = ":\\d+";
-    var path = "(\\/[\\w\\p{L}\\.\\-\\!\\?\\=\\+#~&%:\\,\\(\\)]*)*\\/?";
-    return "(" + schema + ")?(" + hostname + "|" + ip + ")(" + port + ")?" + path/* + "(?!\\S)"*/;
+    var path = "(\\/[\\w\\p{L}\\.\\-\\!\\?\\=\\+#~&%:;\\,\\(\\)\\[\\]«»]*)*\\/?";
+    return "(" + schema + ")?(" + hostname + "|" + ip + ")(" + port + ")?" + path;
 })();
 
 Object.defineProperty(module.exports, "Billion", { value: (2 * 1000 * 1000 * 1000) });
@@ -60,7 +71,7 @@ var forIn = function(obj, f) {
 
 module.exports.forIn = forIn;
 
-module.exports.mapIn = function(obj, f) {
+var mapIn = function(obj, f) {
     if (!obj || typeof f != "function")
         return;
     var arr = [];
@@ -70,6 +81,8 @@ module.exports.mapIn = function(obj, f) {
     }
     return arr;
 };
+
+module.exports.mapIn = mapIn;
 
 module.exports.filterIn = function(obj, f) {
     if (!obj || typeof f != "function")
@@ -85,15 +98,15 @@ module.exports.filterIn = function(obj, f) {
     return nobj;
 };
 
-module.exports.toArray = function(obj) {
+var toArray = function(obj) {
     var arr = [];
-    var i = 0;
     forIn(obj, function(val) {
-        arr[i] = val;
-        ++i;
+        arr.push(val);
     });
     return arr;
 };
+
+module.exports.toArray = toArray;
 
 module.exports.extend = function(Child, Parent) {
     var F = function() {};
@@ -152,7 +165,7 @@ module.exports.toUTC = function(date) {
 
 module.exports.hashpass = function(req) {
     var s = req.cookies.hashpass;
-    if (typeof s != "string" || !s.match(/^([0-9a-fA-F]){40}$/))
+    if (!module.exports.mayBeHashpass(s))
         return;
     return s;
 };
@@ -203,8 +216,10 @@ module.exports.styles = function() {
     styles = [];
     var path = __dirname + "/../public/css";
     FSSync.readdirSync(path).forEach(function(fileName) {
-        if (fileName.split(".").pop() != "css")
+        if (fileName.split(".").pop() != "css"
+            || ["base", "desktop", "mobile"].indexOf(fileName.split(".").shift()) >= 0) {
             return;
+        }
         var name = fileName.split(".").shift();
         var str = FSSync.readFileSync(path + "/" + fileName, "utf8");
         var match = /\/\*\s*([^\*]+?)\s*\*\//gi.exec(str);
@@ -244,8 +259,8 @@ module.exports.mimeType = function(fileName) {
         return new Promise(function(resolve, reject) {
             ChildProcess.exec(`file --brief --mime-type ${fileName}`, {
                 timeout: 5000,
-                    encoding: "utf8",
-                    stdio: [
+                encoding: "utf8",
+                stdio: [
                     0,
                     "pipe",
                     null
@@ -262,7 +277,7 @@ module.exports.mimeType = function(fileName) {
 };
 
 module.exports.isAudioType = function(mimeType) {
-    return mimeType.substr(0, 6) == "audio/";
+    return "application/ogg" == mimeType || mimeType.substr(0, 6) == "audio/";
 };
 
 module.exports.isVideoType = function(mimeType) {
@@ -275,79 +290,6 @@ module.exports.isPdfType = function(mimeType) {
 
 module.exports.isImageType = function(mimeType) {
     return mimeType.substr(0, 6) == "image/";
-};
-
-var getWords = function(text) {
-    if (!text)
-        return [];
-    var rx = XRegExp("^\\pL|[0-9]$");
-    var words = [];
-    var word = "";
-    var pos = 0;
-    for (var i = 0; i < text.length; ++i) {
-        var c = text[i];
-        if (rx.test(c)) {
-            word += c;
-        } else if (word.length > 0) {
-            words.push({
-                word: word.toLowerCase(),
-                pos: pos
-            });
-            word = "";
-            ++pos;
-        }
-    }
-    if (word.length > 0) {
-        words.push({
-            word: word.toLowerCase(),
-            pos: pos
-        });
-    }
-    return words;
-};
-
-module.exports.getWords = getWords;
-
-module.exports.indexPost = function(post, wordIndex) {
-    if (!wordIndex)
-        wordIndex = {};
-    ["rawText", "subject"].forEach(function(source) {
-        var words = getWords(post[source]);
-        for (var i = 0; i < words.length; ++i) {
-            var word = words[i];
-            if (!wordIndex.hasOwnProperty(word.word))
-                wordIndex[word.word] = [];
-            wordIndex[word.word].push({
-                boardName: post.boardName,
-                postNumber: post.number,
-                source: source,
-                position: word.pos
-            });
-        }
-    });
-    return wordIndex;
-};
-
-module.exports.complement = function(map1, map2) {
-    var map = {};
-    forIn(map1, function(value, key) {
-        if (!map2.hasOwnProperty(key))
-            map[key] = value;
-    });
-    return map;
-};
-
-module.exports.intersection = function(map1, map2) {
-    var map = {};
-    forIn(map1, function(value, key) {
-        if (map2.hasOwnProperty(key))
-            map[key] = value;
-    });
-    return hasOwnProperties(map1) ? map : map2;
-}
-
-module.exports.sum = function(map1, map2) {
-    return merge.recursive(map1, map2);
 };
 
 module.exports.splitCommand = function(cmd) {
@@ -366,29 +308,29 @@ module.exports.splitCommand = function(cmd) {
         } else {
             if ("\"" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                    case 1:
-                        quot = 0;
-                        break;
-                    case -1:
-                        arg += c;
-                        break;
-                    case 0:
-                    default:
-                        quot = 1;
-                        break;
+                case 1:
+                    quot = 0;
+                    break;
+                case -1:
+                    arg += c;
+                    break;
+                case 0:
+                default:
+                    quot = 1;
+                    break;
                 }
             } else if ("'" == c && (i < 1 || "\\" != cmd[i - 1])) {
                 switch (quot) {
-                    case 1:
-                        arg += c;
-                        break;
-                    case -1:
-                        quot = 0;
-                        break;
-                    case 0:
-                    default:
-                        quot = -1;
-                        break;
+                case 1:
+                    arg += c;
+                    break;
+                case -1:
+                    quot = 0;
+                    break;
+                case 0:
+                default:
+                    quot = -1;
+                    break;
                 }
             } else {
                 if (("\"" == c || "'" == c) && (i > 0 || "\\" == cmd[i - 1]) && arg.length > 0)
@@ -411,28 +353,39 @@ module.exports.splitCommand = function(cmd) {
     };
 };
 
-module.exports.password = function(pwd) {
-    if (!pwd)
-        return null;
-    var sha1 = Crypto.createHash("sha1");
-    sha1.update(pwd);
-    return sha1.digest("hex");
-}
+module.exports.mayBeHashpass = function(password) {
+    return (typeof password == "string") && password.match(/^([0-9a-fA-F]){40}$/);
+};
 
 module.exports.parseForm = function(req) {
-    var form = new Formidable.IncomingForm();
-    form.uploadDir = config("system.tmpPath", __dirname + "/../tmp") + "/formidable";
-    form.hash = "sha1";
+    if (req.formFields) {
+        return Promise.resolve({
+            fields: req.formFields,
+            files: req.formFiles || []
+        });
+    }
+    var form = new Multiparty.Form();
+    form.uploadDir = config("system.tmpPath", __dirname + "/../tmp") + "/form";
+    form.autoFields = true;
+    form.autoFiles = true;
+    form.maxFieldsSize = 5 * 1024 * 1024;
     return new Promise(function(resolve, reject) {
         form.parse(req, function(err, fields, files) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve({
-                    fields: fields,
-                    files: files
-                });
-            }
+            if (err)
+                return reject(err);
+            forIn(fields, function(val, key) {
+                if (1 == val.length)
+                    fields[key] = val[0];
+            });
+            resolve({
+                fields: fields,
+                files: toArray(files).reduce(function(acc, files) {
+                    return acc.concat(files);
+                }, []).map(function(file) {
+                    file.name = file.originalFilename;
+                    return file;
+                })
+            });
         });
     });
 };
@@ -450,7 +403,7 @@ module.exports.proxy = function() {
     };
 };
 
-module.exports.correctAddress = function(ip) {
+var correctAddress = function(ip) {
     if (!ip)
         return null;
     if ("::1" == ip)
@@ -477,6 +430,8 @@ module.exports.correctAddress = function(ip) {
     return null;
 };
 
+module.exports.correctAddress = correctAddress;
+
 module.exports.preferIPv4 = function(ip) {
     if (!ip)
         return null;
@@ -496,6 +451,14 @@ module.exports.preferIPv4 = function(ip) {
     return ip;
 };
 
+module.exports.sha1 = function(data) {
+    if (!data || (!Util.isString(data) && !Util.isBuffer(data)))
+        return null;
+    var sha1 = Crypto.createHash("sha1");
+    sha1.update(data);
+    return sha1.digest("hex");
+};
+
 module.exports.sha256 = function(data) {
     if (!data)
         return null;
@@ -504,13 +467,15 @@ module.exports.sha256 = function(data) {
     return sha256.digest("hex");
 };
 
-module.exports.withoutDuplicates = function(arr) {
+var withoutDuplicates = function(arr) {
     if (!arr || !Util.isArray(arr))
         return arr;
     return arr.filter(function(item, i) {
         return arr.indexOf(item) == i;
     });
 };
+
+module.exports.withoutDuplicates = withoutDuplicates;
 
 module.exports.remove = function(arr, what, both) {
     if (!arr || !Util.isArray(arr))
@@ -602,7 +567,7 @@ module.exports.writeFile = function(path, data) {
 };
 
 module.exports.removeFile = function(path) {
-    var c = { noclose: true };
+    var c = {};
     return openFile(path, "w").then(function(fd) {
         c.fd = fd;
         return flockFile(c.fd, "ex");
@@ -613,23 +578,10 @@ module.exports.removeFile = function(path) {
         return flockFile(c.fd, "un");
     }).then(function() {
         c.locked = false;
+        return closeFile(c.fd);
+    }).then(function() {
         return Promise.resolve();
     }).catch(recover.bind(null, c));
-};
-
-var controller;
-
-module.exports.controllerHtml = function(req, res, f, keys) {
-    if (!controller)
-        controller = require("./controller"); //NOTE: Circular dependency workaround
-    var ifModifiedSince = new Date(req.headers["if-modified-since"]);
-    var args = [f, ifModifiedSince].concat(Array.prototype.slice.call(arguments, 3));
-    return controller.html.apply(controller, args).then(function(data) {
-        res.setHeader("Last-Modified", data.lastModified.toUTCString());
-        if (+ifModifiedSince >= +data.lastModified)
-            res.status(304);
-        res.send(data.data);
-    });
 };
 
 module.exports.series = function(arr, f) {
@@ -648,4 +600,95 @@ module.exports.series = function(arr, f) {
         });
     }
     return p;
+};
+
+module.exports.generateTripcode = function(source) {
+    var md5 = Crypto.createHash("md5");
+    md5.update(source + config("site.tripcodeSalt", ""));
+    return "!" + md5.digest("base64").substr(0, 10);
+};
+
+module.exports.plainText = function(text, options) {
+    if (!text)
+        return "";
+    text = "" + text;
+    var uuid = UUID.v4();
+    if (options && options.brToNewline)
+        text = text.replace(/<br \/>/g, uuid);
+    else
+        text = text.replace(/<br \/>/g, " ");
+    text = HTMLToText.fromString(text, {
+        wordwrap: null,
+        linkHrefBaseUrl: config("site.protocol", "http") + "://" + config("site.domain", "localhost:8080"),
+        hideLinkHrefIfSameAsText: true,
+        ignoreImages: true
+    });
+    if (options && options.brToNewline)
+        text = text.split(uuid).join("\n");
+    return text;
+};
+
+module.exports.ipList = function(s) {
+    var ips = (s || "").split(/\s+/).filter(function(ip) {
+        return ip;
+    });
+    //TODO: IP ranges
+    var err = ips.some(function(ip, i) {
+        ip = correctAddress(ip);
+        if (!ip)
+            return true;
+        ips[i] = ip;
+    });
+    if (err)
+        return translate("Invalid IP address");
+    return withoutDuplicates(ips);
+};
+
+module.exports.markupLatex = function(text, inline) {
+    return new Promise(function(resolve, reject) {
+        MathJax.typeset({
+            math: text,
+            format: inline ? "inline-TeX" : "TeX",
+            svg: true
+        }, function(data) {
+            if (data.errors)
+                return reject(data.errors[0] || data.errors);
+            var html = data.svg;
+            if (inline)
+                html = `<span class="inlineLatex">${html}</span>`;
+            else
+                html = `<div class="blockLatex">${html}</div>`;
+            resolve(html);
+        });
+    });
+};
+
+module.exports.generateImageHash = function(fileName) {
+    return phash(fileName, true).then(function(hash) {
+        return Promise.resolve(hash.toString());
+    });
+};
+
+module.exports.generateRandomImage = function(hash, mimeType, thumbPath) {
+    var canvas = new Canvas(200, 200);
+    var ctx = canvas.getContext("2d");
+    Jdenticon.drawIcon(ctx, hash, 200);
+    return FS.read(__dirname + "/../public/img/" + mimeType.replace("/", "_") + "_logo.png", "b").then(function(data) {
+        var img = new Image;
+        img.src = data;
+        ctx.drawImage(img, 0, 0, 200, 200);
+        return new Promise(function(resolve, reject) {
+            canvas.pngStream().pipe(FSSync.createWriteStream(thumbPath).on("error", reject).on("finish", resolve));
+        });
+    });
+};
+
+module.exports.du = function(path) {
+    return new Promise(function(resolve, reject) {
+        du(path, function(err, size) {
+            if (err)
+                return reject(err);
+            resolve(size);
+        });
+    });
 };

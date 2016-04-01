@@ -1,223 +1,280 @@
-//var cluster = require("cluster");
 var Crypto = require("crypto");
-var ReadLine = require("readline");
-var ReadLineSync = require("readline-sync");
+var Util = require("util");
+var vorpal = require("vorpal")();
 
 var Board = require("../boards/board");
-var BoardModel = require("../models/board");
 var config = require("./config");
+var controller = require("./controller");
 var Database = require("./database");
 var Global = require("./global");
 var Tools = require("./tools");
 
-var rl = ReadLine.createInterface({
-    "input": process.stdin,
-    "output": process.stdout
-});
-
-rl.setPrompt("ololord.js> ");
-
-rl.tmp_question = rl.question;
-rl.question = function(question) {
-    return new Promise(function(resolve, reject) {
-        rl.tmp_question.apply(rl, [question, resolve]);
-    });
-};
-
-var handlers = {};
-
-var _installHandler = function(cmd, f) {
-    if (typeof cmd == "string") {
-        handlers[cmd] = f;
-    } else {
-        cmd.forEach(function(cmd) {
-            handlers[cmd] = f;
+var requestPassword = function(thisArg) {
+    var c = {};
+    return thisArg.prompt.call(thisArg, {
+        type: "password",
+        name: "password",
+        message: Tools.translate("Enter password: "),
+    }).then(function(result) {
+        c.password = result.password;
+        if (!c.password)
+            return Promise.reject(Tools.translate("Invalid password"));
+        if (!Tools.mayBeHashpass(c.password))
+            return Promise.resolve();
+        return thisArg.prompt.call(thisArg, {
+            type: "confirm",
+            name: "hashpass",
+            default: true,
+            message: Tools.translate("That is a hashpass, isn't it? ")
         });
+    }).then(function(result) {
+        var notHashpass = (!result || !result.hashpass);
+        return Promise.resolve({
+            password: c.password,
+            notHashpass: notHashpass
+        });
+    });
+};
+
+vorpal.installHandler = function(cmd, f, options) {
+    var description = (options && options.description) || undefined;
+    var command = vorpal.command(cmd, description).action(function(args, callback) {
+        var prompt = this.prompt;
+        var _this = this;
+        this.prompt = function(options) {
+            return new Promise(function(resolve, reject) {
+                var simple = (typeof options == "string");
+                if (simple) {
+                    options = {
+                        message: options,
+                        name: "input"
+                    };
+                }
+                prompt.call(_this, options, function(result) {
+                    resolve(simple ? result.input : result);
+                });
+            });
+        };
+        f.call(this, args).then(function(result) {
+            if (result)
+                console.log(result);
+            callback();
+        }).catch(function(err) {
+            console.log((err && err.stack) || err);
+            callback();
+        });
+    }).cancel(function () {
+        console.log(Tools.translate("Cancelled"));
+    });
+    if (options && options.alias) {
+        if (Util.isArray(options.alias))
+            command.alias.apply(command, options.alias);
+        else
+            command.alias(options.alias);
     }
 };
 
-_installHandler(["quit", "q"], function() {
+vorpal.find("exit").remove();
+
+vorpal.installHandler("quit", function() {
     process.exit(0);
-    return Promise.resolve();
+    return Promise.resolve("OK");
+}, {
+    description: Tools.translate(Tools.translate("Quits the application.")),
+    alias: ["exit", "q"]
 });
 
-_installHandler(["respawn"], function(args) {
-    var status = !isNaN(+args) ? +args : 0;
-    return Global.IPC.send("exit", status, true).then(function() {
+vorpal.installHandler("respawn [exitCode]", function(args) {
+    var exitCode = !isNaN(+args.exitCode) ? +args.exitCode : 0;
+    return Global.IPC.send("exit", exitCode, true).then(function() {
         return Promise.resolve("OK");
     });
-});
+}, { description: Tools.translate("Respawns worker processes with the passed exit code.") });
 
-_installHandler("help", function() {
-    console.log("q | quit - Exit the application");
-    console.log("help - Print this Help");
-    return Promise.resolve();
-});
-
-_installHandler("set", function(args) {
-    var path = args.split(/\s+/)[0];
-    var value = args.split(/\s+/).slice(1).join(" ");
+vorpal.installHandler("set <key> [value]", function(args) {
+    var path = args.key;
+    var value = args.value;
     if (!path)
-        return Promise.reject("Неверная команда. Введите 'help' для справки");
+        return Promise.reject(Tools.translate("Invalid command. Type 'help' for commands"));
     if (value) {
-        config.set(path, JSON.parse(value));
+        try {
+            console.log(value);
+            value = JSON.parse(value);
+        } catch (err) {
+            //Do nothing
+        }
+        config.set(path, value);
         return Promise.resolve("OK");
     }
-    return rl.question("Enter value for '" + path + "': ").then(function(answer) {
-        config.set(path, (typeof answer == "string") ? answer : JSON.parse(answer));
+    return this.prompt(Tools.translate("Enter value for") + " '" + path + "': ").then(function(result) {
+        config.set(path, (typeof result == "string") ? result : JSON.parse(answer));
         return Promise.resolve("OK");
     });
+}, {
+    description: Tools.translate("Sets the option (config.json) at the key specified. "
+        + "If no value is specified, prompts to enter it.")
 });
 
-_installHandler("get", function(args) {
-    if (!args)
-        return Promise.reject(console.log("Неверная команда. Введите 'help' для справки"));
-    var v = config(args);
+vorpal.installHandler("get <key>", function(args) {
+    var path = args.key;
+    if (!path)
+        return Promise.reject(console.log(Tools.translate("Invalid command. Type 'help' for commands")));
+    var v = config(path);
     if (undefined == v)
         return Promise.reject("No such value");
-    return Promise.resolve("Value for '" + args + "': " + JSON.stringify(v, null, 4));
-});
+    return Promise.resolve(Tools.translate("Value for") + " '" + path + "': " + JSON.stringify(v, null, 4));
+}, { description: Tools.translate("Prints the option (config.json) at the key specified.") });
 
-_installHandler("remove", function(args) {
-    if (!args)
-        Promise.reject("Неверная команда. Введите 'help' для справки");
-    config.remove(args);
+vorpal.installHandler("remove <key>", function(args) {
+    var path = args.key;
+    if (!path)
+        Promise.reject(Tools.translate("Invalid command. Type 'help' for commands"));
+    config.remove(path);
     return Promise.resolve("OK");
-});
+}, { description: Tools.translate("Removes the option (config.json) at the key specified.") });
 
-_installHandler("register-user", function() {
-    rl.pause();
-    var password = ReadLineSync.question("Enter password: ", {
-        hideEchoBack: true,
-        mask: ""
-    });
-    if (password.length < 1)
-        return Promise.reject("Invalid password");
+vorpal.installHandler("add-superuser", function() {
     var c = {};
-    return rl.question("Enter level: USER | MODER | ADMIN\nYour choice: ").then(function(answer) {
-        if (!Tools.contains(["USER", "MODER", "ADMIN"], answer))
-            return Promise.reject("Invalid level");
-        c.level = answer;
-        return rl.question("Enter boards:\n"
-            + "Separate board names by spaces.\n"
-            + "* - any board\n"
-            + "Your choice: ");
-    }).then(function(answer) {
-        c.boardNames = answer.split(/\s+/gi);
-        if (!password.match(/^([0-9a-fA-F]){40}$/)) {
-            var sha1 = Crypto.createHash("sha1");
-            sha1.update(password);
-            password = sha1.digest("hex");
-        }
-        var availableBoardNames = Board.boardNames();
-        for (var i = 0; i < c.boardNames.length; ++i) {
-            var boardName = c.boardNames[i];
-            if ("*" != boardName && !Tools.contains(availableBoardNames, boardName))
-                return Promise.reject("Invalid board(s)");
-        }
-        return rl.question("Enter user IP (zero, one or more, separated by commas):\n"
-            + "[ip][,ip]...\n"
-            + "List: ");
-    }).then(function(answer) {
-        c.ips = answer ? answer.split(".") : [];
-        return Database.registerUser(password, c.level, c.boardNames, c.ips);
+    var _this = this;
+    return requestPassword(this).then(function(result) {
+        c.password = result.password;
+        c.notHashpass = result.notHashpass;
+        return _this.prompt(Tools.translate("Enter superuser IP list (separate by spaces): "));
+    }).then(function(result) {
+        var ips = Tools.ipList(result.input);
+        if (typeof ips == "string")
+            return Promise.reject(ips);
+        return Database.addSuperuser(c.password, ips, c.notHashpass);
     }).then(function() {
         return Promise.resolve("OK");
     });
-});
+}, { description: Tools.translate("Registers a superuser.") });
 
-_installHandler("rerender-posts", function(args) {
+vorpal.installHandler("remove-superuser", function() {
+    return requestPassword(this).then(function(result) {
+        return Database.removeSuperuser(result.password, result.notHashpass);
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+}, { description: Tools.translate("Unregisters a superuser.") });
+
+vorpal.installHandler("rerender-posts [board]", function(args) {
+    args = args.board;
     var boards = Board.boardNames();
     if (args) {
         if (boards.indexOf(args) < 0)
-            return Promise.reject("Invalid board");
+            return Promise.reject(Tools.translate("Invalid board"));
         boards = [args];
     }
-    return rl.question("Are you sure? [Yes/no] ").then(function(answer) {
-        answer = answer.toLowerCase();
-        if (answer && answer != "yes" && answer != "y")
+    return this.prompt({
+        type: "confirm",
+        name: "rerender",
+        default: true,
+        message: Tools.translate("Are you sure? ")
+    }).then(function(result) {
+        if (!result.rerender)
             return Promise.resolve();
         return Global.IPC.send("stop").then(function() {
             return Database.rerenderPosts(boards);
         }).then(function() {
-            console.log("Generating cache, please, wait...");
-            return BoardModel.generate();
+            return controller.regenerate();
         }).then(function() {
             return Global.IPC.send("start");
         }).then(function() {
             return Promise.resolve("OK");
         });
     });
-});
+}, { description: Tools.translate("Rerenders all posts (workers are closed and then opened again).") });
 
-_installHandler("stop", function(args) {
+vorpal.installHandler("stop", function() {
     return Global.IPC.send("stop").then(function() {
         return Promise.resolve("OK");
     });
-});
+}, { description: Tools.translate("Closes all workers, preventing incoming connections.") });
 
-_installHandler("start", function(args) {
+vorpal.installHandler("start", function() {
     return Global.IPC.send("start").then(function() {
         return Promise.resolve("OK");
     });
-});
+}, { description: Tools.translate("Opens workers for connections if closed.") });
 
-_installHandler("regenerate", function(args) {
+vorpal.installHandler("regenerate", function() {
     return Global.IPC.send("stop").then(function() {
-        console.log("Generating cache, please, wait...");
-        return BoardModel.generate();
+        return controller.regenerate();
     }).then(function() {
         return Global.IPC.send("start");
     }).then(function() {
         return Promise.resolve("OK");
     });
-});
+}, { description: Tools.translate("Regenerates the cache (workers are closed and then opened again).") });
 
-_installHandler("rebuild-search-index", function(args) {
-    return rl.question("Are you sure? [Yes/no] ").then(function(answer) {
-        answer = answer.toLowerCase();
-        if (answer && answer != "yes" && answer != "y")
+vorpal.installHandler("reload-boards", function() {
+    return Global.IPC.send("stop").then(function() {
+        Board.initialize();
+        return Global.IPC.send("reloadBoards");
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+}, { description: Tools.translate("Reloads the boards.") });
+
+vorpal.installHandler("reload-config [fileName]", function(args) {
+    args = args.fileName;
+    return Global.IPC.send("stop").then(function() {
+        if (args)
+            config.setConfigFile(args);
+        else
+            config.reload();
+        return Global.IPC.send("reloadConfig", args);
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+}, { description: Tools.translate("Reloads the config file.") });
+
+vorpal.installHandler("reload-templates", function(args) {
+    return Global.IPC.send("stop").then(function() {
+        return controller.initialize();
+    }).then(function() {
+        return Global.IPC.send("start");
+    }).then(function() {
+        return Promise.resolve("OK");
+    });
+}, { description: Tools.translate("Reloads the templates and the partials (including public ones).") });
+
+vorpal.installHandler("rebuild-search-index", function(args) {
+    return this.prompt({
+        type: "confirm",
+        name: "rebuild",
+        default: true,
+        message: Tools.translate("Are you sure? ")
+    }).then(function(result) {
+        if (!result.rebuild)
             return Promise.resolve();
         return Database.rebuildSearchIndex().then(function() {
             return Promise.resolve();
         });
     });
-});
+}, { description: Tools.translate("Rebuilds post search index.") });
 
-var init = function() {
-    console.log("Движок запущен! Введите 'help' для справки");
-    rl.prompt();
-    rl.on("line", function(line, lineCount, byteCount) {
-        if ("" == line)
-            return rl.prompt();
-        var cmd = "";
-        var i = 0;
-        for (; i < line.length; ++i) {
-            if (line[i] == " ")
-                break;
-            cmd += line[i];
-        }
-        if (!handlers.hasOwnProperty(cmd)) {
-            console.log("Неверная команда. Введите 'help' для справки");
-            return rl.prompt();
-        }
-        rl.pause();
-        handlers[cmd]((i < (line.length - 1)) ? line.substr(i + 1) : undefined).then(function(msg) {
-            if (msg)
-                console.log(msg);
-            rl.resume();
-            rl.prompt();
-        }).catch(function(err) {
-            Global.error(err.stack ? err.stack : err);
-            rl.resume();
-            rl.prompt();
-        });
-    }).on("error", function(err) {
-        Global.error(err);
-    });
-    return rl;
+vorpal.installHandler("uptime", function() {
+    var format = function(seconds) {
+        var pad = function(s) {
+            return (s < 10 ? "0" : "") + s;
+        };
+        var days = Math.floor(seconds / (24 * 60 * 60));
+        var hours = Math.floor(seconds % (24 * 60 * 60) / (60 * 60));
+        var minutes = Math.floor(seconds % (60 * 60) / 60);
+        var seconds = Math.floor(seconds % 60);
+        return days + " days " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+    };
+    return Promise.resolve(format(process.uptime()));
+}, { description: Tools.translate("Shows server uptime.") });
+
+module.exports = function() {
+    console.log(Tools.translate("Type 'help' for commands"));
+    vorpal.delimiter("ololord.js>").show();
+    return vorpal;
 };
-
-init.installHandler = _installHandler;
-
-module.exports = init;

@@ -10,219 +10,20 @@ if (typeof $ != "undefined") {
             });
         });
     };
+    $.extend({
+        getQueryParameters: function(str) {
+            return (str || window.location.search).replace(/(^\?)/, "").split("&").map((function(n) {
+                n = n.split("=");
+                this[n[0]] = n[1];
+                return this;
+            }).bind({}))[0];
+        }
+    });
 }
 
 /*ololord global object*/
 
-var lord = lord || {};
-
-/*Classes*/
-
-/*constructor*/ lord.PopupMessage = function(text, options) {
-    this.hideTimer = null;
-    this.text = text;
-    this.timeout = (options && !isNaN(+options.timeout)) ? +options.timeout : 5 * 1000;
-    this.classNames = (options && typeof options.classNames == "string") ? options.classNames : "";
-    if (options && typeof options.type == "string" && lord.in(["critical", "warning"], options.type.toLowerCase()))
-        this.classNames += options.type.toLowerCase() + (("" != this.classNames) ? " " : "");
-    this.html = (options && typeof options.type == "string" && options.type.toLowerCase() == "html");
-    this.node = (options && typeof options.type == "string" && options.type.toLowerCase() == "node");
-    this.msg = lord.node("div");
-    lord.addClass(this.msg, "popup");
-    lord.addClass(this.msg, this.classNames);
-    this.msg.onclick = this.hide.bind(this);
-    if (lord.popups.length > 0) {
-        var prev = lord.popups[lord.popups.length - 1];
-        this.msg.style.top = (prev.msg.offsetTop + prev.msg.offsetHeight + 5) + "px";
-    }
-    if (this.html)
-        this.msg.innerHTML = text;
-    else if (this.node)
-        this.msg.appendChild(text);
-    else
-        this.msg.appendChild(lord.node("text", text));
-};
-
-/*public*/ lord.PopupMessage.prototype.show = function() {
-    if (this.hideTimer)
-        return;
-    document.body.appendChild(this.msg);
-    lord.popups.push(this);
-    this.hideTimer = setTimeout(this.hide.bind(this), this.timeout);
-};
-
-/*public*/ lord.PopupMessage.prototype.hide = function() {
-    if (!this.hideTimer)
-        return;
-    clearTimeout(this.hideTimer);
-    this.hideTimer = null;
-    var offsH = this.msg.offsetHeight + 5;
-    document.body.removeChild(this.msg);
-    var ind = lord.popups.indexOf(this);
-    if (ind < 0)
-        return;
-    lord.popups.splice(ind, 1);
-    for (var i = ind; i < lord.popups.length; ++i) {
-        var top = +lord.popups[i].msg.style.top.replace("px", "");
-        top -= offsH;
-        lord.popups[i].msg.style.top = top + "px";
-    }
-};
-
-/*public*/ lord.PopupMessage.prototype.resetTimeout = function(timeout) {
-    if (!this.hideTimer)
-        return;
-    clearTimeout(this.hideTimer);
-    this.timeout = (!isNaN(+timeout)) ? +timeout : 5 * 1000;
-    this.hideTimer = setTimeout(this.hide.bind(this), this.timeout);
-};
-
-/*public*/ lord.PopupMessage.prototype.resetText = function(text, options) {
-    var offsH = this.msg.offsetHeight;
-    this.text = text;
-    this.classNames = (options && typeof options.classNames == "string") ? options.classNames : "";
-    if (options && typeof options.type == "string" && lord.in(["critical", "warning"], options.type.toLowerCase()))
-        this.classNames += options.type.toLowerCase() + (("" != this.classNames) ? " " : "");
-    this.html = (options && typeof options.type == "string" && options.type.toLowerCase() == "html");
-    this.node = (options && typeof options.type == "string" && options.type.toLowerCase() == "node");
-    this.msg.className = "";
-    lord.addClass(this.msg, "popup");
-    lord.addClass(this.msg, this.classNames);
-    lord.removeChildren(this.msg);
-    if (this.html)
-        this.msg.innerHTML = text;
-    else if (this.node)
-        this.msg.appendChild(text);
-    else
-        this.msg.appendChild(lord.node("text", text));
-    if (!this.hideTimer)
-        return;
-    var ind = lord.popups.indexOf(this);
-    if (ind < 0)
-        return;
-    offsH = this.msg.offsetHeight - offsH;
-    for (var i = ind + 1; i < lord.popups.length; ++i) {
-        var top = +lord.popups[i].msg.style.top.replace("px", "");
-        top += offsH;
-        lord.popups[i].msg.style.top = top + "px";
-    }
-};
-
-/*constructor*/ lord.OverlayProgressBar = function(options) {
-    this.visible = false;
-    this.max = (options && +options.max >= 0) ? +options.max : 100;
-    this.value = (options && +options.value <= this.max) ? +options.value : 0;
-    this.mask = lord.node("div");
-    lord.addClass(this.mask, "overlayMask");
-    this.progressBar = lord.node("progress");
-    this.progressBar.max = this.max;
-    this.progressBar.value = this.value;
-    lord.addClass(this.progressBar, "overlayProgressBar");
-    var _this = this;
-    var createCancelButton = function(callback) {
-        _this.cancelButton = lord.node("button");
-        lord.addClass(_this.cancelButton, "button overlayProgressBarCancelButton");
-        _this.cancelButton.onclick = function() {
-            _this.cancelButton.disabled = true;
-            callback();
-        };
-        _this.cancelButton.appendChild(lord.node("text", "Cancel"));
-        lord.removeChildren(_this.cancelButton);
-        _this.cancelButton.appendChild(lord.node("text", lord.text("cancelButtonText")));
-    };
-    if (options && typeof options.cancelCallback == "function")
-        createCancelButton(options.cancelCallback);
-    else
-        this.cancelButton = null;
-    if (options && typeof options.finishCallback == "function") {
-        this.finishCallback = options.finishCallback;
-    } else {
-        this.finishCallback = function() {
-            _this.hide();
-        };
-    }
-    if (options && options.xhr) {
-        if (!this.cancelButton)
-            createCancelButton(options.xhr.abort);
-        options.xhr.upload.onprogress = function(e) {
-            if (!e.lengthComputable)
-                return;
-            _this.max = e.total;
-            _this.progressBar.max = _this.max;
-            _this.progress(e.loaded);
-        };
-        options.xhr.upload.onload = function() {
-            _this.max = 0;
-            _this.value = 0;
-            _this.progressBar.removeAttribute("max");
-            _this.progressBar.removeAttribute("value");
-        };
-        options.xhr.onprogress = function(e) {
-            if (!e.lengthComputable)
-                return;
-            _this.max = e.total;
-            _this.progressBar.max = _this.max;
-            _this.progress(e.loaded);
-        };
-        options.xhr.onload = function() {
-            _this.max = 0;
-            _this.value = 0;
-            _this.progressBar.removeAttribute("max");
-            _this.progressBar.removeAttribute("value");
-            _this.finishCallback();
-        };
-    }
-};
-
-/*public*/ lord.OverlayProgressBar.prototype.progress = function(value) {
-    value = +value;
-    if (isNaN(value) || value < 0 || value > this.max)
-        return;
-    this.value = value;
-    this.progressBar.value = this.value;
-};
-
-/*public*/ lord.OverlayProgressBar.prototype.show = function() {
-    if (this.visible)
-        return;
-    this.visible = true;
-    document.body.appendChild(this.mask);
-    document.body.appendChild(this.progressBar);
-    if (this.cancelButton)
-        document.body.appendChild(this.cancelButton);
-};
-
-/*public*/ lord.OverlayProgressBar.prototype.showDelayed = function(delay) {
-    var _this = this;
-    this.mustShow = true;
-    setTimeout(function() {
-        if (!_this.mustShow)
-            return;
-        _this.show();
-    }, delay || 0);
-};
-
-/*public*/ lord.OverlayProgressBar.prototype.hide = function() {
-    this.mustShow = false;
-    this.mustHide = false;
-    if (!this.visible)
-        return;
-    this.visible = false;
-    if (this.cancelButton)
-        document.body.removeChild(this.cancelButton);
-    document.body.removeChild(this.progressBar);
-    document.body.removeChild(this.mask);
-};
-
-/*public*/ lord.OverlayProgressBar.prototype.hideDelayed = function(delay) {
-    var _this = this;
-    this.mustHide = true;
-    setTimeout(function() {
-        if (!_this.mustHide)
-            return;
-        _this.hide();
-    }, delay || 0);
-};
+var lord = lord || _.noConflict();
 
 /*Constants*/
 
@@ -232,7 +33,6 @@ lord.Hour = 60 * lord.Minute;
 lord.Day = 24 * lord.Hour;
 lord.Year = 365 * lord.Day;
 lord.Billion = 2 * 1000 * 1000 * 1000;
-lord.SettingsStoredInCookies = ["time", "timeZoneOffset", "captchaEngine"];
 //
 lord.keyboardMap = [
   "", // [0]
@@ -497,16 +297,230 @@ lord.keyboardMap = [
 
 lord.popups = [];
 lord.unloading = false;
-lord.leftChain = [];
-lord.rightChain = [];
 lord.models = {};
-//lord.partials = null;
 lord.templates = {};
+lord.dialogs = [];
+
+/*Classes*/
+
+/*constructor*/ lord.PopupMessage = function(text, options) {
+    this.hideTimer = null;
+    this.text = text;
+    this.timeout = (options && !isNaN(+options.timeout)) ? +options.timeout : 5 * 1000;
+    this.classNames = (options && typeof options.classNames == "string") ? options.classNames : "";
+    if (options && typeof options.type == "string" && lord.contains(["critical", "warning"],
+        options.type.toLowerCase())) {
+        this.classNames += options.type.toLowerCase() + (("" != this.classNames) ? " " : "");
+    }
+    this.html = (options && typeof options.type == "string" && options.type.toLowerCase() == "html");
+    this.node = (options && typeof options.type == "string" && options.type.toLowerCase() == "node");
+    this.msg = lord.node("div");
+    $(this.msg).addClass("popup");
+    $(this.msg).addClass(this.classNames);
+    this.msg.onclick = this.hide.bind(this);
+    if (lord.popups.length > 0) {
+        var prev = lord.popups[lord.popups.length - 1];
+        this.msg.style.top = (prev.msg.offsetTop + prev.msg.offsetHeight + 5) + "px";
+    }
+    if (this.html)
+        this.msg.innerHTML = text;
+    else if (this.node)
+        this.msg.appendChild(text);
+    else
+        this.msg.appendChild(lord.node("text", text));
+};
+
+/*public*/ lord.PopupMessage.prototype.show = function() {
+    if (this.hideTimer)
+        return;
+    document.body.appendChild(this.msg);
+    lord.popups.push(this);
+    this.hideTimer = setTimeout(this.hide.bind(this), this.timeout);
+};
+
+/*public*/ lord.PopupMessage.prototype.hide = function() {
+    if (!this.hideTimer)
+        return;
+    clearTimeout(this.hideTimer);
+    this.hideTimer = null;
+    var offsH = this.msg.offsetHeight + 5;
+    document.body.removeChild(this.msg);
+    var ind = lord.popups.indexOf(this);
+    if (ind < 0)
+        return;
+    lord.popups.splice(ind, 1);
+    for (var i = ind; i < lord.popups.length; ++i) {
+        var top = +lord.popups[i].msg.style.top.replace("px", "");
+        top -= offsH;
+        lord.popups[i].msg.style.top = top + "px";
+    }
+};
+
+/*public*/ lord.PopupMessage.prototype.resetTimeout = function(timeout) {
+    if (!this.hideTimer)
+        return;
+    clearTimeout(this.hideTimer);
+    this.timeout = (!isNaN(+timeout)) ? +timeout : 5 * 1000;
+    this.hideTimer = setTimeout(this.hide.bind(this), this.timeout);
+};
+
+/*public*/ lord.PopupMessage.prototype.resetText = function(text, options) {
+    var offsH = this.msg.offsetHeight;
+    this.text = text;
+    this.classNames = (options && typeof options.classNames == "string") ? options.classNames : "";
+    if (options && typeof options.type == "string" && lord.contains(["critical", "warning"],
+        options.type.toLowerCase())) {
+        this.classNames += options.type.toLowerCase() + (("" != this.classNames) ? " " : "");
+    }
+    this.html = (options && typeof options.type == "string" && options.type.toLowerCase() == "html");
+    this.node = (options && typeof options.type == "string" && options.type.toLowerCase() == "node");
+    this.msg.className = "";
+    $(this.msg).addClass("popup");
+    $(this.msg).addClass(this.classNames);
+    $(this.msg).empty();
+    if (this.html)
+        this.msg.innerHTML = text;
+    else if (this.node)
+        this.msg.appendChild(text);
+    else
+        this.msg.appendChild(lord.node("text", text));
+    if (!this.hideTimer)
+        return;
+    var ind = lord.popups.indexOf(this);
+    if (ind < 0)
+        return;
+    offsH = this.msg.offsetHeight - offsH;
+    for (var i = ind + 1; i < lord.popups.length; ++i) {
+        var top = +lord.popups[i].msg.style.top.replace("px", "");
+        top += offsH;
+        lord.popups[i].msg.style.top = top + "px";
+    }
+};
+
+/*constructor*/ lord.OverlayProgressBar = function(options) {
+    this.visible = false;
+    this.max = (options && +options.max >= 0) ? +options.max : 100;
+    this.value = (options && +options.value <= this.max) ? +options.value : 0;
+    this.mask = lord.node("div");
+    $(this.mask).addClass("overlayMask");
+    this.progressBar = lord.node("progress");
+    this.progressBar.max = this.max;
+    this.progressBar.value = this.value;
+    $(this.progressBar).addClass("overlayProgressBar");
+    var _this = this;
+    var createCancelButton = function(callback) {
+        _this.cancelButton = lord.node("button");
+        $(_this.cancelButton).addClass("button overlayProgressBarCancelButton");
+        _this.cancelButton.onclick = function() {
+            _this.cancelButton.disabled = true;
+            callback();
+        };
+        _this.cancelButton.appendChild(lord.node("text", "Cancel"));
+        $(_this.cancelButton).empty();
+        _this.cancelButton.appendChild(lord.node("text", lord.text("cancelButtonText")));
+    };
+    if (options && typeof options.cancelCallback == "function")
+        createCancelButton(options.cancelCallback);
+    else
+        this.cancelButton = null;
+    if (options && typeof options.finishCallback == "function") {
+        this.finishCallback = options.finishCallback;
+    } else {
+        this.finishCallback = function() {
+            _this.hide();
+        };
+    }
+    if (options && options.xhr) {
+        if (!this.cancelButton)
+            createCancelButton(options.xhr.abort);
+        options.xhr.upload.onprogress = function(e) {
+            if (!e.lengthComputable)
+                return;
+            _this.max = e.total;
+            _this.progressBar.max = _this.max;
+            _this.progress(e.loaded);
+        };
+        options.xhr.upload.onload = function() {
+            _this.max = 0;
+            _this.value = 0;
+            _this.progressBar.removeAttribute("max");
+            _this.progressBar.removeAttribute("value");
+        };
+        options.xhr.onprogress = function(e) {
+            if (!e.lengthComputable)
+                return;
+            _this.max = e.total;
+            _this.progressBar.max = _this.max;
+            _this.progress(e.loaded);
+        };
+        options.xhr.onload = function() {
+            _this.max = 0;
+            _this.value = 0;
+            _this.progressBar.removeAttribute("max");
+            _this.progressBar.removeAttribute("value");
+            _this.finishCallback();
+        };
+    } else {
+        this.finishOnMaxValue = true;
+    }
+};
+
+/*public*/ lord.OverlayProgressBar.prototype.progress = function(value) {
+    value = +value;
+    if (isNaN(value) || value < 0 || value > this.max)
+        return;
+    this.value = value;
+    this.progressBar.value = this.value;
+    if (this.finishOnMaxValue && this.value == this.max)
+        this.finishCallback();
+};
+
+/*public*/ lord.OverlayProgressBar.prototype.show = function() {
+    if (this.visible)
+        return;
+    this.visible = true;
+    document.body.appendChild(this.mask);
+    document.body.appendChild(this.progressBar);
+    if (this.cancelButton)
+        document.body.appendChild(this.cancelButton);
+};
+
+/*public*/ lord.OverlayProgressBar.prototype.showDelayed = function(delay) {
+    var _this = this;
+    this.mustShow = true;
+    setTimeout(function() {
+        if (!_this.mustShow)
+            return;
+        _this.show();
+    }, delay || 0);
+};
+
+/*public*/ lord.OverlayProgressBar.prototype.hide = function() {
+    this.mustShow = false;
+    this.mustHide = false;
+    if (!this.visible)
+        return;
+    this.visible = false;
+    if (this.cancelButton)
+        document.body.removeChild(this.cancelButton);
+    document.body.removeChild(this.progressBar);
+    document.body.removeChild(this.mask);
+};
+
+/*public*/ lord.OverlayProgressBar.prototype.hideDelayed = function(delay) {
+    var _this = this;
+    this.mustHide = true;
+    setTimeout(function() {
+        if (!_this.mustHide)
+            return;
+        _this.hide();
+    }, delay || 0);
+};
 
 /*Functions*/
 
 lord.isAudioType = function(type) {
-    return type in {"audio/mpeg": true, "audio/ogg": true, "audio/wav": true};
+    return type in {"application/ogg": true, "audio/mpeg": true, "audio/ogg": true, "audio/wav": true};
 };
 
 lord.isImageType = function(type) {
@@ -575,31 +589,47 @@ lord.setLocalObject = function(key, value) {
 
 lord.removeLocalObject = function(key) {
     if (!key || typeof key != "string")
-        return;
+        return false;
     try {
         return localStorage.removeItem(key);
     } catch (ex) {
-        //
-    }
-};
-
-lord.in = function(arr, obj, strict) {
-    if (!arr || !arr.length)
         return false;
-    for (var i = 0; i < arr.length; ++i) {
-        if ((strict && obj === arr[i]) || (!strict && obj == arr[i]))
-            return true;
     }
-    return false;
 };
 
-lord.arr = function(obj) {
-    var arr = [];
-    if (!obj || !obj.length)
-        return arr;
-    for (var i = 0; i < obj.length; ++i)
-        arr.push(obj[i]);
-    return arr;
+lord.getSessionObject = function(key, defValue) {
+    if (!key || typeof key != "string")
+        return null;
+    try {
+        var val = sessionStorage.getItem(key);
+        return (null != val) ? JSON.parse(val) : defValue;
+    } catch (ex) {
+        return null;
+    }
+};
+
+lord.setSessionObject = function(key, value) {
+    if (!key || typeof key != "string")
+        return false;
+    try {
+        if (null != value && typeof value != "undefined")
+            sessionStorage.setItem(key, JSON.stringify(value));
+        else
+            sessionStorage.setItem(key, null);
+        return true;
+    } catch (ex) {
+        return false;
+    }
+};
+
+lord.removeSessionObject = function(key) {
+    if (!key || typeof key != "string")
+        return false;
+    try {
+        return sessionStorage.removeItem(key);
+    } catch (ex) {
+        return false;
+    }
 };
 
 lord.hasOwnProperties = function(obj) {
@@ -612,116 +642,13 @@ lord.hasOwnProperties = function(obj) {
     return false;
 };
 
-lord.forIn = function(obj, f) {
-    if (!obj || typeof f != "function")
-        return;
-    for (var x in obj) {
-        if (obj.hasOwnProperty(x))
-            f(obj[x], x);
-    }
-};
-
-lord.mapIn = function(obj, f) {
-    if (!obj || typeof f != "function")
-        return;
-    var arr = [];
-    for (var x in obj) {
-        if (obj.hasOwnProperty(x))
-            arr.push(f(obj[x], x));
-    }
-    return arr;
-};
-
-lord.filterIn = function(obj, f) {
-    if (!obj || typeof f != "function")
-        return;
-    var nobj = {};
-    for (var x in obj) {
-        if (obj.hasOwnProperty(x)) {
-            var item = obj[x];
-            if (f(item, x))
-                nobj[x] = item;
-        }
-    }
-    return nobj;
-};
-
-lord.toArray = function(obj) {
-    var arr = [];
-    var i = 0;
-    for (var x in obj) {
-        if (obj.hasOwnProperty(x)) {
-            arr[i] = obj[x];
-            ++i;
-        }
-    }
-    return arr;
-};
-
-lord.removeChildren = function(obj) {
-    if (!obj || typeof obj.removeChild != "function")
-        return;
-    while (obj.firstChild)
-        obj.removeChild(obj.firstChild);
-};
-
-lord.last = function(arr) {
-    if (!arr || !arr.length)
-        return null;
-    return arr[arr.length - 1];
-};
-
-lord.equal = function(x, y) {
-    var p;
-    if (isNaN(x) && isNaN(y) && typeof x === "number" && typeof y === "number")
-        return true;
-    if (x === y)
-        return true;
-    if ((typeof x === "function" && typeof y === "function") ||
-        (x instanceof Date && y instanceof Date) ||
-        (x instanceof RegExp && y instanceof RegExp) ||
-        (x instanceof String && y instanceof String) ||
-        (x instanceof Number && y instanceof Number)) {
-        return x.toString() === y.toString();
-    }
-    if (!(x instanceof Object && y instanceof Object))
-        return false;
-    if (x.isPrototypeOf(y) || y.isPrototypeOf(x))
-        return false;
-    if (x.constructor !== y.constructor)
-        return false;
-    if (x.prototype !== y.prototype)
-        return false;
-    if (lord.leftChain.indexOf(x) > -1 || lord.rightChain.indexOf(y) > -1)
-         return false;
-    for (p in y) {
-        if (y.hasOwnProperty(p) !== x.hasOwnProperty(p))
-            return false;
-        else if (typeof y[p] !== typeof x[p])
-            return false;
-    }
-    for (p in x) {
-        if (y.hasOwnProperty(p) !== x.hasOwnProperty(p))
-            return false;
-        else if (typeof y[p] !== typeof x[p])
-            return false;
-        switch (typeof (x[p])) {
-        case "object":
-        case "function":
-            lord.leftChain.push(x);
-            lord.rightChain.push(y);
-            if (!equal(x[p], y[p]))
-                return false;
-            lord.leftChain.pop();
-            lord.rightChain.pop();
-            break;
-        default:
-            if (x[p] !== y[p])
-                return false;
-            break;
-        }
-    }
-    return true;
+lord.chunk = function(array, size) {
+    return array.reduce(function(res, item, index) {
+        if (index % size === 0)
+            res.push([]);
+        res[res.length - 1].push(item);
+        return res;
+    }, []);
 };
 
 lord.gently = function(obj, f, options) {
@@ -818,7 +745,7 @@ lord.id = function(id) {
     return document.getElementById(id);
 };
 
-lord.query = function(query, parent) {
+lord.queryAll = function(query, parent) {
     if (typeof query != "string")
         return null;
     if (!parent)
@@ -840,64 +767,12 @@ lord.queryOne = function(query, parent) {
     return parent.querySelector(query);
 };
 
-lord.name = function(name, parent) {
-    return lord.query("[name='" + name + "']", parent);
+lord.nameAll = function(name, parent) {
+    return lord.queryAll("[name='" + name + "']", parent);
 };
 
 lord.nameOne = function(name, parent) {
     return lord.queryOne("[name='" + name + "']", parent);
-};
-
-lord.contains = function(s, subs) {
-    if (typeof s == "string" && typeof subs == "string")
-        return s.replace(subs, "") != s;
-    if (!s || !s.length || s.length < 1)
-        return false;
-    for (var i = 0; i < s.length; ++i) {
-        if (lord.equal(s[i], subs))
-            return true;
-    }
-    return false;
-};
-
-lord.isInViewport = function(el) {
-    var rect = el.getBoundingClientRect();
-    return (rect.top >= 0 && rect.left >= 0
-        && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-        && rect.right <= (window.innerWidth || document.documentElement.clientWidth));
-};
-
-lord.addClass = function(element, classNames) {
-    if (!element || !element.tagName || !classNames || typeof classNames != "string")
-        return;
-    lord.arr(classNames.split(" ")).forEach(function(className) {
-        if (!className)
-            return;
-        if (lord.hasClass(element, className))
-            return;
-        if (element.className)
-            element.className += " " + className;
-        else
-            element.className = className;
-    });
-};
-
-lord.hasClass = function(element, className) {
-    if (!element || !element.tagName || !className || typeof className != "string")
-        return false;
-    return !!element.className.match(new RegExp("(^| )" + className + "( |$)"));
-};
-
-lord.removeClass = function(element, classNames) {
-    if (!element || !element.tagName || !classNames || typeof classNames != "string")
-        return;
-    lord.arr(classNames.split(" ")).forEach(function(className) {
-        if (!className)
-            return;
-        element.className = element.className.replace(new RegExp("(^| )" + className + "$"), "");
-        element.className = element.className.replace(new RegExp("^" + className + "( |$)"), "");
-        element.className = element.className.replace(new RegExp(" " + className + " "), " ");
-    });
 };
 
 lord.node = function(type, text) {
@@ -967,7 +842,7 @@ lord.deviceType = function(expected) {
 
 lord.showDialog = function(body, options) {
     return new Promise(function(resolve, reject) {
-        var buttons = ((options && options.buttons) || ["cancel", "ok"]).map(function(button) {
+        var buttons = ((options && options.buttons) || ["ok", "cancel"]).map(function(button) {
             if ("ok" == button) {
                 return {
                     text: lord.text("confirmButtonText"),
@@ -1007,17 +882,19 @@ lord.showDialog = function(body, options) {
         }).filter(function(button) {
             return button;
         });
-        $(body).dialog({
+        var dlg = $(body).dialog({
             title: lord.text(options && options.title),
             modal: true,
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            minHeight: 256,
-            minWidth: 555,
-            open: function(event, ui) {$('.ui-widget-overlay').bind('click', function(){$(body).dialog('close');});},
+            open: (options ? options.afterShow : undefined),
+            maxHeight: $(window).height() - 20,
+            maxWidth: $(window).width() - 40,
             close: function() {
+                lord.dialogs.pop();
                 resolve(false);
+                $(this).dialog("destroy").remove();
             },
             create: function() {
                 $("body").css({ overflow: "hidden" });
@@ -1029,129 +906,36 @@ lord.showDialog = function(body, options) {
                     lord.scrollHandler();
             }
         });
-    });
-};
-
-lord.isHashpass = function(s) {
-    return !!s.match(/([0-9a-fA-F]{8}\-){4}[0-9a-fA-F]{8}/g);
-};
-
-lord.generateImageHash = function(imageData, sizeX, sizeY) {
-    sizeX = +sizeX;
-    sizeY = +sizeY;
-    if (!imageData || isNaN(sizeX) || isNaN(sizeY))
-        return null;
-    var buf = new Uint8Array(imageData);
-    var oldw = sizeX;
-    var oldh = sizeY;
-    var size = oldw * oldh;
-    for (var i = 0, j = 0; i < size; i++, j += 4)
-        buf[i] = buf[j] * 0.3 + buf[j + 1] * 0.59 + buf[j + 2] * 0.11;
-    var newh = 8;
-    var neww = 8;
-    var levels = 3;
-    var areas = 256 / levels;
-    var values = 256 / (levels - 1);
-    var hash = 0;
-    for (var i = 0; i < newh; i++) {
-        for (var j = 0; j < neww; j++) {
-            var tmp = i / (newh - 1) * (oldh - 1);
-            var l = Math.min(tmp | 0, oldh - 2);
-            var u = tmp - l;
-            tmp = j / (neww - 1) * (oldw - 1);
-            var c = Math.min(tmp | 0, oldw - 2);
-            var t = tmp - c;
-            var first = buf[l * oldw + c] * ((1 - t) * (1 - u));
-            first += buf[l * oldw + c + 1] * (t * (1 - u));
-            first += buf[(l + 1) * oldw + c + 1] * (t * u);
-            first += buf[(l + 1) * oldw + c] * ((1 - t) * u);
-            first /= areas;
-            first = values * (first | 0);
-            hash = (hash << 4) + Math.min(first, 255);
-            var g = hash & 4026531840;
-            if (g)
-                hash ^= g >>> 24;
-            hash &= ~g;
-        }
-    }
-    return hash;
-};
-
-lord.getPlainText = function(node) {
-    if (!node)
-        return "";
-    function normalize(a) {
-        if (!a)
-            return "";
-        a = a.replace(/ +/g, " ").replace(/[\t]+/gm, "").replace(/[ ]+$/gm, "").replace(/^[ ]+/gm, "");
-        a = a.replace(/\n+/g, "\n").replace(/\n+$/, "").replace(/^\n+/, "").replace(/\nNEWLINE\n/g, "\n\n");
-        return a.replace(/NEWLINE\n/g, "\n\n");
-    }
-    function removeWhiteSpace(node) {
-        var isWhite = function(node) {
-            return !(/[^\t\n\r ]/.test(node.nodeValue));
-        };
-        var ws = [];
-        var findWhite = function(node) {
-            for(var i = 0; i < node.childNodes.length; i++) {
-                var n = node.childNodes[i];
-                if (n.nodeType == 3 && isWhite(n))
-                    ws.push(n);
-                else if (n.hasChildNodes())
-                    findWhite(n);
+        dlg.parent().find(".ui-dialog-titlebar").dblclick(function() {
+            this.isMaximized = !this.isMaximized;
+            body = $(body);
+            if (this.isMaximized) {
+                this.lastHeight = body.closest(".ui-dialog").height() + 8;
+                this.lastWidth = body.closest(".ui-dialog").width() + 16;
+                this.lastPosition = body.dialog("option", "position");
+                body.dialog("option", "maxHeight", $(window).height());
+                body.dialog("option", "maxWidth", $(window).width());
+                body.dialog("option", "minHeight", $(window).height());
+                body.dialog("option", "minWidth", $(window).width());
+                body.dialog("option", "height", $(window).height());
+                body.dialog("option", "width", $(window).width());
+                body.dialog("option", "position", {
+                    my: "left top",
+                    at: "left top",
+                    of: window
+                });
+            } else {
+                body.dialog("option", "minHeight", 150);
+                body.dialog("option", "minWidth", 150);
+                body.dialog("option", "maxHeight", $(window).height() - 20);
+                body.dialog("option", "maxWidth", $(window).width() - 40);
+                body.dialog("option", "height", this.lastHeight);
+                body.dialog("option", "width", this.lastWidth);
+                body.dialog("option", "position", this.lastPosition);
             }
-        };
-        findWhite(node);
-        for(var i = 0; i < ws.length; i++)
-            ws[i].parentNode.removeChild(ws[i]);
-    }
-    function sty(n, prop) {
-        if (n.style[prop])
-            return n.style[prop];
-        var s = n.currentStyle || n.ownerDocument.defaultView.getComputedStyle(n, null);
-        if (n.tagName == "SCRIPT")
-            return "none";
-        if(!s[prop])
-            return ("LI,P,TR".indexOf(n.tagName) > -1) ? "block" : n.style[prop];
-        if (s[prop] =="block" && n.tagName=="TD")
-            return "feaux-inline";
-        return s[prop];
-    }
-    var blockTypeNodes = "table-row,block,list-item";
-    function isBlock(n) {
-        var s = sty(n, "display") || "feaux-inline";
-        if (blockTypeNodes.indexOf(s) > -1)
-            return true;
-        return false;
-    }
-    function recurse(n) {
-        if (/pre/.test(sty(n, "whiteSpace"))) {
-            t += n.innerHTML.replace(/\t/g, " ").replace(/\n/g, " ");
-            return "";
-        }
-        var s = sty(n, "display");
-        if (s == "none")
-            return "";
-        var gap = isBlock(n) ? "\n" : " ";
-        t += gap;
-        for (var i = 0; i < n.childNodes.length; i++) {
-            var c = n.childNodes[i];
-            if (c.nodeType == 3)
-                t += c.nodeValue;
-            if (c.childNodes.length)
-                recurse(c);
-        }
-        t += gap;
-        return t;
-    }
-    node = node.cloneNode(true);
-    node.innerHTML = node.innerHTML.replace(/<br>/g, "\n");
-    var paras = node.getElementsByTagName("p");
-    for (var i = 0; i < paras.length; i++)
-        paras[i].innerHTML += "NEWLINE";
-    var t = "";
-    removeWhiteSpace(node);
-    return normalize(recurse(node));
+        });
+        lord.dialogs.push(dlg);
+    });
 };
 
 lord.activateTab = function(a) {
@@ -1164,15 +948,15 @@ lord.activateTab = function(a) {
     var header = tab.parentNode;
     var widget = lord.queryOne("div", header.parentNode);
     var page = lord.queryOne("[data-index='" + tabIndex + "']", widget);
-    lord.arr(widget.childNodes).forEach(function(node) {
+    lord.toArray(widget.childNodes).forEach(function(node) {
         if (node.nodeType != 1) //Element
             return;
-        node.style.display = ((node == page) ? "block" : "none");
+        node.style.display = ((node == page) ? "" : "none");
     });
-    lord.query("ul > li", header.parentNode).forEach(function(node) {
-        lord.removeClass(node, "activated");
+    lord.queryAll("ul > li", header.parentNode).forEach(function(node) {
+        $(node).removeClass("activated");
     });
-    lord.addClass(tab, "activated");
+    $(tab).addClass("activated");
 };
 
 lord.notificationsEnabled = function() {
@@ -1195,25 +979,18 @@ lord.playSound = function() {
     lord.sound.play();
 };
 
-lord.nearlyEqual = function(a, b, epsilon) {
-    var absA = Math.abs(a);
-    var absB = Math.abs(b);
-    var diff = Math.abs(a - b);
-    if (a == b) {
-        return true;
-    } else if (a == 0 || b == 0 || diff < Number.MIN_VALUE) {
-        return diff < (epsilon * Number.MIN_VALUE);
-    } else {
-        return diff / (absA + absB) < epsilon;
-    }
-};
-
-lord.hash = function() {
-    return window.location.hash.substr(1, window.location.hash.length - 1);
+lord.hash = function(hash) {
+    if (typeof hash == "undefined")
+        return window.location.hash.substr(1, window.location.hash.length - 1);
+    hash = "" + hash;
+    if (!hash && !lord.hash())
+        return;
+    window.location.hash = "";
+    window.location.hash = hash;
 };
 
 lord.data = function(key, el, bubble) {
-    el = el || document.body;
+    el = el || lord.queryOne(".wrap");//document.body;
     while (el && el.dataset) {
         if (key in el.dataset)
             return el.dataset[key];
@@ -1222,26 +999,10 @@ lord.data = function(key, el, bubble) {
     return undefined;
 };
 
-lord.template = function(templateName, model, noparse) {
-    var template = lord.templates[templateName];
-    if (!template)
-        return null;
-    if (!model)
-        return template;
-    var html = template(model);
-    if (noparse)
-        return html;
-    var nodes = $.parseHTML(html, document, true);
-    var node;
-    for (var i = 0; i < nodes.length; ++i) {
-        if (1 == nodes[i].nodeType) {
-            node = nodes[i];
-            break;
-        }
-    }
-    if (!node)
-        return null;
-    lord.query("script", node).forEach(function(script) {
+lord.scriptWorkaround = function(parent) {
+    if (!parent)
+        parent = document;
+    lord.queryAll("script", parent).forEach(function(script) {
         var nscript = lord.node("script");
         nscript.type = script.type;
         if (script.src)
@@ -1250,85 +1011,226 @@ lord.template = function(templateName, model, noparse) {
             nscript.innerHTML = script.innerHTML;
         script.parentNode.replaceChild(nscript, script);
     });
-    return node;
 };
 
-lord.createStylesheetLink = function(href, prefix) {
+lord.addTemplate = function(name, html) {
+    if (!name || !html)
+        return false;
+    try {
+        lord.templates[name] = doT.template(html, {
+            evaluate: /\{\{([\s\S]+?)\}\}/g,
+            interpolate: /\{\{=([\s\S]+?)\}\}/g,
+            encode: /\{\{!([\s\S]+?)\}\}/g,
+            use: /\{\{#([\s\S]+?)\}\}/g,
+            define: /\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}/g,
+            conditional: /\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}/g,
+            iterate: /\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})/g,
+            varname: 'it',
+            strip: false,
+            append: true,
+            selfcontained: false
+        }, lord.partials);
+    } catch (err) {
+        lord.handleError(err);
+        return false;
+    }
+    return true;
+};
+
+lord._template = lord.template;
+
+Object.defineProperty(lord, "template", {
+    value: function(templateName, model, noparse) {
+        var template = lord.templates[templateName];
+        if (!template)
+            return null;
+        if (!model)
+            return template;
+        var html = template(model);
+        if (noparse)
+            return html;
+        var nodes = $.parseHTML(html, document, true);
+        var node;
+        for (var i = 0; i < nodes.length; ++i) {
+            if (1 == nodes[i].nodeType) {
+                node = nodes[i];
+                break;
+            }
+        }
+        if (!node)
+            return null;
+        lord.scriptWorkaround(node);
+        return node;
+    },
+    writable: false,
+    enumerable: true,
+    configurable: false
+}); //NOTE: A hack to prevent Underscore.js from overwriting this property
+
+lord.createDocumentFragment = function(html) {
+    var temp = document.createElement("div");
+    temp.innerHTML = html;
+    if (typeof document.createDocumentFragment != "function")
+        return Promise.resolve(temp);
+    var frag = document.createDocumentFragment();
+    return new Promise(function(resolve) {
+        var f = function() {
+            if (!temp.firstChild)
+                return resolve(frag);
+            frag.appendChild(temp.firstChild);
+            setTimeout(f, 0);
+        };
+        f();
+    });
+};
+
+lord.createStylesheetLink = function(href, prefix, id) {
     var link = lord.node("link");
-    link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
-    link.id = "stylesheet";
-    link.rel = "stylesheet";
     link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = (prefix ? ("/" + lord.models.base.site.pathPrefix + "css/") : "") + href;
+    if(typeof id !== 'undefined')
+        link.id = id;
     lord.queryOne("head").appendChild(link);
     return link;
 };
 
-lord.createScript = function(src, prefix) {
+lord.createScript = function(src, prefix, cl) {
     var script = lord.node("script");
+    if(typeof cl != "undefined")
+        script.className = cl;
     script.type = "text/javascript";
     script.src = (prefix ? ("/" + lord.models.base.site.pathPrefix + "js/") : "") + src;
     lord.queryOne("head").appendChild(script);
     return script;
 };
 
+lord.userLevels = [
+    "USER",
+    "MODER",
+    "ADMIN",
+    "SUPERUSER"
+];
+
 lord.compareRegisteredUserLevels = function(l1, l2) {
-    if (!l1)
-        l1 = null;
-    if (!l2)
-        l2 = null;
-    if (["ADMIN", "MODER", "USER", null].indexOf(l2) < 0)
-        throw "Invalid registered user level l2: " + l2;
-    switch (l1) {
-    case "ADMIN":
-        return (l1 == l2) ? 0 : 1;
-    case "MODER":
-        if (l1 == l2)
-            return 0;
-        return ("ADMIN" == l2) ? -1 : 1;
-    case "USER":
-        if (l1 == l2)
-            return 0;
-        return (null == l2) ? 1 : -1;
-    case null:
-        return (l1 == l2) ? 0 : -1;
-    default:
-        throw "Invalid reistered user level l1: " + l1;
-    }
+    l1 = lord.userLevels.indexOf(l1);
+    l2 = lord.userLevels.indexOf(l2);
+    if (l1 < l2)
+        return -1;
+    else if (l1 > l2)
+        return 1;
+    else
+        return 0;
 };
 
-lord.escaped = function(text) {
-    return $("<div />").text(text).html();
+lord.ratings = [
+    "SFW",
+    "R-15",
+    "R-18",
+    "R-18G"
+];
+
+lord.compareRatings = function(r1, r2) {
+    r1 = lord.ratings.indexOf(r1);
+    if (r1 < 0)
+        r1 = 0;
+    r2 = lord.ratings.indexOf(r2);
+    if (r2 < 0)
+        r2 = 0;
+    if (r1 < r2)
+        return -1;
+    else if (r1 > r2)
+        return 1;
+    else
+        return 0;
 };
 
-lord.model = function(modelName, mustMerge) {
+lord.model = function(modelName) {
     if (Array.isArray(modelName)) {
         var models = modelName.map(function(modelName) {
             return lord.model(modelName);
         });
-        if (!mustMerge)
-            return models;
         var model = (models.length > 0) ? merge.clone(models[0]) : {};
         models.slice(1).forEach(function(m) {
             model = merge.recursive(model, m);
-        })
+        });
         return model;
     } else {
         var match = modelName.match(/^board\/(\S+)$/);
+        var model;
         if (match) {
             var boards = lord.models["boards"].boards;
             for (var i = 0; i < boards.length; ++i) {
                 if (match[1] == boards[i].name)
                     return { board: boards[i] };
             }
-            return lord.models["boards"].boards[match[1]];
+            model = lord.models["boards"].boards[match[1]];
+        } else {
+            model = lord.models[modelName];
         }
-        return lord.models[modelName];
+        if (!model)
+            return model;
+        var settings = lord.settings();
+        var base = lord.models.base;
+        var locale = base.site.locale;
+        var dateFormat = base.site.dateFormat;
+        var timeOffset = base.site.timeOffset;
+        model.settings = settings;
+        model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels.bind(lord);
+        model.hasOwnProperties = lord.hasOwnProperties.bind(lord);
+        model.formattedDate = function(date) {
+            return moment(date).utcOffset(timeOffset).locale(locale).format(dateFormat);
+        };
+        var maxLevel = lord.toArray(lord.models.base.user.levels).sort(function() {
+            return -1 * lord.compareRegisteredUserLevels(arguments);
+        });
+        maxLevel = (maxLevel.length > 0) ? maxLevel[0] : null;
+        var test = function(level, boardName, strict) {
+            var lvl;
+            if (boardName && typeof boardName != "boolean") {
+                lvl = lord.models.base.user.levels[boardName];
+            } else {
+                lvl = maxLevel;
+                strict = boardName;
+            }
+            if (strict)
+                return !lord.compareRegisteredUserLevels(lvl, level);
+            else
+                return lord.compareRegisteredUserLevels(lvl, level) >= 0;
+        };
+        if (!model.user)
+            model.user = {};
+        model.user.vkAuth = lord.getCookie("vkAuth", "");
+        model.user.level = function(boardName) {
+            if (!boardName)
+                return maxLevel;
+            return lord.models.base.user.levels[boardName] || null;
+        };
+        model.hasPermission = function(board, permission) {
+            if (!permission || !board || !board.permissions.hasOwnProperty(permission))
+                return false;
+            return lord.compareRegisteredUserLevels(model.user.level(board.name), board.permissions[permission]) >= 0;
+        };
+        var levelMap = {
+            User: "USER",
+            Moder: "MODER",
+            Admin: "ADMIN",
+            Superuser: "SUPERUSER"
+        };
+        lord.each(levelMap, function(lvl, key) {
+            model.user["is" + key] = test.bind(model.user, lvl);
+        });
+        model.customPostBodyPart = lord.customPostBodyPart;
+        model.customPostHeaderPart = lord.customPostHeaderPart;
+        return model;
     }
 };
 
-lord.get = function(what) {
+lord.get = function(what, enableCache) {
     var xhr = new XMLHttpRequest();
-    xhr.open("get", "/" + lord.data("sitePathPrefix", lord.queryOne("head")) + what, false);
+    if (!enableCache)
+        what += ((what.indexOf("?") >= 0) ? "&" : "?") + "_=" + new Date().getTime();
+    xhr.open("get", what, false);
     xhr.send(null);
     if (xhr.status === 200)
         return xhr.responseText;
@@ -1338,7 +1240,7 @@ lord.get = function(what) {
 lord.api = function(entity, parameters, prefix) {
     prefix = prefix || "api";
     var query = "";
-    lord.forIn(parameters, function(val, key) {
+    lord.each(parameters, function(val, key) {
         if (!Array.isArray(val))
             val = [val];
         val.forEach(function(val) {
@@ -1390,22 +1292,31 @@ lord.post = function(action, formData, progressBarContext, progressBarOptions) {
     });
 };
 
-lord.now = function() {
-    return new Date();
-};
+lord._now = lord.now;
+
+Object.defineProperty(lord, "now", {
+    value: function() {
+        return new Date();
+    },
+    writable: false,
+    enumerable: true,
+    configurable: false
+}); //NOTE: A hack to prevent Underscore.js from overwriting this property
 
 lord.settings = function() {
     return {
-        time: lord.getCookie("time", "local"),
-        timeZoneOffset: lord.getCookie("timeZoneOffset", -lord.now().getTimezoneOffset()),
-        captchaEngine: { id: lord.getCookie("captchaEngine", "google-recaptcha") },
-        style: { name: lord.getLocalObject("style", "photon") },
+        deviceType: lord.getLocalObject("deviceType", "auto"),
+        time: lord.getLocalObject("time", "local"),
+        timeZoneOffset: lord.getLocalObject("timeZoneOffset", -lord.now().getTimezoneOffset()),
+        captchaEngine: { id: lord.getLocalObject("captchaEngine", "node-captcha") },
+        style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
         stickyToolbar: lord.getLocalObject("stickyToolbar", true),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", false),
+        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),
         minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
         hiddenBoards: lord.getLocalObject("hiddenBoards", []),
         autoUpdateThreadsByDefault: lord.getLocalObject("autoUpdateThreadsByDefault", false),
@@ -1413,6 +1324,7 @@ lord.settings = function() {
         showAutoUpdateDesktopNotifications: lord.getLocalObject("showAutoUpdateDesktopNotifications", true),
         playAutoUpdateSound: lord.getLocalObject("playAutoUpdateSound", false),
         soundNotificationsVolume: lord.getLocalObject("soundNotificationsVolume", 75),
+        addExpander: lord.getLocalObject("addExpander", true),
         signOpPostLinks: lord.getLocalObject("signOpPostLinks", true),
         signOwnPostLinks: lord.getLocalObject("signOwnPostLinks", true),
         showLeafButtons: lord.getLocalObject("showLeafButtons", true),
@@ -1432,30 +1344,32 @@ lord.settings = function() {
         hideUserNames: lord.getLocalObject("hideUserNames", false),
         strikeOutHiddenPostLinks: lord.getLocalObject("strikeOutHiddenPostLinks", true),
         spellsEnabled: lord.getLocalObject("spellsEnabled", true),
+        ihashDistance: lord.getLocalObject("ihashDistance", 15),
         showNewPosts: lord.getLocalObject("showNewPosts", true),
         hotkeysEnabled: lord.getLocalObject("hotkeysEnabled", true),
         userCssEnabled: lord.getLocalObject("userCssEnabled", true),
         userJavaScriptEnabled: lord.getLocalObject("userJavaScriptEnabled", true),
         sourceHighlightingEnabled: lord.getLocalObject("sourceHighlightingEnabled", false),
         chatEnabled: lord.getLocalObject("chatEnabled", true),
+        drawingEnabled: lord.getLocalObject("drawingEnabled", true),
+        autoUpdatePlayer: lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")),
+        resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", false),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
-        apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false)
+        hidePostPreviewDelay: lord.getLocalObject("hidePostPreviewDelay", 1000),
+        apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
+        bannersMode: lord.getLocalObject("bannersMode", "random"),
+
+        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
+        transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };
 
 lord.setSettings = function(model) {
     if (!model)
         return;
-    lord.forIn(model, function(val, key) {
-        if (lord.SettingsStoredInCookies.indexOf(key) >= 0) {
-            lord.setCookie(key, val, {
-                "expires": lord.Billion,
-                "path": "/"
-            });
-        } else {
-            lord.setLocalObject(key, val);
-        }
+    lord.each(model, function(val, key) {
+        lord.setLocalObject(key, val);
     });
 };
 
@@ -1525,14 +1439,6 @@ lord.handleError = function(error) {
     lord.showPopup(text, {type: "critical"});
 };
 
-lord.toMap = function(arr, keyGenerator) {
-    var map = {};
-    arr.forEach(function(item) {
-        map[keyGenerator(item)] = item;
-    });
-    return map;
-};
-
 lord.readAs = function(blob, method) {
     switch (method) {
     case "ArrayBuffer":
@@ -1554,4 +1460,30 @@ lord.readAs = function(blob, method) {
         };
         binaryReader["readAs" + method](blob);
     });
+};
+
+lord.series = function(arr, f) {
+    var p = Promise.resolve();
+    if (Array.isArray(arr)) {
+        arr.forEach(function(el) {
+            p = p.then(function() {
+                return f(el);
+            });
+        });
+    } else if (typeof arr == "object") {
+        forIn(arr, function(el, key) {
+            p = p.then(function() {
+                return f(el, key);
+            });
+        });
+    }
+    return p;
+};
+
+lord.inIframe = function() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
 };

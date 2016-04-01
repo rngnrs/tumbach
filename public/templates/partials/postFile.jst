@@ -6,7 +6,8 @@
     data-size-text="{{=fileInfo.sizeText}}"
     data-width="{{ out += fileInfo.dimensions ? fileInfo.dimensions.width : 0; }}"
     data-height="{{ out += fileInfo.dimensions ? fileInfo.dimensions.height : 0; }}"
-    {{? fileInfo.mimeType.substr(0, 6) == "audio/" && fileInfo.extraData}}
+    {{? fileInfo.ihash}}data-ihash="{{=fileInfo.ihash}}"{{?}}
+    {{? ("application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/") && fileInfo.extraData}}
         {{? fileInfo.extraData.duration}}data-duration="{{=fileInfo.extraData.duration}}"{{?}}
         {{? fileInfo.extraData.bitrate}}data-bitrate="{{=fileInfo.extraData.bitrate}}"{{?}}
         {{? fileInfo.extraData.album}}data-audio-tag-album="{{=fileInfo.extraData.album}}"{{?}}
@@ -20,7 +21,7 @@
     <div class="postFileName">
         <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}" target="_blank">{{=fileInfo.name}}</a>
     </div>
-    <div class="postFileSize {{=it.deviceType}}" {{? fileInfo.sizeTooltip}}title="{{=fileInfo.sizeTooltip}}"{{?}}>
+    <div class="postFileSize" {{? fileInfo.sizeTooltip}}title="{{=fileInfo.sizeTooltip}}"{{?}}>
         ({{=fileInfo.sizeText}})
     </div>
     <div class="postFileSearch">
@@ -29,8 +30,23 @@
            <img src="/{{=it.site.pathPrefix}}img/delete.png" title="{{=it.tr.deleteFileText}}"
                 class="buttonImage" /></a>
         {{? fileInfo.mimeType.substr(0, 6) == "image/"}}
-            <a name="hideByImageButton" onclick="lord.hideByImage(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/hide.png" title="{{=it.tr.hideByImageText}}"
+            <input type="image" src="/{{=it.site.pathPrefix}}img/hide.png" class="buttonImage"
+                   title="{{=it.tr.hideByImageText}}"
+                   onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;" />
+            <ul id="image{{=fileInfo.name.replace(".", "-")}}HideMenu" name="hideByImageButton" class="menu">
+                <li class="nowrap">
+                    <a href="javascript:void(0);"
+                       onclick="lord.hideByImage(this, false);">{{=it.tr.hideByImageSizeText}}</a>
+                </li>
+                {{? fileInfo.ihash && "0" != fileInfo.ihash && "image/gif" != fileInfo.mimeType}}
+                    <li class="nowrap">
+                        <a href="javascript:void(0);"
+                           onclick="lord.hideByImage(this, true);">{{=it.tr.hideByImageHashText}}</a>
+                    </li>
+                {{?}}
+            </ul>
+            <a name="drawOnImageButton" onclick="lord.drawOnImage(this); return false;">
+                <img src="/{{=it.site.pathPrefix}}img/draw.png" title="{{=it.tr.drawOnImageText}}"
                      class="buttonImage" /></a>
             <input type="image" src="/{{=it.site.pathPrefix}}img/search.png" class="buttonImage"
                    title="{{=it.tr.findSourceText}}"
@@ -63,17 +79,17 @@
                 </li>
             </ul>
         {{?}}
-        {{? fileInfo.mimeType.substr(0, 6) == "audio/"}}
-            <a href="javascript:void(0);" onclick="lord.editAudioTags(this); return false"
+        {{? "application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/"}}
+            <a href="javascript:void(0);" onclick="lord.editAudioTags(this); return false;"
                title="{{=it.tr.editAudioTagsText}}">
                 <img src="/{{=it.site.pathPrefix}}img/audio_edit_tags.png" class="buttonImage"></a>
             <a href="javascript:void(0);" onclick="lord.addToPlaylist(this); return false;"
                title="{{=it.tr.addToPlaylistText}}">
-                <img src="/{{=it.site.pathPrefix}}img/playlist.png" class="buttonImage"></a>
+                <img src="/{{=it.site.pathPrefix}}img/player/16/player.png" class="buttonImage"></a>
         {{?}}
     </div>
-    <div class="postFileFile {{=it.deviceType}}">
-        <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
+    <div class="postFileFile">
+        <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}" data-rating="{{=fileInfo.rating}}"
            {{? "application/pdf" == fileInfo.mimeType}}target="_blank"{{??}}onclick="lord.showImage(this); return false;"{{?}}>
             {{#def.postFileThumb}}
         </a>

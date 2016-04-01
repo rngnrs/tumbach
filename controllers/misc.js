@@ -1,36 +1,38 @@
 var express = require("express");
-var FS = require("q-io/fs");
 
 var controller = require("../helpers/controller");
 
 var router = express.Router();
 
 router.get("/misc/base.json", function(req, res) {
-    var model = controller.baseModel(req);
-    res.send(model);
+    var model = controller.baseModel();
+    model.user = {
+        ip: req.ip,
+        hashpass: req.hashpass,
+        levels: (req.levels || {}),
+        loggedIn: !!req.hashpass
+    };
+    res.json(model);
 });
 
 router.get("/misc/boards.json", function(req, res) {
-    var model = controller.boardsModel(req);
-    res.send(model);
+    res.json(controller.boardsModel());
 });
 
 router.get("/misc/board/:board.json", function(req, res) {
-    var model = controller.boardModel(req.params.board);
-    res.send(model);
+    res.json(controller.boardModel(req.params.board));
 });
 
 router.get("/misc/tr.json", function(req, res) {
-    var model = controller.translationsModel();
-    res.send(model);
+    res.json(controller.translationsModel());
 });
 
 router.get("/misc/partials.json", function(req, res) {
-    FS.list(__dirname + "/../public/templates/partials").then(function(fileNames) {
-        res.send(fileNames.map(function(fileName) {
-            return fileName.split(".").shift();
-        }));
-    });
+    res.json(controller.publicPartialNames());
+});
+
+router.get("/misc/statistics.json", function(req, res) {
+    controller.sendCachedJSON(req, res, "statistics");
 });
 
 module.exports = router;
