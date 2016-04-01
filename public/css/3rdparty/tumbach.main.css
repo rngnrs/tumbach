@@ -58,7 +58,7 @@ input[type=number] {
     position: fixed;
     width: 100%;
     top: 0; right: 0;
-    z-index: 1;
+    z-index: 8;
 }
 #header.transparent .header-wrapper,
 #header.transparent .logo {

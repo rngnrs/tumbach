@@ -3,6 +3,7 @@ var Address6 = require("ip-address").Address6;
 var Canvas = require("canvas");
 var ChildProcess = require("child_process");
 var Crypto = require("crypto");
+var du = require("du");
 var equal = require("deep-equal");
 var escapeHtml = require("escape-html");
 var FS = require("q-io/fs");
@@ -289,79 +290,6 @@ module.exports.isPdfType = function(mimeType) {
 
 module.exports.isImageType = function(mimeType) {
     return mimeType.substr(0, 6) == "image/";
-};
-
-var getWords = function(text) {
-    if (!text)
-        return [];
-    var rx = XRegExp("^\\pL|[0-9]$");
-    var words = [];
-    var word = "";
-    var pos = 0;
-    for (var i = 0; i < text.length; ++i) {
-        var c = text[i];
-        if (rx.test(c)) {
-            word += c;
-        } else if (word.length > 0) {
-            words.push({
-                word: word.toLowerCase(),
-                pos: pos
-            });
-            word = "";
-            ++pos;
-        }
-    }
-    if (word.length > 0) {
-        words.push({
-            word: word.toLowerCase(),
-            pos: pos
-        });
-    }
-    return words;
-};
-
-module.exports.getWords = getWords;
-
-module.exports.indexPost = function(post, wordIndex) {
-    if (!wordIndex)
-        wordIndex = {};
-    ["rawText", "subject"].forEach(function(source) {
-        var words = getWords(post[source]);
-        for (var i = 0; i < words.length; ++i) {
-            var word = words[i];
-            if (!wordIndex.hasOwnProperty(word.word))
-                wordIndex[word.word] = [];
-            wordIndex[word.word].push({
-                boardName: post.boardName,
-                postNumber: post.number,
-                source: source,
-                position: word.pos
-            });
-        }
-    });
-    return wordIndex;
-};
-
-module.exports.complement = function(map1, map2) {
-    var map = {};
-    forIn(map1, function(value, key) {
-        if (!map2.hasOwnProperty(key))
-            map[key] = value;
-    });
-    return map;
-};
-
-module.exports.intersection = function(map1, map2) {
-    var map = {};
-    forIn(map1, function(value, key) {
-        if (map2.hasOwnProperty(key))
-            map[key] = value;
-    });
-    return hasOwnProperties(map1) ? map : map2;
-}
-
-module.exports.sum = function(map1, map2) {
-    return merge.recursive(map1, map2);
 };
 
 module.exports.splitCommand = function(cmd) {
@@ -751,6 +679,16 @@ module.exports.generateRandomImage = function(hash, mimeType, thumbPath) {
         ctx.drawImage(img, 0, 0, 200, 200);
         return new Promise(function(resolve, reject) {
             canvas.pngStream().pipe(FSSync.createWriteStream(thumbPath).on("error", reject).on("finish", resolve));
+        });
+    });
+};
+
+module.exports.du = function(path) {
+    return new Promise(function(resolve, reject) {
+        du(path, function(err, size) {
+            if (err)
+                return reject(err);
+            resolve(size);
         });
     });
 };

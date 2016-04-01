@@ -63,7 +63,7 @@ Example:
         }
     },
     "permissions": {
-        "addFilesToPost: "MODER",
+        "addFilesToPost": "MODER",
         "deleteFile": 0,
         "deletePost": 0,
         "editPost": "MODER",
@@ -129,6 +129,9 @@ Example:
         }
     },
     "system": {
+        "elasticsearch": {
+            "host": "localhost:9200"
+        },
         "embedScripts": true,
         "embedStylesheets": true,
         "fileDownloadProxy": "",
