@@ -17,6 +17,7 @@ tumb.set = {
 tumb.toggle = {
 	frame: function(toggle) {
 		var hc = tumb.go.sb.hasClass('open');
+		tumb.toggle.navbar(hc);
 		if(!toggle)
 			setTimeout(function() {
 				tumb.go.wr.addClass("transition");
@@ -25,8 +26,9 @@ tumb.toggle = {
 		if(toggle || (lord.getLocalObject("showFrame", lord.deviceType("desktop")) != hc)) {
 			if((tumb.go.width < 1024 || lord.deviceType("mobile")) && !toggle)
 				return;
-			else
+			else {
 				lord.setLocalObject("showFrame", !hc);
+			}
 			if(tumb.go.width < 1024) {
 				tumb.go.ov.toggleClass('toggled');
 				tumb.go.sb.removeClass('sidebar-stacked').addClass('sidebar-fixed-left');
@@ -36,9 +38,18 @@ tumb.toggle = {
 				tumb.go.sb.addClass('sidebar-stacked').removeClass('sidebar-fixed-left');
 			}
 			tumb.go.sb.toggleClass('open');
-			return hc;
+			return;
 		}
 		return false;
+	},
+	navbar: function(toggle) {
+		var n = $(".navbar"),
+			ls = !lord.getLocalObject("showFrame", true);
+		if (typeof toggle == "undefined") {
+			(ls) ? n.show() : n.hide();
+			return;
+		}
+		(toggle) ? n.slideDown() : n.slideUp();
 	},
 	player: function(toggle) {
 		var pl = $("#tplayer"),
@@ -129,7 +140,8 @@ tumb.onLoad = function(){
     $('#style-switcher').change(function() {
         tumb.switchStyle(this.value);
     });
-    tumb.dottie('header');
+	tumb.toggle.navbar();
+	tumb.dottie('header');
     tumb.slidy('.kek');
     $('.kek').bind('click', function(){
 		tumb.toggle.frame(true);

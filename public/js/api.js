@@ -10,15 +10,6 @@ if (typeof $ != "undefined") {
             });
         });
     };
-    $.extend({
-        getQueryParameters: function(str) {
-            return (str || window.location.search).replace(/(^\?)/, "").split("&").map((function(n) {
-                n = n.split("=");
-                this[n[0]] = n[1];
-                return this;
-            }).bind({}))[0];
-        }
-    });
 }
 
 /*ololord global object*/
@@ -901,7 +892,8 @@ lord.showDialog = function(body, options) {
                 $(".navigationButton").css({ display: "none" });
             },
             beforeClose: function() {
-                $("body").css({ overflow: "inherit" });
+                if (lord.dialogs.length == 1)
+                    $("body").css({ overflow: "inherit" });
                 if (lord.scrollHandler)
                     lord.scrollHandler();
             }

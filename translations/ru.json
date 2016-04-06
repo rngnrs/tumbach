@@ -428,6 +428,9 @@
     "Title:": {
         "audioTagTitleText": {
             "value": "Название:"
+        },
+        "playerRadioTitleLabelText": {
+            "value": "Название:"
         }
     },
     "Year:": {
@@ -1386,9 +1389,9 @@
             "value": "Найти соус..."
         }
     },
-    "Download all files as a .zip archive": {
-        "downloadThreadText": {
-            "value": "Скачать все файлы в виде .zip-архива"
+    "Download all files": {
+        "downloadThreadFilesText": {
+            "value": "Скачать все файлы"
         }
     },
     "Last modified:": {
@@ -1571,6 +1574,9 @@
     },
     "URL:": {
         "linkLabelText": {
+            "value": "Ссылка:"
+        },
+        "playerRadioURLLabelText": {
             "value": "Ссылка:"
         }
     },
@@ -1874,21 +1880,6 @@
     "Google reCAPTCHA v1": {
         "_default": {
             "value": "Google reCAPTCHA v1"
-        }
-    },
-    "Yandex captcha (Latin)": {
-        "_default": {
-            "value": "Yandex captcha (Latin)"
-        }
-    },
-    "Yandex captcha (digits)": {
-        "_default": {
-            "value": "Yandex captcha (digits)"
-        }
-    },
-    "Yandex captcha (Cyrillic)": {
-        "_default": {
-            "value": "Yandex captcha (Cyrillic)"
         }
     },
     "Target board": {
@@ -3161,6 +3152,11 @@
     "Hide by image size": {
         "hideByImageSizeText": {
             "value": "Скрывать по размеру картинки"
+        }
+    },
+    "Add radio stream": {
+        "addRadioText": {
+            "value": "Добавить радиопоток"
         }
     },
     "Transparent header": {

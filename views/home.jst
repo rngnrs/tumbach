@@ -8,6 +8,7 @@
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
+            {{#def.navbar}}
             <script type="text/javascript">
                 (function() {
                     if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst")))

@@ -69,7 +69,7 @@ span.spoiler:hover {
     background-color: #99D9EA;
     border: 1px solid #7AB;
 }
-.track.selected {
+.track.selected, .track:hover, .pseudoTrack:hover {
     background-color: #7AB;
     border: 1px solid #99D9EA;
 }
@@ -86,4 +86,7 @@ ul.tabWidget > li.activated {
 }
 .scrollAreaH60 {
     border: 1px solid #CCC;
+}
+.searchResultHighlighted {
+    background-color: #FF0;
 }

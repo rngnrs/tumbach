@@ -613,23 +613,6 @@ h1 {
     margin: 0 80px;
 }
 
-/* Navbar */
-.navbar {
-    font-size: 1.2em;
-}
-.navbar, .postingSpeedBar, .friendsBar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    width: 70%;
-}
-.navbar.navbarFrame {
-    text-align: left;
-    margin-left: 4px;
-    font-size: 1em;
-}
-
 /* Post */
 .postFileSearch {
     padding-bottom: 4px;
@@ -772,22 +755,6 @@ h1 {
 .loginDescription {
     text-align: center;
     margin-top: 20px;
-}
-.buttonImage {
-    vertical-align: middle;
-    opacity: .65;
-}
-.buttonImage:disabled {
-    opacity: .4;
-}
-.buttonImage:hover {
-    opacity: 1;
-}
-.buttonImage:disabled:hover {
-    opacity: .4;
-}
-input.buttonImage {
-    background-color: transparent;
 }
 .signImage {
     vertical-align: middle;

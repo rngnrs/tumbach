@@ -404,9 +404,10 @@ textarea {
 
 .track {
     background-color: #2C2C2C;
+    border: 1px solid #000;
 }
 
-.track:hover {
+.track:hover, .pseudoTrack:hover {
     background-color: #AABA77;
     border: 1px solid #545454;
 }

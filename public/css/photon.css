@@ -353,7 +353,7 @@ ul.tabWidget > li.activated > a {
     border: 1px solid #CCC;
 }
 
-.track:hover {
+.track:hover, .pseudoTrack:hover {
     background-color: #CCC;
     border: 1px solid #BBB;
 }

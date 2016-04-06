@@ -84,6 +84,10 @@ a.expandCollapse:hover,
     font-size: 75%;
 }
 
+.hiddenPostList {
+    min-width: 350px;
+}
+
 .hiddenPostList > div:nth-child(even) {
     margin: 3px 0;
 }
@@ -141,7 +145,7 @@ span.tooltip {
 }
 
 span.newPostCount {
-    font-size: 75%;
+    font-size: 85%;
 }
 
 .pages {
@@ -294,13 +298,14 @@ span.newPostCount {
 
 .navbar {
     font-size: 1.2em;
+    padding: 0 0 10px 0;
 }
 .navbar, .postingSpeedBar, .friendsBar {
     display: block;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    width: 70%;
+    width: 100%;
 }
 
 .navbar.navbarFrame {
@@ -941,10 +946,16 @@ input.buttonImage {
     float: right;
 }
 
-.track {
+.track, .pseudoTrack {
     padding: 4px;
     cursor: pointer;
     position: relative;
+}
+
+.pseudoTrack {
+    padding: 8px;
+    text-align: center;
+    border: none !important;
 }
 
 .trackActions {
@@ -1097,7 +1108,6 @@ div.registeredUser {
 }
 
 .searchResult {
-    margin-top: -16px;
     margin-bottom: 4px;
     padding: 4px;
     overflow-x: auto;

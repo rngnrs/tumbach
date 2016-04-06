@@ -3,6 +3,7 @@
 !partials
 !addFileDialog.jst
 !addFilesDialog.jst
+!addRadioDialog.jst
 !banner.jst
 !boardPageLower.jst
 !boardPageUpper.jst
@@ -33,6 +34,7 @@
 !googleRecaptchaWidget.jst
 !hiddenPostList.jst
 !hotkeysDialog.jst
+!imageSearchMenu.jst
 !movablePlayer.jst
 !moveThreadDialog.jst
 !navbar.jst
@@ -65,5 +67,4 @@
 !userBan.jst
 !vkAudioList.jst
 !voteVariant.jst
-!yandexCaptchaWidget.jst
 !.gitignore
