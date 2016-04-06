@@ -43,6 +43,8 @@ tumb.toggle = {
 		return false;
 	},
 	navbar: function(toggle) {
+		if(lord.deviceType("mobile"))
+			return;
 		var n = $(".navbar"),
 			ls = !lord.getLocalObject("showFrame", true);
 		if (typeof toggle == "undefined") {
