@@ -1,9 +1,5 @@
 <div>
-    {{? it.settings.stickyToolbar}}
-        <div class="toolbar sticky">
-    {{??}}
-        <div class="toolbar" style="margin-top: 0px;">
-    {{?}}
+    <div class="toolbar">
         [<input type="image" name="settingsButton" title="{{=it.tr.settingsButtonText}}" class="buttonImage"
                 src="/{{=it.site.pathPrefix}}img/settings.png" onclick="lord.showSettings(); return false;" />]
         [<input type="image" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" class="buttonImage"
@@ -27,8 +23,5 @@
             |
         {{?}}
         {{#def.innerNavbar}}
-        {{? it.settings.stickyToolbar}}
-            <hr style="margin-top: 3px; margin-bottom: 0;" />
-        {{?}}
     </div>
 </div>

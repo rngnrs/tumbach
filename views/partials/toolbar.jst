@@ -21,8 +21,6 @@
         document.open();
         document.write(lord.template("tumbToolbar", model, true));
         document.close();
-        if (settings.stickyToolbar)
-            $(document.body).css("padding-top", $(".toolbar.sticky").height() + "px");
         tumb.go = {
             sb: $('#sidebar'),
             sb2: $('#sidebar2'),

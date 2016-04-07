@@ -1802,11 +1802,6 @@
             "value": "Залогиниться"
         }
     },
-    "Sticky toolbar": {
-        "stickyToolbarLabelText": {
-            "value": "Прилепить панель"
-        }
-    },
     "Show post form": {
         "showPostFormText": {
             "value": "Показать форму постинга"

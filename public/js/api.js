@@ -1305,7 +1305,6 @@ lord.settings = function() {
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
-        stickyToolbar: lord.getLocalObject("stickyToolbar", false),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", false),
         hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),

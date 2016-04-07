@@ -1782,7 +1782,7 @@ lord.checkChats = function() {
 };
 
 lord.showChat = function(key) {
-    lord.queryAll("[name='chatButton']").forEach(function(a) {
+    lord.queryAll(".navbarItem > [name='chatButton']").forEach(function(a) {
         var img = lord.queryOne("img", a);
         if (img && img.src.replace("chat_message.gif", "") != img.src)
             img.src = img.src.replace("chat_message.gif", "chat.png");
@@ -1790,10 +1790,8 @@ lord.showChat = function(key) {
     var btn = lord.queryOne(".list-item[name='chatButton']");
     if (btn) {
         var img = lord.queryOne("img", btn);
-        if (img) {
-            lord.removeChildren(btn);
-            btn.appendChild(lord.node("text", lord.text("chatText")));
-        }
+        if (img)
+            $(img).remove();
     }
     var model = lord.model(["base", "tr"]);
     model.contacts = [];
@@ -1815,6 +1813,7 @@ lord.showChat = function(key) {
         lord.chatDialog = null;
     }).catch(lord.handleError);
 };
+
 
 lord.selectChatContact = function(key) {
     if (!key|| !lord.chatDialog)
@@ -2041,7 +2040,7 @@ lord.hashChangeHandler = function() {
     if (!target || !target[0])
         return;
     var offset = target.offset();
-    var scrollto = offset.top - $(".toolbar.sticky").height() - 4;
+    var scrollto = offset.top - $("header").height() - 4;
     $("html, body").animate({ scrollTop: scrollto }, 0);
 };
 
@@ -2120,22 +2119,22 @@ lord.initializeOnLoadBase = function() {
         lord.checkChats();
     if (lord.notificationsEnabled())
         lord.checkNotificationQueue();
-    if (lord.queryOne(".toolbar.sticky"))
+    if (!lord.queryOne("header.transparent"))
         window.addEventListener("hashchange", lord.hashChangeHandler, false);
     var bsc = lord.getLocalObject("tooltips/boardSelect", 0);
     if (lord.deviceType("mobile"))
         lord.setTooltips();
-    if (lord.deviceType("mobile") && bsc < 5) {
+    if (lord.deviceType("mobile") && bsc < 3) {
         lord.setLocalObject("tooltips/boardSelect", bsc + 1);
-        var bs = $(lord.queryOne(".boardSelectContainer > select"));
+        var bs = $(lord.queryOne(".boardSelectContainer > .boardSelectItem"));
         bs.tooltip({
             position: {
                 using: function() {
                     var pos = bs.position();
                     $(this).css({
                         position: "absolute",
-                        left: Math.floor(pos.left + bs.width() / 2 - 100) + "px",
-                        top: Math.floor(pos.top + bs.height() + 15) + "px",
+                        left: Math.floor(pos.left + bs.width() / 2 - 18) + "px",
+                        top: Math.floor(pos.top + bs.height() + 10) + "px",
                         width: "200px"
                     });
                 }
@@ -2145,7 +2144,10 @@ lord.initializeOnLoadBase = function() {
             bs.tooltip("open");
             setTimeout(function() {
                 bs.tooltip("close");
-            }, 10 * lord.Second);
+                setTimeout(function() {
+                    bs.tooltip("destroy");
+                }, lord.Second);
+            }, 9 * lord.Second);
         }, 3 * lord.Second);
     }
     var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;

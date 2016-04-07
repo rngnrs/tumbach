@@ -8,25 +8,26 @@
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
-        <div class="theTitle">
-            <h1>
-                {{=it.title}}
-            </h1>
-        </div>
-        <script type="text/javascript">
-            (function() {
-                if (!lord.addTemplate("custom-faq", lord.get("/{{=it.site.pathPrefix}}templates/custom-faq.jst")))
-                    return;
-                var model = lord.model(["base", "tr", "boards"]);
-                model.settings = lord.settings();
-                var data = lord.template("custom-faq", model, true);
-                if (!data)
-                    return;
-                document.open();
-                document.write(data);
-                document.close();
-            })();
-        </script>
+            {{#def.navbar}}
+            <div class="theTitle">
+                <h1>
+                    {{=it.title}}
+                </h1>
+            </div>
+            <script type="text/javascript">
+                (function() {
+                    if (!lord.addTemplate("custom-faq", lord.get("/{{=it.site.pathPrefix}}templates/custom-faq.jst")))
+                        return;
+                    var model = lord.model(["base", "tr", "boards"]);
+                    model.settings = lord.settings();
+                    var data = lord.template("custom-faq", model, true);
+                    if (!data)
+                        return;
+                    document.open();
+                    document.write(data);
+                    document.close();
+                })();
+            </script>
         </div>
     </div>
     {{#def.customFooter}}

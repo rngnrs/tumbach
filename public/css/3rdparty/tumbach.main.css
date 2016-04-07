@@ -759,12 +759,6 @@ h1 {
 .signImage {
     vertical-align: middle;
 }
-.boardSelectContainer {
-    display: inline-block;
-    vertical-align: middle;
-    width: 16px;
-    overflow: hidden;
-}
 .boardSelect {
     border: none;
     background: url("../../img/boards.png") left top no-repeat;
