@@ -775,11 +775,6 @@ lord.isMediaTypeSupported = function(mimeType) {
     return !!(node.canPlayType && node.canPlayType(mimeType + ";").replace(/no/, ""));
 };
 
-/*lord.updatePlayerTracksHeight = function() {
-    var tracks = $("#playerTracks");
-    tracks.css("max-height", ($("#player").height() - tracks.position().top - 44) + "px");
-};*/
-
 lord.setSidebarVisible = function(e) {
     if (e)
         e.stopPropagation();
@@ -833,8 +828,6 @@ lord.updatePlayerTrackTags = function() {
     var tags = lord.id("playerTrackTags");
     $(tags).empty();
     tags.style.display = "none";
-    /*if (!lord.currentTrack)
-        return lord.updatePlayerTracksHeight();*/
     var t = lord.currentTrack;
     var s = t.artist || "";
     s += (t.artist && t.title) ? " — " : "";
@@ -843,11 +836,8 @@ lord.updatePlayerTrackTags = function() {
     s += t.album ? ("[" + t.album + "]") : "";
     s += (s && t.year) ? (" (" + t.year + ")") : "";
     s += s ? " " : "";
-    /*if (!s)
-        return lord.updatePlayerTracksHeight();*/
     tags.appendChild(lord.node("text", s));
     tags.style.display = "";
-    /*lord.updatePlayerTracksHeight();*/
 };
 
 lord.updatePlayerTrackInfo = function() {
@@ -1153,18 +1143,6 @@ lord.initRadio = function() {
     var model = lord.model("tr");
     cont.prepend("<div class='pseudoTrack' onclick='lord.playerAddRadio();'>" +
         "<img src='/"+lord.data("sitePathPrefix")+"img/player/32/radio_add.png' class='buttonImage' width=14 height=14 /> "+model.tr.addRadioText+"</div>");
-    /*$(document).off("click", ncont + " .track")
-        .on("click", ncont + " .track", function (th) {
-            th = $(th);
-            if (th.hasClass("selected"))
-                return lord.playerPlayPause();
-            lord.playTrack(this);
-            //lord.playRadio(th.data("href"), th.data("title"));
-            lord.queryAll(".track.selected", lord.id("sidebar2")).forEach(function(div) {
-                $(div).removeClass("selected");
-            });
-            th.addClass("selected");
-        });*/
 };
 
 lord.allowTrackDrop = function(e) {
@@ -1976,11 +1954,10 @@ lord.expandCollapseYoutubeVideo = function(a) {
         if (isNaN(start) || start <= 0)
             start = 0;
         iframe.src = "https://www.youtube-nocookie.com/embed/" + videoId + "?autoplay=1&start=" + start;
-        iframe.setAttribute('allowfullscreen', ''); /* iframe.allowfullscreen = true; <- Это не работает. Серьёзно? */
-        iframe.setAttribute('frameborder', 'none'); /* iframe.frameborder = "0px"; */
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('frameborder', 'none');
         iframe.height = "360";
         iframe.width = "640";
-        //iframe.display = "block";
         var parent = a.parentNode;
         var el = a.nextSibling;
         if (el) {
@@ -2016,11 +1993,10 @@ lord.expandCollapseCoubVideo = function(a) {
         var iframe = lord.node("iframe");
         iframe.src = "https://coub.com/embed/" + videoId
             + "?muted=false&autostart=false&originalSize=false&hideTopBar=false&startWithHD=false";
-        iframe.setAttribute('allowfullscreen', ''); /* iframe.allowfullscreen = true; <- Это не работает. Серьёзно? */
-        iframe.setAttribute('frameborder', 'none'); /* iframe.frameborder = "0px"; */
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('frameborder', 'none');
         iframe.height = "360";
         iframe.width = "480";
-        //iframe.display = "block";
         var parent = a.parentNode;
         var el = a.nextSibling;
         if (el) {
@@ -2175,21 +2151,17 @@ lord.initializeOnLoadBase = function() {
         lord.checkPlaylist();
     if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
         lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
-    /*  var w = $(window);
+      var w = $(window);
         w.resize(function() {
         var n = {
             width: w.width(),
             height: w.height()
         };
-        if (n.height != lord.lastWindowSize.height && !$("#player").hasClass("minimized"))
-            lord.updatePlayerTracksHeight();
         if (n.width != lord.lastWindowSize.width) {
             $(".postBody").css("maxWidth", (n.width - 30) + "px");
-            if (lord.getLocalObject("stickyToolbar", true))
-                $(document.body).css("padding-top", $(".toolbar.sticky").height() + "px");
         }
         lord.lastWindowSize = n;
-    });*/
+    });
 };
 
 (document.readyState === "complete") ? load() : window.addEventListener("load", load, false);

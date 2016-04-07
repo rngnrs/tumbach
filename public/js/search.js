@@ -1,5 +1,5 @@
-window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
+(document.readyState === "complete") ? load_s() : window.addEventListener("load", load_s, false);
+function load_s() {
     var searchResultsPlaceholder = lord.id("searchResultsPlaceholder");
     var search = URI(window.location.href).search(true);
     var query = search.query;
@@ -42,4 +42,4 @@ window.addEventListener("load", function load() {
         lord.handleError(err);
         searchResultsPlaceholder.parentNode.removeChild(searchResultsPlaceholder);
     });
-}, false);
+}

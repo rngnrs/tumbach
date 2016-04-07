@@ -42,11 +42,12 @@ lord.vkAuth = function() {
     }, VK.access.AUDIO);
 };
 
-window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
+(document.readyState === "complete") ? load_n() : window.addEventListener("load", load_n, false);
+
+function load_n() {
     var vkButton = lord.id("vkontakteLoginButton");
     if (!vkButton)
         return;
     VK.UI.button("vkontakteLoginButton");
     vkButton.style.width = "";
-}, false);
+}

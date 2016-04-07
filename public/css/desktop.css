@@ -8,16 +8,24 @@
     font-size: 50px;
 }
 .searchAction {
-    max-width: 350px;
+    max-width: 38%;
 }
 #tplayer {
-    max-width: 500px;
+    max-width: 58%;
 }
 .mobileOnly {
     display: none;
 }
 #playerTrackTags {
     width: 68%;
+}
+@media screen and (min-width: 1000px) {
+    .searchAction {
+        max-width: 350px;
+    }
+    #tplayer {
+        max-width: 500px;
+    }
 }
 /* /tumb rewrite */
 
