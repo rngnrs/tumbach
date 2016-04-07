@@ -90,3 +90,12 @@ ul.tabWidget > li.activated {
 .searchResultHighlighted {
     background-color: #FF0;
 }
+.ui-tooltip {
+    border: 1px solid #CCC !important;
+}
+.ui-tooltip-content::after {
+    border-color: #CCC transparent;
+}
+.ui-slider, .ui-slider-handle {
+    border: 1px solid #000 !important;
+}
