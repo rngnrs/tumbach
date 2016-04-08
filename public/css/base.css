@@ -534,10 +534,6 @@ ul.tabWidget > li > a {
     text-align: right;
 }
 
-/*.searchAction > form {
-    display: inline-block;
-}*/
-
 .searchActionInput {
     width: 55%;
     padding: 9px 0;

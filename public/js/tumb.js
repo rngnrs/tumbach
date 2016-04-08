@@ -48,7 +48,8 @@ tumb.toggle = {
 		var n = $(".navbar, .toolbar"),
 			ls = !lord.getLocalObject("showFrame", true);
 		if (typeof toggle == "undefined") {
-			(ls) ? n.show() : n.hide();
+			if (ls)
+				n.show();
 			return;
 		}
 		(toggle) ? n.slideDown() : n.slideUp();

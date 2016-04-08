@@ -1207,7 +1207,7 @@ lord.draw = function(options) {
     var backgroundShape;
     if (options && options.imageUrl) {
         var backgroundImage = new Image();
-        backgroundImage.src = options.imageUrl;
+        backgroundImage.src = options.imageUrl.replace(/^https?\:/, window.location.protocol);
         backgroundShape = LC.createShape("Image", {
             x: 0,
             y: 0,
@@ -1908,6 +1908,15 @@ lord.removeFile = function(div) {
         lord.queryOne("a.postformFileRemoveButton", div).style.display = "none";
     }
     lord.checkPostformTextareaSize();
+    for (var i = 0; i < parent.children.length; ++i) {
+        var c = parent.children[i];
+        if ("none" == lord.queryOne("a.postformFileRemoveButton", c).style.display)
+            return;
+    }
+    var ndiv = div.cloneNode(true);
+    lord.queryOne("a.postformFileRemoveButton", ndiv).style.display = "none";
+    lord.clearFileInput(ndiv);
+    parent.appendChild(ndiv);
 };
 
 lord.browseFile = function(e, div) {
@@ -2239,6 +2248,7 @@ lord.submitted = function(event, form) {
     lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
+    lord.setLocalObject("password", lord.nameOne("password", form).value || "");
     var formData = new FormData(form);
     lord.queryAll(".postformFile", form).forEach(function(div) {
         if (div.file)
