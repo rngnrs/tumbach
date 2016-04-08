@@ -43,27 +43,15 @@ tumb.toggle = {
 		return false;
 	},
 	navbar: function(toggle) {
-		if(lord.deviceType("mobile"))
+		if(lord.deviceType("mobile") || tumb.go.width < 1024)
 			return;
-		var n = $(".navbar"),
+		var n = $(".navbar, .toolbar"),
 			ls = !lord.getLocalObject("showFrame", true);
 		if (typeof toggle == "undefined") {
 			(ls) ? n.show() : n.hide();
 			return;
 		}
 		(toggle) ? n.slideDown() : n.slideUp();
-	},
-	player: function(toggle) {
-		var pl = $("#tplayer"),
-			sr = $("#search"),
-			cl = "hiddenElement";
-		if (toggle || pl.hasClass(cl)) {
-			pl.removeClass(cl);
-			sr.addClass(cl);
-		} else {
-			pl.addClass(cl);
-			sr.removeClass(cl);
-		}
 	}
 };
 tumb.dottie = function(floatElement, upperDiv) {

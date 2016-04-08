@@ -10,7 +10,7 @@
      {{? it.thread.postingEnabled}}data-posting-enabled="true"{{?}}
      {{? it.thread.postLimitReached}}data-post-limit-reached="true"{{?}}
      {{? it.thread.bumpLimitReached}}data-bump-limit-reached="true"{{?}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
@@ -31,7 +31,7 @@
                 {{#def.leafButton}}
             {{~}}
             {{#def.banner}}
-            {{#def.navbar}}
+            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>{{!it.title}}</h1>
             </div>

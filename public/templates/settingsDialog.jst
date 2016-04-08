@@ -178,6 +178,12 @@
                                value="{{=it.settings.hidePostPreviewDelay}}" />
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="infiniteScroll"
+                               {{? it.settings.infiniteScroll}}checked="true"{{?}} />{{=it.tr.infiniteScrollLabelText}}</label>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table data-index="2" style="display: none;">

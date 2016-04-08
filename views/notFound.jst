@@ -4,13 +4,13 @@
 <body>
 {{#def.header}}
 <div class="wrap" {{#def.baseData}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <script id="model-notFoundImageFileNames"
             type="application/json">{{ out += JSON.stringify(it.notFoundImageFileNames); }}</script>
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
-            {{#def.navbar}}
+            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>{{=it.notFoundMessage}}</h1>
             </div>

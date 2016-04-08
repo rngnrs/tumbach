@@ -56,6 +56,7 @@
 !searchResults.jst
 !settingsDialog.jst
 !setVotingOpenedDialog.jst
+!sidebar.jst
 !socPostHeaderPart.jst
 !synchronizationDialog.jst
 !thread.jst
@@ -63,7 +64,6 @@
 !threadPageUpper.jst
 !toolbar.jst
 !tplayer.jst
-!tumbToolbar.jst
 !userBan.jst
 !vkAudioList.jst
 !voteVariant.jst

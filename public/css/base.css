@@ -310,7 +310,6 @@ span.newPostCount {
 
 .navbar.navbarFrame {
     text-align: left;
-    margin-left: 4px;
 }
 
 .navbarItem {
@@ -567,6 +566,10 @@ ul.tabWidget > li > a {
     padding-bottom: 0;
 }
 
+.navbarBoardGroup {
+    word-spacing: -2px;
+}
+
 blockquote.blockquoteThread,
 blockquote.blockquoteThread.expand {
     max-height: none;
@@ -706,7 +709,7 @@ input.buttonImage {
     height: 50px;
     margin-top: -25px;
     margin-left: -200px;
-    z-index: 100501;        
+    z-index: 100501;
 }
 
 .overlayProgressBarCancelButton {
@@ -1152,7 +1155,7 @@ div.ui-widget-content.ui-dialog-content.checkerboardBackground {
     -moz-background-size: 16px 16px;
     background-size: 16px 16px;
     -webkit-background-size: 16px 17px;
-    background-position: 0 0, 8px 0, 8px -8px, 0px 8px;
+    background-position: 0 0, 8px 0, 8px -8px, 0 8px;
 }
 
 .serverActions ~ .serverActions {
@@ -1184,10 +1187,10 @@ div.ui-widget-content.ui-dialog-content.checkerboardBackground {
 
 .blockLatex {
     text-align: center;
-    margin-top: 0px;
-    margin-bottom: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
     padding-top: 8px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
     max-width: 100%;
     overflow-x: auto;
 }

@@ -1802,6 +1802,11 @@
             "value": "Залогиниться"
         }
     },
+    "Sticky toolbar": {
+        "stickyToolbarLabelText": {
+            "value": "Прилепить панель"
+        }
+    },
     "Show post form": {
         "showPostFormText": {
             "value": "Показать форму постинга"
@@ -2353,7 +2358,8 @@
     "Invalid captcha type": {
         "_default": {
             "value": "Недействительный тип капчи"
-        }
+        },
+        "_obsolete": true
     },
     "Invalid URL": {
         "_default": {
@@ -3106,7 +3112,7 @@
     },
     "Rebuilds post search index.": {
         "_default": {
-            "value": "Пересоздает индекс посика постов."
+            "value": "Пересоздает индекс поиска постов."
         }
     },
     "Shows server uptime.": {
@@ -3152,6 +3158,16 @@
     "Add radio stream": {
         "addRadioText": {
             "value": "Добавить радиопоток"
+        }
+    },
+    "Infinite scroll": {
+        "infiniteScrollLabelText": {
+            "value": "Бесконечная прокрутка"
+        }
+    },
+    "Page": {
+        "pageText": {
+            "value": "Страница"
         }
     },
     "Transparent header": {

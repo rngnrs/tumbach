@@ -1348,6 +1348,7 @@ lord.settings = function() {
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
         hidePostPreviewDelay: lord.getLocalObject("hidePostPreviewDelay", 1000),
+        infiniteScroll: lord.getLocalObject("infiniteScroll", lord.deviceType("mobile")),
         apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 

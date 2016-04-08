@@ -440,6 +440,8 @@ module.exports = function(tr) {
     translate("Reload templates", "reloadTemplatesButtonText");
     translate("Reload everything", "reloadAllButtonText");
     translate("Image similarity:", "ihashDistanceLabelText");
+    translate("Infinite scroll", "infiniteScrollLabelText");
+    translate("Page", "pageText");
 
     translate("Transparent header", "transparentHeaderLabelText");
     return tr;

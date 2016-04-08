@@ -20,7 +20,15 @@
         model.mumWatching = lord.getLocalObject("mumWatching", false);
         lord.processBoardGroups(model);
         document.open();
-        document.write(lord.template("toolbar", model, true));
+        document.write(lord.template("sidebar", model, true));
         document.close();
+        tumb.go = {
+            sb: $('#sidebar'),
+            sb2: $('#sidebar2'),
+            ov: $('.overlay'),
+            wr: $('.wrap'),
+            width: $(window).width()
+        };
+        tumb.toggle.frame();
     })();
 </script>
