@@ -653,7 +653,7 @@ lord.gently = function(obj, f, options) {
     if (isNaN(n) || n < 1)
         n = 1;
     return new Promise(function(resolve, reject) {
-        if (Array.isArray(obj)) {
+        if (lord.isArray(obj)) {
             var arr = obj;
             var ind = 0;
             var g = function() {
@@ -879,7 +879,6 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            open: (options ? options.afterShow : undefined),
             maxHeight: $(window).height() - 20,
             maxWidth: $(window).width() - 40,
             close: function() {
@@ -891,6 +890,7 @@ lord.showDialog = function(body, options) {
                 $("body").css({ overflow: "hidden" });
                 $(".navigationButton").css({ display: "none" });
             },
+            open: (options ? options.afterShow : undefined),
             beforeClose: function() {
                 if (lord.dialogs.length == 1)
                     $("body").css({ overflow: "inherit" });
@@ -959,16 +959,20 @@ lord.soundEnabled = function() {
     return lord.getLocalObject("playAutoUpdateSound", false);
 };
 
-lord.playSound = function() {
-    if (!lord.sound) {
-        lord.sound = lord.node("audio");
+lord.playSound = function(type) {
+    type = type || "signal";
+    if (["signal", "message"].indexOf(type) < 0)
+        return;
+    var key = "sound_" + type;
+    if (!lord[key]) {
+        lord[key] = lord.node("audio");
         var source = lord.node("source");
-        source.type = "audio/ogg";
-        source.src = "/" + lord.data("sitePathPrefix") + "audio/signal.ogg";
-        lord.sound.volume = lord.getLocalObject("soundNotificationsVolume", 100) / 100;
-        lord.sound.appendChild(source);
+        source.type = "audio/mp3";
+        source.src = "/" + lord.data("sitePathPrefix") + "audio/" + type + ".mp3";
+        lord[key].volume = lord.getLocalObject("soundNotificationsVolume", 100) / 100;
+        lord[key].appendChild(source);
     }
-    lord.sound.play();
+    lord[key].play();
 };
 
 lord.hash = function(hash) {
@@ -1138,7 +1142,7 @@ lord.compareRatings = function(r1, r2) {
 };
 
 lord.model = function(modelName) {
-    if (Array.isArray(modelName)) {
+    if (lord.isArray(modelName)) {
         var models = modelName.map(function(modelName) {
             return lord.model(modelName);
         });
@@ -1234,7 +1238,7 @@ lord.api = function(entity, parameters, prefix) {
     prefix = prefix || "api";
     var query = "";
     lord.each(parameters, function(val, key) {
-        if (!Array.isArray(val))
+        if (!lord.isArray(val))
             val = [val];
         val.forEach(function(val) {
             if (query)
@@ -1455,22 +1459,40 @@ lord.readAs = function(blob, method) {
     });
 };
 
-lord.series = function(arr, f) {
+lord.series = function(arr, f, container) {
+    if (container && typeof container != "object")
+        container = [];
+    var isArray = lord.isArray(container);
+    var isObject = (typeof container == "object");
     var p = Promise.resolve();
-    if (Array.isArray(arr)) {
+    if (lord.isArray(arr)) {
         arr.forEach(function(el) {
             p = p.then(function() {
                 return f(el);
+            }).then(function(result) {
+                if (isArray)
+                    container.push(result);
+                else if (isObject)
+                    container[el] = result;
             });
         });
-    } else if (typeof arr == "object") {
-        forIn(arr, function(el, key) {
+    } else if (lord.isObject(arr)) {
+        lord.each(arr, function(el, key) {
             p = p.then(function() {
                 return f(el, key);
+            }).then(function(result) {
+                if (isArray)
+                    container.push(result);
+                else if (isObject)
+                    container[key] = result;
             });
         });
     }
-    return p;
+    if (!container)
+        return p;
+    return p.then(function() {
+        return Promise.resolve(container);
+    });
 };
 
 lord.inIframe = function() {

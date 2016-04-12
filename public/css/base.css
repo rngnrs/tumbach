@@ -11,6 +11,14 @@
     width: 8px !important;
 }
 
+.spoiler > span[data-video-id] > img {
+    visibility: hidden;
+}
+
+.spoiler:hover > span[data-video-id] > img {
+    visibility: visible;
+}
+
 a.expandCollapse,
 a.expandCollapse:hover,
 .select,
@@ -108,15 +116,15 @@ a.expandCollapse:hover,
 }
 
 blockquote {
-    margin: 10px 20px;
+    margin: 14.4px 25px;
     padding-top: 10px;
     overflow-y: auto;
     overflow-x: auto;
     max-height: 240px;
     box-sizing: border-box;
-    max-width: 1200px;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    word-break: break-word;
     -ms-hyphens: auto;
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
@@ -259,12 +267,10 @@ span.newPostCount {
 }
 
 .symbolCounter {
-    font-size: .8em;
-    position: absolute;
-    right: 12px;
-    bottom: 7px;
-    color: #333;
-    opacity: .6;
+    display: block;
+    text-align: right;
+    font-size: 0.8em;
+    padding-right: 4px;
 }
 
 .symbolCounterContainer {

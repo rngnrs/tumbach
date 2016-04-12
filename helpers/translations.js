@@ -446,7 +446,8 @@ module.exports = function(tr) {
     translate("Image similarity:", "ihashDistanceLabelText");
     translate("Infinite scroll", "infiniteScrollLabelText");
     translate("Page", "pageText");
-
+    translate("Regenerate archived threads", "regenerateArchivedThreadsLabelText");
+    
     translate("Transparent header", "transparentHeaderLabelText");
     return tr;
 };

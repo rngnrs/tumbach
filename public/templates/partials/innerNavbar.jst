@@ -1,4 +1,5 @@
 {{? "mobile" == it.deviceType}}
+    [{{=it.tr.boardsText}}:
     [<div class="boardSelectContainer">
         <select name="url" class="boardSelect boardSelectItem" title="{{=it.tr.boardSelectTooltip}}"
                 onchange="(function(sel) { var val = sel.options[sel.selectedIndex].value; if (val) location = val; })(this);">

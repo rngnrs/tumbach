@@ -2138,7 +2138,7 @@
             "value": "Попытка прикрепить голосвание не будучи ОПом"
         }
     },
-    "No vote text provided": {
+    "No voting text provided": {
         "_default": {
             "value": "Не указан текст голосования"
         }
@@ -3184,6 +3184,16 @@
     "New": {
         "newPasswordButtonText": {
             "value": "Новый"
+        }
+    },
+    "Regenerate archived threads, too.": {
+        "_default": {
+            "value": "Также сгенерировать заново архивные треды."
+        }
+    },
+    "Regenerate archived threads": {
+        "regenerateArchivedThreadsLabelText": {
+            "value": "Сгенерировать заново архивные треды"
         }
     },
     "Transparent header": {

@@ -7,7 +7,7 @@ var OS = require("os");
 
 var Global = require("./helpers/global");
 Global.Program = require("commander");
-Global.Program.version("1.1.0-beta")
+Global.Program.version("1.1.0-rc")
     .option("-c, --config-file <file>", "Path to the config.json file")
     .parse(process.argv);
 
@@ -157,7 +157,7 @@ if (cluster.isMaster) {
             }, config("server.rss.ttl", 60) * Tools.Minute);
         }
         if (config("system.regenerateCacheOnStartup", true))
-            return controller.regenerate();
+            return controller.regenerate(config("system.regenerateArchive", false));
         return Promise.resolve();
     }).then(function() {
         console.log("Создание воркеров...");
@@ -206,8 +206,8 @@ if (cluster.isMaster) {
             config.reload();
             return Global.IPC.send("reloadConfig");
         });
-        Global.IPC.installHandler("regenerateCache", function() {
-            return controller.regenerate();
+        Global.IPC.installHandler("regenerateCache", function(regenerateArchive) {
+            return controller.regenerate(regenerateArchive);
         });
     }).catch(function(err) {
         Global.error(err.stack || err);

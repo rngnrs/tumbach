@@ -22,6 +22,9 @@ a {
 a.expandCollapse {
     color: #444;
 }
+a.expandCollapse:hover {
+    color: #777;
+}
 .postSequenceNumber,
 a:hover {
     color: #F80;
@@ -98,4 +101,7 @@ ul.tabWidget > li.activated {
 }
 .ui-slider, .ui-slider-handle {
     border: 1px solid #000 !important;
+}
+.newPost {
+    background-color: #CCC;
 }

@@ -49,15 +49,11 @@
 !registeredUser.jst
 !renameFileDialog.jst
 !rerenderPostsDialog.jst
-!rpgEditPostDialogPart.jst
-!rpgPostBodyPart.jst
-!rpgPostFormField.jst
 !searchAction.jst
 !searchResults.jst
 !settingsDialog.jst
 !setVotingOpenedDialog.jst
 !sidebar.jst
-!socPostHeaderPart.jst
 !synchronizationDialog.jst
 !thread.jst
 !threadPageLower.jst
@@ -67,4 +63,8 @@
 !userBan.jst
 !vkAudioList.jst
 !voteVariant.jst
+!withLikesPostHeaderPart.jst
+!withVotingsEditPostDialogPart.jst
+!withVotingsPostBodyPart.jst
+!withVotingsPostFormField.jst
 !.gitignore
