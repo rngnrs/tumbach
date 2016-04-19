@@ -55,17 +55,10 @@ tumb.toggle = {
 		(toggle) ? n.slideDown() : n.slideUp();
 	}
 };
-tumb.dottie = function(floatElement, upperDiv) {
-	var mode = (upperDiv === undefined) ? 1 : 0,
-		maxh = 650,
-	    floatElement = $(floatElement),
-		upperDiv = $(upperDiv),
+tumb.dottie = function(floatElement) {
+	var floatElement = $(floatElement),
 		wrap = $('.wrap'),
-		height = (mode === 1) ? 0 : $(window).height()-floatElement.height();
-	if(height < maxh && mode === 0)
-		height = maxh;
-	else
-		upperDiv.css({'height':height+'px'});
+		height = 0;
 	if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location) {
 		localStorage["scroll"] = height;
 		localStorage["scrollPage"] = window.location;
@@ -93,7 +86,6 @@ tumb.dottie = function(floatElement, upperDiv) {
 	window.onscroll = function(){
 		moveDottie()
 	};
-	return (mode === 1) ? 'down-only' : 'landing';
 };
 tumb.slidy = function(el) {
 	if(!localStorage["scroll"])
