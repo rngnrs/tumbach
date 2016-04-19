@@ -549,7 +549,7 @@ lord.initFiles = function(reset) {
     lord.files = [];
     lord.filesMap = {};
     lord.queryAll(".postFile").forEach(function(td) {
-        var href = lord.data("href", td);
+        var href = lord.data("href", td).replace(/^https?\:\/\/[^\/]+/, "");
         var mimeType = lord.data("mimeType", td);
         if ("application/pdf" == mimeType
             || ((lord.isAudioType(mimeType) || lord.isVideoType(mimeType)) && !lord.isMediaTypeSupported(mimeType))) {

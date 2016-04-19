@@ -139,8 +139,9 @@ var spawnCluster = function() {
 if (cluster.isMaster) {
     var FS = require("q-io/fs");
     var path = __dirname + "/public/node-captcha";
+    var initCallback;
     FS.list(path).then(function(fileNames) {
-        Tools.series(fileNames.filter(function(fileName) {
+        return Tools.series(fileNames.filter(function(fileName) {
             return fileName.split(".").pop() == "png" && /^[0-9]+$/.test(fileName.split(".").shift());
         }), function(fileName) {
             return FS.remove(path + "/" + fileName);
@@ -150,7 +151,8 @@ if (cluster.isMaster) {
         return Promise.resolve();
     }).then(function() {
         return Database.initialize();
-    }).then(function() {
+    }).then(function(cb) {
+        initCallback = cb;
         return controller.initialize();
     }).then(function() {
         if (config("server.statistics.enabled", true)) {
@@ -176,8 +178,10 @@ if (cluster.isMaster) {
         var ready = 0;
         Global.IPC.installHandler("ready", function() {
             ++ready;
-            if (ready == count)
+            if (ready == count) {
+                initCallback();
                 require("./helpers/commands")();
+            }
         });
         var lastFileName;
         var fileName = function() {
