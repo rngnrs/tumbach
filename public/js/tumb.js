@@ -103,11 +103,13 @@ tumb.slidy = function(el) {
 		e.preventDefault();
 	});
 };
-tumb.switchStyle = function(style) {
+tumb.switchStyle = function(style, fromSwitcher) {
 	tumb.set.tileColor(style);
 	$('#stylesheet').attr('href','/'+lord.data("sitePathPrefix")+'css/'+style+'.css');
 	$('#jqui-stylesheet').attr('href', '/'+lord.data("sitePathPrefix")+'css/3rdparty/jquery-ui/'+style+'/jquery-ui.min.css');
     lord.setLocalObject("style", style);
+	if(!fromSwitcher)
+		$("#style-switcher").val(style);
 };
 tumb.length = function(obj) {
 	var size = 0, key;
@@ -121,7 +123,7 @@ tumb.onLoad = function(){
         .css('user-select', 'none')
         .on('selectstart', false);
     $('#style-switcher').change(function() {
-        tumb.switchStyle(this.value);
+        tumb.switchStyle(this.value,true);
     });
 	tumb.toggle.navbar();
 	tumb.dottie('header');
