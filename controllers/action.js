@@ -296,9 +296,9 @@ router.post("/action/addFiles", function(req, res) {
         c.fields = result.fields;
         c.files = result.files;
         c.board = Board.board(c.fields.boardName);
-        if (!board)
+        if (!c.board)
             return Promise.reject(Tools.translate("Invalid board"));
-        transaction.board = board;
+        transaction.board = c.board;
         return controller.checkBan(req, res, c.board.name, true);
     }).then(function() {
         return getFiles(c.fields, c.files, transaction);
