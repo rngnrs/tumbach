@@ -114,33 +114,6 @@ lord.checkExpander = function(post) {
     bq.parent()[0].appendChild(a);
 };
 
-lord.postProcessors.push(function textWidthProcessor(post, retry) {
-    if ($(".postFile ~ .postFile ~ .postText").length > 0)
-        return;
-    var postText = $(".postFile ~ .postText", post);
-    if (!postText[0])
-        return;
-    var postFile = postText.parent().find(".postFile");
-    if (post.parentNode && post.parentNode.tagName) {
-        var width = Math.ceil(postText.position().left - postText.parent().position().left - 1);
-        if (retry && retry.width != width) {
-            setTimeout(function() {
-                textWidthProcessor(post, { width: width });
-            }, 100);
-        } else {
-            postText.css("max-width", "calc(100% - " + width + "px)");
-        }
-    } else if (retry) {
-        setTimeout(function() {
-            textWidthProcessor(post, {});
-        }, 100);
-    } else {
-        postFile.find(".postFileThumbImage").load(function() {
-            textWidthProcessor(post, {});
-        });
-    }
-});
-
 if (lord.getLocalObject("addExpander", true))
     lord.postProcessors.push(lord.checkExpander);
 
@@ -3053,6 +3026,8 @@ lord.showImageSearchMenu = function(e, input, fileName) {
         return;
     var model = lord.model(["base", "board/" + lord.data("boardName")]);
     model.fileInfo = { name: fileName };
+    model.siteProtocol = window.location.protocol;
+    model.siteDomain = window.location.host;
     file.appendChild(lord.template("imageSearchMenu", model));
     return lord.showMenu(e, input, "#" + id);
 };
