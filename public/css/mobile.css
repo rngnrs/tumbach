@@ -95,6 +95,10 @@ blockquote {
     display: block;
 }
 
+.postText {
+    display: block;
+}
+
 .postFile {
     display: inline-block;
 }

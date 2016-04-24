@@ -1305,20 +1305,20 @@ module.exports.createThread = function(req, fields, files, transaction) {
                 //NOTE: Yep, no return here for the sake of speed
                 var oldThreadNumber = c.thread.number;
                 mkpath(c.archPath).then(function() {
-                    c.sourceId = `thread-${board.name}-${oldThreadNumber}`;
-                    return Cache.getJSON(c.sourceId);
+                    c.sourceId = `${board.name}/res/${oldThreadNumber}.json`;
+                    return Cache.readFile(c.sourceId);
                 }).then(function(data) {
-                    c.model = JSON.parse(data.data);
+                    c.model = JSON.parse(data);
                     c.model.thread.archived = true;
-                    return Tools.writeFile(`${c.archPath}/${oldThreadNumber}.json`, JSON.stringify(c.model));
+                    return FS.write(`${c.archPath}/${oldThreadNumber}.json`, JSON.stringify(c.model));
                 }).then(function() {
                     return BoardModel.generateThreadHTML(board, oldThreadNumber, c.model, true);
                 }).then(function(data) {
-                    return Tools.writeFile(`${c.archPath}/${oldThreadNumber}.html`, data);
+                    return FS.write(`${c.archPath}/${oldThreadNumber}.html`, data);
                 }).then(function() {
-                    return Cache.removeJSON(c.sourceId);
+                    return Cache.removeFile(c.sourceId);
                 }).then(function() {
-                    return Cache.removeHTML(c.sourceId);
+                    return Cache.removeFile(`${board.name}/res/${oldThreadNumber}.html`);
                 }).catch(function(err) {
                     Global.error(err);
                 });
@@ -1566,7 +1566,7 @@ var rerenderBoardPosts = function(boardName, posts) {
 };
 
 var rebuildPostSearchIndex = function(boardName, postNumber, threads) {
-    var key = boardName + ":" + postNumber;
+    //var key = boardName + ":" + postNumber;
     if (!boardName || !postNumber)
         return Promise.resolve();
     console.log(`Rebuilding post search index: >>/${boardName}/${postNumber}`);
@@ -1905,8 +1905,8 @@ module.exports.deletePost = function(req, res, fields) {
         var p;
         if (c.isThread && c.archived) {
             var path = `${__dirname}/../public/${board.name}/arch/${postNumber}.`;
-            p = Tools.removeFile(path + "json").then(function() {
-                return Tools.removeFile(path + "html");
+            p = FS.remove(path + "json").then(function() {
+                return FS.remove(path + "html");
             }).then(function() {
                 return Global.generateArchive(board.name);
             });
@@ -1937,9 +1937,9 @@ module.exports.moveThread = function(req, fields) {
         return Promise.reject(Tools.translate("Not enough rights"));
     var password = Tools.sha1(fields.password);
     var c = {};
-    var sourcePath = __dirname + "/../public/" + sourceBoard.name + "/src"
+    var sourcePath = __dirname + "/../public/" + sourceBoard.name + "/src";
     var sourceThumbPath = __dirname + "/../public/" + sourceBoard.name + "/thumb";
-    var targetPath = __dirname + "/../public/" + targetBoard.name + "/src"
+    var targetPath = __dirname + "/../public/" + targetBoard.name + "/src";
     var targetThumbPath = __dirname + "/../public/" + targetBoard.name + "/thumb";
     return getThreads(sourceBoard.name, {
         withPostNumbers: true,
@@ -2167,7 +2167,7 @@ module.exports.deleteFile = function(req, res, fields) {
         return getPost(c.fileInfo.boardName, c.fileInfo.postNumber);
     }).then(function(post) {
         c.post = post;
-        return checkPermissions(req, board, post, "deleteFile", Tools.sha1(fields.password));
+        return checkPermissions(req, c.board, post, "deleteFile", Tools.sha1(fields.password));
     }).then(function(result) {
         if (!result)
             return Promise.reject(Tools.translate("Not enough rights"));

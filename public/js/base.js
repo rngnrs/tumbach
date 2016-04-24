@@ -499,6 +499,7 @@ lord.logoutImplementation = function(form, vk) {
         expires: lord.Billion,
         path: "/"
     });
+    lord.removeLocalObject("lastChatCheckDate");
     if (vk) {
         lord.setCookie("vkAuth", "", {
             expires: lord.Billion,
@@ -1470,6 +1471,14 @@ lord.showNewPosts = function() {
             var newPostCount = result[boardName] - lastPostNumber;
             return (newPostCount > 0) ? newPostCount : 0;
         };
+        if (typeof lord.newPostCountReceived == "function") {
+            lord.newPostCountReceived(lord.model("boards").boards.reduce(function(acc, board) {
+                var count = getNewPostCount(board.name);
+                if (count > 0)
+                    acc[board.name] = count;
+                return acc;
+            }, {}));
+        }
         if (lord.deviceType("mobile")) {
             lord.queryAll(".boardSelect").forEach(function(sel) {
                 lord.queryAll("option", sel).forEach(function(opt) {
@@ -1719,11 +1728,11 @@ lord.populateChatHistory = function(key) {
     model.formattedDate = function(date) {
         return moment(date).utcOffset(timeOffset).locale(model.site.locale).format(model.site.dateFormat);
     };
-    var messages = lord.getLocalObject("chats", {})[key] || [];
-    messages = messages.map(function(message) {
+    (lord.getLocalObject("chats", {})[key] || []).forEach(function(message) {
         var m = merge.recursive(model, message);
         history.appendChild(lord.template("chatMessage", m));
     });
+    $(history).animate({ scrollTop: $(history).prop("scrollHeight") }, 100);
 };
 
 lord.updateChat = function(keys) {
@@ -1860,6 +1869,7 @@ lord.selectChatContact = function(key) {
     lord.populateChatHistory(key);
     lord.nameOne("sendMessageButton", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).disabled = false;
+    lord.nameOne("message", lord.chatDialog).focus();
 };
 
 lord.deleteChat = function(key) {
@@ -2146,7 +2156,8 @@ lord.initializeOnLoadBase = function() {
         lord.checkChats();
     if (lord.notificationsEnabled())
         lord.checkNotificationQueue();
-    window.addEventListener("hashchange", lord.hashChangeHandler, false);
+    if (!lord.getLocalObject("transparentHeader", true))
+        window.addEventListener("hashchange", lord.hashChangeHandler, false);
     var bsc = lord.getLocalObject("tooltips/boardSelect", 0);
     if (lord.deviceType("mobile"))
         lord.setTooltips();
@@ -2201,8 +2212,8 @@ lord.initializeOnLoadBase = function() {
         lord.checkPlaylist();
     if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
         lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
-      var w = $(window);
-        w.resize(function() {
+    var w = $(window);
+    w.resize(function() {
         var n = {
             width: w.width(),
             height: w.height()
