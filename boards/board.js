@@ -167,6 +167,7 @@ Board.boards = {};
         name: this.name,
         title: this.title,
         defaultUserName: this.defaultUserName,
+        groupName: this.groupName,
         showWhois: this.showWhois,
         hidden: this.hidden,
         postingEnabled: this.postingEnabled,
@@ -517,7 +518,7 @@ var getRules = function(boardName) {
                     width: info.width,
                     height: info.height
                 };
-                if ("image/gif" != file.mimeType) {
+                if (config("system.phash.enabled", true) && "image/gif" != file.mimeType) {
                     return Tools.generateImageHash(file.path + suffix).then(function(hash) {
                         file.ihash = hash;
                     });
