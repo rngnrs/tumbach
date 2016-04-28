@@ -2971,10 +2971,18 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 210 : 0;
+    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? $("#sidebar").width() : 0,
+        ic = input.getBoundingClientRect(),
+        html = document.documentElement,
+        of = {
+            "x" : html.clientWidth-ic.right < lord.currentMenu.width(),
+            "y" : html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
+        },
+        cx = pageXOffset + ic.left + (of.x ? -lord.currentMenu.width() : 0) - fw,
+        cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
-    lord.currentMenu.css("top", input.getBoundingClientRect().top+pageYOffset-34);
-    lord.currentMenu.css("left", input.getBoundingClientRect().left+pageXOffset-fw);
+    lord.currentMenu.css("left", cx);
+    lord.currentMenu.css("top", cy);
 };
 
 lord.hotkey = function(name, hotkeys) {
