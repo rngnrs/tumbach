@@ -1,4 +1,4 @@
-#### Модификация движка [ololord.js](https://github.com/ololoepepe/ololord.js) версии 0.1-beta1 (основана на версии 1.1.0-rc).
+#### Модификация движка [ololord.js](https://github.com/ololoepepe/ololord.js) версии 0.1-beta1 (основана на версии 1.1.0-rc2).
 
 В активной разработке. Использовать только в ознакомительных целях.
 
