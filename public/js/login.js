@@ -21,7 +21,8 @@ lord.loginImplementation = function(form, session) {
             path: "/"
         });
     }
-    window.location = URI(window.location.href).search(true).source;
+    var source = URI(window.location.href).search(true).source;
+    window.location = (source != undefined) ? source : "/"+lord.data("sitePathPrefix");
 };
 
 lord.doLogin = function(event, form) {
