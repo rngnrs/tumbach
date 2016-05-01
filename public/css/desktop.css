@@ -13,7 +13,7 @@
 #tplayer {
     max-width: 58%;
 }
-#wrapper .navbar, #wrapper .toolbar, .mobileOnly {
+.wrappie .navbar, .wrappie .toolbar, .mobileOnly {
     display: none;
 }
 #playerTrackTags {

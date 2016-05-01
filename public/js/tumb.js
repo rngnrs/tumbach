@@ -17,7 +17,8 @@ tumb.set = {
 tumb.toggle = {
 	frame: function(toggle) {
 		var hc = tumb.go.sb.hasClass('open');
-		tumb.toggle.navbar(hc);
+		if(toggle != undefined)
+			tumb.toggle.navbar(hc);
 		if(!toggle)
 			setTimeout(function() {
 				tumb.go.wr.addClass("transition");
@@ -26,9 +27,8 @@ tumb.toggle = {
 		if(toggle || (lord.getLocalObject("showFrame", lord.deviceType("desktop")) != hc)) {
 			if((tumb.go.width < 1024 || lord.deviceType("mobile")) && !toggle)
 				return;
-			else {
+			else
 				lord.setLocalObject("showFrame", !hc);
-			}
 			if(tumb.go.width < 1024) {
 				tumb.go.ov.toggleClass('toggled');
 				tumb.go.sb.removeClass('sidebar-stacked').addClass('sidebar-fixed-left');
@@ -43,16 +43,11 @@ tumb.toggle = {
 		return false;
 	},
 	navbar: function(toggle) {
-		if(lord.deviceType("mobile") || tumb.go.width < 1024)
-			return;
 		var n = $(".navbar, .toolbar"),
 			ls = !lord.getLocalObject("showFrame", true);
-		if (typeof toggle == "undefined") {
-			if (ls)
-				n.show();
-			return;
-		}
-		(toggle) ? n.slideDown() : n.slideUp();
+		if(lord.deviceType("mobile") || tumb.go.width < 1024)
+			return n.show();
+		(toggle || (toggle == undefined && ls)) ? n.slideDown() : n.slideUp();
 	}
 };
 tumb.dottie = function(floatElement) {
@@ -131,9 +126,10 @@ tumb.onLoad = function(){
 		return false;
     });
     $('.overlay, .list-item, #sidebar .frameLabels i').bind('click', function(){
-        if (tumb.go.sb.hasClass('open') && tumb.go.width < 1024)
+        if (tumb.go.sb.hasClass('open') && tumb.go.width < 1024) {
 			tumb.go.sb.removeClass('open');
-		tumb.go.sb2.removeClass('open');
+			tumb.go.sb2.removeClass('open');
+		}
 		tumb.go.ov.removeClass('toggled');
     });
 	$(document).on("click", "#tabl2", function() {
