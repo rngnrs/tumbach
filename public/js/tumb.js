@@ -1,4 +1,5 @@
 var tumb = tumb || {};
+tumb.ajaxProcessors = [];
 tumb.set = {
 	tileColor: function(style){
 		var hex = {

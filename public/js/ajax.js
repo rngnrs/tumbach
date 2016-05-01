@@ -64,7 +64,11 @@ $(function() {
         /* Fixes for most ololord functions */
         lord.postProcessors = [];
         lord.pageProcessors = [];
-        window.removeEventListener("hashchange", lord.hashChangeHandler, false);
+        lord.series(tumb.ajaxProcessors, function(f) {
+            return f();
+        }).catch(lord.handleError);
+        if (!lord.getLocalObject("transparentHeader", true))
+            window.removeEventListener("hashchange", lord.hashChangeHandler, false);
         window.removeEventListener("scroll", lord.scrollHandler, true);
         if(lord.autoUpdateTimer) {
             lord.autoUpdateTimer.stop();
@@ -88,7 +92,7 @@ $(function() {
         }
         $(".ajaxScripts").remove();
         rt.filter(".ajaxScripts").each(function () {
-            lord.createScript(this.src, false, "extraScripts");
+            lord.createScript(this.src, false, "ajaxScripts");
         });
         return data;
     }
