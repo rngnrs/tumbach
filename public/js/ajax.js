@@ -67,6 +67,8 @@ $(function() {
         lord.series(tumb.ajaxProcessors, function(f) {
             return f();
         }).catch(lord.handleError);
+        lord.initializeOnLoadBase();
+        lord.checkFavoriteThreads();
         if (!lord.getLocalObject("transparentHeader", true))
             window.removeEventListener("hashchange", lord.hashChangeHandler, false);
         window.removeEventListener("scroll", lord.scrollHandler, true);

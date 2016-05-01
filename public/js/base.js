@@ -2212,7 +2212,7 @@ lord.initializeOnLoadBase = function() {
     });
     if (lord.id("tplayer"))
         lord.checkPlaylist();
-    if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
+    if (!lord.getLocalObject("enableAjax", false) && lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
         lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
     var w = $(window);
     w.resize(function() {

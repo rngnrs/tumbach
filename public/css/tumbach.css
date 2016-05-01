@@ -105,3 +105,6 @@ ul.tabWidget > li.activated {
 .newPost {
     background-color: #CCC;
 }
+.opSign {
+    color: #080;
+}
