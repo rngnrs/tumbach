@@ -7,20 +7,21 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
+        {{#def.toolbar}}
         <div id="wrapper">
-            {{#def.toolbar}}
-            <script type="text/javascript">
+            <script id="customContentPlaceholder" type="text/javascript">
                 (function() {
-                    if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst")))
+                    if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst", true)))
                         return;
-                    var model = lord.model(["base", "tr", "boards"]);
-                    model.settings = lord.settings();
-                    var data = lord.template("custom-home", model, true);
-                    if (!data)
-                        return;
-                    document.open();
-                    document.write(data);
-                    document.close();
+                    var customContentPlaceholder = lord.id("customContentPlaceholder");
+                    if (customContentPlaceholder) {
+                        var model = lord.model(["base", "tr", "boards"]);
+                        model.settings = lord.settings();
+                        var data = lord.template("custom-home", model/*, true*/);
+                        if (!data)
+                            return;
+                        customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
+                    }
                 })();
             </script>
         </div>

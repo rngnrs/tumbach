@@ -103,7 +103,7 @@
                 {{?}}
                 <a class="list-item ajax" href="/faq.html">{{=it.tr.toFaqPageText}}</a>
                 {{? it.user.isModer()}}
-                    <a class="list-item ajax" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
+                    <a class="list-item" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
                 {{?}}
                 {{? it.user.loggedIn}}
                 <a href="javascript:void(0)" onclick="lord.doLogout(event, this.parent); return false;" class="list-item"
@@ -111,7 +111,7 @@
                     {{=it.tr.logoutText}}
                 </a>
                 {{??}}
-                <a href="/login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item ajax">
+                <a href="/login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item">
                     {{=it.tr.loginText}}
                 </a>
                 {{?}}

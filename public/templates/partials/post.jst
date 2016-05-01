@@ -120,7 +120,7 @@
             {{? post.isOp && !it.isThreadPage}}
                 <span name="toThread" class="postToThread postToThreadDesktop">
                     [<a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.number}}.html"
-                        name="toThreadLink">{{=it.tr.toThread}}</a>]
+                        name="toThreadLink" class="ajax">{{=it.tr.toThread}}</a>]
                 </span>
             {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[160]}}
@@ -186,7 +186,7 @@
     {{? post.isOp && !it.isThreadPage}}
         <span name="toThread" class="postToThread postToThreadMobile">
             <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.number}}.html"
-               name="toThreadLink"><button class="button">{{=it.tr.toThread}}</button></a>
+               name="toThreadLink" class="ajax"><button class="button">{{=it.tr.toThread}}</button></a>
         </span>
     {{?}}
 </div>

@@ -88,7 +88,7 @@ var MarkupTags = {
     "[spoiler]": {
         op: "<span class=\"spoiler\">",
         cl: "</span>"
-    },
+    }
 };
 
 var ListTypes = {
@@ -684,7 +684,7 @@ var convertPostLink = function(info, _, matchs, _, options) {
             if (postNumber != post.threadNumber)
                 href += "#" + postNumber;
             href += "\"";
-            var result = "<a " + href + " data-board-name=\"" + boardName + "\" data-post-number=\"" + postNumber
+            var result = "<a class='ajax' " + href + " data-board-name=\"" + boardName + "\" data-post-number=\"" + postNumber
                 + "\" data-thread-number=\"" + post.threadNumber + "\">" + escaped + "</a>";
             return result;
         });

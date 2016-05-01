@@ -447,7 +447,8 @@ module.exports = function(tr) {
     translate("Infinite scroll", "infiniteScrollLabelText");
     translate("Page", "pageText");
     translate("Regenerate archived threads", "regenerateArchivedThreadsLabelText");
-    
+
+    translate("Failed to prepare captcha", "failedToPrepareCaptchaText");
     translate("Transparent header", "transparentHeaderLabelText");
     return tr;
 };

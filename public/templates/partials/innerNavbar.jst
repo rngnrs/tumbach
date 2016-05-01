@@ -8,7 +8,7 @@
                 <option disabled="true" value=""
                         class="selectOption">{{? group.title}}{{=group.title}}{{??}}----{{?}}</option>
                 {{~group.boards :board}}
-                    <option value="/{{=it.site.pathPrefix}}{{=board.name}}" data-board-name="{{=board.name}}"
+                    <option value="/{{=it.site.pathPrefix}}{{=board.name}}/" data-board-name="{{=board.name}}"
                             class="selectOption">[{{=board.name}}] {{=board.title}}</option>
                 {{~}}
             {{~}}
@@ -23,8 +23,8 @@
         <span class="navbarBoardGroup">
             [
             {{~group.boards :board:index}}
-                <span class="navbarItem navbarItemBoard"><a href="/{{=it.site.pathPrefix}}{{=board.name}}"
-                      title="{{=board.title}}" data-board-name="{{=board.name}}">{{=board.name}}</a></span>
+                <span class="navbarItem navbarItemBoard"><a href="/{{=it.site.pathPrefix}}{{=board.name}}/"
+                      class="ajax" title="{{=board.title}}" data-board-name="{{=board.name}}">{{=board.name}}</a></span>
                 {{? index < group.boards.length - 1}}
                     /
                 {{?}}
@@ -34,11 +34,11 @@
     {{~}}
 {{?}}
 <span class="navbarItem">[<a href="/{{=it.site.pathPrefix}}"
-                             title="{{=it.tr.toHomePageText}}"><img src="/{{=it.site.pathPrefix}}img/homepage.png"
+                             class="ajax" title="{{=it.tr.toHomePageText}}"><img src="/{{=it.site.pathPrefix}}img/homepage.png"
                                                                     class="buttonImage"
                                                                     width="16" height="16"></a>]</span>
 <span class="navbarItem">[<a href="/{{=it.site.pathPrefix}}markup.html"
-                             title="{{=it.tr.toMarkupPageText}}"><img src="/{{=it.site.pathPrefix}}img/markup.png"
+                             class="ajax" title="{{=it.tr.toMarkupPageText}}"><img src="/{{=it.site.pathPrefix}}img/markup.png"
                                                                       class="buttonImage"
                                                                       width="16" height="16"></a>]</span>
 {{? !it.inIframe}}
@@ -49,7 +49,7 @@
                                                                            width="16" height="16"></a>]</span>
 {{?}}
 <span class="navbarItem">[<a href="/{{=it.site.pathPrefix}}faq.html"
-                             title="{{=it.tr.toFaqPageText}}"><img src="/{{=it.site.pathPrefix}}img/question.png"
+                             class="ajax" title="{{=it.tr.toFaqPageText}}"><img src="/{{=it.site.pathPrefix}}img/question.png"
                                                                    class="buttonImage"
                                                                    width="16" height="16"></a>]</span>
 {{? it.user.isModer()}}

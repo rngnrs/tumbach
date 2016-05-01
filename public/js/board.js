@@ -755,8 +755,9 @@ lord.deletePost = function(el) {
             return Promise.reject("noSuchPostErrorText");
         if (lord.data("isOp", post)) {
             if (!isNaN(+lord.data("threadNumber"))) {
-                window.location = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
+                var loc = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
                     + lord.data("boardName") + ((lord.data("archived", el, true) == "true") ? "/archive.html" : "");
+                (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
             } else {
                 lord.reloadPage();
             }
@@ -818,8 +819,9 @@ lord.moveThread = function(el) {
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
+        var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
             + ".html";
+        (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
     }).catch(lord.handleError);
 };
 
@@ -2284,8 +2286,9 @@ lord.submitted = function(event, form) {
             } else {
                 var action = lord.getLocalObject("quickReplyAction", "append_post");
                 if ("goto_thread" == action) {
-                    window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/"
+                   var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/"
                         + result.threadNumber + ".html#" + result.number;
+                    (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
                     return;
                 } else if (threadId) {
                     var thread = lord.id("thread" + threadId);
@@ -2307,8 +2310,9 @@ lord.submitted = function(event, form) {
         } else {
             c.progressBar.hide(200);
             resetButton();
-            window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
+            var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
                 + ".html";
+            (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
         }
         return Promise.resolve();
     }).catch(function(err) {
@@ -3150,7 +3154,10 @@ lord.initializeOnLoadBoard = function() {
             if (captcha && captcha.widgetHtml)
                 container.innerHTML = captcha.widgetHtml;
             else if (captcha && captcha.widgetTemplate)
-                container.appendChild(lord.template(captcha.widgetTemplate, captcha));
+                if (container)
+                    container.appendChild(lord.template(captcha.widgetTemplate, captcha));
+                else
+                    return lord.handleError("failedToPrepareCaptchaText");
         };
         lord.api("captchaQuota", { boardName: lord.data("boardName") }).then(function(result) {
             var quota = result.quota;
@@ -3159,7 +3166,10 @@ lord.initializeOnLoadBoard = function() {
                 var span = lord.node("span");
                 span.appendChild(lord.node("text", lord.text("noCaptchaText") + ". "
                     + lord.text("captchaQuotaText") + " " + quota));
-                lord.id("captchaContainer").appendChild(span);
+                if(lord.id("captchaContainer"))
+                    lord.id("captchaContainer").appendChild(span);
+                else
+                    return Promise.reject("failedToPrepareCaptchaText");
             } else {
                 appendCaptchaWidgetToContainer(lord.id("captchaContainer"));
             }
@@ -3241,6 +3251,8 @@ lord.initializeOnLoadThread = function() {
 };
 
 lord.scrollHandler = function() {
+    if (!lord.queryOne(".navigationButtonTop"))
+        return;
     var k = 1300;
     var top = ((window.innerHeight + window.scrollY + k) >= document.body.offsetHeight);
     var bottom = (window.scrollY <= k);
@@ -3460,5 +3472,4 @@ function load_b() {
         lord.initializeOnLoadThread();
 }
 
-if(!lord.getLocalObject('enableAjax', false))
-    window.addEventListener("scroll", lord.scrollHandler, false);
+window.addEventListener("scroll", lord.scrollHandler, false);

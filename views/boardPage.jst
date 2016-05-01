@@ -8,6 +8,7 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
+        {{#def.toolbar}}
         <div id="wrapper">
             <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
             {{? it.site.vkontakte.integrationEnabled }}
@@ -26,7 +27,6 @@
                 {{#def.leafButton}}
             {{~}}
             {{#def.banner}}
-            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>
                     {{=it.board.title}}
@@ -41,13 +41,15 @@
                                                                 width="24" height="24"></a>
                 </h1>
             </div>
-            <script type="text/javascript">
+            <script id="boardPageUpperPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
-                    document.open();
-                    document.write(lord.template("boardPageUpper", model, true));
-                    document.close();
+                    var placeholder = lord.id("boardPageUpperPlaceholder");
+                    var html = lord.template("boardPageUpper", model/*, true*/);
+                    if (!html)
+                        return;
+                    placeholder.parentNode.replaceChild(html, placeholder);
                 })();
             </script>
             <div id="threads">
@@ -70,14 +72,14 @@
                     </div>
                 {{~}}
             </div>
-            <script type="text/javascript">
+            <script id="boardPageLowerPlaceholder" type="text/javascript">
                 (function() {
                     var infScroll = lord.getLocalObject("infiniteScroll", lord.deviceType("mobile"));
                     if (infScroll) {
                         var w = $(window);
                         var loading = false;
                         var infiniteScrollPage;
-                        w.scroll(function() {
+                        w.on("scroll", function() {
                             if (loading)
                                 return;
                             var pageCount = +lord.data("pageCount");
@@ -120,7 +122,6 @@
                     }
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
-                    document.open();
                     var s = lord.template("boardPageLower", model, true);
                     if (infScroll) {
                         s += '<div id="infiniteScrollLoading" class="loadingMessage" style="display: none;">'
@@ -128,29 +129,29 @@
                             + '<h1 style="display: inline;">{{=it.tr.loadingThreadsMessage}}</h1>'
                             + '</div>';
                     }
-                    document.write(s);
-                    document.close();
+                    var placeholder = lord.id("boardPageLowerPlaceholder"),
+                            tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = s;
+                    placeholder.parentNode.replaceChild(tempDiv, placeholder);
                 })();
             </script>
             <hr />
-            <script type="text/javascript">
+            <script id="paginationPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["base", "tr", "board/" + lord.data("boardName")]);
                     model.pageCount = +lord.data("pageCount");
                     model.currentPage = +lord.data("currentPage");
-                    document.open();
-                    document.write(lord.template("pagination", model, true));
-                    document.close();
+                    var placeholder = lord.id("paginationPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("pagination", model/*, true*/), placeholder);
                 })();
             </script>
             <hr />
             {{#def.navbar}}
-            <hr />
             {{#def.postingSpeed}}
         </div>
+        <a id="bottom"></a>
     </div>
     {{#def.customFooter}}
 </div>
-<a id="bottom"></a>
 </body>
 </html>

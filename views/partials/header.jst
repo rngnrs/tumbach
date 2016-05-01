@@ -8,15 +8,14 @@
                 <i class="zmdi zmdi-playlist-audio zmdi-hc-2x"
                    title="{{=it.tr.maximizePlayerText}}"></i>
             </button>
-            <script>
+            <script id="headerPlaceholder">
                 (function() {
                     var model = lord.model(["base", "tr", "boards"]);
                     if (lord.data("boardName"))
                         model.board = lord.model("board/" + lord.data("boardName")).board;
-                    document.open();
-                    document.write(lord.template("searchAction", model, true));
-                    document.write(lord.template("tplayer", model, true));
-                    document.close();
+                    var placeholder = lord.id("headerPlaceholder");
+                    placeholder.parentNode.appendChild(lord.template("tplayer", model));
+                    placeholder.parentNode.replaceChild(lord.template("searchAction", model), placeholder);
                 })();
             </script>
         </div>

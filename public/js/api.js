@@ -879,7 +879,7 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            maxHeight: $(window).height() - 20,
+            maxHeight: $(window).height() - 50,
             maxWidth: $(window).width() - 40,
             close: function() {
                 lord.dialogs.pop();
@@ -894,7 +894,7 @@ lord.showDialog = function(body, options) {
             beforeClose: function() {
                 if (lord.dialogs.length == 1)
                     $("body").css({ overflow: "inherit" });
-                if (lord.scrollHandler)
+                if (lord.scrollHandler && lord.queryOne(".navigationButtonTop"))
                     lord.scrollHandler();
             }
         });
@@ -905,21 +905,21 @@ lord.showDialog = function(body, options) {
                 this.lastHeight = body.closest(".ui-dialog").height() + 8;
                 this.lastWidth = body.closest(".ui-dialog").width() + 16;
                 this.lastPosition = body.dialog("option", "position");
-                body.dialog("option", "maxHeight", $(window).height());
+                body.dialog("option", "maxHeight", $(window).height()-50);
                 body.dialog("option", "maxWidth", $(window).width());
-                body.dialog("option", "minHeight", $(window).height());
+                body.dialog("option", "minHeight", $(window).height()-50);
                 body.dialog("option", "minWidth", $(window).width());
-                body.dialog("option", "height", $(window).height());
+                body.dialog("option", "height", $(window).height()-50);
                 body.dialog("option", "width", $(window).width());
                 body.dialog("option", "position", {
                     my: "left top",
-                    at: "left top",
+                    at: "left top+50px",
                     of: window
                 });
             } else {
                 body.dialog("option", "minHeight", 150);
                 body.dialog("option", "minWidth", 150);
-                body.dialog("option", "maxHeight", $(window).height() - 20);
+                body.dialog("option", "maxHeight", $(window).height() - 50);
                 body.dialog("option", "maxWidth", $(window).width() - 40);
                 body.dialog("option", "height", this.lastHeight);
                 body.dialog("option", "width", this.lastWidth);

@@ -2135,7 +2135,7 @@
     },
     "Attempt to attach voting while not being the OP": {
         "_default": {
-            "value": "Попытка прикрепить голосвание не будучи ОПом"
+            "value": "Попытка прикрепить голосование не будучи ОПом"
         }
     },
     "No voting text provided": {
@@ -2169,6 +2169,9 @@
         }
     },
     "Failed to prepare captcha": {
+        "failedToPrepareCaptchaText": {
+            "value": "Не удалось подготовить капчу"
+        },
         "_default": {
             "value": "Не удалось подготовить капчу"
         }

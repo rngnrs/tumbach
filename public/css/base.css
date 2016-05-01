@@ -545,18 +545,16 @@ ul.tabWidget > li > a {
 }
 
 .searchActionSelect {
-    width: 37%;
+    width: 36%;
     padding: 8px 0;
 }
 
 .toolbar {
     display: block;
-    padding-bottom: 5px;
     text-align: center;
     overflow-x: auto;
     font-size: 1.2em;
     position: relative;
-    top: -8px;
     z-index: 1;
 }
 

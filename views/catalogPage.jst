@@ -8,19 +8,19 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
+        {{#def.toolbar}}
         <div id="wrapper">
             {{~["top", "bottom"] :target}}
             {{#def.navigationButton}}
             {{~}}
             {{#def.banner}}
-            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>
-                    <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}">{{=it.board.title}}</a>
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/">{{=it.board.title}}</a>
                 </h1>
                 {{=it.tr.sortingModeLabelText}}
                 <select name="catalogSortingModeSelect" class="select"
-                        onchange="location = '/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog' + ((this.selectedIndex > 0) ? ('-' + this.options[this.selectedIndex].value) : '') + '.html';">
+                        onchange="var loc = '/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog' + ((this.selectedIndex > 0) ? ('-' + this.options[this.selectedIndex].value) : '') + '.html';(lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc">
                     <option value="date"
                             {{? it.sortMode == "date"}}selected="true"{{?}}>{{=it.tr.sortingModeDateLabelText}}</option>
                     <option value="recent"
@@ -35,6 +35,7 @@
                 <div class="catalogItem">
                     <div>
                         <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=thread.opPost.number}}.html"
+                           class="ajax"
                            {{? thread.opPost.fileInfos.length > 0}}data-rating="{{=thread.opPost.fileInfos[0].rating}}"{{?}}>
                             {{? thread.opPost.fileInfos.length > 0}}
                             {{~[thread.opPost.fileInfos[0]] :fileInfo}}
@@ -71,9 +72,9 @@
             <hr />
             {{#def.postingSpeed}}
         </div>
+        <a id="bottom"></a>
     </div>
     {{#def.customFooter}}
 </div>
-<a id="bottom"></a>
 </body>
 </html>

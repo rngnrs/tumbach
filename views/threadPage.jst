@@ -13,6 +13,7 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
+        {{#def.toolbar}}
         <div id="wrapper">
             <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
             {{? it.site.vkontakte.integrationEnabled }}
@@ -31,11 +32,10 @@
                 {{#def.leafButton}}
             {{~}}
             {{#def.banner}}
-            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>{{!it.title}}</h1>
             </div>
-            <script type="text/javascript">
+            <script id="threadPageUpperPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
@@ -45,9 +45,8 @@
                         postLimitReached: lord.data("postLimitReached"),
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
-                    document.open();
-                    document.write(lord.template("threadPageUpper", model, true));
-                    document.close();
+                    var placeholder = lord.id("threadPageUpperPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("threadPageUpper", model/*, true*/), placeholder);
                 })();
             </script>
             <hr />
@@ -79,7 +78,7 @@
             {{~["Bottom"] :position}}
                 {{#def.threadActions}}
             {{~}}
-            <script type="text/javascript">
+            <script id="threadPageLowerPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
@@ -89,18 +88,16 @@
                         postLimitReached: lord.data("postLimitReached"),
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
-                    document.open();
-                    document.write(lord.template("threadPageLower", model, true));
-                    document.close();
+                    var placeholder = lord.id("threadPageLowerPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("threadPageLower", model/*, true*/), placeholder);
                 })();
             </script>
             <hr />
             {{#def.navbar}}
-            <hr />
         </div>
+        <a id="bottom"></a>
     </div>
     {{#def.customFooter}}
 </div>
-<a id="bottom"></a>
 </body>
 </html>

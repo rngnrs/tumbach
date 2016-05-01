@@ -57,14 +57,12 @@ tumb.toggle = {
 };
 tumb.dottie = function(floatElement) {
 	var floatElement = $(floatElement),
-		wrap = $('.wrap'),
-		height = 0;
-	if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location) {
-		localStorage["scroll"] = height;
-		localStorage["scrollPage"] = window.location;
-	}
+		wrap = $('.wrap');
+	if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location)
+		localStorage["scroll"] = 0;
+	localStorage["scrollPage"] = window.location;
 	function moveDottie() {
-		if (window.scrollY > height) {
+		if (window.scrollY > 0) {
 			if(localStorage["scroll"] < $(document).scrollTop())
 				localStorage["scroll"] = $(document).scrollTop();
 			if (floatElement.hasClass('default')) {

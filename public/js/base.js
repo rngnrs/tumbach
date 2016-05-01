@@ -807,12 +807,12 @@ lord.removeFavorite = function(el) {
 
 lord.switchMumWatching = function() {
     var watching = !lord.getLocalObject("mumWatching", false);
-    var img = lord.queryOne("[name='switchMumWatchingButton']");
+    var img = lord.queryAll("[name='switchMumWatchingButton']");
+    (watching) ? lord.insertMumWatchingStylesheet() : $("#mumWatchingStylesheet").remove();
     if (watching) {
-        lord.insertMumWatchingStylesheet();
         $(img).removeClass("zmdi-eye").addClass("zmdi-eye-off");
     } else {
-        $("#mumWatchingStylesheet").remove();
+
         $(img).removeClass("zmdi-eye-off").addClass("zmdi-eye");
     }
     lord.setLocalObject("mumWatching", watching);

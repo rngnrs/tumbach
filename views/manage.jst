@@ -7,29 +7,26 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
+        {{#def.toolbar}}
         <div id="wrapper">
-            {{#def.toolbar}}
             <div class="theTitle">
                 <h1>
                     {{=it.title}}
                 </h1>
             </div>
             <div>
-                <ul class="tabWidget nowrap">
+                <ul id="tabsPlaceholder" class="tabWidget nowrap">
                     <li data-index="0"
-                        class="activated"><a onclick="lord.activateTab(this); return false;">{{=it.tr.bansTabText}}</a></li>
-                    <script type="text/javascript">
-                        (function() {
-                            if (lord.compareRegisteredUserLevels(lord.model("base").user.level(), "SUPERUSER") < 0)
-                                return;
-                            var s = '<li data-index="1"><a onclick="lord.activateTab(this); lord.loadTabContent(\'users\'); return false;">{{=it.tr.usersTabText}}</a></li>\n'
-                                    + '<li data-index="2"><a onclick="lord.activateTab(this); lord.loadTabContent(\'content\'); return false;">{{=it.tr.contentTabText}}</a></li>';
-                            document.open();
-                            document.write(s);
-                            document.close();
-                        })();
-                    </script>
-                </ul>
+                        class="activated"><a onclick="lord.activateTab(this); return false;">{{=it.tr.bansTabText}}</a></li></ul>
+                <script type="text/javascript">
+                    (function() {
+                        if (lord.compareRegisteredUserLevels(lord.model("base").user.level(), "SUPERUSER") < 0)
+                            return;
+                        var s = '<li data-index="1"><a onclick="lord.activateTab(this); lord.loadTabContent(\'users\'); return false;">{{=it.tr.usersTabText}}</a></li>' +
+                                '<li data-index="2"><a onclick="lord.activateTab(this); lord.loadTabContent(\'content\'); return false;">{{=it.tr.contentTabText}}</a></li>';
+                        $("#tabsPlaceholder").append(s);
+                    })();
+                </script>
                 <div>
                     <div id="bans" data-index="0" class="loadingMessage">
                         <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">

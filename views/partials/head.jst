@@ -28,20 +28,20 @@
             {{?}}
         {{~}}
     {{?}}
-    {{ out += it.script("3rdparty/jquery-2.2.0.min.js"); }}
-    {{ out += it.script("3rdparty/isInViewport.min.js"); }}
-    {{ out += it.script("3rdparty/jquery-ui.min.js"); }}
-    {{ out += it.script("3rdparty/Promise.min.js"); }}
-    {{ out += it.script("3rdparty/doT.min.js"); }}
-    {{ out += it.script("3rdparty/underscore-min.js"); }}
-    {{ out += it.script("api.js"); }}
-    {{ out += it.script("3rdparty/merge.min.js"); }}
-    {{ out += it.script("3rdparty/uuid.js"); }}
-    {{ out += it.script("3rdparty/moment-with-locales.min.js"); }}
-    {{ out += it.script("3rdparty/jszip.min.js"); }}
-    {{ out += it.script("3rdparty/jszip-utils.min.js"); }}
-    {{ out += it.script("3rdparty/FileSaver.min.js"); }}
-    {{ out += it.script("3rdparty/mobile-detect.min.js"); }}
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/underscore-min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/api.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/uuid.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jszip.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/FileSaver.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/mobile-detect.min.js"></script>
     <script id="model-base" type="application/json"></script>
     <script id="model-boards" type="application/json">{{=it.models.boards}}</script>
     <script id="model-tr" type="application/json">{{=it.models.tr}}</script>
@@ -97,19 +97,19 @@
             });
         })();
     </script>
-    {{ out += it.script("base.js"); }}
-    {{ out += it.script("tumb.js"); }}
-    {{ out += it.script("ajax.js"); }}
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/base.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/ajax.js"></script>
     {{? it.site.vkontakte.integrationEnabled }}
         {{ out += it.script("3rdparty/vk-openapi.js"); }}
     {{?}}
     {{? it.isBoardPage}}
-        {{ out += it.script("3rdparty/sha1.min.js"); }}
-        {{ out += it.script("3rdparty/jquery.knob.min.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery.knob.min.js"></script>
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js"></script>
         {{? it.site.twitter.integrationEnabled }}
-            {{ out += it.script("3rdparty/twitter.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/twitter.js"></script>
         {{?}}
-        {{ out += it.script("board.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/board.js"></script>
     {{?}}
     {{? it.extraScripts}}
         {{~it.extraScripts :script}}
@@ -126,16 +126,16 @@
         (function() {
             var settings = lord.settings();
             tumb.set.tileColor(settings.style.name);
-            document.open();
+            var s = '';
             if (lord.deviceType("mobile"))
-                document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, '
-                    + 'maximum-scale=1.0, user-scalable=no" />');
+                s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, '
+                    + 'maximum-scale=1.0, user-scalable=no" />';
             var prefix = lord.model("base").site.pathPrefix;
-            document.write('<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType()
-                + '.css">');
-            document.write('<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name
-                + '.css">');
-            var s = '<style type="text/css">';
+            s += '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType()
+                + '.css">';
+            s +='<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name
+                + '.css">';
+            s += '<style type="text/css">';
             if (!settings.shrinkPosts)
                 s += '.post, .opPost, .draft, .searchResult { width: 99%; max-width: 95vw; }';
             if (settings.addExpander)
@@ -170,9 +170,9 @@
             }
             s += '</style>';
             if (lord.getLocalObject("mumWatching", false)) {
-                document.write('<style id="mumWatchingStylesheet" type="text/css">'
+                s += '<style id="mumWatchingStylesheet" type="text/css">'
                     + '.postFileFile > a > img:not(:hover), .banner > a > img:not(:hover) { opacity: 0.05 !important; }'
-                    + '</style>');
+                    + '</style>';
             }
             var appendScript = function(path) {
                 s += '<script type="text/javascript" src="/' + prefix + path + '"></s' + 'cript>';
@@ -196,8 +196,7 @@
             }
             if (settings.userJavaScriptEnabled)
                 s += '<script type="text/javascript">' + lord.getLocalObject("userJavaScript", "") + "</s" + "cript>";
-            document.write(s);
-            document.close();
+            lord.queryOne("head").innerHTML += s;
             lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
             lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
             if (settings.userCssEnabled) {
