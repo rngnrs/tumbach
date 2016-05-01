@@ -2189,31 +2189,33 @@ lord.initializeOnLoadBase = function() {
             }, 9 * lord.Second);
         }, 3 * lord.Second);
     }
-    var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
-    $("#playerVolumeSlider").slider({
-        min: 0,
-        max: 1,
-        step: 0.01,
-        value: lord.getLocalObject("playerVolume", defVol),
-        slide: function() {
-            var volume = +$(this).slider("value");
-            if (lord.playerElement)
-                lord.playerElement.volume = volume;
-            else
-                lord.setLocalObject("playerVolume", volume);
-        }
-    });
-    $("#playerDurationSlider").slider({
-        min: 0,
-        max: 0,
-        step: 0,
-        value: 0,
-        disabled: true
-    });
-    if (lord.id("tplayer"))
-        lord.checkPlaylist();
-    if (!lord.getLocalObject("enableAjax", false) && lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
-        lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
+    if(lord.getSessionObject("ajaxFires", 0) == 0) {
+        var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
+        $("#playerVolumeSlider").slider({
+            min: 0,
+            max: 1,
+            step: 0.01,
+            value: lord.getLocalObject("playerVolume", defVol),
+            slide: function () {
+                var volume = +$(this).slider("value");
+                if (lord.playerElement)
+                    lord.playerElement.volume = volume;
+                else
+                    lord.setLocalObject("playerVolume", volume);
+            }
+        });
+        $("#playerDurationSlider").slider({
+            min: 0,
+            max: 0,
+            step: 0,
+            value: 0,
+            disabled: true
+        });
+        if (lord.id("tplayer"))
+            lord.checkPlaylist();
+        if (lord.queryOne(".track", lord.id("playerTracks")) && lord.getSessionObject("playerPlaying", false))
+            lord.playerPlayPause(null, lord.getSessionObject("playerCurrentTime", 0));
+    }
     var w = $(window);
     w.resize(function() {
         var n = {

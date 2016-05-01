@@ -4,6 +4,7 @@ $(function() {
         wrap = $(".wrap"),
         selector = " #wrapper > *",
         body = $("body");
+    lord.setSessionObject("ajaxFires", 0);
     if (history.pushState) {
         NavigationCache[window.location.pathname] = body.html();
         if (lord.getLocalObject('enableAjax', false))
@@ -79,6 +80,7 @@ $(function() {
         delete lord.AutoUpdateTimer;
         $(window).off('scroll');
 
+        lord.setSessionObject("ajaxFires", 1+lord.getSessionObject("ajaxFires", 0));
         return data;
     }
     function setPage(data) {
