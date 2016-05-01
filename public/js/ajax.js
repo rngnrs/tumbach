@@ -62,6 +62,8 @@ $(function() {
         localStorage["scrollPage"] = window.location;
 
         /* Fixes for most ololord functions */
+        lord.postProcessors = [];
+        lord.pageProcessors = [];
         window.removeEventListener("hashchange", lord.hashChangeHandler, false);
         window.removeEventListener("scroll", lord.scrollHandler, true);
         if(lord.autoUpdateTimer) {

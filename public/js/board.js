@@ -96,6 +96,8 @@ lord.checkExpander = function(post) {
     var bq = $("blockquote", post);
     if (bq[0].scrollHeight <= bq.innerHeight())
         return;
+    if (bq.parent()[0].getElementsByClassName("postTextExpander").length > 0)
+        return;
     var a = lord.node("a");
     a.appendChild(lord.node("text", lord.text("expandPostTextText")));
     a.href = "javascript:void(0);";
