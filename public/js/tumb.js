@@ -61,20 +61,11 @@ tumb.dottie = function(floatElement) {
 		if (window.scrollY > 0) {
 			if(localStorage["scroll"] < $(document).scrollTop())
 				localStorage["scroll"] = $(document).scrollTop();
-			if (floatElement.hasClass('default')) {
-				if (lord.settings().transparentHeader)
-					floatElement.addClass("transparent");
-				floatElement.removeClass("default").addClass("fixed");
-				wrap.css({'padding-top':floatElement.height()+wrap.css('padding-top').replace(/[^-d.]/g, '')+'px'});
-			}
-		} else {
-			if (floatElement.hasClass('fixed')) {
-				if (lord.settings().transparentHeader)
-					floatElement.removeClass("transparent");
-				floatElement.removeClass("fixed").addClass("default");
-				wrap.css({'padding-top':''});
-			}
-		}
+			if (lord.settings().transparentHeader)
+				floatElement.addClass("transparent");
+		} else
+			if (lord.settings().transparentHeader)
+				floatElement.removeClass("transparent");
 	}
 	moveDottie();
 	window.onscroll = function(){
