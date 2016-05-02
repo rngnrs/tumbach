@@ -41,6 +41,10 @@ tumb.toggle = {
 			tumb.go.sb.toggleClass('open');
 			return;
 		}
+		tumb.go.sb.removeClass('open');
+		tumb.go.wr.removeClass('toggle');
+		tumb.toggle.navbar();
+		lord.setLocalObject("showFrame", false);
 		return false;
 	},
 	navbar: function(toggle) {
