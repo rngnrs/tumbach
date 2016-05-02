@@ -37,6 +37,7 @@ $(function() {
                     if (xhr.status == 200) {
                         NavigationCache[url] = xhr.response;
                         history.pushState({page: url, type: "page"}, document.title, url);
+                        lord.setSessionObject("ajaxFires", 1+lord.getSessionObject("ajaxFires", 0));
                         resolve(xhr.response);
                     } else
                         onError();
@@ -77,8 +78,6 @@ $(function() {
         }
         delete lord.AutoUpdateTimer;
         $(window).off('scroll');
-
-        lord.setSessionObject("ajaxFires", 1+lord.getSessionObject("ajaxFires", 0));
         return data;
     }
     function setPage(data) {
