@@ -55,7 +55,7 @@ body  {
     /*font-family: "Trebuchet MS",Trebuchet,tahoma,serif;*/
 }
 
-a {
+a, .cspoilerTitle {
     color: #C9BE89;
 }
 
@@ -63,7 +63,7 @@ a.expandCollapse {
     color: #AAA;
 }
 
-a:hover {
+a:hover, .cspoilerTitle:hover {
     color: #EEFEBB;
 }
 

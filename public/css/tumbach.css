@@ -11,7 +11,7 @@
 body, aside {
     background-color: #EEE;
 }
-a {
+a, .cspoilerTitle {
     text-decoration:none;
     color: rgba(0, 127, 255, .87);
     transition: .1s color;
@@ -26,6 +26,7 @@ a.expandCollapse:hover {
     color: #777;
 }
 .postSequenceNumber,
+.cspoilerTitle:hover,
 a:hover {
     color: #F80;
 }
