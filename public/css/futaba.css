@@ -36,7 +36,7 @@ body  {
     color: #800000;
 }
 
-a, .cspoilerTitle {
+a {
     color: #00E;
 }
 
@@ -44,7 +44,7 @@ a.expandCollapse {
     color: #444;
 }
 
-a:hover, .cspoilerTitle:hover {
+a:hover {
     color: #D00;
 }
 

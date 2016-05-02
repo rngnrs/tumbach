@@ -40,7 +40,7 @@ body  {
     /*font-family: Verdana,sans-serif;*/
 }
 
-a, .cspoilerTitle {
+a {
     color: #000;
     text-decoration: underline;
 }
@@ -49,7 +49,7 @@ a.expandCollapse {
     color: #444;
 }
 
-a:hover, .cspoilerTitle:hover {
+a:hover {
     color: #06F;
 }
 
