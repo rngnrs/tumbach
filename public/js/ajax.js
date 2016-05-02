@@ -26,6 +26,11 @@ $(function() {
     function getPage(url, noHistory) {
         if (content.length > 0 && !noHistory) {
             return new Promise(function (resolve, reject) {
+                function onError() {
+                    content.html("<h2 class='alignCenter'>"+lord.text("error"+xhr.status+"Text")+"</h2>");
+                    $(".overlay").removeClass("toggled over");
+                    reject(lord.text("error"+xhr.status+"Text"));
+                }
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', url);
                 xhr.onload = function () {
@@ -33,21 +38,11 @@ $(function() {
                         NavigationCache[url] = xhr.response;
                         history.pushState({page: url, type: "page"}, document.title, url);
                         resolve(xhr.response);
-                    } else {
-                        console.info(url + ": " + xhr.status);
-                        $(".overlay").removeClass("toggled over");
-                        reject(xhr.statusText);
-                    }
+                    } else
+                        onError();
                 };
-                xhr.onerror = function () {
-                    console.info(url + ": " + xhr.status);
-                    content.html("<h2 class='alignCenter'>"+lord.text("error"+xhr.status+"Text")+"</h2>");
-                    reject(lord.text("error0Text"));
-                };
+                xhr.onerror = onError;
                 xhr.send();
-                $('html,body').stop().animate({
-                    scrollTop: 0
-                }, 300);
                 $(".overlay").addClass("toggled over");
             });
         }
@@ -56,6 +51,9 @@ $(function() {
     function htmlToSel(data) {
         content.html($(data).find(selector));
         $(".overlay").removeClass("toggled over");
+        $('html,body').stop().animate({
+            scrollTop: 0
+        }, 300);
 
         /* Fix for tumb scroll */
         if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location)
