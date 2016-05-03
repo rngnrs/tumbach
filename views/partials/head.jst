@@ -141,7 +141,7 @@
             if (settings.addExpander)
                 s += 'blockquote:not(.draftBlockquote) { overflow-y: hidden; }';
             if(!settings.drawingEnabled)
-                s += 'a[name="drawOnImageButton"] { display: none; }';
+                s += 'a[name="drawOnImageButton"] { display: none; } .fileByLinkButton ~ .fileByLinkButton { display: none; }';
             if (lord.compareRatings(settings.maxAllowedRating, "R-18G") < 0) {
                 var selectors = [];
                 var size = lord.deviceType("mobile") ? "140px" : "200px";
