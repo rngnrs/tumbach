@@ -15,7 +15,6 @@
                         model.board = lord.model("board/" + lord.data("boardName")).board;
                     var placeholder = lord.id("headerPlaceholder");
                     placeholder.parentNode.appendChild(lord.template("tplayer", model));
-                    placeholder.parentNode.replaceChild(lord.template("searchAction", model), placeholder);
                 })();
             </script>
         </div>

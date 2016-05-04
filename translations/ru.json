@@ -2423,7 +2423,8 @@
     "404 (not found)": {
         "errorMessage": {
             "value": "404 (не найдено)"
-        }
+        },
+        "_obsolete": true
     },
     "Invalid page number": {
         "_default": {

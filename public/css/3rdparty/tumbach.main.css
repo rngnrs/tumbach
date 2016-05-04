@@ -30,7 +30,7 @@ input[type=number] {
     border-radius: 4px;
     color: #FFF;
     content: attr(data-tooltip);
-    top: 40px;
+    bottom: -24px;
     left: 0;
     min-width: 100%;
     margin: 0 auto;
@@ -368,10 +368,6 @@ div.scroll-window {
     width: calc(100% - 75px);
     max-width: 100%;
     padding: 2px 5px;
-}
-header .searchAction {
-    margin-top: 4px;
-    float: left;
 }
 #tplayer {
     float: right;

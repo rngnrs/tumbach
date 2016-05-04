@@ -93,7 +93,7 @@
                 {{~}}
                 <div class="clr"></div>
                 <hr/>
-                <a href="/search.html" class="list-item ajax mobileOnly">
+                <a href="/{{=it.site.pathPrefix}}search.html" class="list-item ajax">
                     Поиск
                 </a>
                 {{? it.settings.chatEnabled}}
@@ -101,7 +101,7 @@
                     {{=it.tr.chatText}}
                 </a>
                 {{?}}
-                <a class="list-item ajax" href="/faq.html">{{=it.tr.toFaqPageText}}</a>
+                <a class="list-item ajax" href="/{{=it.site.pathPrefix}}faq.html">{{=it.tr.toFaqPageText}}</a>
                 {{? it.user.isModer()}}
                     <a class="list-item" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
                 {{?}}
@@ -111,7 +111,7 @@
                     {{=it.tr.logoutText}}
                 </a>
                 {{??}}
-                <a href="/login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item">
+                <a href="/{{=it.site.pathPrefix}}login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item">
                     {{=it.tr.loginText}}
                 </a>
                 {{?}}

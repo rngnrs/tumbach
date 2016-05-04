@@ -511,7 +511,7 @@ span.newPostCount {
 
 .settingsDialog table {
     margin: 0 auto;
-    min-width: 75%;
+    font-size: 14px;
 }
 
 .tabWidget {
@@ -533,6 +533,7 @@ ul.tabWidget > li > a {
 }
 
 .searchAction {
+    position: relative;
     display: block;
     margin-left: auto;
     margin-right: auto;

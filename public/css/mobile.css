@@ -16,6 +16,9 @@ header .searchAction, .desktopOnly {
 #playerTrackInfo {
     width: 60px;
 }
+.toolbar, .navbar {
+    font-size: 1em;
+}
 /* /tumb rewrite */
 
 body {
