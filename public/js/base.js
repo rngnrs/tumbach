@@ -1489,11 +1489,16 @@ lord.showNewPosts = function() {
                     var newPostCount = getNewPostCount(lord.data("boardName", opt));
                     if (!newPostCount)
                         return;
+                    if(opt.childNodes.length > 1)
+                        opt.removeChild(opt.childNodes[0]);
                     opt.insertBefore(lord.node("text", "+" + newPostCount + " "), opt.childNodes[0]);
                 });
             });
-        } else {
-            lord.queryAll(".navbar, .toolbar, .tumb-menu").forEach(function(navbar) {
+            setNewPostCount(".tumb-menu");
+        } else
+            setNewPostCount(".navbar, .toolbar, .tumb-menu");
+        function setNewPostCount(navbars) {
+            lord.queryAll(navbars).forEach(function(navbar) {
                 lord.queryAll(".navbarItem", navbar).forEach(function(item) {
                     var a = lord.queryOne("a", item);
                     if (!a)

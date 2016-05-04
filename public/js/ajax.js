@@ -6,13 +6,15 @@ $(function() {
         body = $("body");
     lord.setSessionObject("ajaxFires", 0);
     if (history.pushState) {
-        NavigationCache[window.location.pathname] = body.html();
+        NavigationCache[location.pathname] = body.html();
         if (lord.getLocalObject('enableAjax', false))
-            history.pushState({page: window.location.pathname, type: "page"}, document.title, window.location.pathname);
+            history.pushState({page: location.pathname+location.search+location.hash, type: "page"}, document.title, location.pathname+location.search+location.hash);
         window.onpopstate = function (e) {
-            if (e.state && e.state.type.length > 0)
-                if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0)
+            if (location.hash == "" && e.state != null && e.state.type == "page")
+                if (NavigationCache[e.state.page] && NavigationCache[e.state.page].length > 0) {
                     tumb.ajax(NavigationCache[e.state.page], true);
+                    console.log('ajax!');
+                }
         }
     }
     body.on("click", "a.ajax", function (e) {
@@ -52,10 +54,16 @@ $(function() {
     function htmlToSel(data) {
         content.html($(data).find(selector));
         $(".overlay").removeClass("toggled over");
-        $('html,body').stop().animate({
-            scrollTop: 0
-        }, 300);
-
+        if(location.hash == "")
+            $('html,body').stop().animate({
+                scrollTop: 0
+            }, 300);
+        else /* NOTE: Temporary fix! */
+            setTimeout(function(){
+                var hash = location.hash;
+                location.hash = '';
+                location.hash = hash;
+            }, 200);
         /* Fix for tumb scroll */
         if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location)
             localStorage["scroll"] = 0;
@@ -69,8 +77,8 @@ $(function() {
         }).catch(lord.handleError);
         lord.initializeOnLoadBase();
         lord.checkFavoriteThreads();
-        if (!lord.getLocalObject("transparentHeader", true))
-            window.removeEventListener("hashchange", lord.hashChangeHandler, false);
+        //if (!lord.getLocalObject("transparentHeader", true))
+        //    window.removeEventListener("hashchange", lord.hashChangeHandler, false);
         window.removeEventListener("scroll", lord.scrollHandler, true);
         if(lord.autoUpdateTimer) {
             lord.autoUpdateTimer.stop();

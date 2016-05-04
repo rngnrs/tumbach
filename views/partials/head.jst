@@ -114,7 +114,7 @@
     {{? it.extraScripts}}
         {{~it.extraScripts :script}}
             {{? script.source}}
-                <script type="text/javascript" src="{{=script.source}}"></script>
+                <script class="ajaxScripts" type="text/javascript" src="{{=script.source}}"></script>
             {{?? script.fileName}}
                 {{ out += it.script(script.fileName, script.noEmbed); }}
             {{?? script.value}}

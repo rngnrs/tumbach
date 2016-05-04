@@ -2,9 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{~["top", "bottom"] :target}}
-    {{#def.navigationButton}}
-{{~}}
 {{#def.header}}
 <a id="top"></a>
 <div class="wrap" {{#def.baseData}}>
@@ -13,10 +10,13 @@
         {{#def.customHeader}}
         {{#def.toolbar}}
         <div id="wrapper">
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
             {{#def.banner}}
             <div class="theTitle">
                 <h1>
-                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}">{{=it.board.title}}</a>
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/">{{=it.board.title}}</a>
                 </h1>
             </div>
             <div id="threads" class="alignCenter">
@@ -28,9 +28,9 @@
             <hr />
             {{#def.postingSpeed}}
         </div>
-        <a id="bottom"></a>
     </div>
     {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>
