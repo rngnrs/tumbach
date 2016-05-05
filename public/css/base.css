@@ -463,6 +463,14 @@ span.newPostCount {
     right: 20px;
 }
 
+.movableImage {
+    position: fixed;
+    z-index: 9905;
+    border: 5px solid #777;
+    padding: 0;
+    line-height: 0;
+}
+
 .postformFile {
     border: 1px dashed #777;
     text-align: justify;
