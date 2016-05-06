@@ -176,9 +176,10 @@
                     + '.postFileFile > a > img:not(:hover), .banner > a > img:not(:hover) { opacity: 0.05 !important; }'
                     + '</style>';
             }
-            var appendScript = function(path) {
-                s += '<script type="text/javascript" src="/' + prefix + path + '"></s' + 'cript>';
-            };
+            var scriptsQueue = [],
+                appendScript = function(path) {
+                    scriptsQueue[scriptsQueue.length] = '/' + prefix + path;
+                };
             if (lord.model("base").user.isModer()) {
                 appendScript("js/3rdparty/jquery.datetimepicker.js");
                 lord.createStylesheetLink("3rdparty/jquery.datetimepicker.css", true);
@@ -198,7 +199,7 @@
             }
             if (settings.userJavaScriptEnabled)
                 s += '<script type="text/javascript">' + lord.getLocalObject("userJavaScript", "") + "</s" + "cript>";
-            lord.queryOne("head").innerHTML += s;
+            document.head.innerHTML += s;
             lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
             lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
             if (settings.userCssEnabled) {
@@ -209,8 +210,14 @@
                     style.styleSheet.cssText = css;
                 else
                     style.appendChild(lord.node("text", css));
-                lord.queryOne("head").appendChild(style);
+                document.head.appendChild(style);
             }
+            scriptsQueue.forEach(function(src) {
+                var script = document.createElement('script');
+                script.src = src;
+                script.async = false;
+                document.head.appendChild(script);
+            });
         })();
     </script>
 </head>
