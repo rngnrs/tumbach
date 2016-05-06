@@ -1270,7 +1270,7 @@ lord.drawOnImage = function(a) {
     lord.showDialog(dlg, {
         title: "drawingOptionsDialogTitle",
         afterShow: function() {
-            $(dlg).css({ minHeight: "180px" });
+            $(dlg).css({ minHeight: "240px" });
             $("button", dlg).button();
             $("[name='backgroundTypeGroup']", dlg).buttonset();
             $("input[name='backgroundColor']", dlg).minicolors({
@@ -1772,7 +1772,7 @@ lord.attachFileByDrawing = function(a) {
             return lord.showDialog(dlg, {
                 title: "drawingOptionsDialogTitle",
                 afterShow: function() {
-                    $(dlg).css({ minHeight: "180px" });
+                    $(dlg).css({ minHeight: "200px" });
                     $("button", dlg).button();
                     $("[name='backgroundTypeGroup']", dlg).buttonset();
                     $("input[name='backgroundColor']", dlg).minicolors({
@@ -1806,7 +1806,7 @@ lord.attachFileByDrawing = function(a) {
         p = lord.showDialog(dlg, {
             title: "drawingOptionsDialogTitle",
             afterShow: function() {
-                $(dlg).css({ minHeight: "180px" });
+                $(dlg).css({ minHeight: "200px" });
                 $("button", dlg).button();
                 $("input[name='backgroundColor']", dlg).minicolors({
                     control: "wheel",

@@ -881,6 +881,7 @@ lord.showDialog = function(body, options) {
             width: "auto",
             maxHeight: $(window).height() - 50,
             maxWidth: $(window).width() - 40,
+            minHeight: 24,
             close: function() {
                 lord.dialogs.pop();
                 resolve(false);

@@ -7,7 +7,7 @@
     font-family: 'PT Sans';
     font-style: normal;
     font-weight: 400;
-    src: local('PT Sans'), local('PTSans-Regular'), url(/res/fonts/ptsans.woff2) format('woff2');
+    src: local('PT Sans'), local('PTSans-Regular'), url(/res/fonts/ptsans.woff) format('woff');
 }
 body {
     position:relative;
@@ -430,17 +430,28 @@ h1 {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100vw;
-    min-height: 24px !important;
+}
+
+.ui-dialog .ui-dialog-content:empty {
+    display: table !important;
+}
+
+.ui-dialog .ui-dialog-content:empty:after {
+    content: 'Ничего нет.';
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 /* COMMON FOR ALL STYLES */
 .critical {
-    color: red;
-    border: 1px dotted red;
+    color: #F00;
+    border: 2px dotted #F00 !important;
 }
 .warning {
-    color: orange;
-    border: 1px dotted orange;
+    color: #F90;
+    border: 2px dotted #F90 !important;
+    background-color: #888 !important;
 }
 .quotation {
     color: #789922;

@@ -136,6 +136,8 @@
             s +='<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name
                 + '.css">';
             s += '<style type="text/css">';
+            if(/firefox/i.test(navigator.userAgent))
+                s += "@font-face { font-family: 'PT Sans'; font-style: normal; font-weight: bold; src: local('PT Sans'), local('PTSans-Bold'), url(/res/fonts/ptsansb.woff) format('woff');}";
             if (!settings.shrinkPosts)
                 s += '.post, .opPost, .draft, .searchResult { width: 99%; max-width: 95vw; }';
             if (settings.addExpander)

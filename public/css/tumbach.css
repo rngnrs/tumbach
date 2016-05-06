@@ -79,6 +79,8 @@ span.spoiler:hover {
 }
 .chatMessage {
     border: 1px solid #CCC;
+}
+.chatMessage, .chatContact:hover {
     background-color: rgba(0, 188, 212, .25);
 }
 ul.tabWidget > li {
