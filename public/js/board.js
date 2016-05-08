@@ -2982,7 +2982,7 @@ lord.showMenu = function(e, input, selector) {
         html = document.documentElement,
         of = {
             "x" : html.clientWidth-ic.right < lord.currentMenu.width(),
-            "y" : html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
+            "y" : (window.pageYOffset+ic.top < lord.currentMenu.width()) ? false : html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
         },
         cx = pageXOffset + ic.left + (of.x ? -lord.currentMenu.width() : 0) - fw,
         cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
