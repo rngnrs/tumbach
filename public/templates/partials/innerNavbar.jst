@@ -5,8 +5,8 @@
                 onchange="(function(sel) { var val = sel.options[sel.selectedIndex].value; if (val) location = val; })(this);">
             <option selected="true" value="" class="selectOption"></option>
             {{~it.boardGroups :group}}
-                <option disabled="true" value=""
-                        class="selectOption">{{? group.title}}{{=group.title}}{{??}}----{{?}}</option>
+            {{? group.title}}<option disabled="true" value=""
+                        class="selectOption">{{=group.title}}</option>{{?}}
                 {{~group.boards :board}}
                     <option value="/{{=it.site.pathPrefix}}{{=board.name}}/" data-board-name="{{=board.name}}"
                             class="selectOption">[{{=board.name}}] {{=board.title}}</option>

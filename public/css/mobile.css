@@ -117,7 +117,7 @@ blockquote {
     cursor: pointer;
     border: none;
     background: url("../img/boards.png") left center no-repeat;
-    width: 36px;
+    width: 16px;
 }
 
 .boardSelectForm {
