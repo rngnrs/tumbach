@@ -43,6 +43,9 @@ span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotati
 span.spoiler:hover {
     color: #333;
 }
+span.spoiler:hover a {
+    color: rgba(0, 127, 255, .87);
+}
 .select {
     background: #EAEAEA;
     border: 1px solid #CCC;
