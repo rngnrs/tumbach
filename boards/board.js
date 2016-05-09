@@ -191,7 +191,7 @@ Board.boards = {};
         opModeration: this.opModeration
     };
     this.customBoardInfoFields().forEach(function(field) {
-        model[field] = board[field];
+        model[field] = this[field];
     });
     return model;
 };

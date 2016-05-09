@@ -336,7 +336,6 @@ span.newPostCount {
 }
 
 .hidden > .postBody,
-.opPost.hidden ~ .post,
 .thread.hidden > .omittedPosts,
 .thread.hidden > .threadPosts {
     display: none;
