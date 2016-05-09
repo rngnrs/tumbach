@@ -1121,7 +1121,7 @@ lord.applySpells = function(posts, force) {
         });
         return Promise.all(promises);
     }).then(function() {
-        $("tmpHiddenPosts").remove();
+        $("#tmpHiddenPosts").remove();
         return Promise.resolve();
     });
 };
@@ -2708,7 +2708,7 @@ lord.processPosts = function(parent) {
             posts.forEach(function(post) {
                 lord.processPost(hiddenPosts, post);
             });
-            $("tmpHiddenPosts").remove();
+            $("#tmpHiddenPosts").remove();
         }
         return Promise.resolve();
     });
