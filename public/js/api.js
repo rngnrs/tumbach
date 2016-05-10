@@ -810,6 +810,9 @@ lord.showNotification = function(title, body, icon) {
             "body": body,
             "icon": icon
         });
+        notification.onclick = function () {
+            window.focus();
+        };
     });
 };
 
@@ -1350,7 +1353,7 @@ lord.settings = function() {
         chatEnabled: lord.getLocalObject("chatEnabled", true),
         drawingEnabled: lord.getLocalObject("drawingEnabled", true),
         autoUpdatePlayer: lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")),
-        resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", false),
+        resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", true),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
         hidePostPreviewDelay: lord.getLocalObject("hidePostPreviewDelay", 1000),
@@ -1359,6 +1362,7 @@ lord.settings = function() {
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
+        showFrame: lord.getLocalObject("showFrame", window.width >= 1024),
         transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };
