@@ -2985,7 +2985,7 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? $("#sidebar").width() : 0,
+    var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
         ic = input.getBoundingClientRect(),
         html = document.documentElement,
         of = {

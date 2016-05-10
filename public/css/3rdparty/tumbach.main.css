@@ -393,7 +393,7 @@ h1 {
     position:fixed;
     top:0;bottom:0;
     left:0;right:0;
-    transition: .2s background;
+    transition: .2s background, .2s visibility;
     visibility: hidden;
 }
 .overlay.toggled {

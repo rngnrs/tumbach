@@ -18,18 +18,13 @@ tumb.set = {
 tumb.toggle = {
 	frame: function(toggle) {
 		var hc = tumb.go.sb.hasClass('open');
-		if(toggle != undefined)
-			tumb.toggle.navbar(hc);
-		if(!toggle)
-			setTimeout(function() {
+		if(toggle == undefined)
+			setTimeout(function () {
 				tumb.go.wr.addClass("transition");
 				tumb.go.sb.addClass("transition");
 			}, 100);
-		if(toggle || (lord.getLocalObject("showFrame", lord.deviceType("desktop")) != hc)) {
-			if((tumb.go.width < 1024 || lord.deviceType("mobile")) && !toggle)
-				return;
-			else
-				lord.setLocalObject("showFrame", !hc);
+		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop"))) {
+			lord.setLocalObject("showFrame", !hc);
 			if(tumb.go.width < 1024) {
 				tumb.go.ov.toggleClass('toggled');
 				tumb.go.sb.removeClass('sidebar-stacked').addClass('sidebar-fixed-left');
@@ -39,20 +34,21 @@ tumb.toggle = {
 				tumb.go.sb.addClass('sidebar-stacked').removeClass('sidebar-fixed-left');
 			}
 			tumb.go.sb.toggleClass('open');
+			tumb.toggle.navbar(hc);
 			return;
 		}
 		tumb.go.sb.removeClass('open');
 		tumb.go.wr.removeClass('toggle');
-		tumb.toggle.navbar();
+		tumb.toggle.navbar(true);
 		lord.setLocalObject("showFrame", false);
 		return false;
 	},
 	navbar: function(toggle) {
 		var n = $(".navbar, .toolbar"),
-			ls = !lord.getLocalObject("showFrame", true);
-		if(lord.deviceType("mobile") || tumb.go.width < 1024)
+			ls = !lord.settings().showFrame;
+		if(lord.deviceType("mobile"))
 			return n.show();
-		(toggle || (toggle == undefined && ls)) ? n.slideDown() : n.slideUp();
+		(toggle || (toggle == undefined && !ls)) ? n.slideDown() : n.slideUp();
 	}
 };
 tumb.dottie = function(floatElement) {
@@ -114,7 +110,6 @@ tumb.onLoad = function(){
     $('#style-switcher').change(function() {
         tumb.switchStyle(this.value,true);
     });
-	tumb.toggle.navbar();
 	tumb.dottie('header');
     tumb.slidy('.kek');
     $('.kek').bind('click', function(){
