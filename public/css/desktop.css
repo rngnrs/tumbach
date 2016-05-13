@@ -108,18 +108,18 @@ blockquote {
 }
 
 #playerDurationSlider {
-    width: -moz-calc(75% - 12px);
-    width: -webkit-calc(75% - 12px);
-    width: -o-calc(75% - 12px);
-    width: calc(75% - 12px);
+    width: -moz-calc(75% - 10px);
+    width: -webkit-calc(75% - 10px);
+    width: -o-calc(75% - 10px);
+    width: calc(75% - 10px);
 }
 
 #playerVolumeSlider {
     display: inline-block;
-    width: -moz-calc(25% - 12px);
-    width: -webkit-calc(25% - 12px);
-    width: -o-calc(25% - 12px);
-    width: calc(25% - 12px);
+    width: -moz-calc(25% - 4px);
+    width: -webkit-calc(25% - 4px);
+    width: -o-calc(25% - 4px);
+    width: calc(25% - 4px);
 }
 .movablePlayerConstrolsSliders {
     width: -moz-calc(100% - 44px);
@@ -129,18 +129,18 @@ blockquote {
 }
 
 .movablePlayerDurationSlider {
-    width: -moz-calc(75% - 12px);
-    width: -webkit-calc(75% - 12px);
-    width: -o-calc(75% - 12px);
-    width: calc(75% - 12px);
+    width: -moz-calc(75% - 10px);
+    width: -webkit-calc(75% - 10px);
+    width: -o-calc(75% - 10px);
+    width: calc(75% - 10px);
 }
 
 .movablePlayerVolumeSlider {
     display: inline-block;
-    width: -moz-calc(25% - 12px);
-    width: -webkit-calc(25% - 12px);
-    width: -o-calc(25% - 12px);
-    width: calc(25% - 12px);
+    width: -moz-calc(25% - 4px);
+    width: -webkit-calc(25% - 4px);
+    width: -o-calc(25% - 4px);
+    width: calc(25% - 4px);
 }
 
 .chatContactList {

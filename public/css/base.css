@@ -934,7 +934,7 @@ input.buttonImage {
 }
 
 .playerHeader {
-    padding: 2px;
+    padding: 1px 2px;
 }
 
 .playerSliderContainer {
@@ -943,12 +943,12 @@ input.buttonImage {
 
 #playerDurationSlider {
     display: inline-block;
-    margin: 0 6px;
+    margin-left: 6px;
 }
 
 #playerTrackInfo {
     display: inline-block;
-    padding: 2px;
+    padding: 1px 2px;
 }
 
 .playerHeader > input[name="playerMuteButton"] {

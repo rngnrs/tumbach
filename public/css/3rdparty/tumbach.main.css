@@ -367,7 +367,7 @@ div.scroll-window {
 #tplayer .pmain {
     width: calc(100% - 75px);
     max-width: 100%;
-    padding: 2px 5px;
+    padding: 0 5px;
 }
 #tplayer {
     float: right;
