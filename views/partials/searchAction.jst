@@ -4,6 +4,6 @@
         if (lord.data("boardName"))
             model.board = lord.model("board/" + lord.data("boardName")).board;
         var placeholder = lord.id("searchActionPlaceholder");
-        placeholder.parentNode.replaceChild(lord.template("searchAction", model/*, true*/), placeholder);
+        placeholder.parentNode.replaceChild(lord.template("searchAction", model), placeholder);
     })();
 </script>

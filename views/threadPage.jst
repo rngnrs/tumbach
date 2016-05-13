@@ -46,7 +46,7 @@
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
                     var placeholder = lord.id("threadPageUpperPlaceholder");
-                    placeholder.parentNode.replaceChild(lord.template("threadPageUpper", model/*, true*/), placeholder);
+                    placeholder.parentNode.replaceChild(lord.template("threadPageUpper", model), placeholder);
                 })();
             </script>
             <hr />
@@ -89,7 +89,7 @@
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
                     var placeholder = lord.id("threadPageLowerPlaceholder");
-                    placeholder.parentNode.replaceChild(lord.template("threadPageLower", model/*, true*/), placeholder);
+                    placeholder.parentNode.replaceChild(lord.template("threadPageLower", model), placeholder);
                 })();
             </script>
             <hr />

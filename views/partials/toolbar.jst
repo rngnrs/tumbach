@@ -19,6 +19,6 @@
         model.mumWatching = lord.getLocalObject("mumWatching", false);
         lord.processBoardGroups(model);
         var placeholder = lord.id("toolbarPlaceholder");
-        placeholder.parentNode.replaceChild(lord.template("toolbar", model/*, true*/), placeholder);
+        placeholder.parentNode.replaceChild(lord.template("toolbar", model), placeholder);
     })();
 </script>

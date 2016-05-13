@@ -7,7 +7,7 @@
                     model.board = lord.model("board/" + lord.data("boardName")).board;
                 model.settings = lord.settings();
                 model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
-                var html = lord.template("custom-footer", model/*, true*/);
+                var html = lord.template("custom-footer", model);
                 if (!html)
                     return;
                 var customFooterPlaceholder = lord.id("customFooterPlaceholder");

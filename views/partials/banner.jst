@@ -40,6 +40,6 @@
         model.bannerBoardName = bannerBoardName;
         model.bannerBoardTitle = bannerBoardTitle;
         var placeholder = lord.id("bannerPlaceholder");
-        placeholder.parentNode.replaceChild(lord.template("banner", model/*, true*/), placeholder);
+        placeholder.parentNode.replaceChild(lord.template("banner", model), placeholder);
     })();
 </script>

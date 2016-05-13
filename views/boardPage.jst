@@ -46,7 +46,7 @@
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
                     var placeholder = lord.id("boardPageUpperPlaceholder");
-                    var html = lord.template("boardPageUpper", model/*, true*/);
+                    var html = lord.template("boardPageUpper", model);
                     if (!html)
                         return;
                     placeholder.parentNode.replaceChild(html, placeholder);
@@ -142,7 +142,7 @@
                     model.pageCount = +lord.data("pageCount");
                     model.currentPage = +lord.data("currentPage");
                     var placeholder = lord.id("paginationPlaceholder");
-                    placeholder.parentNode.replaceChild(lord.template("pagination", model/*, true*/), placeholder);
+                    placeholder.parentNode.replaceChild(lord.template("pagination", model), placeholder);
                 })();
             </script>
             <hr />

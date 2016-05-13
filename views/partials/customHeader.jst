@@ -6,7 +6,7 @@
         model.settings = lord.settings();
         model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
         var customHeaderPlaceholder = lord.id("customHeaderPlaceholder");
-        var html = lord.template("custom-header", model/*, true*/);
+        var html = lord.template("custom-header", model);
         if (!html)
             return;
         customHeaderPlaceholder.parentNode.replaceChild(html, customHeaderPlaceholder);

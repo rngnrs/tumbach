@@ -7,6 +7,6 @@
         model.inIframe = lord.inIframe();
         lord.processBoardGroups(model);
         var placeholder = lord.id("navbarPlaceholder");
-        placeholder.parentNode.replaceChild(lord.template("navbar", model/*, true*/), placeholder);
+        placeholder.parentNode.replaceChild(lord.template("navbar", model), placeholder);
     })();
 </script>

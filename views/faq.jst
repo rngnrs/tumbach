@@ -23,7 +23,7 @@
                     if (customContentPlaceholder) {
                         var model = lord.model(["base", "tr", "boards"]);
                         model.settings = lord.settings();
-                        var data = lord.template("custom-faq", model/*, true*/);
+                        var data = lord.template("custom-faq", model);
                         if (!data)
                             return;
                         customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
