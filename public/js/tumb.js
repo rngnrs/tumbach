@@ -23,7 +23,7 @@ tumb.toggle = {
 				tumb.go.wr.addClass("transition");
 				tumb.go.sb.addClass("transition");
 			}, 100);
-		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop"))) {
+		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop") && tumb.go.width > 1024)) {
 			lord.setLocalObject("showFrame", !hc);
 			if(tumb.go.width < 1024) {
 				tumb.go.ov.toggleClass('toggled');
@@ -32,9 +32,9 @@ tumb.toggle = {
 			} else {
 				tumb.go.wr.toggleClass('toggle');
 				tumb.go.sb.addClass('sidebar-stacked').removeClass('sidebar-fixed-left');
+				tumb.toggle.navbar(hc);
 			}
 			tumb.go.sb.toggleClass('open');
-			tumb.toggle.navbar(hc);
 			return;
 		}
 		tumb.go.sb.removeClass('open');
