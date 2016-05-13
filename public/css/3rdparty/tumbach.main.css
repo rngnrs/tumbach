@@ -110,7 +110,7 @@ input[type=number] {
     position: absolute;
     width: 100%;
     height: 100%;
-    padding-left: 50px;
+    padding-left: 42px;
     box-sizing: border-box;
 }
 .header-wrapper_container {
@@ -284,15 +284,15 @@ footer:after {
     position: relative;
     margin: 0 auto;
     width: 100%;
-    height: calc(100% - 50px);
+    height: calc(100% - 33px);
 }
 .double-btn {
     cursor: pointer;
     display: block;
     float: left;
     width: 50%;
-    height: 50px;
-    line-height: 50px;
+    height: 33px;
+    line-height: 33px;
     position: relative;
     text-align: center;
 }
@@ -340,7 +340,7 @@ div.scroll-window {
     height: 100%;
 }
 #tplayer {
-    max-height: 50px;
+    max-height: 42px;
 }
 .player-menu {
     -webkit-appearance: none;
