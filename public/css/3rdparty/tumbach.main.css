@@ -48,11 +48,11 @@ input[type=number] {
 }
 #header {
     width: 100%;
-    height: 50px;
+    height: 42px;
     top: 0;
     right: 0;
     position: fixed;
-    z-index: 100100;
+    z-index: 8;
 }
 #header.transparent .header-wrapper,
 #header.transparent .logo {
@@ -84,7 +84,7 @@ input[type=number] {
 .sidebar-fixed-right,
 .sidebar-stacked {
     position: fixed;
-    top: 50px;
+    top: 42px;
     bottom: 0;
     z-index: 8;
 }
@@ -128,7 +128,7 @@ header i:hover,
 .tumb-menu {
     position: relative;
     width: 100%;
-    height: calc(100vh - 128px);
+    height: calc(100vh - 103px);
     overflow-y: auto;
 }
 .list-item {
@@ -153,7 +153,7 @@ a {
     left: 0;
     top: 0;
     background: url("../../assets/icon.png");
-    width: 50px;
+    width: 42px;
     height: 100%;
     background-size: cover;
     z-index: 2;
@@ -174,7 +174,7 @@ a {
     position: relative;
     width: 100%;
     left: 0;
-    padding-top: 50px;
+    padding-top: 42px;
  }
 .wrap.toggle {
     width: calc(100% - 210px);
@@ -189,7 +189,7 @@ a {
 .wrappie {
     position: relative;
     top: 0;
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 75px);
     margin: 0 auto;
     width: auto;
 }
@@ -216,12 +216,12 @@ a {
 }
 footer div {
     position:relative;
-    height: 50px;
+    height: 33px;
     width: 100%;
     box-sizing: border-box;
 }
 footer div span {
-    padding: 15px 10px;
+    padding: 7px 10px;
     position: relative;
 }
 footer:after {
@@ -233,16 +233,16 @@ footer:after {
 /* CSS FILES SELECTOR */
 .select_sidebar {
     position:relative;
-    height:50px;
+    height:33px;
     width:100%;
 }
 .select_sidebar select {
     border: none;
     position: relative;
-    padding: 10px;
+    padding: 0 10px;
     width: 100%;
     box-sizing: border-box;
-    height: 50px;
+    height: 100%;
     font: 15px "PT Sans";
     outline: none;
 }
@@ -354,7 +354,7 @@ div.scroll-window {
 }
 #tplayer i, .player-menu i {
     padding: 0 5px;
-    height: 50px;
+    height: 42px;
     vertical-align: middle;
     display: table-cell;
 }
