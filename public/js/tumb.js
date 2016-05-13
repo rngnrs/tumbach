@@ -54,9 +54,9 @@ tumb.toggle = {
 tumb.dottie = function(floatElement) {
 	var floatElement = $(floatElement),
 		wrap = $('.wrap');
-	if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location)
+	if(!localStorage["scroll"] || localStorage["scrollPage"] != location.pathname+location.search+location.hash)
 		localStorage["scroll"] = 0;
-	localStorage["scrollPage"] = window.location;
+	localStorage["scrollPage"] = location.pathname+location.search+location.hash;
 	function moveDottie() {
 		if (window.scrollY > 0) {
 			if(localStorage["scroll"] < $(document).scrollTop())

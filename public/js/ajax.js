@@ -54,20 +54,6 @@ $(function() {
     function htmlToSel(data) {
         content.html($(data).find(selector));
         $(".overlay").removeClass("toggled over");
-        if(location.hash == "")
-            $('html,body').stop().animate({
-                scrollTop: 0
-            }, 300);
-        else /* NOTE: Temporary fix! */
-            setTimeout(function(){
-                var hash = location.hash;
-                location.hash = '';
-                location.hash = hash;
-            }, 200);
-        /* Fix for tumb scroll */
-        if(!localStorage["scroll"] || localStorage["scrollPage"] != window.location)
-            localStorage["scroll"] = 0;
-        localStorage["scrollPage"] = window.location;
 
         /* Fixes for most ololord functions */
         lord.postProcessors = [];
@@ -86,6 +72,24 @@ $(function() {
         }
         delete lord.AutoUpdateTimer;
         $(window).off('scroll');
+
+        /* Fix for tumb scroll */
+        if(!localStorage["scroll"] || localStorage["scrollPage"] != location.pathname+location.search+location.hash)
+            localStorage["scroll"] = 0;
+        localStorage["scrollPage"] = location.pathname+location.search+location.hash;
+        if(location.hash == "")
+            $('html,body').stop().animate({
+                scrollTop: 0
+            }, 300);
+        else {/* NOTE: Temporary fix! */
+            function setHash(hash) {
+                window.removeEventListener("load", setHash, true);
+                location.hash = '';
+                location.hash = hash;
+            }
+            var hash = location.hash;
+            window.addEventListener("load", setHash(hash), true);
+        }
         return data;
     }
     function setPage(data) {
