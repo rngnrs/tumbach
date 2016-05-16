@@ -882,7 +882,7 @@ lord.showDialog = function(body, options) {
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            maxHeight: $(window).height() - 50,
+            maxHeight: $(window).height() - 42,
             maxWidth: $(window).width() - 40,
             minHeight: 24,
             close: function() {
@@ -909,21 +909,21 @@ lord.showDialog = function(body, options) {
                 this.lastHeight = body.closest(".ui-dialog").height() + 8;
                 this.lastWidth = body.closest(".ui-dialog").width() + 16;
                 this.lastPosition = body.dialog("option", "position");
-                body.dialog("option", "maxHeight", $(window).height()-50);
+                body.dialog("option", "maxHeight", $(window).height()-42);
                 body.dialog("option", "maxWidth", $(window).width());
-                body.dialog("option", "minHeight", $(window).height()-50);
+                body.dialog("option", "minHeight", $(window).height()-42);
                 body.dialog("option", "minWidth", $(window).width());
-                body.dialog("option", "height", $(window).height()-50);
+                body.dialog("option", "height", $(window).height()-42);
                 body.dialog("option", "width", $(window).width());
                 body.dialog("option", "position", {
                     my: "left top",
-                    at: "left top+50px",
+                    at: "left top+42px",
                     of: window
                 });
             } else {
                 body.dialog("option", "minHeight", 150);
                 body.dialog("option", "minWidth", 150);
-                body.dialog("option", "maxHeight", $(window).height() - 50);
+                body.dialog("option", "maxHeight", $(window).height() - 42);
                 body.dialog("option", "maxWidth", $(window).width() - 40);
                 body.dialog("option", "height", this.lastHeight);
                 body.dialog("option", "width", this.lastWidth);

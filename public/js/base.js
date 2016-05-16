@@ -1849,6 +1849,7 @@ lord.showChat = function(key) {
     lord.chatDialog = lord.template("chatDialog", model);
     lord.showDialog(lord.chatDialog, {
         title: "chatText",
+        maxWidth: "33vw",
         afterShow: function() {
             $('.ui-widget-overlay').bind('click', function(){$(lord.chatDialog).dialog('close');});
             lord.checkChats();
@@ -1879,6 +1880,11 @@ lord.selectChatContact = function(key) {
     lord.nameOne("sendMessageButton", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).focus();
+    $(lord.chatDialog).dialog('option', 'position', {
+        my: "center",
+        at: "center",
+        of: window
+    });
 };
 
 lord.deleteChat = function(key) {
