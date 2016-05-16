@@ -38,6 +38,7 @@ hr {
 }
 span.spoiler {
     background: #BBB;
+    color: #BBB;
     transition: .2s background;
 }
 span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
@@ -45,6 +46,7 @@ span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     transition: .2s opacity;
 }
 span.spoiler:hover {
+    color: inherit;
     background: inherit;
 }
 span.spoiler:hover * {
