@@ -499,3 +499,16 @@ h1 {
     position: absolute;
     right: 0;
 }
+
+/* Settings */
+.settingsInputRange {
+    width: 92%;
+    box-sizing: border-box;
+    margin: 0 4%;
+    position: relative;
+}
+.logos {
+    width:42px;
+    height:42px;
+    position:relative;
+}
