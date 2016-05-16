@@ -791,6 +791,7 @@ input.buttonImage {
     margin-bottom: 4px;
     border-radius: 6px;
     padding: 4px;
+    max-width: 420px;
 }
 
 .chatMessageDate {
@@ -810,10 +811,7 @@ input.buttonImage {
 .chatInput,
 .chatSendButton {
     box-sizing: border-box;
-    width: -moz-calc(100% - 4px);
-    width: -webkit-calc(100% - 4px);
-    width: -o-calc(100% - 4px);
-    width: calc(100% - 4px);
+    width: 100%;
 }
 
 .loadingMessage {

@@ -61,9 +61,9 @@
                             {{#def.post}}
                         {{~}}
                         {{? thread.omittedPosts > 0}}
-                            <div class="omittedPosts">
+                            <span class="omittedPosts" onclick="lord.expandCollapseThread(this); return false;">
                                 {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
-                            </div>
+                            </span>
                         {{?}}
                         <div class="threadPosts">
                             {{~thread.lastPosts :post}}

@@ -500,6 +500,11 @@ h1 {
     right: 0;
 }
 
+.omittedPosts {
+    border-bottom: 1px dashed #000;
+    cursor: pointer;
+}
+
 /* Settings */
 .settingsInputRange {
     width: 92%;

@@ -36,15 +36,19 @@ a.expandCollapse:hover {
 hr {
     background-color: #CCC;
 }
-span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
+span.spoiler {
     background: #BBB;
-    color: #BBB;
+    transition: .2s background;
+}
+span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
+    opacity: 0;
+    transition: .2s opacity;
 }
 span.spoiler:hover {
-    color: #333;
+    background: inherit;
 }
-span.spoiler:hover a {
-    color: rgba(0, 127, 255, .87);
+span.spoiler:hover * {
+    opacity: 1;
 }
 .select {
     background: #EAEAEA;
@@ -83,7 +87,7 @@ span.spoiler:hover a {
 .chatMessage {
     border: 1px solid #CCC;
 }
-.chatMessage, .chatContact:hover {
+.chatContact.selected, .chatMessage, .chatContact:hover {
     background-color: rgba(0, 188, 212, .25);
 }
 ul.tabWidget > li {
