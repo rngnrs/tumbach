@@ -190,8 +190,8 @@ if (typeof lord.getLocalObject("password") != "string") {
             max: 1,
             step: 0.01,
             value: volume,
-            slide: function() {
-                var volume = +$(this).slider("value");
+            slide: function(e, ui) {
+                var volume = ui.value;
                 _this.content.volume = volume;
                 _this.updateButtons();
             }
@@ -1880,11 +1880,6 @@ lord.selectChatContact = function(key) {
     lord.nameOne("sendMessageButton", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).disabled = false;
     lord.nameOne("message", lord.chatDialog).focus();
-    $(lord.chatDialog).dialog('option', 'position', {
-        my: "center",
-        at: "center",
-        of: window
-    });
 };
 
 lord.deleteChat = function(key) {
@@ -2209,8 +2204,8 @@ lord.initializeOnLoadBase = function() {
             max: 1,
             step: 0.01,
             value: lord.getLocalObject("playerVolume", defVol),
-            slide: function () {
-                var volume = +$(this).slider("value");
+            slide: function (e, ui) {
+                var volume = ui.value;
                 if (lord.playerElement)
                     lord.playerElement.volume = volume;
                 else
