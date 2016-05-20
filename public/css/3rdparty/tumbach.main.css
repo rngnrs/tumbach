@@ -517,3 +517,24 @@ h1 {
     height:42px;
     position:relative;
 }
+.settingsDialog > ul.tabWidget {
+    width: 128px;
+    float: left;
+}
+.settingsDialog > ul.tabWidget > li {
+    display: block;
+    width: 100%;
+}
+.settingsDialog > ul.tabWidget > li > a {
+    padding: 9px 0;
+}
+#settingsDialog_window {
+    float: left;
+    min-width: calc(100% - 128px);
+    max-width: 50vw;
+}
+#fastSettings, .settingsDialog table {
+    padding: 10px;
+    width: 394px;
+    box-sizing: border-box;
+}

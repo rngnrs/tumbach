@@ -949,7 +949,7 @@ lord.activateTab = function(a) {
             return;
         node.style.display = ((node == page) ? "" : "none");
     });
-    lord.queryAll("ul > li", header.parentNode).forEach(function(node) {
+    lord.queryAll("li", lord.queryOne("ul", header.parentNode)).forEach(function(node) {
         $(node).removeClass("activated");
     });
     $(tab).addClass("activated");

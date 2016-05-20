@@ -89,15 +89,18 @@ span.spoiler:hover * {
 .chatMessage {
     border: 1px solid #CCC;
 }
+.chatContact {
+    background-color: rgba(153, 217, 234, .25);
+}
 .chatContact.selected, .chatMessage, .chatContact:hover {
-    background-color: rgba(0, 188, 212, .25);
+    background-color: rgba(153, 217, 234, .75);
 }
 ul.tabWidget > li {
-    background-color: #DDD;
+    background-color: rgba(153, 217, 234, .25);
     border: 1px solid #CCC;
 }
 ul.tabWidget > li.activated {
-    background-color: #AAA;
+    background-color: #99D9EA;
 }
 .scrollAreaH60 {
     border: 1px solid #CCC;
