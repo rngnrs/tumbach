@@ -4,10 +4,9 @@
     </div>
     <div class="header-wrapper color-prim">
         <div class="header-wrapper_container">
-            <button class="float-r player-menu" onclick="lord.setSidebarVisible(event);">
-                <i class="zmdi zmdi-playlist-audio zmdi-hc-2x"
-                   title="{{=it.tr.maximizePlayerText}}"></i>
-            </button>
+            <i onclick="lord.setSidebarVisible(event);"
+               class="float-r player-menu zmdi zmdi-playlist-audio zmdi-hc-2x"
+               title="{{=it.tr.maximizePlayerText}}"></i>
             <script id="headerPlaceholder">
                 (function() {
                     var model = lord.model(["base", "tr", "boards"]);

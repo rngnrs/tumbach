@@ -6,6 +6,7 @@
 .titl {
     padding: 42px 0;
     font-size: 50px;
+    height: 150px;
 }
 .searchAction {
     max-width: 38%;
@@ -21,7 +22,7 @@
 }
 @media screen and (min-width: 1000px) {
     .searchAction {
-        max-width: 350px;
+        max-width: 420px;
     }
     #tplayer {
         max-width: 500px;
@@ -108,38 +109,23 @@ blockquote {
 }
 
 #playerDurationSlider {
-    width: -moz-calc(75% - 4px);
-    width: -webkit-calc(75% - 4px);
-    width: -o-calc(75% - 4px);
-    width: calc(75% - 4px);
+    width: calc(75% - 5px);
 }
 
 #playerVolumeSlider {
     display: inline-block;
-    width: -moz-calc(25% - 4px);
-    width: -webkit-calc(25% - 4px);
-    width: -o-calc(25% - 4px);
     width: calc(25% - 4px);
 }
 .movablePlayerConstrolsSliders {
-    width: -moz-calc(100% - 44px);
-    width: -webkit-calc(100% - 44px);
-    width: -o-calc(100% - 44px);
     width: calc(100% - 44px);
 }
 
 .movablePlayerDurationSlider {
-    width: -moz-calc(75% - 12px);
-    width: -webkit-calc(75% - 12px);
-    width: -o-calc(75% - 12px);
     width: calc(75% - 12px);
 }
 
 .movablePlayerVolumeSlider {
     display: inline-block;
-    width: -moz-calc(25% - 8px);
-    width: -webkit-calc(25% - 8px);
-    width: -o-calc(25% - 8px);
     width: calc(25% - 8px);
 }
 
@@ -192,8 +178,5 @@ blockquote {
 }
 
 .frameContent {
-    width: -moz-calc(100% - 248px);
-    width: -webkit-calc(100% - 248px);
-    width: -o-calc(100% - 248px);
     width: calc(100% - 248px);
 }

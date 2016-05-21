@@ -12,7 +12,7 @@
 body {
     position:relative;
     margin: 0;
-    font: 15px "PT Sans";
+    font-family: 'PT Sans', sans-serif;
 }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -135,9 +135,8 @@ header i:hover,
     position: relative;
     cursor: pointer;
     font-size: 14px;
-    line-height: 24px;
     font-weight: bold;
-    padding: 12px;
+    padding: 10px;
     box-sizing: border-box;
     width: 100%;
     display: block;
@@ -201,6 +200,7 @@ a {
 .titl {
     position: relative;
     text-align: center;
+    box-sizing: border-box;
 }
 .float-l {
     float:left;
@@ -342,17 +342,13 @@ div.scroll-window {
 #tplayer {
     max-height: 42px;
 }
-.player-menu {
-    -webkit-appearance: none;
-    display: block;
-    background: none;
-    border: none;
-    outline:none;
-    padding: 0;
-    width: 33px;
-    right:0;
+#header .player-menu {
+    font-size: 30px;
+    padding: 6px 5px;
+    right: 0;
+    height: inherit;
 }
-#tplayer i, .player-menu i {
+#tplayer i, .player-menu {
     padding: 0 5px;
     height: 42px;
     vertical-align: middle;
@@ -414,9 +410,9 @@ h1 {
 }
 .list-item .buttonImage {
     position: absolute;
-    right: 12px;
+    right: 6px;
     padding: 4px;
-    top: 12px;
+    top: 6px;
 }
 .cspoilerTitle {
     cursor: pointer;
@@ -429,18 +425,6 @@ h1 {
 .ui-button-icon-only .ui-button-text {
     padding: 0 !important;
     margin: 0 !important;
-    max-width: 100vw;
-}
-
-.ui-dialog .ui-dialog-content:empty {
-    display: table !important;
-}
-
-.ui-dialog .ui-dialog-content:empty:after {
-    content: 'Ничего нет.';
-    text-align: center;
-    display: table-cell;
-    vertical-align: middle;
 }
 
 /* COMMON FOR ALL STYLES */
@@ -477,7 +461,7 @@ h1 {
 }
 .list-item .newPostCount {
     position: absolute;
-    right: 5%;
+    right: 2%;
     font-size: 100% !important;
     color: green;
 }
@@ -534,6 +518,8 @@ h1 {
     max-width: 50vw;
 }
 #fastSettings, .settingsDialog table {
+    margin: 0 auto;
+    font-size: 14px;
     padding: 10px;
     width: 394px;
     box-sizing: border-box;

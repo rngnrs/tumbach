@@ -4,10 +4,10 @@
     height: 75px;
 }
 .titl {
-    padding: 23px 0;
-    font-size: 23px;
+    padding: 27px 0;
+    height: 75px;
 }
-header .searchAction, .desktopOnly {
+.desktopOnly {
     display: none;
 }
 #playerTrackTags {
