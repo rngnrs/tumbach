@@ -1362,7 +1362,7 @@ lord.settings = function() {
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
-        showFrame: lord.getLocalObject("showFrame", window.width >= 1024),
+        showFrame: lord.getLocalObject("showFrame", $(window).width() >= 1024),
         transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };

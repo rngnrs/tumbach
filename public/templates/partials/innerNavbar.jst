@@ -23,10 +23,12 @@
         <span class="navbarBoardGroup">
             [
             {{~group.boards :board:index}}
-                <span class="navbarItem navbarItemBoard"><a href="/{{=it.site.pathPrefix}}{{=board.name}}/"
-                      class="ajax" title="{{=board.title}}" data-board-name="{{=board.name}}">{{=board.name}}</a></span>
-                {{? index < group.boards.length - 1}}
-                    /
+                {{? it.settings.hiddenBoards.indexOf(board.name) < 0 && !board.hidden}}
+                    <span class="navbarItem navbarItemBoard"><a href="/{{=it.site.pathPrefix}}{{=board.name}}/"
+                          class="ajax" title="{{=board.title}}" data-board-name="{{=board.name}}">{{=board.name}}</a></span>
+                    {{? index < group.boards.length - 1}}
+                        /
+                    {{?}}
                 {{?}}
             {{~}}
             ]
@@ -41,13 +43,6 @@
                              class="ajax" title="{{=it.tr.toMarkupPageText}}"><img src="/{{=it.site.pathPrefix}}img/markup.png"
                                                                       class="buttonImage"
                                                                       width="16" height="16"></a>]</span>
-{{? !it.inIframe}}
-    <span class="navbarItem">[<a href="javascript:void(0);"
-                                 onclick="window.location = '/{{=it.site.pathPrefix}}frame.html?src=' + window.location.pathname; return false;"
-                                 title="{{=it.tr.framedVersionText}}"><img src="/{{=it.site.pathPrefix}}img/frame.png"
-                                                                           class="buttonImage"
-                                                                           width="16" height="16"></a>]</span>
-{{?}}
 <span class="navbarItem">[<a href="/{{=it.site.pathPrefix}}faq.html"
                              class="ajax" title="{{=it.tr.toFaqPageText}}"><img src="/{{=it.site.pathPrefix}}img/question.png"
                                                                    class="buttonImage"

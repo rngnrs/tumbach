@@ -461,7 +461,7 @@ h1 {
 }
 .list-item .newPostCount {
     position: absolute;
-    right: 2%;
+    right: 10px;
     font-size: 100% !important;
     color: green;
 }
@@ -501,6 +501,15 @@ h1 {
     height:42px;
     position:relative;
 }
+.logo-0chan {
+    background: url(../../img/custom/logo-0chan.png) no-repeat;
+}
+.logo-2ch {
+    background: url(../../img/custom/logo-2ch.png) no-repeat;
+}
+.logo-tumbach {
+    background: url(../../img/custom/logo-tumbach.png) no-repeat;
+}
 .settingsDialog > ul.tabWidget {
     width: 128px;
     float: left;
@@ -520,7 +529,7 @@ h1 {
 #fastSettings, .settingsDialog table {
     margin: 0 auto;
     font-size: 14px;
-    padding: 10px;
+    padding: 6px;
     width: 394px;
     box-sizing: border-box;
 }

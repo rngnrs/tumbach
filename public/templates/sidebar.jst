@@ -84,7 +84,7 @@
                     {{? it.settings.hiddenBoards.indexOf(board.name) < 0 && !board.hidden}}
                         <span class="navbarItem navbarItemBoard">
                             <a class="list-item ajax"
-                               href="/{{=it.site.pathPrefix}}{{=board.name}}/" title="{{=board.name}}"
+                               href="/{{=it.site.pathPrefix}}{{=board.name}}/" title="/{{=board.name}}/"
                                data-board-name="{{=board.name}}">
                                 {{=board.title}}
                             </a>
