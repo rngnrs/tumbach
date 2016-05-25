@@ -2988,14 +2988,7 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var k = (!lord.deviceType("mobile") && lord.getLocalObject("showFrame", true)) ? $('#sidebar').width() : 0;
-    lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
-        my: "left top",
-        at: "left-" + k + "px bottom+2px",
-        of: $(input),
-        collision: "fit flip"
-    }).show();
-    /*var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
+    var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
         ic = input.getBoundingClientRect(),
         html = document.documentElement,
         of = {
@@ -3006,7 +2999,7 @@ lord.showMenu = function(e, input, selector) {
         cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
     lord.currentMenu.css("left", cx);
-    lord.currentMenu.css("top", cy);*/
+    lord.currentMenu.css("top", cy);
 };
 
 lord.hotkey = function(name, hotkeys) {
