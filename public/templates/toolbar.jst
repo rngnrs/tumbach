@@ -1,5 +1,6 @@
 <div>
     <div class="toolbar">
+        {{? "mobile" != it.deviceType}}
         [<input type="image" name="settingsButton" title="{{=it.tr.settingsButtonText}}" class="buttonImage"
                 src="/{{=it.site.pathPrefix}}img/settings.png" onclick="lord.showSettings(); return false;" />]
         [<input type="image" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" class="buttonImage"
@@ -7,17 +8,18 @@
         [<a onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"
             title="{{=it.tr.mumWatchingText}}"><img src="/{{=it.site.pathPrefix}}img/{{? it.mumWatching}}hide{{??}}show{{?}}.png"
                                                     class="buttonImage"></a>]
-        {{? it.user.loggedIn}}
-            <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
-                  enctype="application/x-www-form-urlencoded" class="inlineForm"
-                  onsubmit="lord.doLogout(event, this); return false;">
-                [<input type="image" name="submit" src="/{{=it.site.pathPrefix}}img/logout.png" class="buttonImage"
-                        title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}" />]
-            </form>
-        {{??}}
-            [<a href="javascript:void(0);"
-                onclick="lord.redirectToLoginPage();"><img src="/{{=it.site.pathPrefix}}img/login.png"
-                                                           class="buttonImage" title="{{=it.tr.loginText}}"></a>]
+            {{? it.user.loggedIn}}
+                <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
+                      enctype="application/x-www-form-urlencoded" class="inlineForm"
+                      onsubmit="lord.doLogout(event, this); return false;">
+                    [<input type="image" name="submit" src="/{{=it.site.pathPrefix}}img/logout.png" class="buttonImage"
+                            title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}" />]
+                </form>
+            {{??}}
+                [<a href="javascript:void(0);"
+                    onclick="lord.redirectToLoginPage();"><img src="/{{=it.site.pathPrefix}}img/login.png"
+                                                               class="buttonImage" title="{{=it.tr.loginText}}"></a>]
+            {{?}}
         {{?}}
         {{#def.innerNavbar}}
     </div>

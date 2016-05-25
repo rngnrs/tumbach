@@ -2130,6 +2130,24 @@ lord.insertMumWatchingStylesheet = function() {
     document.head.appendChild(style);
 };
 
+lord.adjustPostBodySize = function() {
+    var style = lord.id("postBodySize");
+    if (!style)
+        return;
+    var nstyle = lord.node("style");
+    nstyle.id = "postBodySize";
+    nstyle.type = "text/css";
+    var width = $(".wrap").width();
+    var m = lord.deviceType("mobile") ? 0 : 270;
+    var css = ".postBody { max-width: " + (width - 14) + "px; }\n";
+    css += ".postFile ~ .postText > blockquote, .blockLatex, .codeBlock { max-width: " + (width - m) + "px; }";
+    if (nstyle.styleSheet)
+        nstyle.styleSheet.cssText = css;
+    else
+        nstyle.appendChild(lord.node("text", css));
+    document.head.replaceChild(nstyle, style);
+};
+
 lord.initializeOnLoadBase = function() {
     lord.hashChangeHandler(lord.hash());
     lord.series(lord.pageProcessors, function(f) {
@@ -2230,11 +2248,22 @@ lord.initializeOnLoadBase = function() {
             width: w.width(),
             height: w.height()
         };
-        if (n.width != lord.lastWindowSize.width) {
-            $(".postBody").css("maxWidth", (n.width - 30) + "px");
-        }
+        if (n.width != lord.lastWindowSize.width)
+            lord.adjustPostBodySize();
         lord.lastWindowSize = n;
     });
+    if (lord.deviceType("mobile")) {
+        lord.detectSwipe(document.body, function(e) {
+            var visible1 = $("#sidebar").hasClass("open");
+            var visible2 = $("#sidebar2").hasClass("open");
+            if (Math.abs(e.distanceX) < 100)
+                return;
+            if ((e.types.indexOf("swiperight") >= 0 && !visible1 && !visible2) || (e.types.indexOf("swipeleft") >= 0 && visible1 && !visible2))
+                tumb.toggle.frame(true);
+            else if ((e.types.indexOf("swiperight") >= 0 && visible2) || (e.types.indexOf("swipeleft") >= 0 && !visible2))
+                lord.setSidebarVisible();
+        });
+    }
 };
 
 lord.processBoardGroups = function(model) {

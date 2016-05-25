@@ -1,10 +1,8 @@
 <script id="navbarPlaceholder" type="text/javascript">
     (function() {
-        var settings = lord.settings();
         var model = lord.model(["base", "tr", "boards"]);
         if (lord.data("boardName"))
             model.board = lord.model("board/" + lord.data("boardName")).board;
-        model.inIframe = lord.inIframe();
         lord.processBoardGroups(model);
         var placeholder = lord.id("navbarPlaceholder");
         placeholder.parentNode.replaceChild(lord.template("navbar", model), placeholder);

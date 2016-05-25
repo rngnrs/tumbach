@@ -431,6 +431,7 @@ lord.clearFileInput = function(div) {
     if (!div)
         return;
     lord.queryOne("img.postformFilePreview", div).src = "/" + lord.data("sitePathPrefix") + "img/addfile.png";
+    $("img.postformFilePreview", div).removeClass("noInvert");
     $(lord.queryOne("span.postformFileText", div)).empty();
     lord.removeFileHash(div);
     if (div.hasOwnProperty("fileInput"))
@@ -1619,6 +1620,7 @@ lord.fileAddedCommon = function(div) {
         lord.readAs(div.file, "DataURL").then(function(url) {
             var img = lord.queryOne("img", div);
             img.src = url;
+            $(img).addClass("noInvert");
             if ("neutron" == lord.settings().style.name)
                 $(img).addClass("noInvert");
             img.addEventListener("load", function load() {
@@ -1761,6 +1763,7 @@ lord.attachFileByDrawing = function(a) {
                     });
                 };
                 img.src = url;
+                $(img).addClass("noInvert");
             });
         }).then(function(options) {
             var model = lord.model(["base", "tr"]);
@@ -2596,7 +2599,7 @@ lord.strikeOutHiddenPostLinks = function(parent) {
 
 lord.signOpPostLinks = function(parent) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     lord.queryAll("a", parent).forEach(function(a) {
         lord.signOpPostLink(a);
     });
@@ -2604,7 +2607,7 @@ lord.signOpPostLinks = function(parent) {
 
 lord.signOwnPostLinks = function(parent, ownPosts) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     ownPosts = ownPosts || lord.getLocalObject("ownPosts", {});
     lord.queryAll("a", parent).forEach(function(a) {
         lord.signOwnPostLink(a, ownPosts);
@@ -2676,7 +2679,7 @@ lord.downloadThreadFiles = function(el) {
 
 lord.processPosts = function(parent) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     $(".postBody", parent).css("maxWidth", ($(window).width() - 30) + "px");
     var posts = ($(parent).hasClass("post") || $(parent).hasClass("opPost")) ? [parent]
         : lord.queryAll(".post, .opPost", parent);
@@ -2985,7 +2988,14 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
+    var k = (!lord.deviceType("mobile") && lord.getLocalObject("showFrame", true)) ? $('#sidebar').width() : 0;
+    lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().position({
+        my: "left top",
+        at: "left-" + k + "px bottom+2px",
+        of: $(input),
+        collision: "fit flip"
+    }).show();
+    /*var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
         ic = input.getBoundingClientRect(),
         html = document.documentElement,
         of = {
@@ -2996,7 +3006,7 @@ lord.showMenu = function(e, input, selector) {
         cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
     lord.currentMenu.css("left", cx);
-    lord.currentMenu.css("top", cy);
+    lord.currentMenu.css("top", cy);*/
 };
 
 lord.hotkey = function(name, hotkeys) {
@@ -3114,7 +3124,7 @@ lord.appendHotkeyShortcuts = function() {
 };
 
 lord.initializeOnLoadBoard = function() {
-    $(".postBody", document.body).css("maxWidth", ($(window).width() - 30) + "px");
+    lord.adjustPostBodySize();
     var c = {};
     c.model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
     c.model.settings = lord.settings();
@@ -3231,7 +3241,7 @@ lord.initializeOnLoadBoard = function() {
             }
         }
     }
-    lord.processPosts(document.body);
+    lord.processPosts(lord.queryOne(".wrap"));
     var lastLang = lord.getLocalObject("lastCodeLang", "-");
     var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
     if (sel) {
@@ -3264,7 +3274,7 @@ lord.scrollHandler = function() {
     if (!lord.queryOne(".navigationButtonTop"))
         return;
     var k = 1300;
-    var top = ((window.innerHeight + window.scrollY + k) >= document.body.offsetHeight);
+    var top = ((window.innerHeight + window.scrollY + k) >= lord.queryOne(".wrap").scrollHeight);
     var bottom = (window.scrollY <= k);
     lord.queryOne(".navigationButtonTop").style.display = bottom ? "none" : "";
     lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";

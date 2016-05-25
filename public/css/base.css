@@ -142,10 +142,16 @@ blockquote.expand {
 
 .spoilerMarkupButton {
     border: none;
-    height: 20px;
+    display: inline-block;
+    height: 22px;
     vertical-align: middle;
     padding-left: 0;
     padding-right: 0;
+    opacity: .65;
+}
+
+.spoilerMarkupButton:hover {
+    opacity: 1;
 }
 
 span.tooltip {
@@ -1195,6 +1201,5 @@ div.ui-widget-content.ui-dialog-content.checkerboardBackground {
     margin-bottom: 0;
     padding-top: 8px;
     padding-bottom: 0;
-    max-width: 100%;
     overflow-x: auto;
 }

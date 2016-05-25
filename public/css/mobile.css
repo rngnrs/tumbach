@@ -32,10 +32,6 @@ body {
     cursor: pointer;
 }
 
-blockquote {
-    max-width: 550px;
-}
-
 .navbar.navbarFrame {
     font-size: 1.2em;
 }
@@ -80,7 +76,6 @@ blockquote {
 
 .searchAction > form {
     white-space: nowrap;
-    /*width: 98%;*/
     width: 70%;
     margin: 0 auto;
 }
@@ -145,9 +140,6 @@ blockquote {
 }*/
 
 #playerDurationSlider {
-    width: -moz-calc(100% - 6px);
-    width: -webkit-calc(100% - 6px);
-    width: -o-calc(100% - 6px);
     width: calc(100% - 6px);
     margin-right: 0px;
 }
@@ -162,16 +154,10 @@ blockquote {
 }*/
 
 .movablePlayerConstrolsSliders {
-    width: -moz-calc(100% - 28px);
-    width: -webkit-calc(100% - 28px);
-    width: -o-calc(100% - 28px);
     width: calc(100% - 28px);
 }
 
 .movablePlayerDurationSlider {
-    width: -moz-calc(100% - 6px);
-    width: -webkit-calc(100% - 6px);
-    width: -o-calc(100% - 6px);
     width: calc(100% - 6px);
     margin-right: 0px;
 }
@@ -204,24 +190,18 @@ div.bannedUser {
 
 .chatHistory {
     min-width: 200px;
-    max-width: 300px;
+    max-width: 200px;
     min-height: 400px;
     max-height: 400px;
 }
 
 .registeredUserHashpassInput {
     box-sizing: border-box;
-    width: -moz-calc(100% - 8px);
-    width: -webkit-calc(100% - 8px);
-    width: -o-calc(100% - 8px);
     width: calc(100% - 8px);
 }
 
 .registeredUserIpsInput {
     box-sizing: border-box;
-    width: -moz-calc(100% - 8px);
-    width: -webkit-calc(100% - 8px);
-    width: -o-calc(100% - 8px);
     width: calc(100% - 8px);
 }
 
@@ -234,8 +214,5 @@ div.bannedUser {
 }
 
 .frameContent {
-    width: -moz-calc(100% - 88px);
-    width: -webkit-calc(100% - 88px);
-    width: -o-calc(100% - 88px);
     width: calc(100% - 88px);
 }
