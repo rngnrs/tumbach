@@ -126,3 +126,7 @@ ul.tabWidget > li.activated {
 .opSign {
     color: #080;
 }
+.submitContainer > input {
+    border-color: #99D9EA;
+    background: #99D9EA;
+}
