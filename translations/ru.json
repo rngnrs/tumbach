@@ -827,6 +827,9 @@
         },
         "closeThreadText": {
             "value": "Закрыть"
+        },
+        "closePostFormButtonText": {
+            "value": "Закрыть"
         }
     },
     "Remove thread from favorites": {
@@ -1256,6 +1259,9 @@
     "Fixed": {
         "fixedText": {
             "value": "Закрепленный"
+        },
+        "postFormFixedButtonText": {
+            "value": "Закреплена"
         }
     },
     "Fix": {
@@ -2420,12 +2426,6 @@
             "value": "Поисковый запрос слишком длинный"
         }
     },
-    "404 (not found)": {
-        "errorMessage": {
-            "value": "404 (не найдено)"
-        },
-        "_obsolete": true
-    },
     "Invalid page number": {
         "_default": {
             "value": "Недействительный номер страницы"
@@ -3208,6 +3208,16 @@
     "Edit file rating": {
         "editFileRatingText": {
             "value": "Редактировать рейтинг файла"
+        }
+    },
+    "Start dragging to make post form float": {
+        "postFormHeaderLabelText": {
+            "value": "Потяните, чтобы сделать форму плавающей"
+        }
+    },
+    "Not fixed": {
+        "postFormUnfixedButtonText": {
+            "value": "Не закреплена"
         }
     },
     "Transparent header": {

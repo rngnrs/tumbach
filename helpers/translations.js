@@ -450,7 +450,10 @@ module.exports = function(tr) {
     translate("Regenerate archived threads", "regenerateArchivedThreadsLabelText");
     translate("Show search field", "showSearchActionText");
     translate("Hide search field", "hideSearchActionText");
-
+    translate("Start dragging to make post form float", "postFormHeaderLabelText");
+    translate("Fixed", "postFormFixedButtonText");
+    translate("Not fixed", "postFormUnfixedButtonText");
+    translate("Close", "closePostFormButtonText");
 
     translate("Failed to prepare captcha", "failedToPrepareCaptchaText");
     translate("Transparent header", "transparentHeaderLabelText");

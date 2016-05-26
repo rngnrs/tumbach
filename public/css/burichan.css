@@ -384,5 +384,23 @@ ul.tabWidget > li.activated {
 }
 
 ul.jqueryFileTree a {
-    color: black !important;
+    color: #000 !important;
+}
+
+#postForm {
+    background-color: #EEF2FF;
+}
+
+#postForm.floatingPostForm {
+    border: 2px solid #BBB;
+}
+
+.postFormHeader {
+    background-color: #D6DAF0;
+    border: 1px solid #CCC;
+}
+
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #CCC;
 }

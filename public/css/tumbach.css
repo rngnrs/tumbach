@@ -130,3 +130,17 @@ ul.tabWidget > li.activated {
     border-color: #99D9EA;
     background: #99D9EA;
 }
+#postForm {
+    background-color: #EEE;
+}
+#postForm.floatingPostForm {
+    border: 2px solid #BBB;
+}
+.postFormHeader {
+    background-color: #99D9EA;
+    border: 1px solid #CCC;
+}
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #CCC;
+}

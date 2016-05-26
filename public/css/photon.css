@@ -370,8 +370,8 @@ ul.tabWidget > li.activated > a {
 }
 
 .searchResult {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    border: 1px solid #CCC;
 }
 
 .searchResultHighlighted {
@@ -384,4 +384,26 @@ ul.tabWidget > li.activated > a {
 
 ul.jqueryFileTree a {
     color: black !important;
+}
+
+.theTitle {
+    color: #F60;
+}
+
+#postForm {
+    background-color: #EEE;
+}
+
+#postForm.floatingPostForm {
+    border: 2px solid #BBB;
+}
+
+.postFormHeader {
+    background-color: #DDD;
+    border: 1px solid #CCC;
+}
+
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #CCC;
 }
