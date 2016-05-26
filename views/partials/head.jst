@@ -35,6 +35,7 @@
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/underscore-min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/api.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/xregexp-all.min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/uuid.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js"></script>
@@ -153,7 +154,7 @@
                     var sel = 'a[data-rating="' + rating + '"]';
                     selectors.push(sel);
                     var dots = "..";
-                    if (/\/((res|arch)\/\d+|catalog|archive)\.html$/.test(window.location.href))
+                    if (/\/((res|arch)\/\d+|catalog|archive)\.html$/.test(window.location.pathname))
                         dots += "/..";
                     s += sel + '{ background: url("' + dots + '/img/' + rating.toLowerCase() + '.png") center center; '
                         + 'width: ' + size + '; height: ' + size + '; }';

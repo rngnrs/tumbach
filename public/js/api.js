@@ -1314,7 +1314,7 @@ lord.settings = function() {
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
-        maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
+        maxAllowedRating: lord.getLocalObject("maxAllowedRating", "SFW"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", false),
         hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),
         minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
@@ -1327,7 +1327,7 @@ lord.settings = function() {
         addExpander: lord.getLocalObject("addExpander", true),
         signOpPostLinks: lord.getLocalObject("signOpPostLinks", true),
         signOwnPostLinks: lord.getLocalObject("signOwnPostLinks", true),
-        showLeafButtons: lord.getLocalObject("showLeafButtons", true),
+        showLeafButtons: lord.getLocalObject("showLeafButtons", false),
         leafThroughImagesOnly: lord.getLocalObject("leafThroughImagesOnly", true),
         imageZoomSensitivity: lord.getLocalObject("imageZoomSensitivity", 20),
         defaultAudioVideoVolume: lord.getLocalObject("defaultAudioVideoVolume", 100),
@@ -1343,15 +1343,15 @@ lord.settings = function() {
         hideTripcodes: lord.getLocalObject("hideTripcodes", false),
         hideUserNames: lord.getLocalObject("hideUserNames", false),
         strikeOutHiddenPostLinks: lord.getLocalObject("strikeOutHiddenPostLinks", true),
-        spellsEnabled: lord.getLocalObject("spellsEnabled", true),
-        ihashDistance: lord.getLocalObject("ihashDistance", 15),
+        spellsEnabled: lord.getLocalObject("spellsEnabled", false),
+        ihashDistance: lord.getLocalObject("ihashDistance", 10),
         showNewPosts: lord.getLocalObject("showNewPosts", true),
         hotkeysEnabled: lord.getLocalObject("hotkeysEnabled", true),
         userCssEnabled: lord.getLocalObject("userCssEnabled", true),
         userJavaScriptEnabled: lord.getLocalObject("userJavaScriptEnabled", true),
         sourceHighlightingEnabled: lord.getLocalObject("sourceHighlightingEnabled", false),
-        chatEnabled: lord.getLocalObject("chatEnabled", true),
-        drawingEnabled: lord.getLocalObject("drawingEnabled", true),
+        chatEnabled: lord.getLocalObject("chatEnabled", false),
+        drawingEnabled: lord.getLocalObject("drawingEnabled", false),
         autoUpdatePlayer: lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")),
         resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", true),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
@@ -1362,7 +1362,7 @@ lord.settings = function() {
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
-        showFrame: lord.getLocalObject("showFrame", $(window).width() >= 1024),
+        showFrame: lord.getLocalObject("showFrame", false),
         transparentHeader: lord.getLocalObject("transparentHeader", true)
     };
 };
@@ -1604,4 +1604,10 @@ lord.detectSwipe = function(el, callback) {
             });
         }, false);
     })();
+};
+
+lord.getWords = function(text) {
+    if (typeof text != "string")
+        return [];
+    return text.replace(/\s+/g, " ").replace(new XRegExp("[^\\p{L} ]", "gi"), "").trim().substring(0, 800).split(" ");
 };
