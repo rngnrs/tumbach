@@ -173,6 +173,8 @@
                 };
                 s += createSelector() + '{ display: inline-block; }';
                 s += createSelector(" > img") + '{ display: none; }';
+                if(!lord.model("base").user.isModer())
+                    s += "[name=editFileRatingButton] { display: none; }";
             }
             s += '</style>';
             if (lord.getLocalObject("mumWatching", false)) {

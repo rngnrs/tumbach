@@ -26,6 +26,7 @@
 !echoPostFormField.jst
 !echoPostSubject.jst
 !editAudioTagsDialog.jst
+!editFileRatingDialog.jst
 !editPostDialog.jst
 !favoritesDialog.jst
 !favoritesElement.jst

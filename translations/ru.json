@@ -3205,6 +3205,11 @@
             "value": "Капча решена неправильно"
         }
     },
+    "Edit file rating": {
+        "editFileRatingText": {
+            "value": "Редактировать рейтинг файла"
+        }
+    },
     "Transparent header": {
         "transparentHeaderLabelText": {
             "value": "Прозрачная шапка"
