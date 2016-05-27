@@ -216,3 +216,28 @@ div.bannedUser {
 .frameContent {
     width: calc(100% - 88px);
 }
+
+.settingsDialog,
+.settingsDialog input,
+.settingsDialog select,
+.settingsDialog button {
+    font-size: 12px !important;
+}
+
+.settingsDialog ul.tabWidget {
+    display: block;
+}
+
+.settingsDialog > div {
+    width: 100vw;
+    box-sizing: border-box;
+}
+
+.settingsDialog ul.tabWidget > li > a {
+    padding: 6px 3px;
+}
+
+#fastSettings, .settingsDialog table {
+    width: 100vw;
+    font-size: 12px;
+}

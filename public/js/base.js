@@ -2272,7 +2272,7 @@ lord.initializeOnLoadBase = function() {
         lord.detectSwipe(document.body, function(e) {
             var visible1 = $("#sidebar").hasClass("open");
             var visible2 = $("#sidebar2").hasClass("open");
-            if (Math.abs(e.distanceY) >= 15 || Math.abs(e.distanceX) < 100)
+            if (Math.abs(e.distanceY) >= 15 || Math.abs(e.distanceX) < 100 || lord.dialogs.length > 0)
                 return;
             if ((e.types.indexOf("swiperight") >= 0 && !visible1 && !visible2) || (e.types.indexOf("swipeleft") >= 0 && visible1 && !visible2))
                 tumb.toggle.frame(true);
