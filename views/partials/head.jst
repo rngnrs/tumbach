@@ -204,8 +204,6 @@
                 lord.createStylesheetLink("3rdparty/literallycanvas.css", true);
                 lord.createStylesheetLink("3rdparty/jquery.minicolors.css", true);
             }
-            if (settings.userJavaScriptEnabled)
-                s += '<script type="text/javascript">' + lord.getLocalObject("userJavaScript", "") + "</s" + "cript>";
             document.head.innerHTML += s;
             lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
             lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
@@ -241,6 +239,12 @@
                     style.appendChild(lord.node("text", css));
                 document.head.appendChild(style);
             {{?}}
+            if (settings.userJavaScriptEnabled) {
+                var js = lord.getLocalObject("userJavaScript", "");
+                var script = lord.node("script");
+                script.appendChild(lord.node("text", js));
+                document.head.appendChild(script);
+            }
             if (settings.userCssEnabled) {
                 var css = lord.getLocalObject("userCss", "");
                 var style = lord.node("style");
@@ -252,7 +256,7 @@
                 document.head.appendChild(style);
             }
             scriptsQueue.forEach(function(src) {
-                var script = document.createElement('script');
+                var script = lord.node('script');
                 script.src = src;
                 script.async = false;
                 document.head.appendChild(script);
