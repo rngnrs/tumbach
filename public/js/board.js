@@ -2373,8 +2373,7 @@ lord.submitted = function(event, form) {
         form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
-    if(markupMode)
-        lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
+    lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
     lord.setLocalObject("password", lord.nameOne("password", form).value || "");
@@ -2523,7 +2522,7 @@ lord.fillFormWithDraft = function(a) {
         name = lord.nameOne("name", postForm),
         subject = lord.nameOne("subject", postForm),
         text = lord.nameOne("text", postForm),
-        p = lord.nameOne("signAsOp", postForm),
+        op = lord.nameOne("signAsOp", postForm),
         tripcode = lord.nameOne("tripcode", postForm),
         markupMode = lord.nameOne("markupMode", postForm);
     //TODO: confirm if form not empty
@@ -2535,13 +2534,12 @@ lord.fillFormWithDraft = function(a) {
     $(op).button("refresh");
     tripcode.checked = draft.options.showTripcode;
     $(tripcode).button("refresh");
-    if(markupMode)
-        for (var i = 0; i < markupMode.options.length; ++i) {
-            if (draft.markupMode == markupMode.options[i].value) {
-                markupMode.selectedIndex = i;
-                break;
-            }
+    for (var i = 0; i < markupMode.options.length; ++i) {
+        if (draft.markupMode == markupMode.options[i].value) {
+            markupMode.selectedIndex = i;
+            break;
         }
+    }
 };
 
 lord.deleteDraft = function(a) {
@@ -2575,7 +2573,8 @@ lord.addToDrafts = function(a) {
     var boardName = lord.nameOne("boardName", postForm).value;
     var threadNumber = lord.nameOne("threadNumber", postForm);
     threadNumber = threadNumber ? +threadNumber.value : null;
-    var markupMode = lord.settings().markupMode;
+    var markupMode = lord.nameOne("markupMode", postForm);
+    markupMode = markupMode.options[markupMode.selectedIndex].value;
     var formData = new FormData();
     formData.append("boardName", boardName);
     formData.append("text", lord.nameOne("text", postForm).value);
@@ -2628,13 +2627,12 @@ lord.resetPostForm = function() {
         $(trip).button("refresh");
     }
     var markupMode = lord.nameOne("markupMode", postForm);
-    if(markupMode)
-        for (var i = 0; i < markupMode.options.length; ++i) {
-            if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
-                markupMode.selectedIndex = i;
-                break;
-            }
+    for (var i = 0; i < markupMode.options.length; ++i) {
+        if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
+            markupMode.selectedIndex = i;
+            break;
         }
+    }
     if (lord.customResetForm)
         lord.customResetForm(postForm);
 };

@@ -204,7 +204,7 @@ span.newPostCount {
 .catalogItem {
     box-sizing: border-box;
     display: inline-block;
-    /*height: 450px;*/
+    height: 450px;
     min-height: 450px;
     margin: 10px;
     overflow: hidden;
@@ -518,8 +518,8 @@ span.newPostCount {
 
 .postformFile div[name="ratingSelectContainer"] {
     bottom: 6px;
+    right: 6px;
     position: absolute;
-    right: 0;
 }
 
 .referencedBy {

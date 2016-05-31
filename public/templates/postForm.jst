@@ -265,8 +265,7 @@
             {{? it.customPostFormField && it.customPostFormField[50]}}
                 {{ out += it.customPostFormField[50](it); }}
             {{?}}
-            {{? it.settings.showMarkupModes}}
-            <tr>
+            <tr{{? !it.settings.showMarkupModes}} style="display: none"{{?}}>
                 {{? !it.settings.minimalisticPostform}}
                     <td class="postformLabel">
                         <b>{{=it.tr.postFormLabelMarkupMode}}</b>
@@ -281,7 +280,6 @@
                     </select>
                 </td>
             </tr>
-            {{?}}
             {{? it.customPostFormField && it.customPostFormField[60]}}
                 {{ out += it.customPostFormField[60](it); }}
             {{?}}
