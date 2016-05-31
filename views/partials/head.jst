@@ -127,9 +127,10 @@
         (function() {
             var settings = lord.settings(),
                 prefix = lord.model("base").site.pathPrefix,
-                s = '<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name + '.css">';
+                s = '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType() + '.css">' +
+                    '<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name + '.css">';
             document.head.innerHTML += s;
-            s = '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType() + '.css">';
+            s = '';
             tumb.set.tileColor(settings.style.name);
             if (lord.deviceType("mobile"))
                 s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />';
