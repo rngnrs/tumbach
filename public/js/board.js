@@ -2373,7 +2373,8 @@ lord.submitted = function(event, form) {
         form = lord.id("postForm");
     var btn = lord.nameOne("submit", form);
     var markupMode = lord.nameOne("markupMode", form);
-    lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
+    if(markupMode)
+        lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
     lord.setLocalObject("password", lord.nameOne("password", form).value || "");
@@ -2517,14 +2518,14 @@ lord.fillFormWithDraft = function(a) {
     }
     if (!draft)
         return;
-    var postForm = lord.id("postForm");
-    var email = lord.nameOne("email", postForm);
-    var name = lord.nameOne("name", postForm);
-    var subject = lord.nameOne("subject", postForm);
-    var text = lord.nameOne("text", postForm);
-    var op = lord.nameOne("signAsOp", postForm);
-    var tripcode = lord.nameOne("tripcode", postForm);
-    var markupMode = lord.nameOne("markupMode", postForm);
+    var postForm = lord.id("postForm"),
+        email = lord.nameOne("email", postForm),
+        name = lord.nameOne("name", postForm),
+        subject = lord.nameOne("subject", postForm),
+        text = lord.nameOne("text", postForm),
+        p = lord.nameOne("signAsOp", postForm),
+        tripcode = lord.nameOne("tripcode", postForm),
+        markupMode = lord.nameOne("markupMode", postForm);
     //TODO: confirm if form not empty
     email.value = draft.email;
     name.value = draft.name;
@@ -2534,12 +2535,13 @@ lord.fillFormWithDraft = function(a) {
     $(op).button("refresh");
     tripcode.checked = draft.options.showTripcode;
     $(tripcode).button("refresh");
-    for (var i = 0; i < markupMode.options.length; ++i) {
-        if (draft.markupMode == markupMode.options[i].value) {
-            markupMode.selectedIndex = i;
-            break;
+    if(markupMode)
+        for (var i = 0; i < markupMode.options.length; ++i) {
+            if (draft.markupMode == markupMode.options[i].value) {
+                markupMode.selectedIndex = i;
+                break;
+            }
         }
-    }
 };
 
 lord.deleteDraft = function(a) {
@@ -2626,12 +2628,13 @@ lord.resetPostForm = function() {
         $(trip).button("refresh");
     }
     var markupMode = lord.nameOne("markupMode", postForm);
-    for (var i = 0; i < markupMode.options.length; ++i) {
-        if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
-            markupMode.selectedIndex = i;
-            break;
+    if(markupMode)
+        for (var i = 0; i < markupMode.options.length; ++i) {
+            if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
+                markupMode.selectedIndex = i;
+                break;
+            }
         }
-    }
     if (lord.customResetForm)
         lord.customResetForm(postForm);
 };
