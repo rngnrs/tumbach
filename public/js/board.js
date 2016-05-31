@@ -2573,8 +2573,7 @@ lord.addToDrafts = function(a) {
     var boardName = lord.nameOne("boardName", postForm).value;
     var threadNumber = lord.nameOne("threadNumber", postForm);
     threadNumber = threadNumber ? +threadNumber.value : null;
-    var markupMode = lord.nameOne("markupMode", postForm);
-    markupMode = markupMode.options[markupMode.selectedIndex].value;
+    var markupMode = lord.settings().markupMode;
     var formData = new FormData();
     formData.append("boardName", boardName);
     formData.append("text", lord.nameOne("text", postForm).value);
@@ -3128,7 +3127,7 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.settings().showFrame) ? $("#sidebar").width() : 0,
+    var fw = (lord.settings().showFrame && lord.deviceType("desktop")) ? $("#sidebar").width() : 0,
         ic = input.getBoundingClientRect(),
         html = document.documentElement,
         of = {

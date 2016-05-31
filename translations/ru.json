@@ -3229,5 +3229,10 @@
         "transparentHeaderLabelText": {
             "value": "Прозрачная шапка"
         }
+    },
+    "Show markup modes into the post form": {
+        "showMarkupModesLabelText": {
+            "value": "Отображать переключение разметки в форме ответа"
+        }
     }
 }

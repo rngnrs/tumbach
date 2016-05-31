@@ -458,5 +458,6 @@ module.exports = function(tr) {
 
     translate("Failed to prepare captcha", "failedToPrepareCaptchaText");
     translate("Transparent header", "transparentHeaderLabelText");
+    translate("Show markup modes into the post form", "showMarkupModesLabelText");
     return tr;
 };

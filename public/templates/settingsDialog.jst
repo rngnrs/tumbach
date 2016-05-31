@@ -293,6 +293,25 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelMarkupMode}}</b>
+                    </td>
+                    <td class="postformField">
+                        <select name="markupMode" class="select">
+                            {{~it.markupModes :mode}}
+                            <option {{? mode.name == it.settings.markupMode}}selected="true"{{?}}
+                                    value="{{=mode.name}}">{{=mode.title}}</option>
+                            {{~}}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="showMarkupModes" value="true"
+                                      {{? it.settings.showMarkupModes}}checked="true"{{?}} />{{=it.tr.showMarkupModesLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2">
                         <label><input type="checkbox" name="hidePostformRules" value="true"
                                {{? it.settings.hidePostformRules}}checked="true"{{?}} />{{=it.tr.hidePostformRulesLabelText}}</label>

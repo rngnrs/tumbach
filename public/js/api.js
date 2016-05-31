@@ -1315,8 +1315,8 @@ lord.settings = function() {
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "SFW"),
-        hidePostformRules: lord.getLocalObject("hidePostformRules", false),
-        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),
+        hidePostformRules: lord.getLocalObject("hidePostformRules", true),
+        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", true),
         minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
         hiddenBoards: lord.getLocalObject("hiddenBoards", []),
         autoUpdateThreadsByDefault: lord.getLocalObject("autoUpdateThreadsByDefault", false),
@@ -1363,7 +1363,8 @@ lord.settings = function() {
 
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
         showFrame: lord.getLocalObject("showFrame", false),
-        transparentHeader: lord.getLocalObject("transparentHeader", true)
+        transparentHeader: lord.getLocalObject("transparentHeader", true),
+        showMarkupModes: lord.getLocalObject("showMarkupModes", false)
     };
 };
 

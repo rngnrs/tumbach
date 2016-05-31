@@ -386,7 +386,7 @@ ul.jqueryFileTree a {
     color: black !important;
 }
 
-.theTitle {
+.theTitle h1 {
     color: #F60;
 }
 

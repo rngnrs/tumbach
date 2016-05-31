@@ -40,7 +40,7 @@ input[type=number] {
     position: absolute;
     visibility: hidden;
     transition: all .2s ease-in-out;
-    z-index: 10;
+    z-index: 4;
 }
 .tooltip:focus:after, .tooltip-input:focus + label:after {
     opacity: 1;
@@ -52,7 +52,7 @@ input[type=number] {
     top: 0;
     right: 0;
     position: fixed;
-    z-index: 8;
+    z-index: 3;
 }
 #header.transparent .header-wrapper,
 #header.transparent .logo {
@@ -86,7 +86,7 @@ input[type=number] {
     position: fixed;
     top: 42px;
     bottom: 0;
-    z-index: 8;
+    z-index: 4;
 }
 .sidebar-stacked {
     left: 0;
@@ -304,12 +304,10 @@ footer:after {
 #tab_2:checked ~ div #tabl2,
 .frameLabels input:checked ~ label i {
     top: 0;
-    z-index: 3;
     background: rgba(0,0,0,.2);
 }
 .tabs_cont {
     position: relative;
-    z-index: 2;
     height: 100%;
     overflow-y: hidden;
 }
@@ -395,7 +393,7 @@ h1 {
 .overlay.toggled {
     visibility: visible;
     background: rgba(0,0,0,.4);
-    z-index: 7;
+    z-index: 2;
 }
 .overlay.over {
     background: rgba(0,0,0,.4);
