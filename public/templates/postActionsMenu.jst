@@ -10,8 +10,7 @@
         <li>
             <a name="sourceTextButton" target="_blank" href="javascript:void(0);"
                onclick="lord.showPostSourceText(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/source_text.png"
-                      class="signImage" /> {{=it.tr.postSourceText}}</a>
+                <i class="mdi mdi-file"></i> {{=it.tr.postSourceText}}</a>
         </li>
     {{?}}
     {{? it.customPostMenuAction && it.customPostMenuAction[20]}}
@@ -21,7 +20,7 @@
         <li>
             <a name="editButton" target="_blank" href="javascript:void(0);"
                onclick="lord.editPost(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/edit.png" class="signImage" /> {{=it.tr.editPostText}}</a>
+                <i class="mdi mdi-grease-pencil"></i> {{=it.tr.editPostText}}</a>
         </li>
     {{?}}
     {{? it.customPostMenuAction && it.customPostMenuAction[30]}}
@@ -31,7 +30,7 @@
         <li>
             <a name="addFileButton" target="_blank" href="javascript:void(0);"
                onclick="lord.addFiles(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/add.png" class="signImage" /> {{=it.tr.addFilesText}}</a>
+                <i class="mdi mdi-plus-circle-outline"></i> {{=it.tr.addFilesText}}</a>
         </li>
     {{?}}
     {{? it.customPostMenuAction && it.customPostMenuAction[40]}}
@@ -39,15 +38,14 @@
     {{?}}
     <li>
         <a name="hideButton" href="javascript:void(0);" onclick="lord.setPostHidden(this); return false;">
-            <img src="/{{=it.site.pathPrefix}}img/{{? it.post.hidden}}show{{??}}hide{{?}}.png" class="signImage" />
+            <i class="mdi mdi-eye{{? !it.post.hidden}}-off{{?}}"></i>
             {{? it.post.hidden}}{{=it.tr.showPostText}}{{??}}{{=it.tr.hidePostText}}{{?}}{{? it.hideActionShortcut}} ({{=it.hideActionShortcut}}){{?}}</a>
     </li>
     {{? !it.post.hidden && it.post.rawText}}
         <li>
             <a name="hideSimilarPostsButton" href="javascript:void(0);"
                onclick="lord.hideSimilarPosts(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/similar.png" class="signImage" />
-                {{=it.tr.hideSimilarPostsText}}</a>
+                <i class="mdi mdi-file-multiple"></i> {{=it.tr.hideSimilarPostsText}}</a>
         </li>
     {{?}}
     {{? it.customPostMenuAction && it.customPostMenuAction[50]}}
@@ -57,8 +55,7 @@
         <li>
             <a name="deleteButton" target="_blank" href="javascript:void(0);"
                onclick="lord.deletePost(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/delete.png" class="signImage" />
-                {{=it.tr.deletePostText}}</a>
+                <i class="mdi mdi-delete"></i> {{=it.tr.deletePostText}}</a>
         </li>
     {{?}}
     {{? it.customPostMenuAction && it.customPostMenuAction[60]}}
@@ -72,7 +69,7 @@
         <li>
             <a name="addToFavoritesButton" href="javascript:void(0);"
                onclick="lord.addToOrRemoveFromFavorites(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/favorite{{? it.thread.isInFavorites}}_active{{?}}.png" class="signImage">
+                <i class="mdi mdi-star{{? it.thread.isInFavorites}}-outline{{?}}"></i>
                 <span>{{? !it.thread.isInFavorites}}{{=it.tr.addThreadToFavoritesText}}{{??}}{{=it.tr.removeThreadFromFavoritesText}}{{?}}</span></a>
         </li>
         {{? it.customPostMenuAction && it.customPostMenuAction[80]}}
@@ -81,8 +78,7 @@
         <li>
             <a name="downloadFilesButton" href="javascript:void(0);"
                onclick="lord.downloadThreadFiles(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/download.png" class="signImage" />
-                {{=it.tr.downloadThreadFilesText}}</a>
+                <i class="mdi mdi-download"></i> {{=it.tr.downloadThreadFilesText}}</a>
         </li>
         {{? it.customPostMenuAction && it.customPostMenuAction[90]}}
             {{ out += it.customPostMenuAction[90](it, it.thread, it.post); }}
@@ -91,7 +87,7 @@
             <li>
                 <a name="expandCollapseThreadButton" href="javascript:void(0);"
                    onclick="lord.expandCollapseThread(this); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/expand.png" class="signImage">
+                    <i class="mdi mdi-arrow-{{? it.thread.expanded}}collapse{{??}}expand{{?}}"></i>
                     <span>{{? it.thread.expanded}}{{=it.tr.collapseThreadText}}{{??}}{{=it.tr.expandThreadText}}{{?}}</span></a>
             </li>
         {{?}}
@@ -102,7 +98,7 @@
             <li>
                 <a name="fixButton" href="javascript:void(0);"
                    onclick="lord.setThreadFixed(this, {{=!it.thread.fixed}}); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/{{? it.thread.fixed}}unfix{{??}}fixed{{?}}.png" class="signImage" />
+                    <i class="mdi mdi-pin{{? it.thread.fixed}}-off{{?}}"></i>
                     {{? it.thread.fixed}}{{=it.tr.unfixThreadText}}{{??}}{{=it.tr.fixThreadText}}{{?}}</a>
             </li>
             {{? it.customPostMenuAction && it.customPostMenuAction[110]}}
@@ -111,8 +107,7 @@
             <li>
                 <a name="closeButton" href="javascript:void(0);"
                    onclick="lord.setThreadClosed(this, {{=!it.thread.closed}}); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/{{? it.thread.closed}}open{{??}}closed{{?}}.png"
-                         class="signImage" />
+                    <i class="mdi mdi-lock{{? it.thread.closed}}-open{{?}}"></i>
                     {{? it.thread.closed}}{{=it.tr.openThreadText}}{{??}}{{=it.tr.closeThreadText}}{{?}}</a>
             </li>
             {{? it.customPostMenuAction && it.customPostMenuAction[120]}}
@@ -121,7 +116,7 @@
             <li>
                 <a name="setUnbumpableButton" href="javascript:void(0);"
                    onclick="lord.setThreadUnbumpable(this, {{=!it.thread.unbumpable}}); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/anchor{{? it.thread.unbumpable}}_no{{?}}.png" class="signImage" />
+                    <i class="mdi mdi-anchor"></i>
                     {{? it.thread.unbumpable}}{{=it.tr.setThreadBumpableText}}{{??}}{{=it.tr.setThreadUnbumpableText}}{{?}}</a>
             </li>
             {{? it.customPostMenuAction && it.customPostMenuAction[130]}}
@@ -130,8 +125,7 @@
             <li>
                 <a name="moveButton" target="_blank" href="javascript:void(0);"
                    onclick="lord.moveThread(this); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/move.png" class="signImage" />
-                    {{=it.tr.moveThreadText}}</a>
+                    <i class="mdi mdi-cursor-move"></i> {{=it.tr.moveThreadText}}</a>
             </li>
             {{? it.customPostMenuAction && it.customPostMenuAction[140]}}
                 {{ out += it.customPostMenuAction[140](it, it.thread, it.post); }}
@@ -147,8 +141,7 @@
     {{?}}
     <li>
         <a name="chatButton" href="javascript:void(0);" onclick="lord.chatWithUser(this); return false;">
-            <img src="/{{=it.site.pathPrefix}}img/chat.png" class="signImage" />
-            {{=it.tr.chatWithUserText}}</a>
+            <i class="mdi mdi-comment"></i> {{=it.tr.chatWithUserText}}</a>
     </li>
     {{? it.customPostMenuAction && it.customPostMenuAction[170]}}
         {{ out += it.customPostMenuAction[170](it, it.thread, it.post); }}
@@ -156,16 +149,14 @@
     {{? it.user.isModer()}}
         <li>
             <a name="ipButton" href="javascript:void(0);" onclick="lord.showUserIp(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/ip.png" class="signImage" />
-                {{=it.tr.showUserIpText}}</a>
+                <i class="mdi mdi-server-network"></i> {{=it.tr.showUserIpText}}</a>
         </li>
         {{? it.customPostMenuAction && it.customPostMenuAction[180]}}
             {{ out += it.customPostMenuAction[180](it, it.thread, it.post); }}
         {{?}}
         <li>
             <a name="banButton" target="_blank" href="javascript:void(0);" onclick="lord.banUser(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/ban.png" class="signImage" />
-                {{=it.tr.banUserText}}</a>
+                <i class="mdi mdi-account-off"></i> {{=it.tr.banUserText}}</a>
         </li>
         {{? it.customPostMenuAction && it.customPostMenuAction[190]}}
             {{ out += it.customPostMenuAction[190](it, it.thread, it.post); }}

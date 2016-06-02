@@ -20,23 +20,21 @@
             {{?}}
             {{? post.isOp}}
                 {{? thread.fixed}}
-                    <img src="/{{=it.site.pathPrefix}}img/fixed.png" class="signImage" title="{{=it.tr.fixedText}}">
+                    <i class="mdi mdi-pin" title="{{=it.tr.fixedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[10]}}
                     {{ out += it.customPostHeaderPart[10](it, thread, post); }}
                 {{?}}
                 {{? thread.closed}}
-                    <img src="/{{=it.site.pathPrefix}}img/closed.png" class="signImage" title="{{=it.tr.closedText}}">
+                    <i class="mdi mdi-lock" title="{{=it.tr.closedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[20]}}
                     {{ out += it.customPostHeaderPart[20](it, thread, post); }}
                 {{?}}
                 {{? thread.postLimitReached}}
-                    <img src="/{{=it.site.pathPrefix}}img/postlimit.png" class="signImage"
-                         title="{{=it.tr.postLimitReachedText}}">
+                    <i class="mdi mdi-alert" title="{{=it.tr.postLimitReachedText}}"></i>
                 {{?? thread.bumpLimitReached}}
-                    <img src="/{{=it.site.pathPrefix}}img/bumplimit.png" class="signImage"
-                          title="{{=it.tr.bumpLimitReachedText}}">
+                    <i class="mdi mdi-block-helper" title="{{=it.tr.bumpLimitReachedText}}"></i>
                 {{?}}
             {{?}}
         </span>
@@ -48,7 +46,7 @@
             {{ out += it.customPostHeaderPart[40](it, thread, post); }}
         {{?}}
         {{? post.options.showTripcode && it.compareRegisteredUserLevels(post.user.level, "USER") >= 0}}
-            <img src="/{{=it.site.pathPrefix}}img/registered.png" class="signImage" title="{{=it.tr.registeredText}}">
+        <i class="zmdi zmdi-badge-check" title="{{=it.tr.registeredText}}"></i>
         {{?}}
         {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}
             {{ out += it.customPostHeaderPart[50](it, thread, post); }}
@@ -103,17 +101,16 @@
                 {{ out += it.customPostHeaderPart[130](it, thread, post); }}
             {{?}}
             {{? thread.postingEnabled && !thread.archived && !thread.postLimitReached}}
-                <span name="quickReplyContainer">[<a href="javascript:void(0);" name="quickReply"
+                <span name="quickReplyContainer"><a href="javascript:void(0);" name="quickReply"
                                                      onclick="lord.quickReply(this); return false;"
-                                                     title="{{=it.tr.quickReplyText}}"><img src="/{{=it.site.pathPrefix}}img/reply.png"
-                                                                                            class="buttonImage"></a>]</span>
+                                                     title="{{=it.tr.quickReplyText}}"><i class="mdi b-icon mdi-reply"></i></a></span>
             {{?}}
             {{? it.customPostHeaderPart && it.customPostHeaderPart[140]}}
                 {{ out += it.customPostHeaderPart[140](it, thread, post); }}
             {{?}}
-            <span name="postActionsContainer">[<input type="image" src="/{{=it.site.pathPrefix}}img/post_actions.png" class="buttonImage"
-                                                      name="postActions" title="{{=it.tr.postActionsText}}"
-                                                      onclick="lord.showPostActionsMenu(event, this, {{=post.number}}); return false;">]</span>
+            <span name="postActionsContainer"><a href="javascript:void(0);" name="postActions"
+                                                 onclick="lord.showPostActionsMenu(event, this, {{=post.number}}); return false;"
+                                                 title="{{=it.tr.postActionsText}}"><i class="mdi b-icon mdi-dots-horizontal"></i></a></span>
             {{? it.customPostHeaderPart && it.customPostHeaderPart[150]}}
                 {{ out += it.customPostHeaderPart[150](it, thread, post); }}
             {{?}}

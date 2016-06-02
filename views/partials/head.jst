@@ -96,6 +96,10 @@
                 if (!lord.addTemplate(templateName, html))
                     return;
             });
+            var settings = lord.settings(),
+                prefix = lord.model("base").site.pathPrefix;
+            document.head.innerHTML += '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType() + '.css">' +
+                    '<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name + '.css">';
         })();
     </script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/base.js"></script>
@@ -127,10 +131,7 @@
         (function() {
             var settings = lord.settings(),
                 prefix = lord.model("base").site.pathPrefix,
-                s = '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType() + '.css">' +
-                    '<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name + '.css">';
-            document.head.innerHTML += s;
-            s = '';
+                s = '';
             tumb.set.tileColor(settings.style.name);
             if (lord.deviceType("mobile"))
                 s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />';

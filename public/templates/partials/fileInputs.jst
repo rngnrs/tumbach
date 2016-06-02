@@ -2,23 +2,20 @@
 <div class="postformFile" onclick="lord.browseFile(event, this);" ondragover="return lord.fileDragOver(event, this);"
      ondragleave="return lord.fileDragLeave(event, this);" ondrop="return lord.fileDrop(event, this);"
      title="{{=it.tr.selectFileText}}">
-    <img class="postformFilePreview signImage" src="/{{=it.site.pathPrefix}}img/addfile.png">
+    <i id="filePreviewLabel" class="mdi mdi-folder-multiple-image mdi-hc-2x"></i>
+    <img style="display: none;" class="postformFilePreview signImage noInvert" src="/{{=it.site.pathPrefix}}img/addfile.png">
     <a onclick="lord.attachFileByLink(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-       title="{{=it.tr.attachFileByLinkText}}"><img class="buttonImage" width="32" height="32"
-                                                    src="/{{=it.site.pathPrefix}}img/addfile_link.png"></a>
+       title="{{=it.tr.attachFileByLinkText}}"><i class="mdi mdi-link mdi-hc-2x"></i></a>
     <a onclick="lord.attachFileByDrawing(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-       title="{{=it.tr.attachFileByDrawingText}}"><img class="buttonImage" width="32" height="32"
-                                                       src="/{{=it.site.pathPrefix}}img/draw_big.png"></a>
+       title="{{=it.tr.attachFileByDrawingText}}"><i class="mdi mdi-brush mdi-hc-2x"></i></a>
     {{? it.user.vkAuth}}
         <a onclick="lord.attachFileByVk(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-           title="{{=it.tr.attachFileByVkText}}"><img class="buttonImage" width="32" height="32"
-                                                      src="/{{=it.site.pathPrefix}}img/addfile_vk.png"></a>
+           title="{{=it.tr.attachFileByVkText}}"><i class="mdi mdi-file-music mdi-hc-2x"></i></a>
     {{?}}
     <span class="postformFileText"></span>
     <a href="javascript:void(0);" style="display: none;" onclick="lord.removeFile(this);"
        class="postformFileRemoveButton">
-        <img src="/{{=it.site.pathPrefix}}img/delete.png" title="{{=it.tr.removeFileText}}"
-             class="buttonImage postformFileRemoveImage"></a>
+        <i class="mdi mdi-delete mdi-middle postformFileRemoveImage" title="{{=it.tr.removeFileText}}"></i></a>
     {{? !it.settings.minimalisticPostform}}
         <div name="ratingSelectContainer">
             <span>{{=it.tr.ratingLabelText}}</span>
@@ -28,7 +25,7 @@
                 <option value="R-18" onclick="return lord.preventOnclick(event);">R-18</option>
                 <option value="R-18G" onclick="return lord.preventOnclick(event);">R-18G</option>
             </select>
-            <img src="/{{=it.site.pathPrefix}}img/question.png" title="{{=it.tr.ratingTooltip}}" class="signImage">
+            <i title="{{=it.tr.ratingTooltip}}" class="mdi mdi-help-circle-outline"></i>
         </div>
     {{?}}
 </div>

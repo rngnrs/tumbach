@@ -27,15 +27,12 @@
     </div>
     <div class="postFileSearch">
         <a href="javascript:void(0);" name="deleteFileButton" onclick="lord.deleteFile(this); return false;">
-           <img src="/{{=it.site.pathPrefix}}img/delete.png" title="{{=it.tr.deleteFileText}}"
-                class="buttonImage" /></a>
+            <i class="mdi mdi-middle mdi-delete" title="{{=it.tr.deleteFileText}}"></i></a>
         <a href="javascript:void(0);" name="editFileRatingButton" onclick="lord.editFileRating(this); return false;">
-           <img src="/{{=it.site.pathPrefix}}img/shield.png" title="{{=it.tr.editFileRatingText}}"
-                class="buttonImage" /></a>
+           <i class="mdi mdi-middle mdi-shield" title="{{=it.tr.editFileRatingText}}"></i></a>
         {{? fileInfo.mimeType.substr(0, 6) == "image/"}}
-            <input type="image" src="/{{=it.site.pathPrefix}}img/hide.png" class="buttonImage"
-                   title="{{=it.tr.hideByImageText}}"
-                   onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;" />
+            <i class="mdi mdi-middle mdi-eye-off" title="{{=it.tr.hideByImageText}}"
+               onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;"></i>
             <ul id="image{{=fileInfo.name.replace(".", "-")}}HideMenu" name="hideByImageButton" class="menu">
                 <li class="nowrap">
                     <a href="javascript:void(0);"
@@ -48,22 +45,20 @@
                     </li>
                 {{?}}
             </ul>
-            <a name="drawOnImageButton" onclick="lord.drawOnImage(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/draw.png" title="{{=it.tr.drawOnImageText}}"
-                     class="buttonImage" /></a>
-            <input type="image" src="/{{=it.site.pathPrefix}}img/search.png" class="buttonImage"
-                   title="{{=it.tr.findSourceText}}"
-                   onclick="lord.showImageSearchMenu(event, this, '{{=fileInfo.name}}'); return false;" />
+            <a href="javascript:void(0);" name="drawOnImageButton" onclick="lord.drawOnImage(this); return false;">
+                <i class="mdi mdi-middle mdi-brush" title="{{=it.tr.drawOnImageText}}"></i></a>
+            <a onclick="lord.showImageSearchMenu(event, this, '{{=fileInfo.name}}'); return false;">
+                <i class="mdi mdi-middle mdi-magnify" title="{{=it.tr.findSourceText}}"></i></a>
         {{?}}
         {{? "application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/"}}
             <a href="javascript:void(0);" onclick="lord.editAudioTags(this); return false;"
                title="{{=it.tr.editAudioTagsText}}">
-                <img src="/{{=it.site.pathPrefix}}img/audio_edit_tags.png" class="buttonImage"></a>
+                <i class="mdi mdi-middle mdi-label"></i></a>
         {{?}}
         {{? "application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/" || fileInfo.mimeType.substr(0, 6) == "video/"}}
             <a href="javascript:void(0);" onclick="lord.addToPlaylist(this); return false;"
                title="{{=it.tr.addToPlaylistText}}">
-                <img src="/{{=it.site.pathPrefix}}img/player/16/player.png" class="buttonImage"></a>
+                <i class="mdi mdi-middle mdi-playlist-plus"></i></a>
         {{?}}
     </div>
     <div class="postFileFile">

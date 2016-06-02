@@ -7,27 +7,27 @@
                 <div id="tab_c1">
                     <div class="frameLabels color-prim">
                         <div class="rewind">
-                            <i title="{{=it.tr.playerPreviousTrackText}}" class="zmdi zmdi-fast-rewind zmdi-hc-2x" onclick="lord.playerPrevious();"></i>
+                            <i title="{{=it.tr.playerPreviousTrackText}}" class="mdi mdi-rewind mdi-hc-2x" onclick="lord.playerPrevious();"></i>
                         </div>
                         <div class="stop">
-                            <i class="zmdi zmdi-stop zmdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
+                            <i class="mdi mdi-stop mdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
                         </div>
                         <div>
                             <input type="checkbox" name="mute" id="mute" />
                             <label for="mute">
-                                <i class="zmdi zmdi-volume-off zmdi-hc-2x" onclick="lord.playerMute();"></i>
+                                <i class="mdi mdi-volume-off mdi-hc-2x" onclick="lord.playerMute();"></i>
                             </label>
                         </div>
                         <!--<div class="shuffle">
                             <input type="checkbox" name="shuffle" id="shuffle" />
                             <label for="shuffle" title="Воспроизводить вперемешку">
-                                <i class="zmdi zmdi-shuffle zmdi-hc-2x" onclick="lord.playerShuffle();"></i>
-                            </label>
+                                <i class="mdi mdi-shuffle mdi-hc-2x" onclick="lord.playerShuffle();"></i>
+                            </labelЮ
                         </div>-->
                         <div class="loop">
                             <input type="checkbox" name="loop" id="loop" />
                             <label for="loop" title="Повторять композицию">
-                                <i class="zmdi zmdi-repeat zmdi-hc-2x" onclick="lord.playerLoop();"></i>
+                                <i class="mdi mdi-repeat mdi-hc-2x" onclick="lord.playerLoop();"></i>
                             </label>
                         </div>
                         <div class="clr"></div>
@@ -40,11 +40,11 @@
                     <div class="frameLabels color-prim">
                         <div>
                             <label for="mute">
-                                <i class="zmdi zmdi-volume-off zmdi-hc-2x" onclick="lord.playerMute(event);"></i>
+                                <i class="mdi mdi-volume-off mdi-hc-2x" onclick="lord.playerMute(event);"></i>
                             </label>
                         </div>
                         <div class="stop">
-                            <i class="zmdi zmdi-stop zmdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
+                            <i class="mdi mdi-stop mdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
                         </div>
                         <div class="clr"></div>
                     </div>
@@ -64,16 +64,16 @@
     <aside id="sidebar" class="sidebar sidebar-stacked">
         <div class="frameLabels color-prim">
             <div>
-                <i class="zmdi zmdi-filter-list zmdi-hc-2x" title="{{=it.tr.editSpellsText}}" onclick="lord.editSpells();return false;"></i>
+                <i class="mdi mdi-filter mdi-hc-2x" title="{{=it.tr.editSpellsText}}" onclick="lord.editSpells();return false;"></i>
             </div>
             <div>
-                <i class="zmdi zmdi-settings zmdi-hc-2x" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
+                <i class="mdi mdi-settings mdi-hc-2x" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
             </div>
             <div>
-                <i class="zmdi zmdi-star-outline zmdi-hc-2x" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
+                <i class="mdi mdi-star mdi-hc-2x" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
             </div>
             <div>
-                <i class="zmdi zmdi-eye{{? it.mumWatching}}-off{{?}} zmdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
+                <i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}} mdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
             </div>
             <div class="clr"></div>
         </div>

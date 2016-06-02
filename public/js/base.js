@@ -1406,8 +1406,6 @@ lord.removeThreadFromFavorites = function(boardName, threadNumber) {
     if (!opPost)
         return false;
     var btn = lord.nameOne("addToFavoritesButton", opPost);
-    var img = lord.queryOne("img", btn);
-    img.src = img.src.replace("favorite_active.png", "favorite.png");
     var span = lord.queryOne("span", btn);
     $(span).empty();
     span.appendChild(lord.node("text", lord.text("addThreadToFavoritesText")));

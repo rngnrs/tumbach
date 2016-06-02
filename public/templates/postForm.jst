@@ -6,11 +6,10 @@
             <span class="postFormHeaderLabel">{{=it.tr.postFormHeaderLabelText}}</span>
             <div class="postFormHeaderButtons">
                 <a name="fixPostFormButton" href="javascript:void(0);" title="{{=it.tr.postFormFixedButtonText}}"
-                   onclick="lord.setPostFormFixed(); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/fixed.png" class="buttonImage" /></a>
+                   onclick="lord.setPostFormFixed(); return false;"><i class="mdi mdi-pin"></i></a>
                 <a name="closePostFormButton" href="javascript:void(0);" title="{{=it.tr.closePostFormButtonText}}"
                    onclick="lord.closePostForm(); return false;">
-                    <img src="/{{=it.site.pathPrefix}}img/clear.png" class="buttonImage" /></a>
+                    <i class="mdi mdi-window-close"></i></a>
             </div>
         </div>
     {{?}}
@@ -128,44 +127,29 @@
                     <td class="postformMarkup">
                         <span id="markup">
                             {{? it.board.markupElements.indexOf("BOLD") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/bold.png"
-                                       onclick="lord.markup('b'); return false;" name="markupBold"
-                                       title="{{=it.tr.markupBold}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('b'); return false;"><i class="mdi mdi-format-bold" title="{{=it.tr.markupBold}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("ITALICS") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/italics.png"
-                                       onclick="lord.markup('i'); return false;" name="markupItalics"
-                                       title="{{=it.tr.markupItalics}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('i'); return false;"><i class="mdi mdi-format-italic" title="{{=it.tr.markupItalics}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("STRIKED_OUT") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/strikedout.png"
-                                       onclick="lord.markup('s'); return false;" name="markupStrikedOut"
-                                       title="{{=it.tr.markupStrikedOut}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('s'); return false;"><i class="mdi mdi-format-strikethrough-variant" title="{{=it.tr.markupStrikedOut}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("UNDERLINED") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/underlined.png"
-                                       onclick="lord.markup('u'); return false;" name="markupUnderlined"
-                                       title="{{=it.tr.markupUnderlined}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('u'); return false;"><i class="mdi mdi-format-underline" title="{{=it.tr.markupUnderlined}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("SPOILER") >= 0}}
                                 <button onclick="lord.markup('spoiler'); return false;" name="markupSpoiler"
                                         title="{{=it.tr.markupSpoiler}}"
-                                        class="spoilerMarkupButton bordered"><span class="spoiler">ab</span></button>
+                                        class="spoilerMarkupButton bordered"><span class="spoiler">%%</span></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("QUOTATION") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/quotation.png"
-                                       onclick="lord.markup('>'); return false;" name="markupQuotation"
-                                       title="{{=it.tr.markupQuotation}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('>'); return false;"><i class="mdi mdi-format-quote" title="{{=it.tr.markupQuotation}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("UNORDERED_LIST") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/ul.png"
-                                       class="buttonImage bordered" title="{{=it.tr.markupUnorderedList}}"
-                                       onclick="lord.showMenu(event, this, '#markupUnorderedListActionsMenu'); return false;" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.showMenu(event, this, '#markupUnorderedListActionsMenu'); return false;" title="{{=it.tr.markupUnorderedList}}">
+                                    <i class="mdi mdi-format-list-bulleted"></i>
+                                </button>
                                 <ul id="markupUnorderedListActionsMenu" class="menu">
                                     <li type="disc">
                                         <a onclick="lord.markup('uld'); return false;"
@@ -182,9 +166,9 @@
                                 </ul>
                             {{?}}
                             {{? it.board.markupElements.indexOf("ORDERED_LIST") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/ol.png"
-                                       class="buttonImage bordered" title="{{=it.tr.markupOrderedList}}"
-                                       onclick="lord.showMenu(event, this, '#markupOrderedListActionsMenu'); return false;" />
+                            <button class="spoilerMarkupButton bordered" onclick="lord.showMenu(event, this, '#markupOrderedListActionsMenu'); return false;" title="{{=it.tr.markupOrderedList}}">
+                                <i class="mdi mdi-format-list-numbers"></i>
+                            </button>
                                 <ol id="markupOrderedListActionsMenu" class="menu">
                                     <li type="1" value="1">
                                         <a onclick="lord.markup('ol1'); return false;"
@@ -211,25 +195,17 @@
                             {{? it.board.markupElements.indexOf("LIST_ITEM") >= 0}}
                                 <input type="image" src="/{{=it.site.pathPrefix}}img/markup/li.png"
                                        onclick="lord.markup('li'); return false;" name="markupListItem"
-                                       title="{{=it.tr.markupListItem}}" class="buttonImage bordered" width="24"
+                                       title="{{=it.tr.markupListItem}}" class="mdi mdi-format-subscript buttonImage bordered" width="24"
                                        height="20" />
                             {{?}}
                             {{? it.board.markupElements.indexOf("SUBSCRIPT") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/subscript.png"
-                                       onclick="lord.markup('sub'); return false;" name="markupSubscript"
-                                       title="{{=it.tr.markupSubscript}}" class="buttonImage bordered" width="36"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('sub'); return false;"><i class="mdi mdi-format-subscript" title="{{=it.tr.markupSubscript}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("SUPERSCRIPT") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/superscript.png"
-                                       onclick="lord.markup('sup'); return false;" name="markupSuperscript"
-                                       title="{{=it.tr.markupSuperscript}}" class="buttonImage bordered" width="20"
-                                       height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('sup'); return false;"><i class="mdi mdi-format-superscript" title="{{=it.tr.markupSuperscript}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("URL") >= 0}}
-                                <input type="image" src="/{{=it.site.pathPrefix}}img/markup/url.png"
-                                       onclick="lord.markup('url'); return false;" name="markupUrl"
-                                       title="{{=it.tr.markupUrl}}" class="buttonImage bordered" width="40" height="20" />
+                                <button class="spoilerMarkupButton bordered" onclick="lord.markup('url'); return false;"><i class="mdi mdi-link" title="{{=it.tr.markupUrl}}"></i></button>
                             {{?}}
                             {{? it.board.markupElements.indexOf("LATEX") >= 0}}
                                 <input type="image" src="/{{=it.site.pathPrefix}}img/markup/latex.png"
@@ -314,15 +290,14 @@
                     {{? it.hasPermission(it.board, "useRawHTMLMarkup")}}
                         <a href="javascript:void(0);" onclick="lord.markup('raw-html'); return false;"
                            style="display: inline-block; vertical-align: top;" title='{{=it.tr.markupHtml}}'
-                           name="markupHtml"><img src="/{{=it.site.pathPrefix}}img/html.png" class="signImage"></a>
+                           name="markupHtml"><i class="mdi mdi-language-html5"></i></a>
                     {{?}}
                     {{? it.customPostFormOption && it.customPostFormOption[40]}}
                         {{ out += it.customPostFormOption[40](it); }}
                     {{?}}
                     <a href="javascript:void(0);" onclick="lord.addToDrafts(this); return false;" name="optionDraft"
                        style="display: inline-block; vertical-align: top;"
-                       title="{{=it.tr.addToDraftsText}}"><img src="/{{=it.site.pathPrefix}}img/draft.png"
-                                                               class="signImage"></a>
+                       title="{{=it.tr.addToDraftsText}}"><i class="mdi mdi-lead-pencil"></i></a>
                     {{? it.customPostFormOption && it.customPostFormOption[50]}}
                         {{ out += it.customPostFormOption[50](it); }}
                     {{?}}

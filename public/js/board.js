@@ -431,8 +431,10 @@ lord.updatePost = function(postNumber) {
 lord.clearFileInput = function(div) {
     if (!div)
         return;
-    lord.queryOne("img.postformFilePreview", div).src = "/" + lord.data("sitePathPrefix") + "img/addfile.png";
-    $("img.postformFilePreview", div).removeClass("noInvert");
+    var pf = lord.queryOne("img.postformFilePreview", div);
+    pf.style.display = "none";
+    lord.queryOne("#filePreviewLabel", div).style.display = "";
+    $(div).removeClass("postFormSelected");
     $(lord.queryOne("span.postformFileText", div)).empty();
     lord.removeFileHash(div);
     if (div.hasOwnProperty("fileInput"))
@@ -631,8 +633,8 @@ lord.makeFormNotFloat = function() {
 
 lord.setPostFormFixed = function() {
     lord.postFormFixed = !lord.postFormFixed;
-    var img = lord.queryOne("#postForm [name='fixPostFormButton'] > img");
-    img.src = img.src.replace(/(fixed|unfix)\.png$/, lord.postFormFixed ? "fixed.png" : "unfix.png");
+    var i = lord.queryOne("#postForm [name='fixPostFormButton'] > i");
+    i.className = i.className.replace(/(pin|pin-off)$/, lord.postFormFixed ? "pin" : "pin-off");
     lord.queryOne("#postForm [name='fixPostFormButton']").title =
         lord.text(lord.postFormFixed ? "postFormFixedButtonText" : "postFormUnfixedButtonText");
 };
@@ -1758,9 +1760,9 @@ lord.fileAddedCommon = function(div) {
         lord.readAs(div.file, "DataURL").then(function(url) {
             var img = lord.queryOne("img", div);
             img.src = url;
-            $(img).addClass("noInvert");
-            if ("neutron" == lord.settings().style.name)
-                $(img).addClass("noInvert");
+            img.style.display = "";
+            $(div).addClass("postFormSelected");
+            lord.queryOne("#filePreviewLabel", div).style.display = "none";
             img.addEventListener("load", function load() {
                 img.removeEventListener("load", load, false);
                 lord.checkPostformTextareaSize();
@@ -1901,7 +1903,7 @@ lord.attachFileByDrawing = function(a) {
                     });
                 };
                 img.src = url;
-                $(img).addClass("noInvert");
+                $(div).addClass("postFormSelected");
             });
         }).then(function(options) {
             var model = lord.model(["base", "tr"]);
@@ -2313,8 +2315,6 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
         lord.setLocalObject("favoriteThreads", favoriteThreads);
         var opPost = lord.id(threadNumber);
         var btn = lord.nameOne("addToFavoritesButton", opPost);
-        var img = lord.queryOne("img", btn);
-        img.src = img.src.replace("favorite.png", "favorite_active.png");
         var div = lord.id("favorites");
         var span = lord.queryOne("span", btn);
         $(span).empty();
