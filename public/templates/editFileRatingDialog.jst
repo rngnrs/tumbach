@@ -16,7 +16,7 @@
                                 <option value="R-18" {{? "R-18" == it.fileInfo.rating}}selected="true"{{?}} onclick="return lord.preventOnclick(event);">R-18</option>
                                 <option value="R-18G" {{? "R-18G" == it.fileInfo.rating}}selected="true"{{?}} onclick="return lord.preventOnclick(event);">R-18G</option>
                             </select>
-                            <img src="/{{=it.site.pathPrefix}}img/question.png" title="{{=it.tr.ratingTooltip}}" class="signImage">
+                            <i class="mdi mdi-help-circle-outline" title="{{=it.tr.ratingTooltip}}">
                         </div>
                     </td>
                 </tr>

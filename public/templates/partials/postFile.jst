@@ -31,8 +31,8 @@
         <a href="javascript:void(0);" name="editFileRatingButton" onclick="lord.editFileRating(this); return false;">
            <i class="mdi mdi-middle mdi-shield" title="{{=it.tr.editFileRatingText}}"></i></a>
         {{? fileInfo.mimeType.substr(0, 6) == "image/"}}
-            <i class="mdi mdi-middle mdi-eye-off" title="{{=it.tr.hideByImageText}}"
-               onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;"></i>
+            <a href="javascript:void(0);" onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;">
+                <i class="mdi mdi-middle mdi-eye-off" title="{{=it.tr.hideByImageText}}"></i></a>
             <ul id="image{{=fileInfo.name.replace(".", "-")}}HideMenu" name="hideByImageButton" class="menu">
                 <li class="nowrap">
                     <a href="javascript:void(0);"

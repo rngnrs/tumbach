@@ -20,53 +20,36 @@
             {{?}}
             {{? post.isOp}}
                 {{? thread.fixed}}
-                    <i class="mdi mdi-pin" title="{{=it.tr.fixedText}}"></i>
+                    <i class="mdi mdi-middle mdi-pin" title="{{=it.tr.fixedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[10]}}
                     {{ out += it.customPostHeaderPart[10](it, thread, post); }}
                 {{?}}
                 {{? thread.closed}}
-                    <i class="mdi mdi-lock" title="{{=it.tr.closedText}}"></i>
+                    <i class="mdi mdi-middle mdi-lock" title="{{=it.tr.closedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[20]}}
                     {{ out += it.customPostHeaderPart[20](it, thread, post); }}
                 {{?}}
                 {{? thread.postLimitReached}}
-                    <i class="mdi mdi-alert" title="{{=it.tr.postLimitReachedText}}"></i>
+                    <i class="mdi mdi-middle mdi-alert" title="{{=it.tr.postLimitReachedText}}"></i>
                 {{?? thread.bumpLimitReached}}
-                    <i class="mdi mdi-block-helper" title="{{=it.tr.bumpLimitReachedText}}"></i>
+                    <i class="mdi mdi-middle mdi-block-helper" title="{{=it.tr.bumpLimitReachedText}}"></i>
                 {{?}}
             {{?}}
         </span>
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[30]}}
-            {{ out += it.customPostHeaderPart[30](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[30]}}{{ out += it.customPostHeaderPart[30](it, thread, post); }}{{?}}
         {{#def.postSubject}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[40]}}
-            {{ out += it.customPostHeaderPart[40](it, thread, post); }}
-        {{?}}
-        {{? post.options.showTripcode && it.compareRegisteredUserLevels(post.user.level, "USER") >= 0}}
-        <i class="zmdi zmdi-badge-check" title="{{=it.tr.registeredText}}"></i>
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}
-            {{ out += it.customPostHeaderPart[50](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[40]}}{{ out += it.customPostHeaderPart[40](it, thread, post); }}{{?}}
+        {{? post.options.showTripcode && it.compareRegisteredUserLevels(post.user.level, "USER") >= 0}}<i class="mdi mdi-middle mdi-marker-check"
+                                                                                                          title="{{=it.tr.registeredText}}"></i>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}{{ out += it.customPostHeaderPart[50](it, thread, post); }}{{?}}
         {{#def.postName}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}
-            {{ out += it.customPostHeaderPart[60](it, thread, post); }}
-        {{?}}
-        {{? post.opIp && post.options.signAsOp}}
-            <span class="opSign">[OP]</span>
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}
-            {{ out += it.customPostHeaderPart[70](it, thread, post); }}
-        {{?}}
-        {{? post.options.showTripcode && post.tripcode}}
-            <span class="tripcode">{{=post.tripcode}}</span>
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[80]}}
-            {{ out += it.customPostHeaderPart[80](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}{{ out += it.customPostHeaderPart[60](it, thread, post); }}{{?}}
+        {{? post.opIp && post.options.signAsOp}}<span class="opSign">[OP]</span>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}{{ out += it.customPostHeaderPart[70](it, thread, post); }}{{?}}
+        {{? post.options.showTripcode && post.tripcode}}<span class="tripcode">{{=post.tripcode}}</span>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[80]}}{{ out += it.customPostHeaderPart[80](it, thread, post); }}{{?}}
         {{? it.board.showWhois && post.geolocation.flagName}}
             {{? post.geolocation.cityName}}
                 <img src="/{{=it.site.pathPrefix}}img/flags/{{=post.geolocation.flagName}}" class="flag"

@@ -40,11 +40,11 @@ a {
     color: #00E;
 }
 
-a.expandCollapse {
+a.expandCollapse, a i {
     color: #444;
 }
 
-a:hover {
+a:hover, a:hover i {
     color: #D00;
 }
 

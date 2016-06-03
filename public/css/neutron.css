@@ -15,6 +15,12 @@
 aside {
     background-color: #212121;
 }
+#markup i {
+    color: #FFF;
+}
+.track.selected a i {
+    color: #000;
+}
 /* /tumb rewrite */
 
 .ui-tooltip {

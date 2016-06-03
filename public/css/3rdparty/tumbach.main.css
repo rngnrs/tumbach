@@ -6,6 +6,10 @@
 @import url(materialdesignicons.min.css);
 .mdi-middle, .b-icon {
     vertical-align: middle;
+    font-size: 18px;
+}
+.mdi-20px {
+    font-size: 20px;
 }
 .mdi-hc-2x {
     font-size: 2em;
@@ -113,7 +117,7 @@ input[type=number] {
 }
 .header-wrapper_container > div {
     position: relative;
-    width: calc(100% - 33px);
+    width: calc(100% - 40px);
     margin: 0 auto;
 }
 .header-wrapper {
@@ -132,7 +136,7 @@ header i, .kek {
     cursor:pointer;
 }
 header i:hover,
-.sidebar i:hover {
+.frameLabels i:hover {
     background: rgba(0,0,0,.2);
 }
 .tumb-menu {
@@ -485,7 +489,7 @@ h1 {
 .chatContactNewMessages {
     color: red;
 }
-.chatContactNewMessages ~ .buttonImage {
+.chatContactNewMessages ~ i {
     position: absolute;
     right: 0;
 }
@@ -529,7 +533,27 @@ h1 {
 #markup i {
     font-size: 22px;
     vertical-align: middle;
+    color: #000;
 }
 .postFormSelected {
     min-height: 4em;
+}
+
+/* Chats */
+.chatMessage > div {
+    min-width:50%;
+}
+.chatMessage {
+    display: inline-block;
+    clear: both;
+    max-width: 390px;
+}
+.message_in {
+    float: left;
+}
+.message_out {
+    float: right;
+}
+.message_out > .chatMessageDate {
+    text-align: right;
 }

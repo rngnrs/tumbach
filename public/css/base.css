@@ -426,7 +426,7 @@ span.newPostCount {
 .navigationButton {
     position: fixed;
     right: 20px;
-    z-index: 7;
+    z-index: 3;
     opacity: .5;
 }
 
@@ -517,8 +517,8 @@ span.newPostCount {
 }
 
 .postformFile div[name="ratingSelectContainer"] {
-    bottom: 6px;
-    right: 6px;
+    bottom: 3px;
+    right: 3px;
     position: absolute;
 }
 
@@ -776,11 +776,6 @@ input.buttonImage {
     cursor: pointer;
 }
 
-.chatContact > input[type="image"] {
-    float: right;
-    margin-top: 2px;
-}
-
 .chatContact ~ .chatContact {
     margin-top: 2px;
 }
@@ -801,7 +796,6 @@ input.buttonImage {
     margin-bottom: 4px;
     border-radius: 6px;
     padding: 4px;
-    max-width: 420px;
 }
 
 .chatMessageDate {
@@ -993,7 +987,7 @@ input.buttonImage {
 }
 
 #playerTracks:empty:after {
-    content: "Плейлист пуст. Добавьте музыку в треде путём нажатия соответствующей кнопки около аудиофайла.";
+    content: "Плейлист пуст, добавьте музыку из треда. Кнопка \"Добавить в плейлист\" находится над аудио.";
     text-align: center;
     position: absolute;
     top: 50%;
@@ -1010,6 +1004,7 @@ input.buttonImage {
 
 .trackInfo {
     display: inline-block;
+    word-break: break-word;
 }
 
 .movablePlayer {

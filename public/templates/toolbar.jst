@@ -12,8 +12,8 @@
                       enctype="application/x-www-form-urlencoded" class="inlineForm"
                       onsubmit="lord.doLogout(event, this); return false;">
                     <input type="submit" name="submit" id="logout" style="display: none;" />
-                    <label for="logout"><i class="mdi mdi-middle mdi-logout-variant"
-                                           title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"></i></label>
+                    <a href="javascript:void(0);"><label for="logout"><i class="mdi mdi-middle mdi-logout-variant"
+                                           title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"></i></label></a>
                 </form>
             {{??}}
                 <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-login-variant"

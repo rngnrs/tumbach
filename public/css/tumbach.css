@@ -1,4 +1,4 @@
-/*Tumbach (beta)*/
+/*Tumbach*/
 
 .color-prim {
     background-color: #99D9EA;
@@ -19,7 +19,7 @@ a, .cspoilerTitle {
 .card-paper a, .post a {
     text-decoration: underline;
 }
-a.expandCollapse {
+a.expandCollapse, a i {
     color: #444;
 }
 a.expandCollapse:hover {
@@ -27,7 +27,7 @@ a.expandCollapse:hover {
 }
 .postSequenceNumber,
 .cspoilerTitle:hover,
-a:hover {
+a:hover, a:hover i {
     color: #F80;
 }
 a.expandCollapse:hover {

@@ -3,19 +3,23 @@
      ondragleave="return lord.fileDragLeave(event, this);" ondrop="return lord.fileDrop(event, this);"
      title="{{=it.tr.selectFileText}}">
     <i id="filePreviewLabel" class="mdi mdi-folder-multiple-image mdi-hc-2x"></i>
-    <img style="display: none;" class="postformFilePreview signImage noInvert" src="/{{=it.site.pathPrefix}}img/addfile.png">
-    <a onclick="lord.attachFileByLink(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-       title="{{=it.tr.attachFileByLinkText}}"><i class="mdi mdi-link mdi-hc-2x"></i></a>
-    <a onclick="lord.attachFileByDrawing(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-       title="{{=it.tr.attachFileByDrawingText}}"><i class="mdi mdi-brush mdi-hc-2x"></i></a>
+    <img style="display: none;" class="postformFilePreview signImage noInvert">
+    <i onclick="lord.attachFileByLink(this); return lord.preventOnclick(event);"
+       class="fileByLinkButton mdi mdi-link-variant mdi-hc-2x"
+       title="{{=it.tr.attachFileByLinkText}}"></i>
+    <i onclick="lord.attachFileByDrawing(this); return lord.preventOnclick(event);"
+       class="fileByLinkButton mdi mdi-brush mdi-hc-2x"
+       title="{{=it.tr.attachFileByDrawingText}}"></i>
     {{? it.user.vkAuth}}
-        <a onclick="lord.attachFileByVk(this); return lord.preventOnclick(event);" class="fileByLinkButton"
-           title="{{=it.tr.attachFileByVkText}}"><i class="mdi mdi-file-music mdi-hc-2x"></i></a>
+        <i onclick="lord.attachFileByVk(this); return lord.preventOnclick(event);"
+           class="fileByLinkButton mdi mdi-file-music mdi-hc-2x"
+           title="{{=it.tr.attachFileByVkText}}"></i>
     {{?}}
     <span class="postformFileText"></span>
-    <a href="javascript:void(0);" style="display: none;" onclick="lord.removeFile(this);"
-       class="postformFileRemoveButton">
-        <i class="mdi mdi-delete mdi-middle postformFileRemoveImage" title="{{=it.tr.removeFileText}}"></i></a>
+    <a onclick="lord.removeFile(this);" style="display: none;"
+       class="postformFileRemoveButton" title="{{=it.tr.removeFileText}}">
+        <i class="mdi mdi-delete mdi-middle postformFileRemoveImage"></i>
+    </a>
     {{? !it.settings.minimalisticPostform}}
         <div name="ratingSelectContainer">
             <span>{{=it.tr.ratingLabelText}}</span>

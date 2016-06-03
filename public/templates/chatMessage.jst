@@ -1,6 +1,5 @@
-<div class="chatMessage">
+<div class="chatMessage message_{{=it.type}}">
     <div class="chatMessageDate">
-        <img src="/{{=it.site.pathPrefix}}img/message_{{=it.type}}.png" class="signImage" width="16" height="16" />
         {{ out += it.formattedDate(it.date); }}
     </div>
     <div class="chatMessageText">{{!it.text}}</div>

@@ -1197,7 +1197,7 @@ lord.initRadio = function() {
     });
     var model = lord.model("tr");
     cont.prepend("<div class='pseudoTrack' onclick='lord.playerAddRadio();'>" +
-        "<img src='/"+lord.data("sitePathPrefix")+"img/player/32/radio_add.png' class='buttonImage' width=14 height=14 /> "+model.tr.addRadioText+"</div>");
+        "<i class='mdi mdi-radio'></i> "+model.tr.addRadioText+"</div>");
 };
 
 lord.allowTrackDrop = function(e) {
