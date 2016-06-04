@@ -1,5 +1,5 @@
 <div class="threadActions">
-    [<a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/" name="backButton"
+    [<a href="/{{=it.site.pathPrefix}}{{=it.board.name}}{{? it.thread.archived}}/archive.html{{?}}" name="backButton"
         title="{{=it.tr.backText}}" class="ajax"><img class="buttonImage" width="24" height="24"
                                          src="/{{=it.site.pathPrefix}}img/thread_back.png"></a>]
     [<a href="javascript:void(0);" onclick="lord.updateThread();" title="{{=it.tr.updateThreadText}}"
@@ -29,9 +29,11 @@
             var canvas = parent.find("canvas");
             canvas.click(function() {
                 var list = lord.getLocalObject("autoUpdate", {});
+                var boardName = lord.data("boardName");
                 var threadNumber = +lord.data("threadNumber");
-                var enabled = !list[threadNumber];
-                list[threadNumber] = enabled;
+                var key = boardName + "/" + threadNumber;
+                var enabled = !list[key];
+                list[key] = enabled;
                 lord.setLocalObject("autoUpdate", list);
                 lord.setAutoUpdateEnabled(enabled);
             });

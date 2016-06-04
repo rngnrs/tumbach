@@ -685,6 +685,9 @@
     "Download file": {
         "downloadPlaylistFileText": {
             "value": "Скачать файл"
+        },
+        "downloadFileButtonText": {
+            "value": "Скачать файл"
         }
     },
     "Search": {
@@ -1294,7 +1297,7 @@
             "value": "В этом треде постинг запрещен"
         },
         "_default": {
-            "value": "Posting is disabled in this thread"
+            "value": "В этом треде постинг запрещен"
         }
     },
     "This thread is archived. Posting is disabled": {
@@ -1307,7 +1310,7 @@
             "value": "Достигнут лимит постов"
         },
         "_default": {
-            "value": "Post limit reached"
+            "value": "Достигнут лимит постов"
         }
     },
     "This user is registered": {
@@ -1361,7 +1364,7 @@
             "value": "Отмотать наверх"
         }
     },
-    "Answer": {
+    "Reply": {
         "toThread": {
             "value": "Ответ"
         }
@@ -1391,7 +1394,7 @@
             "value": "Байт(а)"
         }
     },
-    "Answers:": {
+    "Replies:": {
         "referencedByText": {
             "value": "Ответы:"
         }
@@ -3205,6 +3208,11 @@
             "value": "Капча решена неправильно"
         }
     },
+    "Show search field": {
+        "showSearchActionText": {
+            "value": "Поиск"
+        }
+    },
     "Edit file rating": {
         "editFileRatingText": {
             "value": "Редактировать рейтинг файла"
@@ -3223,6 +3231,11 @@
     "Hide similar": {
         "hideSimilarPostsText": {
             "value": "Скрыть похожие"
+        }
+    },
+    "Use WebSockets": {
+        "useWebSocketsLabelText": {
+            "value": "Использовать WebSockets"
         }
     },
     "Transparent header": {

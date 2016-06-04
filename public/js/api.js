@@ -1313,6 +1313,7 @@ lord.settings = function() {
         style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
+        useWebSockets: lord.getLocalObject("useWebSockets", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "SFW"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", true),

@@ -15,8 +15,8 @@ module.exports = function(tr) {
     translate("Hide by image hash", "hideByImageHashText");
     translate("Hide by image size", "hideByImageSizeText");
     translate("Draw on this image", "drawOnImageText");
-    translate("Answer", "toThread");
-    translate("Answers:", "referencedByText");
+    translate("Reply", "toThread");
+    translate("Replies:", "referencedByText");
     translate("Fixed", "fixedText");
     translate("The thread is closed", "closedText");
     translate("To drafts", "addToDraftsText");
@@ -106,6 +106,7 @@ module.exports = function(tr) {
     translate("Style:", "styleLabelText");
     translate("Code style:", "codeStyleLabelText");
     translate("Shrink posts", "postShrinkingLabelText");
+    translate("Use WebSockets", "useWebSocketsLabelText");
     translate("Time:", "timeLabelText");
     translate("Device type:", "deviceTypeLabelText");
     translate("Detect automatically", "deviceTypeAutoText");
@@ -423,6 +424,7 @@ module.exports = function(tr) {
     translate("Add directory", "addDirectoryButtonText");
     translate("Rename directory", "renameDirectoryButtonText");
     translate("Delete directory", "deleteDirectoryButtonText");
+    translate("Download file", "downloadFileButtonText");
     translate("Edit file", "editFileButtonText");
     translate("Rename file", "renameFileButtonText");
     translate("Delete file", "deleteFileButtonText");

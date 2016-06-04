@@ -1,6 +1,7 @@
 <script id="sidebarPlaceholder" type="text/javascript">
     (function() {
         var model = lord.model(["base", "tr", "boards"]);
+        model.mumWatching = lord.getLocalObject("mumWatching", false);
         lord.processBoardGroups(model);
         if (model.user.loggedIn) {
             if (model.user.isSuperuser())

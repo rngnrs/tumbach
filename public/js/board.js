@@ -31,6 +31,7 @@ lord.postFormFixed = true;
 /*Classes*/
 
 /*constructor*/ lord.AutoUpdateTimer = function(intervalSeconds) {
+    this.useWebSockets = lord.getLocalObject("useWebSockets", true);
     this.intervalSeconds = intervalSeconds;
     this.updateTimer = null;
     this.countdownTimer = null;
@@ -57,7 +58,12 @@ lord.postFormFixed = true;
         return;
     var _this = this;
     ["Top", "Bottom"].forEach(function(position) {
-        $("#autoUpdate" + position).val(_this.secondsLeft).trigger("change");
+        if (_this.useWebSockets) {
+            var color = (_this.secondsLeft % 2) ? "#5E5E5E" : "#2F2F2F";
+            $("#autoUpdate" + position).trigger("configure", { fgColor: color });
+        } else {
+            $("#autoUpdate" + position).val(_this.secondsLeft).trigger("change");
+        }
     });
 };
 
@@ -65,9 +71,8 @@ lord.postFormFixed = true;
     if (this.updateTimer)
         return;
     this.updateTimer = setInterval((function() {
-        var boardName = lord.data("boardName");
-        var threadNumber = +lord.data("threadNumber");
-        lord.updateThread(true);
+        if (!this.useWebSockets)
+            lord.updateThread(true);
         if (this.countdownTimer) {
             clearInterval(this.countdownTimer);
             this.createCountdownTimer();
@@ -248,7 +253,8 @@ lord.processPost = function(hiddenPosts, post, data) {
     var info = hiddenPosts[boardName + "/" + postNumber];
     if (!info)
         return;
-    $(post).addClass("hidden");
+    if (!$(post).hasClass("temporary"))
+        $(post).addClass("hidden");
     if (info.reason)
         lord.queryOne(".hideReason", post).appendChild(lord.node("text", info.reason));
     var thread = lord.id("thread" + postNumber);
@@ -552,7 +558,7 @@ lord.nextOrPreviousFile = function(previous) {
     var href = lord.currentMovablePlayer.fileInfo.href;
     if (!href)
         return null;
-    var ind = lord.filesMap[href];
+    var ind = lord.filesMap[href.replace(/^https?\:\/\/[^\/]+/, "")];
     if (ind < 0)
         return null;
     if (!!previous)
@@ -652,6 +658,8 @@ lord.showHidePostForm = function(el) {
         lord.hidePostForm();
     }
     var postForm = lord.id("postForm");
+    if(!postForm)
+        return;
     var position = lord.data("position", el);
     var container = postForm.parentNode;
     var hide = ("postFormContainer" + position) == container.id;
@@ -1506,8 +1514,6 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
         lord.nameAll("toThread", post).forEach(function(el) {
             $(el).remove();
         });
-        $(post).removeClass("opPost hidden");
-        $(post).addClass("post temporary");
         p = Promise.resolve(post);
     } else {
         p = lord.api("post", {
@@ -1518,6 +1524,7 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
         });
     }
     p.then(function(post) {
+        $(post).removeClass("opPost hidden").addClass("post temporary");
         if (!lord.deviceType("mobile")) {
             post.onmouseout = function(event) {
                 var next = post;
@@ -1700,6 +1707,7 @@ lord.fileAddedCommon = function(div) {
     } else {
         p = lord.api("fileHeaders", { url: encodeURIComponent(div.fileUrl) }).then(function(headers) {
             var size = +headers["content-length"];
+            $(div).addClass("postFormSelected");
             if (!size)
                 return Promise.resolve("");
             return lord.readableSize(size);
@@ -1725,7 +1733,6 @@ lord.fileAddedCommon = function(div) {
     lord.removeFileHash(div);
     var prefix = lord.data("sitePathPrefix");
     if (div.file && lord.getLocalObject("checkFileExistence", true)) {
-        var c = {};
         lord.readAs(div.file).then(function(data) {
             div.fileHash = sha1(data);
             return lord.api("fileExistence", { fileHash: div.fileHash });
@@ -1736,12 +1743,11 @@ lord.fileAddedCommon = function(div) {
             var ratingSelect = lord.queryOne("[name='ratingSelectContainer'] > select", div);
             if (ratingSelect)
                 ratingSelect.name = "file_" + div.fileHash + "_rating";
-            var img = lord.node("img");
-            img.src = "/" + prefix + "img/storage.png";
-            $(img).addClass("signImage");
-            img.title = lord.text("fileExistsOnServerText");
+            var i = lord.node("i");
+            i.className = "mdi mdi-server";
+            i.title = lord.text("fileExistsOnServerText");
             lord.queryOne("span", div).appendChild(lord.node("text", " "));
-            lord.queryOne("span", div).appendChild(img);
+            lord.queryOne("span", div).appendChild(i);
             lord.checkPostformTextareaSize();
             var fileHashes = lord.getFileHashes(div);
             if (fileHashes.value.indexOf(div.fileHash) < 0)
@@ -1761,8 +1767,8 @@ lord.fileAddedCommon = function(div) {
             var img = lord.queryOne("img", div);
             img.src = url;
             img.style.display = "";
-            $(div).addClass("postFormSelected");
             lord.queryOne("#filePreviewLabel", div).style.display = "none";
+            $(div).addClass("postFormSelected");
             img.addEventListener("load", function load() {
                 img.removeEventListener("load", load, false);
                 lord.checkPostformTextareaSize();
@@ -1773,16 +1779,19 @@ lord.fileAddedCommon = function(div) {
         if (!fileName.match(/\.(jpe?g)$/i) || !lord.getLocalObject("stripExifFromJpeg", true))
             preview();
     } else {
-        var match = fileNameFull.match(/\.(jpe?g|png|gif|mpeg|mp1|m1a|m2a|mpa|mp3|mpg|mp4|ogg|ogv|webm|wav|pdf)$/i);
+        var match = fileNameFull.match(/\.(jpe?g|png|gif|mpeg|mp1|m1a|m2a|mpa|mp3|mpg|mp4|ogg|ogv|webm|wav|pdf)$/i),
+            img = lord.queryOne("img", div);
         if (match) {
             var extension = match[1].replace("jpg", "jpeg").replace("ogv", "ogg").toLowerCase();
             ["mpeg", "mp1", "m1a", "m2a", "mpa", "mpg"].forEach(function(alias) {
                 extension = extension.replace(alias, "mp3");
             });
-            lord.queryOne("img", div).src = "/" + prefix + "img/" + extension + "_file.png";
-        } else {
-            lord.queryOne("img", div).src = "/" + prefix + "img/file.png";
-        }
+            img.src = "/" + prefix + "img/" + extension + "_file.png";
+        } else
+            img.src = "/" + prefix + "img/file.png";
+        img.style.display = "";
+        lord.queryOne("#filePreviewLabel", div).style.display = "none";
+        $(div).addClass("postFormSelected");
     }
     if (div.file && fileNameFull.match(/\.(jpe?g)$/i) && lord.getLocalObject("stripExifFromJpeg", true)) {
         lord.readAs(div.file).then(function(data) {
@@ -3163,7 +3172,7 @@ lord.showPostActionsMenu = function(e, input, postNumber) {
             rawText: lord.queryOne("blockquote", post).textContent,
             fileInfos: lord.queryAll(".postFile", post),
             isOp: $(post).hasClass("opPost"),
-            hidden: lord.getLocalObject("hiddenPosts", {}).hasOwnProperty(boardName + "/" + postNumber)
+            hidden: lord.getLocalObject("hiddenPosts", {})[boardName + "/" + postNumber]
         },
         thread: {
             fixed: lord.data("fixed", post),
@@ -3342,11 +3351,6 @@ lord.initializeOnLoadBoard = function() {
                 lord.postFormLoaded();
         }).catch(lord.handleError);
     }
-    if (lord.queryOne(".opPost[data-archived='true']")) {
-        lord.nameAll("backButton").forEach(function(btn) {
-            btn.href += "/archive.html";
-        });
-    }
     if (lord.deviceType("mobile"))
         lord.setTooltips();
     var threadNumber = +lord.data("threadNumber");
@@ -3398,19 +3402,21 @@ lord.initializeOnLoadBoard = function() {
 
 lord.initializeOnLoadThread = function() {
     lord.addVisibilityChangeListener(lord.visibilityChangeListener);
-    var enabled = lord.getLocalObject("autoUpdate", {})[+lord.data("threadNumber")];
+    var enabled = lord.getLocalObject("autoUpdate", {})[lord.data("boardName") + "/" +lord.data("threadNumber")];
     if (true === enabled || (false !== enabled && lord.getLocalObject("autoUpdateThreadsByDefault", false)))
         lord.setAutoUpdateEnabled(true);
 };
 
 lord.scrollHandler = function() {
-    if (!lord.queryOne(".navigationButtonTop"))
-        return;
     var k = 1300;
     var top = ((window.innerHeight + window.scrollY + k) >= lord.queryOne(".wrap").scrollHeight);
     var bottom = (window.scrollY <= k);
-    lord.queryOne(".navigationButtonTop").style.display = bottom ? "none" : "";
-    lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";
+    var nbTop = lord.queryOne(".navigationButtonTop");
+    if (nbTop)
+        nbTop.style.display = bottom ? "none" : "";
+    var nbBottom = lord.queryOne(".navigationButtonBottom");
+    if (nbBottom)
+        nbBottom.style.display = top ? "none" : "";
 };
 
 lord.addVisibilityChangeListener = function(callback) {
@@ -3471,6 +3477,12 @@ lord.blinkFaviconNewMessage = function() {
     else
         link.href = link.href.replace("favicon_newmessage.ico", "favicon.ico");
 };
+
+if (lord.getLocalObject("useWebSockets", true)) {
+    lord.wsHandlers["newPost"] = function(msg) {
+        lord.updateThread(true);
+    };
+}
 
 lord.updateThread = function(silent) {
     var boardName = lord.data("boardName");
@@ -3602,6 +3614,19 @@ lord.updateThread = function(silent) {
 };
 
 lord.setAutoUpdateEnabled = function(enabled) {
+    var list = lord.getLocalObject("autoUpdate", {});
+    var boardName = lord.data("boardName");
+    var threadNumber = +lord.data("threadNumber");
+    list[boardName + "/" + threadNumber] = enabled;
+    lord.setLocalObject("autoUpdate", list);
+    if (lord.getLocalObject("useWebSockets", true)) {
+        lord.sendWSMessage((enabled ? "subscribeToThreadUpdates" : "unsubscribeFromThreadUpdates"), {
+            boardName: boardName,
+            threadNumber: threadNumber,
+        }).then(function(msg) {
+            lord.updateThread(true);
+        }).catch(lord.handleError);
+    }
     if (enabled) {
         var intervalSeconds = lord.getLocalObject("autoUpdateInterval", 15);
         lord.autoUpdateTimer = new lord.AutoUpdateTimer(intervalSeconds);
@@ -3610,10 +3635,6 @@ lord.setAutoUpdateEnabled = function(enabled) {
         lord.autoUpdateTimer.stop();
         lord.autoUpdateTimer = null;
     }
-    var list = lord.getLocalObject("autoUpdate", {});
-    var threadNumber = +lord.data("threadNumber");
-    list[threadNumber] = enabled;
-    lord.setLocalObject("autoUpdate", list);
 };
 
 (document.readyState === "complete") ? load_b() : window.addEventListener("load", load_b, false);

@@ -43,7 +43,8 @@
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/FileSaver.min.js"></script>
     <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/mobile-detect.min.js"></script>
-    <script id="model-base" type="application/json"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/sockjs-1.1.0.min.js"></script>
+    <script id="model-base" type="application/json">{{=it.models.base}}</script>
     <script id="model-boards" type="application/json">{{=it.models.boards}}</script>
     <script id="model-tr" type="application/json">{{=it.models.tr}}</script>
     <script id="model-partials" type="application/json">{{=it.models.partials}}</script>
@@ -60,12 +61,23 @@
         lord.templates = {};
 
         (function() {
-            var baseModelHtml = lord.get("/{{=it.site.pathPrefix}}misc/base.json") || "";
             ["base", "boards", "tr", "partials", "templates"].forEach(function(modelName) {
-                var isBase = ("base" == modelName);
-                var html = isBase ? baseModelHtml : lord.id("model-" + modelName).innerHTML;
+                var html = lord.id("model-" + modelName).innerHTML;
                 lord.models[modelName] = JSON.parse(html);
-                if (isBase) {
+                if ("base" == modelName) {
+                    var levels = {};
+                    try {
+                        levels = JSON.parse(lord.getCookie("tmp_levels"));
+                    } catch (ex) {
+                        levels = {};
+                    }
+                    var hashpass = lord.getCookie("hashpass");
+                    lord.models[modelName].user = {
+                        ip: lord.getCookie("tmp_ip"),
+                        levels: levels,
+                        hashpass: hashpass,
+                        loggedIn: !!hashpass
+                    };
                     var deviceTypes = {
                         desktop: {},
                         mobile: {}
@@ -180,6 +192,7 @@
             if (lord.getLocalObject("mumWatching", false)) {
                 s += '<style id="mumWatchingStylesheet" type="text/css">'
                     + '.postFileFile > a > img:not(:hover), .banner > a > img:not(:hover) { opacity: 0.05 !important; }'
+                    + '.hideIfMumWatching:not(:hover) { opacity: 0.05 !important; }'
                     + '</style>';
             }
             var scriptsQueue = [],

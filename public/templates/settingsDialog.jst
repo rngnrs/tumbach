@@ -93,6 +93,12 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <label><input type="checkbox" name="useWebSockets" value="true"
+                               {{? it.settings.useWebSockets}}checked="true"{{?}} />{{=it.tr.useWebSocketsLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <label><input type="checkbox" name="transparentHeader" value="true"
                                       {{? it.settings.transparentHeader}}checked="true"{{?}} />{{=it.tr.transparentHeaderLabelText}}</label>
                         <label><input type="checkbox" name="shrinkPosts" value="true"

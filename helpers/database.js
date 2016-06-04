@@ -1,6 +1,7 @@
 var Address4 = require("ip-address").Address4;
 var Address6 = require("ip-address").Address6;
 var bigInt = require("big-integer");
+var cluster = require("cluster");
 var Crypto = require("crypto");
 var Elasticsearch = require("elasticsearch");
 var FS = require("q-io/fs");
@@ -66,6 +67,24 @@ var es = new Elasticsearch.Client({ host: config("system.elasticsearch.host", "l
 
 module.exports.db = db;
 module.exports.es = es;
+
+var hasNewPosts = new Set();
+
+if (!cluster.isMaster) {
+    setInterval(function() {
+        var o = {};
+        for (var key of hasNewPosts)
+            o[key] = 1;
+        hasNewPosts.clear();
+        if (!Tools.hasOwnProperties(o))
+            return;
+        return Global.IPC.send("notifyAboutNewPosts", o).then(function() {
+            //Do nothing
+        }).catch(function(err) {
+            Global.error(err.stack || err);
+        });
+    }, Tools.Second);
+}
 
 db.tmp_hmget = db.hmget;
 db.hmget = function(key, hashes) {
@@ -1114,6 +1133,7 @@ module.exports.createPost = function(req, fields, files, transaction) {
         c.post = post;
         return Global.generate(post.boardName, post.threadNumber, post.number, "create");
     }).then(function() {
+        hasNewPosts.add(c.post.boardName + "/" + c.post.threadNumber);
         return Promise.resolve(c.post);
     });
 };
@@ -1197,13 +1217,13 @@ var removePost = function(boardName, postNumber, options) {
             return Promise.resolve();
         return rerenderReferringPosts(c.post, { removingThread: options && options.removingThread });
     }).catch(function(err) {
-        Global.error(err);
+        Global.error(err.stack || err);
     }).then(function() {
         if (options && options.leaveReferences)
             return Promise.resolve();
         return removeReferencedPosts(c.post);
     }).catch(function(err) {
-        Global.error(err);
+        Global.error(err.stack || err);
     }).then(function() {
         return db.srem("userPostNumbers:" + c.post.user.ip + ":" + board.name, postNumber);
     }).then(function() {
@@ -1362,7 +1382,7 @@ module.exports.createThread = function(req, fields, files, transaction) {
                 }).then(function() {
                     return Cache.removeFile(`${board.name}/res/${oldThreadNumber}.html`);
                 }).catch(function(err) {
-                    Global.error(err);
+                    Global.error(err.stack || err);
                 });
                 return Promise.resolve();
             });
@@ -1466,19 +1486,30 @@ var Transaction = function() {
 };
 
 Transaction.prototype.rollback = function() {
-    this.filePaths.forEach(function(path) {
-        FS.exists(path).then(function(exists) {
+    var _this = this;
+    Tools.series(_this.filePaths, function(path) {
+        return FS.exists(path).then(function(exists) {
             if (!exists)
-                return;
-            FS.remove(path).catch(function(err) {
+                return Promise.resolve();
+            return FS.remove(path).catch(function(err) {
                 Global.error(err.stack || err);
             });
         });
+    }).then(function() {
+        if (_this.threadNumber <= 0)
+            return Promise.resolve();
+        return removeThread(_this.board.name, _this.threadNumber).catch(function(err) {
+            Global.error(err.stack || err);
+        });
+    }).then(function() {
+        if (_this.postNumber <= 0)
+            return Promise.resolve();
+        return removePost(_this.board.name, _this.postNumber).catch(function(err) {
+            Global.error(err.stack || err);
+        });
+    }).catch(function(err) {
+        Global.error(err.stack || err);
     });
-    if (this.threadNumber > 0)
-        removeThread(this.board.name, this.threadNumber);
-    if (this.postNumber > 0)
-        removePost(this.board.name, this.postNumber);
 };
 
 module.exports.Transaction = Transaction;
@@ -2233,7 +2264,7 @@ module.exports.deleteFile = function(req, res, fields) {
         paths.push(__dirname + "/../public/" + c.post.boardName + "/thumb/" + c.fileInfo.thumb.name);
         paths.forEach(function(path) {
             FS.remove(path).catch(function(err) {
-                Global.error(err);
+                Global.error(err.stack || err);
             });
         });
         Global.generate(c.post.boardName, c.post.threadNumber, c.post.number, "edit");
@@ -2586,7 +2617,7 @@ module.exports.initialize = function() {
     });
     return db.config("SET", "notify-keyspace-events", "Ex").then(function() {
         dbs.subscribe(CHANNEL).catch(function(err) {
-            Global.error(err);
+            Global.error(err.stack || err);
         });
         return Promise.resolve(function() {
             initialized = true;

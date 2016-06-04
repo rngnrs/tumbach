@@ -653,6 +653,7 @@ blockquote.blockquoteThread.expand {
 
 .vote {
     display: table;
+    padding: 4px;
 }
 
 #recaptcha_image_cell,
@@ -1201,4 +1202,16 @@ div.ui-widget-content.ui-dialog-content.checkerboardBackground {
     padding-top: 8px;
     padding-bottom: 0;
     overflow-x: auto;
+}
+
+.bannedUserHeader {
+    font-weight: bold;
+}
+
+.registeredUserHeader {
+    font-weight: bold;
+}
+
+.delallHeader {
+    font-weight: bold;
 }

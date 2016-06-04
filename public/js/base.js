@@ -51,6 +51,8 @@ lord.notificationQueue = [];
 lord.pageProcessors = [];
 lord.postProcessors = [];
 lord.currentTracks = {};
+lord.wsMessages = {};
+lord.wsHandlers = {};
 lord.lastWindowSize = {
     width: $(window).width(),
     height: $(window).height()
@@ -496,6 +498,27 @@ if (typeof lord.getLocalObject("password") != "string") {
     lord.pageProcessors.push(lord.processFomattedDate);
 })();
 
+lord.sendWSMessage = function(type, data) {
+    if (!lord.getLocalObject("useWebSockets", true))
+        return Promise.reject("WebSockets are disabled");
+    return (lord.wsOpen || Promise.resolve()).then(function() {
+        return new Promise(function(resolve, reject) {
+            var id = uuid.v1();
+            lord.wsMessages[id] = {
+                resolve: resolve,
+                reject: reject
+            };
+            if (lord.wsClosed)
+                return reject("Socket closed");
+            lord.ws.send(JSON.stringify({
+                id: id,
+                type: type,
+                data: data
+            }));
+        });
+    });
+};
+
 lord.logoutImplementation = function(form, vk) {
     lord.setCookie("hashpass", "", {
         expires: lord.Billion,
@@ -508,7 +531,7 @@ lord.logoutImplementation = function(form, vk) {
             path: "/"
         });
     }
-    lord.reloadPage();
+    window.location = "/" + lord.data("sitePathPrefix") + "redirect?source=" + window.location.pathname;
 };
 
 lord.doLogout = function(event, form) {
@@ -808,13 +831,13 @@ lord.removeFavorite = function(el) {
 
 lord.switchMumWatching = function() {
     var watching = !lord.getLocalObject("mumWatching", false);
-    var img = lord.queryOne("[name='switchMumWatchingButton']"),
-        cls = (watching ? "zmdi-eye-off" : "zmdi-eye"),
-        clsi = (watching ? "zmdi-eye" : "zmdi-eye-off");
-    $(img).removeClass(clsi).addClass(cls);
+    var btns = lord.queryAll("[name='switchMumWatchingButton']"),
+        cls = (watching ? "mdi-eye-off" : "mdi-eye"),
+        clsi = (watching ? "mdi-eye" : "mdi-eye-off");
+    btns.forEach(function(btn){
+        $(btn).removeClass(clsi).addClass(cls);
+    });
     (watching) ? lord.insertMumWatchingStylesheet() : $("#mumWatchingStylesheet").remove();
-    img = lord.queryOne("[name='switchMumWatchingButton'] > img");
-    img.src = "/" + lord.data("sitePathPrefix") + "img/" + (watching ? "hide" : "show") + ".png";
     lord.setLocalObject("mumWatching", watching);
 };
 
@@ -1807,9 +1830,34 @@ lord.updateChat = function(keys) {
     }
 };
 
+if (lord.getLocalObject("useWebSockets", true)) {
+    lord.wsHandlers["newChatMessage"] = function(msg) {
+        var chats = lord.getLocalObject("chats", {});
+        var data = msg.data;
+        var key = data.boardName + ":" + data.postNumber;
+        if (!chats[key])
+            chats[key] = [];
+        var list = chats[key];
+        var message = data.message;
+        for (var i = 0; i < list.length; ++i) {
+            var m = list[i];
+            if (message.type == m.type && message.date == m.date && message.text == m.text)
+                return;
+        }
+        list.push(message);
+        list.sort(function(m1, m2) {
+            return m1.date.localeCompare(m2.date);
+        });
+        lord.setLocalObject("chats", chats);
+        lord.updateChat([key]);
+    };
+}
+
 lord.checkChats = function() {
-    if (lord.checkChats.timer)
-        clearTimeout(lord.checkChats.timer);
+    if (!lord.getLocalObject("useWebSockets", true)) {
+        if (lord.checkChats.timer)
+            clearTimeout(lord.checkChats.timer);
+    }
     lord.api("chatMessages", { lastRequestDate: lord.lastChatCheckDate || "" }).then(function(model) {
         if (!model)
             return Promise.resolve();
@@ -1821,8 +1869,9 @@ lord.checkChats = function() {
             if (!chats[key])
                 chats[key] = [];
             var list = chats[key];
-            if (messages.length > 0)
-                keys.push(key);
+            if (messages.length < 1)
+                return;
+            var any = false;
             messages.forEach(function(message) {
                 for (var i = 0; i < list.length; ++i) {
                     var msg = list[i];
@@ -1830,16 +1879,25 @@ lord.checkChats = function() {
                         return;
                 }
                 list.push(message);
+                any = true;
             });
+            list.sort(function(m1, m2) {
+                return m1.date.localeCompare(m2.date);
+            });
+            if (any)
+                keys.push(key);
         });
         lord.setLocalObject("chats", chats);
         if (keys.length > 0)
             lord.updateChat(keys);
-        lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord),
-            lord.chatDialog ? (5 * lord.Second) : lord.Minute);
+        if (!lord.getLocalObject("useWebSockets", true)) {
+            lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord),
+                lord.chatDialog ? (5 * lord.Second) : lord.Minute);
+        }
     }).catch(function(err) {
         lord.handleError(err);
-        lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord), lord.Minute);
+        if (!lord.getLocalObject("useWebSockets", true))
+            lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord), lord.Minute);
     });
 };
 
@@ -1933,16 +1991,35 @@ lord.sendChatMessage = function() {
     if (!contact)
         return;
     var message = lord.nameOne("message", lord.chatDialog);
-    var formData = new FormData();
     var key = $(contact).attr("name");
-    formData.append("text", message.value);
-    formData.append("boardName", key.split(":").shift());
-    formData.append("postNumber", +key.split(":").pop());
-    return lord.post("/" + lord.data("sitePathPrefix") + "action/sendChatMessage", formData).then(function(result) {
-        message.value = "";
-        $(message).focus();
-        lord.checkChats();
-    }).catch(lord.handleError);
+    if (lord.getLocalObject("useWebSockets", true)) {
+        lord.sendWSMessage("sendChatMessage", {
+            boardName: key.split(":").shift(),
+            postNumber: +key.split(":").pop(),
+            text: message.value
+        }).then(function(msg) {
+            message.value = "";
+            $(message).focus();
+            var chats = lord.getLocalObject("chats", {});
+            if (!chats[key])
+                chats[key] = [msg];
+            else
+                chats[key].push(msg);
+            lord.setLocalObject("chats", chats);
+            lord.updateChat([key]);
+        }).catch(lord.handleError);
+    } else {
+        var formData = new FormData();
+        formData.append("text", message.value);
+        formData.append("boardName", key.split(":").shift());
+        formData.append("postNumber", +key.split(":").pop());
+        var path = "/" + lord.data("sitePathPrefix") + "action/sendChatMessage";
+        return lord.post(path, formData).then(function(result) {
+            message.value = "";
+            $(message).focus();
+            lord.checkChats();
+        }).catch(lord.handleError);
+    }
 };
 
 lord.checkNotificationQueue = function() {
@@ -2135,7 +2212,8 @@ lord.setTooltips = function(parent) {
 lord.insertMumWatchingStylesheet = function() {
     var style = lord.node("style");
     style.id = "mumWatchingStylesheet";
-    var css = ".postFileFile > a > img:not(:hover), .banner > a > img:not(:hover) { opacity: 0.05 !important; }";
+    var css = ".postFileFile > a > img:not(:hover), .banner > a > img:not(:hover), .hideIfMumWatching:not(:hover) ";
+    css += "{ opacity: 0.05 !important; }";
     style.type = "text/css";
     if (style.styleSheet)
         style.styleSheet.cssText = css;
@@ -2164,6 +2242,70 @@ lord.adjustPostBodySize = function() {
 
 lord.initializeOnLoadBase = function() {
     lord.hashChangeHandler(lord.hash());
+    if (lord.getLocalObject("useWebSockets", true)) {
+        var options = {};
+        var transports = lord.model("base").site.ws.transports;
+        if (transports)
+            options.transports = transports;
+        var retryCount = 0;
+        var f = function() {
+            lord.ws = new SockJS("/" + lord.model("base").site.pathPrefix + "ws", null, options);
+            lord.wsOpen = new Promise(function(resolve, reject) {
+                lord.ws.onopen = function() {
+                    retryCount = 0;
+                    lord.ws.send(JSON.stringify({
+                        type: "init",
+                        data: { hashpass: lord.getCookie("hashpass") }
+                    }));
+                };
+                lord.ws.onmessage = function(message) {
+                    try {
+                        message = JSON.parse(message.data);
+                    } catch (err) {
+                        lord.handleError(err);
+                        return;
+                    }
+                    if ("init" == message.type) {
+                        resolve();
+                        delete lord.wsOpen;
+                    } else {
+                        var msg = lord.wsMessages[message.id];
+                        if (!msg) {
+                            if ("_error" == message.id) {
+                                lord.handleError(message.error);
+                            } else {
+                                var handler = lord.wsHandlers[message.type];
+                                if (handler)
+                                    handler(message);
+                            }
+                            return;
+                        }
+                        delete lord.wsMessages[message.id];
+                        if (!message.error)
+                            msg.resolve(message.data);
+                        else
+                            msg.reject(message.error);
+                    }
+                };
+                lord.ws.onclose = function() {
+                    lord.wsClosed = true;
+                    if (!lord.wsOpen)
+                        return;
+                    reject("Socket closed");
+                    delete lord.wsOpen;
+                };
+            });
+            lord.wsOpen.catch(function(err) {
+                ++retryCount;
+                if (retryCount > 5)
+                    lord.handleError(err);
+                if (retryCount > 10)
+                    return;
+                setTimeout(f, retryCount * lord.Second);
+            });
+        };
+        f();
+    }
     lord.series(lord.pageProcessors, function(f) {
         return f();
     }).catch(lord.handleError);
@@ -2331,7 +2473,7 @@ lord.processBoardGroups = function(model) {
 
 function load() {
     window.removeEventListener("load", load, false);
-    if (/\/(frame|login).html$/.test(window.location.pathname))
+    if (/\/login.html$/.test(window.location.pathname))
         return;
     lord.initializeOnLoadBase();
     lord.checkFavoriteThreads();
