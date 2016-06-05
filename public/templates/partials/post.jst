@@ -32,9 +32,9 @@
                     {{ out += it.customPostHeaderPart[20](it, thread, post); }}
                 {{?}}
                 {{? thread.postLimitReached}}
-                    <i class="mdi mdi-middle mdi-alert" title="{{=it.tr.postLimitReachedText}}"></i>
+                    <i class="mdi mdi-middle mdi-block-helper" title="{{=it.tr.postLimitReachedText}}"></i>
                 {{?? thread.bumpLimitReached}}
-                    <i class="mdi mdi-middle mdi-block-helper" title="{{=it.tr.bumpLimitReachedText}}"></i>
+                    <i class="mdi mdi-middle mdi-alert" title="{{=it.tr.bumpLimitReachedText}}"></i>
                 {{?}}
             {{?}}
         </span>
