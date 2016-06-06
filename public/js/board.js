@@ -1509,20 +1509,17 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
     if (post) {
         post = post.cloneNode(true);
         $(lord.queryOne(".hideReason", post)).remove();
-        $(lord.nameOne("postActionsContainer", post)).remove();
-        $(lord.nameOne("quickReplyContainer", post)).remove();
         lord.nameAll("toThread", post).forEach(function(el) {
             $(el).remove();
         });
         p = Promise.resolve(post);
-    } else {
+    } else
         p = lord.api("post", {
             boardName: boardName,
             postNumber: postNumber
         }).then(function(post) {
             return lord.createPostNode(post, false);
         });
-    }
     p.then(function(post) {
         $(post).removeClass("opPost hidden").addClass("post temporary");
         if (!lord.deviceType("mobile")) {
@@ -1548,6 +1545,8 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
                     hide();
             };
             post.onmouseover = function(event) {
+                $(post).removeClass("newPost");
+                $(lord.id(postNumber)).removeClass("newPost");
                 post.mustHide = false;
                 if (post.hideTimer) {
                     clearTimeout(post.hideTimer);
@@ -1568,9 +1567,9 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
         document.body.appendChild(post);
         if (!lord.deviceType("mobile")) {
             post.style.position = "absolute";
-            var doc = document.documentElement;
-            var coords = a.getBoundingClientRect();
-            var linkCenter = coords.left + (coords.right - coords.left) / 2;
+            var doc = document.documentElement,
+                coords = a.getBoundingClientRect(),
+                linkCenter = coords.left + (coords.right - coords.left) / 2;
             if (linkCenter < 0.6 * doc.clientWidth) {
                 post.style.maxWidth = doc.clientWidth - linkCenter + "px";
                 post.style.left = linkCenter + "px";

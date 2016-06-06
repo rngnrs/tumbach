@@ -370,7 +370,7 @@ span.newPostCount {
     display: none;
     list-style-type: none;
     padding: 2px;
-    z-index: 5;
+    z-index: 9002;
 }
 
 .menu > li {
