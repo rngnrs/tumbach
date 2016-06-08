@@ -524,6 +524,7 @@ lord.logoutImplementation = function(form, vk) {
         expires: lord.Billion,
         path: "/"
     });
+    lord.removeLocalObject("levels");
     lord.removeLocalObject("lastChatCheckDate");
     if (vk) {
         lord.setCookie("vkAuth", "", {
@@ -2230,9 +2231,12 @@ lord.adjustPostBodySize = function() {
     nstyle.id = "postBodySize";
     nstyle.type = "text/css";
     var width = $(".wrap").width();
-    var m = lord.deviceType("mobile") ? 0 : 270;
+    var m = lord.deviceType("mobile") ? 0 : 60;
+    var mm = lord.deviceType("mobile") ? 0 : 270;
     var css = ".postBody { max-width: " + (width - 14) + "px; }\n";
-    css += ".postFile ~ .postText > blockquote, .blockLatex, .codeBlock { max-width: " + (width - m) + "px; }";
+    css += ".postText > blockquote { max-width: " + (width - m) + "px; }";
+    css += ".postFile ~ .postText > blockquote, .blockLatex, .codeBlock { max-width: " + (width - mm) + "px; }";
+    css += ".postFile ~ .postFile ~ .postText > blockquote, .blockLatex, .codeBlock { max-width: " + (width - m) + "px; }";
     if (nstyle.styleSheet)
         nstyle.styleSheet.cssText = css;
     else

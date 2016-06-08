@@ -22,7 +22,8 @@ tumb.toggle = {
 			setTimeout(function () {
 				tumb.go.wr.addClass("transition");
 				tumb.go.sb.addClass("transition");
-			}, 100);
+				tumb.go.sb2.addClass("transition");
+			}, 500);
 		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop") && tumb.go.width > 1024)) {
 			lord.setLocalObject("showFrame", !hc);
 			if(tumb.go.width < 1024) {

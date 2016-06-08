@@ -1,5 +1,5 @@
 <div>
-    <aside id="sidebar2" class="sidebar sidebar-fixed-right transition">
+    <aside id="sidebar2" class="sidebar sidebar-fixed-right">
         <section class="tabs">
             <input id="tab_1" type="radio" name="tab" checked="checked" />
             <input id="tab_2" type="radio" name="tab" />
@@ -12,18 +12,18 @@
                         <div class="stop">
                             <i class="mdi mdi-stop mdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
                         </div>
-                        <div>
+                        <!--<div>
                             <input type="checkbox" name="mute" id="mute" />
                             <label for="mute">
                                 <i class="mdi mdi-volume-off mdi-hc-2x" onclick="lord.playerMute();"></i>
                             </label>
-                        </div>
-                        <!--<div class="shuffle">
+                        </div>-->
+                        <div class="shuffle">
                             <input type="checkbox" name="shuffle" id="shuffle" />
                             <label for="shuffle" title="Воспроизводить вперемешку">
                                 <i class="mdi mdi-shuffle mdi-hc-2x" onclick="lord.playerShuffle();"></i>
-                            </labelЮ
-                        </div>-->
+                            </label>
+                        </div>
                         <div class="loop">
                             <input type="checkbox" name="loop" id="loop" />
                             <label for="loop" title="Повторять композицию">

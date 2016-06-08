@@ -189,7 +189,7 @@ body, input, select {
     left: 4px;
     text-align: left;
     padding-left: 2px;
-    cursor: pointer;
+    cursor: move;
 }
 
 #postForm.floatingPostForm > .postFormHeader {
