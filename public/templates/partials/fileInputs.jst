@@ -2,17 +2,17 @@
 <div class="postformFile" onclick="lord.browseFile(event, this);" ondragover="return lord.fileDragOver(event, this);"
      ondragleave="return lord.fileDragLeave(event, this);" ondrop="return lord.fileDrop(event, this);"
      title="{{=it.tr.selectFileText}}">
-    <i id="filePreviewLabel" class="mdi mdi-folder-multiple-image mdi-hc-2x"></i>
+    <i id="filePreviewLabel" class="mdi mdi-middle mdi-folder-multiple-image mdi-hc-2x"></i>
     <img style="display: none;" class="postformFilePreview signImage noInvert">
     <i onclick="lord.attachFileByLink(this); return lord.preventOnclick(event);"
-       class="fileByLinkButton mdi mdi-link-variant mdi-hc-2x"
+       class="fileByLinkButton mdi mdi-middle mdi-link-variant mdi-hc-2x"
        title="{{=it.tr.attachFileByLinkText}}"></i>
     <i onclick="lord.attachFileByDrawing(this); return lord.preventOnclick(event);"
-       class="fileByLinkButton mdi mdi-brush mdi-hc-2x"
+       class="fileByLinkButton mdi mdi-middle mdi-brush mdi-hc-2x"
        title="{{=it.tr.attachFileByDrawingText}}"></i>
     {{? it.user.vkAuth}}
         <i onclick="lord.attachFileByVk(this); return lord.preventOnclick(event);"
-           class="fileByLinkButton mdi mdi-file-music mdi-hc-2x"
+           class="fileByLinkButton mdi mdi-middle mdi-file-music mdi-hc-2x"
            title="{{=it.tr.attachFileByVkText}}"></i>
     {{?}}
     <span class="postformFileText"></span>

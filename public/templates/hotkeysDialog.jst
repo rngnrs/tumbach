@@ -1,4 +1,4 @@
-<table>
+<table style="font-size: 12px;">
     <tbody>
         {{~["previousPageImage", "nextPageImage", "previousThreadPost", "nextThreadPost", "previousPost", "nextPost",
             "hidePost", "goToThread", "expandThread", "expandImage", "quickReply", "submitReply", "showFavorites",
@@ -8,7 +8,7 @@
                 <td>
                     <input type="text" name="{{=hotkey}}"
                            onkeyup="lord.assignHotkey(event, this);"
-                           onkeydown="return false;"
+                           onkeydown="return false;" style="font-size: 12px !important;"
                            value="{{? it.hotkeys[hotkey]}}{{=it.hotkeys[hotkey]}}{{??}}{{=it.defaultHotkeys[hotkey]}}{{?}}" />
                 </td>
                 <td>

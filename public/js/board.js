@@ -589,21 +589,22 @@ lord.addPostToHidden = function(hiddenPosts, boardName, postNumber, threadNumber
 
 lord.makeFormFloat = function(e) {
     e.preventDefault();
-    var container = postForm.parentNode;
-    var match = container.id.match(/^postFormContainer(Top|Bottom)$/);
+    var postForm = lord.id("postForm"),
+        container = postForm.parentNode,
+        match = container.id.match(/^postFormContainer(Top|Bottom)$/);
     if (match)
         lord.id("showHidePostFormButton" + match[1]).innerHTML = lord.text("showPostFormText");
-    var pos = $("#postForm").offset();
+    var pos = $(postForm).offset();
     pos.left -= window.scrollX;
     pos.top -= window.scrollY;
     var setPos = function(p) {
-        $("#postForm").css({
+        $(postForm).css({
             left: p.left + "px",
             top: p.top + "px"
         });
     };
     setPos(pos);
-    $("#postForm").addClass("floatingPostForm");
+    $(postForm).addClass("floatingPostForm");
     var previous = {
         x: e.clientX,
         y: e.clientY
@@ -1807,6 +1808,7 @@ lord.fileAddedCommon = function(div) {
         } else
             img.src = "/" + prefix + "img/file.png";
         img.style.display = "";
+        $(img).removeClass("noInvert");
         lord.queryOne("#filePreviewLabel", div).style.display = "none";
         $(div).addClass("postFormSelected");
     }
@@ -2924,10 +2926,10 @@ lord.hotkey_previousPageImage = function() {
         lord.previousFile();
         return false;
     }
-    if (+lord.data("threadNumber"))
+    if (+lord.data("threadNumber") || lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
         return;
-    var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.queryAll(".pagesItem:not(.metaPage)");
+    var curr = lord.queryOne(".pagesItem.currentPage"),
+        list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 1; i < list.length; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i - 1]).href;
@@ -2941,10 +2943,10 @@ lord.hotkey_nextPageImage = function() {
         lord.nextFile();
         return false;
     }
-    if (+lord.data("threadNumber"))
+    if (+lord.data("threadNumber") || lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
         return;
-    var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.queryAll(".pagesItem:not(.metaPage)");
+    var curr = lord.queryOne(".pagesItem.currentPage"),
+        list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 0; i < list.length - 1; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i + 1]).href;
@@ -2977,6 +2979,8 @@ lord.currentThread = function(selectLast) {
 };
 
 lord.previousNextThreadPostCommon = function(next, post) {
+    if (lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
+        return;
     var iterationLoop = function(container, el) {
         for (var i = 0; i < container.length; i += 1) {
             if (container[i] == el) {
@@ -3299,7 +3303,7 @@ lord.initializeOnLoadBoard = function() {
             bumpLimitReached: lord.data("bumpLimitReached")
         };
     }
-    if (c.threadOrBoard && c.model.board.captchaEnabled) {
+    if (c.threadOrBoard) {
         c.model.customPostFormField = lord.customPostFormField;
         c.model.customPostFormOption = lord.customPostFormOption;
         c.model.postformRules = JSON.parse(lord.id("model-postformRules").innerHTML);
@@ -3328,45 +3332,47 @@ lord.initializeOnLoadBoard = function() {
                 $("#markup").width($(this).width() + 8);
             }).width(400).resize();
         }
-        var captcha = lord.selectCaptchaEngine();
-        var appendCaptchaWidgetToContainer = function(container) {
-            if (captcha && captcha.widgetHtml)
-                container.innerHTML = captcha.widgetHtml;
-            else if (captcha && captcha.widgetTemplate)
-                if (container)
-                    container.appendChild(lord.template(captcha.widgetTemplate, captcha));
-                else
-                    return lord.handleError("failedToPrepareCaptchaText");
-        };
-        lord.api("captchaQuota", { boardName: lord.data("boardName") }).then(function(result) {
-            var quota = result.quota;
-            if (quota > 0) {
-                appendCaptchaWidgetToContainer(lord.id("hiddenPostForm"));
-                var span = lord.node("span");
-                span.appendChild(lord.node("text", lord.text("noCaptchaText") + ". "
-                    + lord.text("captchaQuotaText") + " " + quota));
-                if(lord.id("captchaContainer"))
-                    lord.id("captchaContainer").appendChild(span);
-                else
-                    return Promise.reject("failedToPrepareCaptchaText");
-            } else {
-                appendCaptchaWidgetToContainer(lord.id("captchaContainer"));
-            }
-            if (captcha && captcha.script) {
-                var script = lord.node("script");
-                script.type = "text/javascript";
-                script.innerHTML = captcha.script;
-                lord.queryOne("head").appendChild(script);
-            }
-            if (captcha && captcha.scriptSource) {
-                var script = lord.node("script");
-                script.type = "text/javascript";
-                script.src = captcha.scriptSource;
-                lord.queryOne("head").appendChild(script);
-            }
-            if (typeof lord.postFormLoaded == "function")
-                lord.postFormLoaded();
-        }).catch(lord.handleError);
+        if (c.model.board.captchaEnabled) {
+            var captcha = lord.selectCaptchaEngine();
+            var appendCaptchaWidgetToContainer = function(container) {
+                if (captcha && captcha.widgetHtml)
+                    container.innerHTML = captcha.widgetHtml;
+                else if (captcha && captcha.widgetTemplate)
+                    if (container)
+                        container.appendChild(lord.template(captcha.widgetTemplate, captcha));
+                    else
+                        return lord.handleError("failedToPrepareCaptchaText");
+            };
+            lord.api("captchaQuota", { boardName: lord.data("boardName") }).then(function(result) {
+                var quota = result.quota;
+                if (quota > 0) {
+                    appendCaptchaWidgetToContainer(lord.id("hiddenPostForm"));
+                    var span = lord.node("span");
+                    span.appendChild(lord.node("text", lord.text("noCaptchaText") + ". "
+                        + lord.text("captchaQuotaText") + " " + quota));
+                    if(lord.id("captchaContainer"))
+                        lord.id("captchaContainer").appendChild(span);
+                    else
+                        return Promise.reject("failedToPrepareCaptchaText");
+                } else {
+                    appendCaptchaWidgetToContainer(lord.id("captchaContainer"));
+                }
+                if (captcha && captcha.script) {
+                    var script = lord.node("script");
+                    script.type = "text/javascript";
+                    script.innerHTML = captcha.script;
+                    lord.queryOne("head").appendChild(script);
+                }
+                if (captcha && captcha.scriptSource) {
+                    var script = lord.node("script");
+                    script.type = "text/javascript";
+                    script.src = captcha.scriptSource;
+                    lord.queryOne("head").appendChild(script);
+                }
+                if (typeof lord.postFormLoaded == "function")
+                    lord.postFormLoaded();
+            }).catch(lord.handleError);
+        }
     }
     if (lord.deviceType("mobile"))
         lord.setTooltips();

@@ -27,7 +27,7 @@ a.expandCollapse:hover {
 }
 .postSequenceNumber,
 .cspoilerTitle:hover,
-a:hover, a:hover i {
+a:hover, a:hover i, a:focus {
     color: #F80;
 }
 a.expandCollapse:hover {

@@ -105,10 +105,10 @@ var spawnCluster = function() {
         BoardModel.initialize().then(function() {
             return controller.initialize();
         }).then(function() {
-            var sockets = {};
-            var nextSocketId = 0;
-            var server = HTTP.createServer(app);
-            var ws = new WebSocket(server);
+            var sockets = {},
+                nextSocketId = 0,
+                server = HTTP.createServer(app),
+                ws = new WebSocket(server);
             ws.installHandler("sendChatMessage", function(msg, conn) {
                 var data = msg.data || {};
                 return Chat.sendMessage({
@@ -132,8 +132,8 @@ var spawnCluster = function() {
             });
             var subscriptions = new Map();
             ws.installHandler("subscribeToThreadUpdates", function(msg, conn) {
-                var data = msg.data || {};
-                var key = data.boardName + "/" + data.threadNumber;
+                var data = msg.data || {},
+                    key = data.boardName + "/" + data.threadNumber;
                 if (subscriptions.has(key)) {
                     subscriptions.get(key).add(conn);
                 } else {
@@ -143,9 +143,9 @@ var spawnCluster = function() {
                 }
             });
             ws.installHandler("unsubscribeFromThreadUpdates", function(msg, conn) {
-                var data = msg.data || {};
-                var key = data.boardName + "/" + data.threadNumber;
-                var s = subscriptions.get(key);
+                var data = msg.data || {},
+                    key = data.boardName + "/" + data.threadNumber,
+                    s = subscriptions.get(key);
                 if (!s)
                     return;
                 s.delete(conn);

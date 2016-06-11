@@ -44,7 +44,7 @@ a.expandCollapse, a i {
     color: #444;
 }
 
-a:hover, a:hover i {
+a:hover, a:hover i, a:focus {
     color: #D00;
 }
 

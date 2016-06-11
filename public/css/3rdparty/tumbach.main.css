@@ -436,6 +436,9 @@ h1 {
     padding: 0 !important;
     margin: 0 !important;
 }
+.ui-dialog-content {
+    max-height: calc(100vh - 90px) !important;
+}
 
 /* COMMON FOR ALL STYLES */
 .critical {
@@ -536,12 +539,12 @@ h1 {
     color: #000;
 }
 .postFormSelected {
-    min-height: 4em;
+    min-height: 3.5em;
 }
 
 /* Chats */
 .chatMessage > div {
-    min-width:50%;
+    min-width: 50%;
 }
 .chatMessage {
     display: inline-block;

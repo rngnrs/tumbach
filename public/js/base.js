@@ -1486,13 +1486,13 @@ lord.checkFavoriteThreads = function() {
 };
 
 lord.showNewPosts = function() {
-    var lastPostNumbers = lord.getLocalObject("lastPostNumbers", {});
-    var currentBoardName = lord.data("boardName");
+    var currentBoardName = lord.data("boardName"),
+        newLastPostNumbers = lord.getLocalObject("lastPostNumbers", {});
     lord.api("lastPostNumbers").then(function(result) {
         var getNewPostCount = function(boardName) {
             if (!boardName || currentBoardName == boardName || !result[boardName])
                 return 0;
-            var lastPostNumber = lastPostNumbers[boardName];
+            var lastPostNumber = newLastPostNumbers[boardName];
             if (!lastPostNumber)
                 return 0;
             var newPostCount = result[boardName] - lastPostNumber;
@@ -1539,14 +1539,31 @@ lord.showNewPosts = function() {
             });
         }
         lord.each(result, function(lastPostNumber, boardName) {
-            if (lastPostNumbers[boardName])
+            if (newLastPostNumbers[boardName])
                 return;
-            lastPostNumbers[boardName] = lastPostNumber;
+            newLastPostNumbers[boardName] = lastPostNumber;
         });
         if (typeof result[currentBoardName] == "number")
-            lastPostNumbers[currentBoardName] = result[currentBoardName];
+            newLastPostNumbers[currentBoardName] = result[currentBoardName];
+        var lastPostNumbers = lord.getLocalObject("lastPostNumbers", {});
+        lord.each(newLastPostNumbers, function(n, boardName) {
+            if (!lastPostNumbers[boardName] || lastPostNumbers[boardName] < n)
+                lastPostNumbers[boardName] = n;
+        });
         lord.setLocalObject("lastPostNumbers", lastPostNumbers);
-    }).catch(lord.handleError);
+        var interval = lord.getLocalObject("showNewPostsInterval", 60);
+        if (interval >= 15)
+            setInterval(function () {
+                lord.showNewPosts.bind(lord)
+            }, interval * lord.Second);
+    }).catch(function(err) {
+        lord.handleError(err);
+        var interval = lord.getLocalObject("showNewPostsInterval", 60);
+        if (interval >= 15)
+            setInterval(function () {
+                lord.showNewPosts.bind(lord)
+            }, 2 * interval * lord.Second);
+    });
 };
 
 lord.editHotkeys = function() {
@@ -1578,10 +1595,11 @@ lord.assignHotkey = function(e, inp) {
     if (!e || e.type != "keyup" || !inp)
         return;
     e.preventDefault();
-    var name = inp.name;
     var key = lord.keyboardMap[e.which || e.keyCode || e.key];
     if (!key)
         return false;
+    if (key == "Esc")
+        return inp.value = "";
     if (e.metaKey)
         key = "Meta+" + key;
     if (e.altKey)
@@ -2334,12 +2352,7 @@ lord.initializeOnLoadBase = function() {
         if (favoritesButton)
             favoritesButton.title += " (" + key("showFavorites") + ")";
     }
-    if (lord.getLocalObject("showNewPosts", true) && lord.getLocalObject("showNewPostsInterval", 60) >= 20) {
-        lord.showNewPosts();
-        setInterval(function () {
-            lord.showNewPosts()
-        }, lord.getLocalObject("showNewPostsInterval", 60) * lord.Second);
-    }
+    lord.showNewPosts();
     if (lord.getLocalObject("chatEnabled", true))
         lord.checkChats();
     if (lord.notificationsEnabled())
