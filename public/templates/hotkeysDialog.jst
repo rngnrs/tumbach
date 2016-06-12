@@ -9,7 +9,7 @@
                     <input type="text" name="{{=hotkey}}"
                            onkeyup="lord.assignHotkey(event, this);"
                            onkeydown="return false;" style="font-size: 12px !important;"
-                           value="{{? it.hotkeys[hotkey]}}{{=it.hotkeys[hotkey]}}{{??}}{{=it.defaultHotkeys[hotkey]}}{{?}}" />
+                           value="{{? it.hotkeys[hotkey] || it.hotkeys[hotkey] == ''}}{{=it.hotkeys[hotkey]}}{{??}}{{=it.defaultHotkeys[hotkey]}}{{?}}" />
                 </td>
                 <td>
                     – {{=it.tr["hotkey" + hotkey[0].toUpperCase() + hotkey.substr(1) + "LabelText"]}}

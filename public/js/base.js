@@ -1578,12 +1578,15 @@ lord.editHotkeys = function() {
         if (!accepted)
             return;
         lord.queryAll("input", c.div).forEach(function(el) {
-            var name = el.name;
-            var value = el.value || lord.DefaultHotkeys.dir[name];
-            c.hotkeys.dir[name] = value;
-            c.hotkeys.rev[value] = name;
-            lord.setLocalObject("hotkeys", c.hotkeys);
+            var name = el.name,
+                value = el.value;
+            if(value != lord.DefaultHotkeys.dir[name]) {
+                c.hotkeys.dir[name] = value;
+                if(value)
+                    c.hotkeys.rev[value] = name;
+            }
         });
+        lord.setLocalObject("hotkeys", c.hotkeys);
     }).catch(lord.handleError);
 };
 
@@ -1759,8 +1762,8 @@ lord.interceptHotkey = function(e) {
             && lord.contains(["TEXTAREA", "INPUT", "BUTTON"], e.target.tagName))) {
         return;
     }
-    var hotkeys = lord.getLocalObject("hotkeys", {});
-    var key = lord.keyboardMap[e.which || e.keyCode || e.key];
+    var hotkeys = lord.getLocalObject("hotkeys", {}),
+        key = lord.keyboardMap[e.which || e.keyCode || e.key];
     if (!key)
         return;
     if (e.metaKey)
@@ -1772,7 +1775,7 @@ lord.interceptHotkey = function(e) {
     if (e.ctrlKey)
         key = "Ctrl+" + key;
     var name = hotkeys.rev ? (hotkeys.rev[key] || lord.DefaultHotkeys.rev[key]) : lord.DefaultHotkeys.rev[key];
-    if (!name || !lord["hotkey_" + name])
+    if (!name || !lord["hotkey_" + name] || hotkeys.dir[name] == "")
         return;
     if (lord["hotkey_" + name]() !== false)
         return;
@@ -2335,18 +2338,22 @@ lord.initializeOnLoadBase = function() {
     model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
     if (lord.getLocalObject("hotkeysEnabled", true) && !lord.deviceType("mobile")) {
         document.body.addEventListener("keyup", lord.interceptHotkey, false);
-        var hotkeys = lord.getLocalObject("hotkeys", {}).dir;
-        var key = function(name) {
-            if (!hotkeys)
-                return lord.DefaultHotkeys.dir[name];
-            return hotkeys[name] || lord.DefaultHotkeys.dir[name];
+        var hotkeys = lord.getLocalObject("hotkeys", {}).dir,
+            key = function(name) {
+                if (!hotkeys)
+                    return lord.DefaultHotkeys.dir[name];
+                return (typeof hotkeys[name] == "string")? hotkeys[name]: lord.DefaultHotkeys.dir[name];
         };
-        var settingsButton = lord.queryOne("[name='settingsButton']");
-        var favoritesButton = lord.queryOne("[name='favoritesButton']");
-        if (settingsButton)
-            settingsButton.title += " (" + key("showSettings") + ")";
-        if (favoritesButton)
-            favoritesButton.title += " (" + key("showFavorites") + ")";
+        var settingsButton = lord.queryAll("[name='settingsButton']"),
+            favoritesButton = lord.queryAll("[name='favoritesButton']");
+        if (settingsButton && key("showSettings"))
+            settingsButton.forEach(function(btn){
+                btn.title += " (" + key("showSettings") + ")";
+            });
+        if (favoritesButton && key("showFavorites"))
+            favoritesButton.forEach(function(btn){
+                btn.title += " (" + key("showFavorites") + ")";
+            });
     }
     lord.showNewPosts();
     if (lord.getLocalObject("chatEnabled", true))

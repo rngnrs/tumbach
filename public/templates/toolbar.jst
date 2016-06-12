@@ -2,9 +2,9 @@
     <div class="toolbar">
         {{? "mobile" != it.deviceType}}
             <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-settings"
-                                         title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i></a>
+                                         title="{{=it.tr.settingsButtonText}}" name="settingsButton" onclick="lord.showSettings(); return false;"></i></a>
             <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-star"
-                                         title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i></a>
+                                         title="{{=it.tr.showFavoritesText}}" name="favoritesButton" onclick="lord.showFavorites(); return false;"></i></a>
             <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-eye{{? it.mumWatching}}-off{{?}}"
                                          title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i></a>
             {{? it.user.loggedIn}}

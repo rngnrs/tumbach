@@ -67,10 +67,10 @@
                 <i class="mdi mdi-filter mdi-hc-2x" title="{{=it.tr.editSpellsText}}" onclick="lord.editSpells();return false;"></i>
             </div>
             <div>
-                <i class="mdi mdi-settings mdi-hc-2x" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
+                <i class="mdi mdi-settings mdi-hc-2x" name="settingsButton" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
             </div>
             <div>
-                <i class="mdi mdi-star mdi-hc-2x" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
+                <i class="mdi mdi-star mdi-hc-2x" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
             </div>
             <div>
                 <i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}} mdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
