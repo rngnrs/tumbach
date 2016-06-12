@@ -1553,16 +1553,12 @@ lord.showNewPosts = function() {
         lord.setLocalObject("lastPostNumbers", lastPostNumbers);
         var interval = lord.getLocalObject("showNewPostsInterval", 60);
         if (interval >= 15)
-            setInterval(function () {
-                lord.showNewPosts.bind(lord)
-            }, interval * lord.Second);
+            setTimeout(lord.showNewPosts.bind(lord), interval * lord.Second);
     }).catch(function(err) {
         lord.handleError(err);
         var interval = lord.getLocalObject("showNewPostsInterval", 60);
         if (interval >= 15)
-            setInterval(function () {
-                lord.showNewPosts.bind(lord)
-            }, 2 * interval * lord.Second);
+            setTimeout(lord.showNewPosts.bind(lord), 2 * interval * lord.Second);
     });
 };
 
