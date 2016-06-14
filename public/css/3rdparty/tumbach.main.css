@@ -65,8 +65,13 @@ input[type=number] {
     height: 42px;
     top: 0;
     right: 0;
-    position: fixed;
     z-index: 3;
+}
+#header.default {
+    position: relative;
+}
+#header.fixed {
+    position: fixed;
 }
 #header.transparent .header-wrapper,
 #header.transparent .logo {
@@ -162,7 +167,7 @@ a {
     text-decoration: none;
 }
 .logo {
-    position: relative;
+    position: fixed;
     left: 0;
     top: 0;
     background: url("../../assets/icon.png");
@@ -187,7 +192,6 @@ a {
     position: relative;
     width: 100%;
     left: 0;
-    padding-top: 42px;
  }
 .wrap.toggle {
     width: calc(100% - 210px);
@@ -359,6 +363,7 @@ div.scroll-window {
     padding: 6px 5px;
     right: 0;
     height: inherit;
+    position: fixed;
 }
 #tplayer i, .player-menu {
     height: 42px;
@@ -418,11 +423,10 @@ h1 {
     position: absolute;
     background: url("../../img/loading_big.gif") center center no-repeat;
 }
-.list-item .buttonImage {
+.list-item i {
     position: absolute;
     right: 6px;
-    padding: 4px;
-    top: 6px;
+    padding: 3px;
 }
 .cspoilerTitle {
     cursor: pointer;
@@ -559,4 +563,9 @@ h1 {
 }
 .message_out > .chatMessageDate {
     text-align: right;
+}
+
+/* realsrc */
+.postFileFile img.unloaded {
+    min-height: 150px;
 }

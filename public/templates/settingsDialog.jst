@@ -107,6 +107,12 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <label><input type="checkbox" name="stickyToolbar" value="true"
+                               {{? it.settings.stickyToolbar}}checked="true"{{?}} />{{=it.tr.stickyToolbarLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         {{=it.tr.postFormLabelPassword}}
                         <input type="password" name="password" size="16" value="{{=it.password}}"
                                oninput="lord.passwordChanged(this);" />

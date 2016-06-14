@@ -870,15 +870,15 @@ lord.showDialog = function(body, options) {
                         $(this).dialog("close");
                     }
                 };
-            } else {
+            } else
                 return null;
-            }
         }).filter(function(button) {
             return button;
         });
-        var dlg = $(body).dialog({
+        var modal = (options && undefined != options.modal)? options.modal: true,
+            dlg = $(body).dialog({
             title: lord.text(options && options.title),
-            modal: true,
+            modal: modal,
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
@@ -890,14 +890,16 @@ lord.showDialog = function(body, options) {
                 resolve(false);
                 $(this).dialog("destroy").remove();
             },
-            create: function() {
-                $("body").css({ overflow: "hidden" });
-                $(".navigationButton").css({ display: "none" });
+            create: function(e) {
+                (modal)?
+                    $("body").css("overflow", "hidden"):
+                    $(e.target).parent().css("position", "fixed");
+                $(".navigationButton").css("display", "none");
             },
-            open: (options ? options.afterShow : undefined),
+            open: (options? options.afterShow: undefined),
             beforeClose: function() {
-                if (lord.dialogs.length == 1)
-                    $("body").css({ overflow: "inherit" });
+                if (modal)
+                    $("body").css("overflow", "inherit");
                 if (lord.scrollHandler && lord.queryOne(".navigationButtonTop"))
                     lord.scrollHandler();
             }
@@ -1315,6 +1317,7 @@ lord.settings = function() {
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
         useWebSockets: lord.getLocalObject("useWebSockets", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
+        stickyToolbar: lord.getLocalObject("stickyToolbar", true),
         maxAllowedRating: lord.getLocalObject("maxAllowedRating", "SFW"),
         hidePostformRules: lord.getLocalObject("hidePostformRules", true),
         hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", true),
@@ -1362,7 +1365,7 @@ lord.settings = function() {
         apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
-        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
+        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 30),
         showFrame: lord.getLocalObject("showFrame", $(window).width() > 1024),
         transparentHeader: lord.getLocalObject("transparentHeader", true),
         showMarkupModes: lord.getLocalObject("showMarkupModes", false)

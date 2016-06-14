@@ -685,13 +685,13 @@ lord.quickReply = function(el) {
         if (lord.postFormFixed)
             return;
         lord.makeFormNotFloat();
-        lord.hidePostForm();
+        //lord.hidePostForm();
     }
-    var postForm = lord.id("postForm");
-    var targetContainer = post.parentNode;
-    var same = (postForm.parentNode == targetContainer
-            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
-    var selection = document.getSelection().toString();
+    var postForm = lord.id("postForm"),
+        targetContainer = post.parentNode,
+        same = (postForm.parentNode == targetContainer
+            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling),
+        selection = document.getSelection().toString();
     lord.hidePostForm();
     if (same)
         return;
@@ -704,16 +704,15 @@ lord.quickReply = function(el) {
         postForm.appendChild(inputThread);
         postForm.action = postForm.action.replace("createThread", "createPost");
     }
-    if (post.nextSibling)
-        targetContainer.insertBefore(postForm, post.nextSibling);
-    else
+    (post.nextSibling)?
+        targetContainer.insertBefore(postForm, post.nextSibling):
         targetContainer.appendChild(postForm);
     lord.insertPostNumber(postNumber);
     lord.quoteSelectedText(selection);
     var tripcode = lord.nameOne("tripcode", postForm);
     if (tripcode) {
         var threadNumber = lord.nameOne("threadNumber", postForm);
-        tripcode.checked = lord.showTripcode(threadNumber ? threadNumber.value : null);
+        tripcode.checked = lord.showTripcode(threadNumber? threadNumber.value: null);
         $(tripcode).button("refresh");
     }
 };
@@ -736,16 +735,16 @@ lord.hidePostForm = function() {
 };
 
 lord.switchShowTripcode = function() {
-    var postForm = lord.id("postForm");
-    var sw = lord.nameOne("tripcode", postForm);
-    var showTripcode = lord.getLocalObject("showTripcode", {});
-    var key;
-    var threadNumber = lord.nameOne("threadNumber", postForm);
+    var postForm = lord.id("postForm"),
+        sw = lord.nameOne("tripcode", postForm),
+        showTripcode = lord.getLocalObject("showTripcode", {}),
+        key,
+        threadNumber = lord.nameOne("threadNumber", postForm);
     if (threadNumber) {
-        lord.showPopup(lord.text(sw.checked ? "threadTripcodeActivatedText" : "threadTripcodeDeactivatedText"));
+        lord.showPopup(lord.text("threadTripcode" + (sw.checked? "A": "Dea") + "ctivatedText"));
         key = lord.data("boardName") + "/" + +threadNumber.value;
     } else {
-        lord.showPopup(lord.text(sw.checked ? "globalTripcodeActivatedText" : "globalTripcodeDeactivatedText"));
+        lord.showPopup(lord.text("globalTripcode" + (sw.checked? "A": "Dea") + "ctivatedText"));
         key = "global";
     }
     if (sw.checked)
@@ -766,8 +765,8 @@ lord.countSymbols = function(textarea) {
 };
 
 lord.showPostSourceText = function(el) {
-    var boardName = lord.data("boardName", el, true);
-    var postNumber = +lord.data("number", el, true);
+    var boardName = lord.data("boardName", el, true),
+        postNumber = +lord.data("number", el, true);
     if (!boardName || isNaN(postNumber) || postNumber <= 0)
         return;
     lord.api("post", {
@@ -776,28 +775,30 @@ lord.showPostSourceText = function(el) {
     }).then(function(post) {
         var textArea = lord.node("textarea");
         textArea.value = post.rawText;
-        textArea.rows = "28";
-        textArea.cols = "43";
+        textArea.rows = 28;
+        textArea.cols = 43;
         return lord.showDialog(textArea, {
             title: "postSourceText",
-            buttons: ["close"]
+            buttons: []
         });
     }).catch(lord.handleError);
 };
 
 lord.chatWithUser = function(el) {
+    if(lord.dialogs.length > 0)
+        return;
     var boardName = lord.data("boardName", el, true);
     if (!boardName)
         return;
     var postNumber = +lord.data("number", el, true);
     if (!postNumber)
         return;
-    var div = lord.node("div");
-    var ta = lord.node("textArea");
+    var div = lord.node("div"),
+        ta = lord.node("textArea");
     ta.rows = 10;
     ta.cols = 43;
     div.appendChild(ta);
-    lord.showDialog(div, { title: "chatText" }).then(function(result) {
+    lord.showDialog(div, { modal: false, title: "chatText" }).then(function(result) {
         if (!result)
             return Promise.resolve();
         if (!ta.value)
@@ -808,8 +809,8 @@ lord.chatWithUser = function(el) {
                 postNumber: postNumber,
                 text: ta.value
             }).then(function(msg) {
-                var key = boardName + ":" + postNumber;
-                var chats = lord.getLocalObject("chats", {});
+                var key = boardName + ":" + postNumber,
+                    chats = lord.getLocalObject("chats", {});
                 if (!chats[key])
                     chats[key] = [msg];
                 else
@@ -833,9 +834,9 @@ lord.chatWithUser = function(el) {
 };
 
 lord.deletePost = function(el) {
-    var c = {};
-    var postNumber = +lord.data("number", el, true);
-    var model = lord.model(["base", "tr"]);
+    var c = {},
+        postNumber = +lord.data("number", el, true),
+        model = lord.model(["base", "tr"]);
     model.boardName = lord.data("boardName", el, true);
     model.postNumber = postNumber;
     c.div = lord.node("div");
@@ -845,16 +846,16 @@ lord.deletePost = function(el) {
     lord.showDialog(c.div, { title: "enterPasswordTitle" }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var form = lord.queryOne("form", c.div);
-        var formData = new FormData(form);
+        var form = lord.queryOne("form", c.div),
+            formData = new FormData(form);
         if (lord.data("archived", el, true) == "true")
             formData.append("archived", true);
         return lord.post(form.action, formData);
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var ownPosts = lord.getLocalObject("ownPosts", {});
-        var key = model.boardName + "/" + postNumber;
+        var ownPosts = lord.getLocalObject("ownPosts", {}),
+            key = model.boardName + "/" + postNumber;
         if (ownPosts.hasOwnProperty(key))
             delete ownPosts[key];
         lord.setLocalObject("ownPosts", ownPosts);
@@ -866,12 +867,10 @@ lord.deletePost = function(el) {
                 var loc = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
                     + lord.data("boardName") + ((lord.data("archived", el, true) == "true") ? "/archive.html" : "");
                 (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
-            } else {
+            } else
                 lord.reloadPage();
-            }
-        } else {
+        } else
             post.parentNode.removeChild(post);
-        }
         lord.removeReferences(postNumber);
     }).catch(lord.handleError);
 };
@@ -897,8 +896,8 @@ lord.setThreadClosed = function(el, closed) {
 };
 
 lord.setThreadUnbumpable = function(el, unbumpable) {
-    var postNumber = +lord.data("number", el, true);
-    var formData = new FormData();
+    var postNumber = +lord.data("number", el, true),
+        formData = new FormData();
     formData.append("boardName", lord.data("boardName"));
     formData.append("threadNumber", postNumber);
     formData.append("unbumpable", unbumpable);
@@ -910,12 +909,12 @@ lord.setThreadUnbumpable = function(el, unbumpable) {
 };
 
 lord.moveThread = function(el) {
-    var boardName = lord.data("boardName");
-    var threadNumber = +lord.data("threadNumber", el, true);
+    var boardName = lord.data("boardName"),
+        threadNumber = +lord.data("threadNumber", el, true);
     if (!boardName || isNaN(threadNumber) || threadNumber <= 0)
         return;
-    var c = {};
-    var model = lord.model(["base", "tr", "boards"]);
+    var c = {},
+        model = lord.model(["base", "tr", "boards"]);
     model.boardName = boardName;
     model.threadNumber = threadNumber;
     c.div = lord.template("moveThreadDialog", model);
@@ -934,9 +933,9 @@ lord.moveThread = function(el) {
 };
 
 lord.editBanReason = function(a) {
-    var inp = $(a).closest("tr").find("[name^='banReason_'], [name='reason']")[0];
-    var div = lord.node("div");
-    var input = lord.node("input");
+    var inp = $(a).closest("tr").find("[name^='banReason_'], [name='reason']")[0],
+        div = lord.node("div"),
+        input = lord.node("input");
     input.type = "text";
     input.size = 40;
     input.value = inp.value;
@@ -950,13 +949,13 @@ lord.editBanReason = function(a) {
 };
 
 lord.banUser = function(el) {
-    var boardName = lord.data("boardName", el, true);
-    var postNumber = +lord.data("number", el, true);
+    var boardName = lord.data("boardName", el, true),
+        postNumber = +lord.data("number", el, true);
     if (!boardName || isNaN(postNumber) || postNumber <= 0)
         return;
-    var model = lord.model(["base", "tr", "boards"]);
-    var settings = lord.settings();
-    var timeOffset = ("local" == settings.time) ? +settings.timeZoneOffset : model.site.timeOffset;
+    var model = lord.model(["base", "tr", "boards"]),
+        settings = lord.settings(),
+        timeOffset = ("local" == settings.time) ? +settings.timeZoneOffset : model.site.timeOffset;
     model.formattedDate = function(date) {
         return moment(date).utcOffset(timeOffset).locale(model.site.locale).format("DD/MM/YYYY HH:mm");
     };
@@ -993,8 +992,8 @@ lord.banUser = function(el) {
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var form = lord.queryOne("form", c.div);
-        var formData = new FormData(form);
+        var form = lord.queryOne("form", c.div),
+            formData = new FormData(form);
         formData.append("timeOffset", timeOffset);
         return lord.post(form.action, formData);
     }).then(function(result) {

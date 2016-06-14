@@ -126,11 +126,11 @@ body, input, select {
 }
 
 .chatContactList {
-    min-width: 150px;
+    min-width: 125px;
 }
 
 .chatHistory {
-    min-width: 400px;
+    min-width: 300px;
     min-height: 300px;
 }
 
@@ -138,12 +138,7 @@ body, input, select {
     font-size: 1.1em;
 }
 
-.registeredUserHashpassInput {
-    box-sizing: border-box;
-    width: 400px;
-}
-
-.registeredUserIpsInput {
+.registeredUserHashpassInput, .registeredUserIpsInput {
     box-sizing: border-box;
     width: 400px;
 }

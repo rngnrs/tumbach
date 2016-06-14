@@ -251,13 +251,13 @@ if (cluster.isMaster) {
         if (Global.Program.regenerate || config("system.regenerateCacheOnStartup", true)) {
             return controller.regenerate(Global.Program.archive || config("system.regenerateArchive", false));
         } else {
-            console.log("Generating statistics, please, wait...");
+            console.log("Сбор статистики...");
             return controller.generateStatistics().catch(function(err) {
                 Global.error(err.stack || err);
             });
         }
     }).then(function() {
-        console.log("Spawning workers, please, wait...");
+        console.log("Создание воркеров...");
         spawnCluster();
         var ready = 0;
         Global.IPC.installHandler("ready", function() {

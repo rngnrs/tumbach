@@ -1802,24 +1802,22 @@ lord.populateChatHistory = function(key) {
 lord.updateChat = function(keys) {
     if (!lord.chatDialog) {
         lord.queryAll("[name='chatButton']").forEach(function(a) {
-            var img = lord.queryOne("img", a);
-            if (img && img.src.replace("chat_message.gif", "") == img.src)
-                img.src = img.src.replace("chat.png", "chat_message.gif");
+            var i = lord.queryOne("i", a);
+            if (i && i.className.replace("mdi-comment-outline", "") == "mdi mdi-middle ")
+                i.className = i.className.replace("mdi-comment-outline", "mdi-comment");
             else
-            if (!img) {
-                var img = lord.node("img");
-                $(img).addClass("buttonImage");
-                img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
-                a.appendChild(img);
-            }
+                if (!i) {
+                    var i = lord.node("i");
+                    i.className = "mdi mdi-comment";
+                    a.appendChild(i);
+                }
         });
-        var div = lord.node("div");
-        var a = lord.node("a");
-        var img = lord.node("img");
-        $(img).addClass("buttonImage");
-        img.src = "/" + lord.data("sitePathPrefix") + "img/chat_message.gif";
+        var div = lord.node("div"),
+            a = lord.node("a"),
+            i = lord.node("i");
+        i.className = "mdi mdi-comment";
         a.title = lord.text("chatText");
-        a.appendChild(img);
+        a.appendChild(i);
         var lastKey = lord.last(keys);
         div.onclick = lord.showChat.bind(lord, lastKey);
         div.appendChild(a);
@@ -1920,16 +1918,18 @@ lord.checkChats = function() {
 };
 
 lord.showChat = function(key) {
+    if(lord.dialogs.length > 0)
+        return;
     lord.queryAll(".navbarItem > [name='chatButton']").forEach(function(a) {
-        var img = lord.queryOne("img", a);
-        if (img && img.src.replace("chat_message.gif", "") != img.src)
-            img.src = img.src.replace("chat_message.gif", "chat.png");
+        var i = lord.queryOne("i", a);
+        if (i && i.className.replace("mdi-comment", "") != "mdi mdi-middle -outline")
+            i.className = i.className.replace("mdi-comment", "mdi-comment-outline");
     });
     var btn = lord.queryOne(".list-item[name='chatButton']");
     if (btn) {
-        var img = lord.queryOne("img", btn);
-        if (img)
-            $(img).remove();
+        var i = lord.queryOne("i", btn);
+        if (i)
+            $(i).remove();
     }
     var model = lord.model(["base", "tr"]);
     model.contacts = [];
@@ -1938,6 +1938,7 @@ lord.showChat = function(key) {
     });
     lord.chatDialog = lord.template("chatDialog", model);
     lord.showDialog(lord.chatDialog, {
+        modal: false,
         title: "chatText",
         maxWidth: "33vw",
         afterShow: function() {

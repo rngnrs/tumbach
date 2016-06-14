@@ -107,6 +107,7 @@ module.exports = function(tr) {
     translate("Code style:", "codeStyleLabelText");
     translate("Shrink posts", "postShrinkingLabelText");
     translate("Use WebSockets", "useWebSocketsLabelText");
+    translate("Sticky toolbar", "stickyToolbarLabelText");
     translate("Time:", "timeLabelText");
     translate("Device type:", "deviceTypeLabelText");
     translate("Detect automatically", "deviceTypeAutoText");
@@ -452,7 +453,6 @@ module.exports = function(tr) {
     translate("Page", "pageText");
     translate("Regenerate archived threads", "regenerateArchivedThreadsLabelText");
     translate("Show search field", "showSearchActionText");
-    translate("Hide search field", "hideSearchActionText");
     translate("Start dragging to make post form float", "postFormHeaderLabelText");
     translate("Fixed", "postFormFixedButtonText");
     translate("Not fixed", "postFormUnfixedButtonText");

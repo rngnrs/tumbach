@@ -1003,7 +1003,6 @@ input.buttonImage {
 }
 
 .trackInfo {
-    display: inline-block;
     word-break: break-word;
 }
 
