@@ -4,9 +4,6 @@
     </div>
     <div class="header-wrapper color-prim">
         <div class="header-wrapper_container">
-            <i onclick="lord.setSidebarVisible(event);"
-               class="float-r player-menu mdi mdi-music-note mdi-hc-2x"
-               title="{{=it.tr.maximizePlayerText}}"></i>
             <script id="headerPlaceholder">
                 (function() {
                     var model = lord.model(["base", "tr", "boards"]);
@@ -16,6 +13,10 @@
                     placeholder.parentNode.appendChild(lord.template("tplayer", model));
                 })();
             </script>
+            {{#def.toolbar}}
         </div>
     </div>
+    <i onclick="lord.setSidebarVisible(event);"
+         class="float-r player-menu mdi mdi-music-note mdi-hc-2x"
+         title="{{=it.tr.maximizePlayerText}}"></i>
 </header>

@@ -1,25 +1,23 @@
-<div>
-    <div class="toolbar">
-        {{? "mobile" != it.deviceType}}
-            <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-settings"
-                                         title="{{=it.tr.settingsButtonText}}" name="settingsButton" onclick="lord.showSettings(); return false;"></i></a>
-            <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-star"
-                                         title="{{=it.tr.showFavoritesText}}" name="favoritesButton" onclick="lord.showFavorites(); return false;"></i></a>
-            <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-eye{{? it.mumWatching}}-off{{?}}"
-                                         title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i></a>
-            {{? it.user.loggedIn}}
-                <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
-                      enctype="application/x-www-form-urlencoded" class="inlineForm"
-                      onsubmit="lord.doLogout(event, this); return false;">
-                    <input type="submit" name="submit" id="logout" style="display: none;" />
-                    <a href="javascript:void(0);"><label for="logout"><i class="mdi mdi-middle mdi-logout-variant"
-                                           title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"></i></label></a>
-                </form>
-            {{??}}
-                <a href="javascript:void(0);"><i class="mdi mdi-middle mdi-login-variant"
-                                                 title="{{=it.tr.loginText}}" onclick="lord.redirectToLoginPage();"></i></a>
-            {{?}}
+<div class="toolbar">
+    {{? "mobile" != it.deviceType}}
+        <a href="javascript:void(0);"><i class="mdi mdi-filter-variant"
+                                     title="{{=it.tr.showHiddenPostListText}}" name="hiddenPostsButton" onclick="lord.showHiddenPostList(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-star"
+                                     title="{{=it.tr.showFavoritesText}}" name="favoritesButton" onclick="lord.showFavorites(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}}"
+                                     title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i></a>
+        {{? it.user.loggedIn}}
+            <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
+                  enctype="application/x-www-form-urlencoded" class="inlineForm"
+                  onsubmit="lord.doLogout(event, this); return false;">
+                <input type="submit" name="submit" id="logout" style="display: none;" />
+                <a href="javascript:void(0);"><label for="logout"><i class="mdi mdi-logout-variant"
+                                       title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"></i></label></a>
+            </form>
+        {{??}}
+            <a href="javascript:void(0);"><i class="mdi mdi-login-variant"
+                                             title="{{=it.tr.loginText}}" onclick="lord.redirectToLoginPage();"></i></a>
         {{?}}
-        {{#def.innerNavbar}}
-    </div>
+    {{?}}
+    {{#def.innerNavbar}}
 </div>

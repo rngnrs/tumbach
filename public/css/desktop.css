@@ -8,24 +8,27 @@
     font-size: 50px;
     height: 150px;
 }
-.searchAction {
-    max-width: 38%;
-}
-#tplayer {
-    max-width: 58%;
-}
 .mobileOnly {
     display: none;
 }
 #playerTrackTags {
     width: 68%;
 }
-@media screen and (min-width: 1000px) {
+.searchAction {
+    max-width: 38%;
+}
+#tplayer {
+    width: 50%;
+}
+@media screen and (min-width: 1084px) {
     .searchAction {
-        max-width: 420px;
+        max-width: 420px !important;
     }
     #tplayer {
-        max-width: 500px;
+        max-width: 500px !important;
+    }
+    .toolbar {
+        width: calc(100% - 500px) !important;
     }
 }
 /* /tumb rewrite */

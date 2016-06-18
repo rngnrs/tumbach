@@ -1,6 +1,9 @@
 <script id="navbarPlaceholder" type="text/javascript">
     (function() {
-        var model = lord.model(["base", "tr", "boards"]);
+        var model = lord.model(["base", "tr", "boards"]),
+            settings = lord.settings();
+        if (settings.stickyToolbar)
+            return;
         if (lord.data("boardName"))
             model.board = lord.model("board/" + lord.data("boardName")).board;
         lord.processBoardGroups(model);

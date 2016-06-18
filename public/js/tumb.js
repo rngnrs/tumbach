@@ -33,23 +33,14 @@ tumb.toggle = {
 			} else {
 				tumb.go.wr.toggleClass('toggle');
 				tumb.go.sb.addClass('sidebar-stacked').removeClass('sidebar-fixed-left');
-				tumb.toggle.navbar(hc);
 			}
 			tumb.go.sb.toggleClass('open');
 			return;
 		}
 		tumb.go.sb.removeClass('open');
 		tumb.go.wr.removeClass('toggle');
-		tumb.toggle.navbar(true);
 		lord.setLocalObject("showFrame", false);
 		return false;
-	},
-	navbar: function(toggle) {
-		var n = $(".navbar, .toolbar"),
-			ls = !lord.settings().showFrame;
-		if(lord.deviceType("mobile"))
-			return n.show();
-		(toggle || (toggle == undefined && !ls)) ? n.slideDown() : n.slideUp();
 	}
 };
 tumb.dottie = function(floatElement) {

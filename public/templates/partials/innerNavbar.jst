@@ -38,18 +38,18 @@
     {{~}}
 {{?}}
 <span class="navbarItem"><a href="/{{=it.site.pathPrefix}}"
-                             class="ajax" title="{{=it.tr.toHomePageText}}"><i class="mdi mdi-middle mdi-home"></i></a></span>
+                             class="ajax" title="{{=it.tr.toHomePageText}}"><i class="mdi mdi-home"></i></a></span>
 <span class="navbarItem"><a href="/{{=it.site.pathPrefix}}markup.html"
-                             class="ajax" title="{{=it.tr.toMarkupPageText}}"><i class="mdi mdi-middle mdi-code-not-equal-variant"></i></a></span>
+                             class="ajax" title="{{=it.tr.toMarkupPageText}}"><i class="mdi mdi-code-not-equal-variant"></i></a></span>
 <span class="navbarItem"><a href="/{{=it.site.pathPrefix}}faq.html"
-                             class="ajax" title="{{=it.tr.toFaqPageText}}"><i class="mdi mdi-middle mdi-help-circle-outline"></i></a></span>
+                             class="ajax" title="{{=it.tr.toFaqPageText}}"><i class="mdi mdi-help-circle-outline"></i></a></span>
 <span class="navbarItem"><a href="/{{=it.site.pathPrefix}}search.html" name="searchButton"
-                             class="ajax" title="{{=it.tr.showSearchActionText}}"><i class="mdi mdi-middle mdi-magnify"></i></a></span>
+                             class="ajax" title="{{=it.tr.showSearchActionText}}"><i class="mdi mdi-magnify"></i></a></span>
 {{? it.user.isModer()}}
     <span class="navbarItem"><a href="/{{=it.site.pathPrefix}}manage.html"
-                                 title="{{=it.tr.toManagePageText}}"><i class="mdi mdi-middle mdi-wrench"></i></a></span>
+                                 title="{{=it.tr.toManagePageText}}"><i class="mdi mdi-wrench"></i></a></span>
 {{?}}
 {{? it.settings.chatEnabled}}
     <span class="navbarItem"><a href="javascript:void(0);" name="chatButton" onclick="lord.showChat(); return false;"
-                                 title="{{=it.tr.chatText}}"><i class="mdi mdi-middle mdi-comment-outline"></i></a></span>
+                                 title="{{=it.tr.chatText}}"><i class="mdi mdi-comment-outline"></i></a></span>
 {{?}}

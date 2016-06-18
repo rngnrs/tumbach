@@ -120,10 +120,8 @@ input[type=number] {
     box-shadow: 0 2px 15px rgba(0, 0, 0, .35);
     transform: translate3d(280px, 0, 0);
 }
-.header-wrapper_container > div {
-    position: relative;
-    width: calc(100% - 40px);
-    margin: 0 auto;
+.header-wrapper_container {
+    line-height: 42px;
 }
 .header-wrapper {
     position: absolute;
@@ -132,13 +130,9 @@ input[type=number] {
     padding: 0 42px;
     box-sizing: border-box;
 }
-.header-wrapper_container {
-    position: relative;
-    opacity: 1;
-}
 header i, .kek {
     transition: .2s background;
-    cursor:pointer;
+    cursor: pointer;
 }
 header i:hover,
 .frameLabels i:hover {
@@ -357,13 +351,17 @@ div.scroll-window {
 }
 #tplayer {
     max-height: 42px;
+    line-height: initial;
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s opacity, .3s visibility;
 }
 #header .player-menu {
     font-size: 30px;
     padding: 6px 5px;
     right: 0;
-    height: inherit;
     position: fixed;
+    box-sizing: border-box;
 }
 #tplayer i, .player-menu {
     height: 42px;
@@ -563,9 +561,4 @@ h1 {
 }
 .message_out > .chatMessageDate {
     text-align: right;
-}
-
-/* realsrc */
-.postFileFile img.unloaded {
-    min-height: 150px;
 }

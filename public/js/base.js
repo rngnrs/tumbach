@@ -864,9 +864,10 @@ lord.setSidebarVisible = function(e) {
 lord.setPlayerVisible = function(e, visible) {
     if (e)
         e.stopPropagation();
-    var sb = $("#tplayer");
+    var player = lord.id("tplayer");
     if (!visible) {
-        sb.fadeOut();
+        player.style.visibility = "hidden";
+        player.style.opacity = 0;
         if (lord.playerElement) {
             lord.playerElement.pause();
             lord.playerElement.currentTime = 0;
@@ -877,7 +878,8 @@ lord.setPlayerVisible = function(e, visible) {
         }
         lord.currentTrack = {};
     } else {
-        sb.fadeIn();
+        player.style.visibility = "visible";
+        player.style.opacity = 1;
         if (lord.playerElement)
             if (lord.playerElement.movablePlayer) {
                 lord.playerElement.movablePlayer.show();

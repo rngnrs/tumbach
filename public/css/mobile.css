@@ -7,8 +7,11 @@
     padding: 27px 0;
     height: 75px;
 }
-.desktopOnly {
+.toolbar, .desktopOnly {
     display: none;
+}
+#tplayer {
+    width: 100%;
 }
 #playerTrackTags {
     width: calc(100% - 70px);
@@ -16,7 +19,7 @@
 #playerTrackInfo {
     width: 60px;
 }
-.toolbar, .navbar {
+.navbar {
     font-size: 1em;
 }
 /* /tumb rewrite */

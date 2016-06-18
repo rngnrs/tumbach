@@ -8,7 +8,6 @@
     {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
-        {{#def.toolbar}}
         <div id="wrapper">
             <script id="model-postformRules" type="application/json">{{ out += JSON.stringify(it.postformRules); }}</script>
             {{? it.site.vkontakte.integrationEnabled }}
@@ -20,12 +19,6 @@
             {{? it.board.captchaEnabled}}
                 <div id="hiddenCaptcha" style="display: none;"></div>
             {{?}}
-            {{~["top", "bottom"] :target}}
-                {{#def.navigationButton}}
-            {{~}}
-            {{~["previous", "next"] :target}}
-                {{#def.leafButton}}
-            {{~}}
             {{#def.banner}}
             <div class="theTitle">
                 <h1>
@@ -145,6 +138,12 @@
             <hr />
             {{#def.navbar}}
             {{#def.postingSpeed}}
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+            {{#def.leafButton}}
+            {{~}}
         </div>
     </div>
     {{#def.customFooter}}
