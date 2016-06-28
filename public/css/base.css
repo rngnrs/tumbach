@@ -630,7 +630,6 @@ blockquote.blockquoteThread.expand {
     right: 0;
     z-index: 9920;
     opacity: .5;
-    transition: .1s all;
 }
 
 .externalThreadFrame:hover {

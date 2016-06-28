@@ -781,7 +781,7 @@ lord.toCenter = function(element, sizeHintX, sizeHintY, border) {
         sizeHintX = +element.offsetWidth;
     if (isNaN(sizeHintY)  || sizeHintY <= 0)
         sizeHintY = +element.offsetHeight;
-    borded = +border;
+    border = +border;
     if (!isNaN(border)) {
         sizeHintX += border * 2;
         sizeHintY += border * 2;
@@ -1368,7 +1368,8 @@ lord.settings = function() {
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 30),
         showFrame: lord.getLocalObject("showFrame", $(window).width() > 1024),
         transparentHeader: lord.getLocalObject("transparentHeader", true),
-        showMarkupModes: lord.getLocalObject("showMarkupModes", false)
+        showMarkupModes: lord.getLocalObject("showMarkupModes", false),
+        animatedEffects: lord.getLocalObject("animatedEffects", true)
     };
 };
 

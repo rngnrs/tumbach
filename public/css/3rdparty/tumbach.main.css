@@ -36,9 +36,6 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-.color-prim, .logo {
-    transition: .5s opacity, .5s background;
-}
 .tooltip:after {
     background: rgba(0, 0, 0, .9);
     border-radius: 4px;
@@ -53,7 +50,6 @@ input[type=number] {
     padding: 3px 0;
     position: absolute;
     visibility: hidden;
-    transition: all .2s ease-in-out;
     z-index: 4;
 }
 .tooltip:focus:after, .tooltip-input:focus + label:after {
@@ -93,12 +89,6 @@ input[type=number] {
     transform: translate3d(0, 0, 0);
     visibility: visible;
 }
-.sidebar.transition {
-    transition: transform .3s cubic-bezier(.4,0,1,1),visibility .3s;
- }
-.sidebar.transition.open {
-    transition: transform .2s cubic-bezier(.4,0,1,1),visibility .2s;
-}
 .sidebar-fixed-left,
 .sidebar-fixed-right,
 .sidebar-stacked {
@@ -131,7 +121,6 @@ input[type=number] {
     box-sizing: border-box;
 }
 header i, .kek {
-    transition: .2s background;
     cursor: pointer;
 }
 header i:hover,
@@ -190,12 +179,6 @@ a {
 .wrap.toggle {
     width: calc(100% - 210px);
     left: 210px;
-}
-.wrap.transition {
-    transition: left .3s cubic-bezier(.4,0,1,1), width .3s cubic-bezier(.4,0,1,1);
-}
-.wrap.transition.toggle {
-    transition: left .2s cubic-bezier(.4,0,1,1), width .2s cubic-bezier(.4,0,1,1);
 }
 .wrappie {
     position: relative;
@@ -328,9 +311,6 @@ footer:after {
      left: -9999px;
      top: 0;
      opacity: 0;
-     -moz-transition: opacity .2s ease-in-out;
-     -webkit-transition: opacity .2s ease-in-out;
-     transition: opacity .2s ease-in-out;
 }
 .scroll-window, #player-audio-list, #player-radio-list {
     height: 100%;
@@ -354,7 +334,6 @@ div.scroll-window {
     line-height: initial;
     opacity: 0;
     visibility: hidden;
-    transition: .3s opacity, .3s visibility;
 }
 #header .player-menu {
     font-size: 30px;
@@ -402,7 +381,6 @@ h1 {
     position:fixed;
     top:0;bottom:0;
     left:0;right:0;
-    transition: .2s background, .2s visibility;
     visibility: hidden;
 }
 .overlay.toggled {

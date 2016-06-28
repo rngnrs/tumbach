@@ -271,6 +271,8 @@
                     style.appendChild(lord.node("text", css));
                 document.head.appendChild(style);
             }
+            if(settings.animatedEffects)
+                lord.createStylesheetLink("transition.css", true);
             scriptsQueue.forEach(function(src) {
                 var script = lord.node('script');
                 script.src = src;

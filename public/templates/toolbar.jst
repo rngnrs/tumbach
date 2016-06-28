@@ -2,6 +2,8 @@
     {{? "mobile" != it.deviceType}}
         <a href="javascript:void(0);"><i class="mdi mdi-filter-variant"
                                      title="{{=it.tr.showHiddenPostListText}}" name="hiddenPostsButton" onclick="lord.showHiddenPostList(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-settings"
+                                     title="{{=it.tr.settingsButtonText}}" name="settingsButton" onclick="lord.showSettings(); return false;"></i></a>
         <a href="javascript:void(0);"><i class="mdi mdi-star"
                                      title="{{=it.tr.showFavoritesText}}" name="favoritesButton" onclick="lord.showFavorites(); return false;"></i></a>
         <a href="javascript:void(0);"><i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}}"

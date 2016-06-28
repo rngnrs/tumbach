@@ -489,6 +489,18 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <label><input type="checkbox" name="apiRequestCachingEnabled"
+                                      {{? it.settings.apiRequestCachingEnabled}}checked="true"{{?}} />{{=it.tr.apiRequestCachingLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="animatedEffects"
+                                      {{? it.settings.animatedEffects}}checked="true"{{?}} />{{=it.tr.animatedEffectsText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <label><input type="checkbox" name="autoUpdatePlayer"
                                {{? it.settings.autoUpdatePlayer}}checked="true"{{?}} />{{=it.tr.autoUpdatePlayerLabelText}}</label>
                     </td>

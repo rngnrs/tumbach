@@ -24,9 +24,9 @@ tumb.toggle = {
 				tumb.go.sb.addClass("transition");
 				tumb.go.sb2.addClass("transition");
 			}, 500);
-		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop") && tumb.go.width > 1024)) {
+		if(toggle || (lord.settings().showFrame != hc && lord.deviceType("desktop"))) {
 			lord.setLocalObject("showFrame", !hc);
-			if(tumb.go.width < 1024) {
+			if(tumb.go.width < 1024 && !lord.getLocalObject("forcedShowFrame", lord.deviceType("desktop"))) {
 				tumb.go.ov.toggleClass('toggled');
 				tumb.go.sb.removeClass('sidebar-stacked').addClass('sidebar-fixed-left');
 				tumb.go.sb2.removeClass('open');
@@ -77,15 +77,20 @@ tumb.dottie = function(floatElement) {
 tumb.slidy = function(el) {
 	if(!localStorage["scroll"])
 		localStorage["scroll"] = $("header").offset().top;
+	var a = $('html,body');
 	$(el).bind('wheel', function (e) {
 		if( e.originalEvent.detail > 0 || e.originalEvent.wheelDelta < 0 || e.originalEvent.deltaY > 0) { //scroll down
-			$('html,body').stop().animate({
-				scrollTop: localStorage["scroll"]
-			}, 500);
+			(lord.getLocalObject('animatedEffects',true))?
+				a.stop().animate({
+					scrollTop: localStorage["scroll"]
+				}, 500):
+				window.scrollTo(0,localStorage["scroll"]);
 		} else { //scroll up
-			$('html,body').stop().animate({
-				scrollTop: 0
-			}, 500);
+			(lord.getLocalObject('animatedEffects',true))?
+				a.stop().animate({
+					scrollTop: 0
+				}, 500):
+				window.scrollTo(0,0);
 		}
 		e.preventDefault();
 	});
@@ -119,7 +124,7 @@ tumb.onLoad = function(){
 		return false;
     });
     $('.overlay, .list-item, #sidebar .frameLabels i').bind('click', function(){
-        if (tumb.go.sb.hasClass('open') && tumb.go.width < 1024) {
+        if (tumb.go.sb.hasClass('open') && !lord.getLocalObject("forcedShowFrame", lord.deviceType("desktop"))) {
 			tumb.go.sb.removeClass('open');
 			tumb.go.sb2.removeClass('open');
 		}

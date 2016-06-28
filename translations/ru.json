@@ -3247,5 +3247,10 @@
         "showMarkupModesLabelText": {
             "value": "Отображать переключение разметки в форме ответа"
         }
+    },
+    "Animated effects": {
+        "animatedEffectsText": {
+            "value": "Анимированные эффекты"
+        }
     }
 }
