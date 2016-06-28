@@ -226,7 +226,7 @@ module.exports.styles = function() {
     var path = __dirname + "/../public/css";
     FSSync.readdirSync(path).forEach(function(fileName) {
         if (fileName.split(".").pop() != "css"
-            || ["base", "desktop", "mobile"].indexOf(fileName.split(".").shift()) >= 0) {
+            || ["base", "desktop", "mobile", "transition"].indexOf(fileName.split(".").shift()) >= 0) {
             return;
         }
         var name = fileName.split(".").shift();
