@@ -1,0 +1,33 @@
+.color-prim, .logo {
+    transition: .5s opacity, .5s background;
+}
+.tooltip:after {
+    transition: all .2s ease-in-out;
+}
+header i, .kek {
+    transition: .2s background;
+}
+.sidebar.transition {
+    transition: transform .3s cubic-bezier(.4,0,1,1),visibility .3s;
+}
+.sidebar.transition.open {
+    transition: transform .2s cubic-bezier(.4,0,1,1),visibility .2s;
+}
+.wrap.transition {
+    transition: left .3s cubic-bezier(.4,0,1,1), width .3s cubic-bezier(.4,0,1,1);
+}
+.wrap.transition.toggle {
+    transition: left .2s cubic-bezier(.4,0,1,1), width .2s cubic-bezier(.4,0,1,1);
+}
+.tabs_cont > div {
+    transition: opacity .2s ease-in-out;
+}
+#tplayer {
+    transition: .3s opacity, .3s visibility;
+}
+.overlay {
+    transition: .2s background, .2s visibility;
+}
+.externalThreadFrame {
+    transition: .1s all;
+}
