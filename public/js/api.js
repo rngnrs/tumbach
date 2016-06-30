@@ -1366,7 +1366,7 @@ lord.settings = function() {
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
         showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 30),
-        showFrame: lord.getLocalObject("showFrame", $(window).width() > 1024),
+        showFrame: lord.getLocalObject("showFrame", false),
         transparentHeader: lord.getLocalObject("transparentHeader", true),
         showMarkupModes: lord.getLocalObject("showMarkupModes", false),
         animatedEffects: lord.getLocalObject("animatedEffects", true)

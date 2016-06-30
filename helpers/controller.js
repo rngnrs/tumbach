@@ -1,4 +1,3 @@
-var Crypto = require("crypto");
 var dot = require("dot");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
@@ -6,7 +5,6 @@ var Highlight = require("highlight.js");
 var merge = require("merge");
 var mkpath = require("mkpath");
 var moment = require("moment");
-var Path = require("path");
 var random = require("random-js")();
 var Util = require("util");
 
@@ -520,7 +518,6 @@ module.exports = controller;
 var Board = require("../boards/board");
 var BoardModel = require("../models/board");
 var Captcha = require("../captchas");
-var config = require("./config");
 var Database = require("./database");
 var markup = require("./markup");
 var Tools = require("./tools");
