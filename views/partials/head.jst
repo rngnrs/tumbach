@@ -22,27 +22,29 @@
     {{? it.extraStylesheets}}
         {{~it.extraStylesheets :stylesheet}}
             {{? stylesheet.source}}
-                <link rel="stylesheet" type="text/css"  href="{{=stylesheet.source}}">
+                <link rel="stylesheet" type="text/css" href="{{=stylesheet.source}}">
             {{?? stylesheet.fileName}}
                 {{ out += it.stylesheet(stylesheet.fileName, stylesheet.noEmbed); }}
             {{?}}
         {{~}}
     {{?}}
-    {{ out += it.script("3rdparty/jquery-2.2.0.min.js"); }}
-    {{ out += it.script("3rdparty/isInViewport.min.js"); }}
-    {{ out += it.script("3rdparty/jquery-ui.min.js"); }}
-    {{ out += it.script("3rdparty/Promise.min.js"); }}
-    {{ out += it.script("3rdparty/doT.min.js"); }}
-    {{ out += it.script("3rdparty/underscore-min.js"); }}
-    {{ out += it.script("api.js"); }}
-    {{ out += it.script("3rdparty/merge.min.js"); }}
-    {{ out += it.script("3rdparty/uuid.js"); }}
-    {{ out += it.script("3rdparty/moment-with-locales.min.js"); }}
-    {{ out += it.script("3rdparty/jszip.min.js"); }}
-    {{ out += it.script("3rdparty/jszip-utils.min.js"); }}
-    {{ out += it.script("3rdparty/FileSaver.min.js"); }}
-    {{ out += it.script("3rdparty/mobile-detect.min.js"); }}
-    <script id="model-base" type="application/json"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/isInViewport.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/Promise.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/doT.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/underscore-min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/api.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/xregexp-all.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/merge.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/uuid.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jszip.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jszip-utils.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/FileSaver.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/mobile-detect.min.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/sockjs-1.1.0.min.js"></script>
+    <script id="model-base" type="application/json">{{=it.models.base}}</script>
     <script id="model-boards" type="application/json">{{=it.models.boards}}</script>
     <script id="model-tr" type="application/json">{{=it.models.tr}}</script>
     <script id="model-partials" type="application/json">{{=it.models.partials}}</script>
@@ -59,12 +61,29 @@
         lord.templates = {};
 
         (function() {
-            var baseModelHtml = lord.get("/{{=it.site.pathPrefix}}misc/base.json") || "";
             ["base", "boards", "tr", "partials", "templates"].forEach(function(modelName) {
-                var isBase = ("base" == modelName);
-                var html = isBase ? baseModelHtml : lord.id("model-" + modelName).innerHTML;
+                var html = lord.id("model-" + modelName).innerHTML;
                 lord.models[modelName] = JSON.parse(html);
-                if (isBase) {
+                if ("base" == modelName) {
+                    var hashpass = lord.getCookie("hashpass");
+                    var levels = hashpass ? lord.getLocalObject("levels", {}) : {};
+                    var tmpLevels = lord.getCookie("tmp_levels");
+                    if (tmpLevels) {
+                        try {
+                            tmpLevels = JSON.parse(tmpLevels);
+                        } catch (ex) {
+                            //Do nothing
+                        }
+                    }
+                    if (tmpLevels) {
+                        levels = tmpLevels;
+                        lord.setLocalObject("levels", levels);
+                    }
+                    lord.models[modelName].user = {
+                        levels: levels,
+                        hashpass: hashpass,
+                        loggedIn: !!hashpass
+                    };
                     var deviceTypes = {
                         desktop: {},
                         mobile: {}
@@ -95,27 +114,30 @@
                 if (!lord.addTemplate(templateName, html))
                     return;
             });
+            var settings = lord.settings(),
+                prefix = lord.model("base").site.pathPrefix;
+            document.head.innerHTML += '<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType() + '.css">' +
+                    '<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name + '.css">';
         })();
     </script>
-    {{ out += it.script("base.js"); }}
-    {{ out += it.script("tumb.js"); }}
-    <!--<script defer src="/{{=it.site.pathPrefix}}js/playlist.js"></script>-->
-    {{ out += it.script("ajax.js"); }}
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/base.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/tumb.js"></script>
+    <script type="text/javascript" src="/{{=it.site.pathPrefix}}js/ajax.js"></script>
     {{? it.site.vkontakte.integrationEnabled }}
         {{ out += it.script("3rdparty/vk-openapi.js"); }}
     {{?}}
     {{? it.isBoardPage}}
-        {{ out += it.script("3rdparty/sha1.min.js"); }}
-        {{ out += it.script("3rdparty/jquery.knob.min.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/jquery.knob.min.js"></script>
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/sha1.min.js"></script>
         {{? it.site.twitter.integrationEnabled }}
-            {{ out += it.script("3rdparty/twitter.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/3rdparty/twitter.js"></script>
         {{?}}
-        {{ out += it.script("board.js"); }}
+        <script class="ajaxScripts" type="text/javascript" src="/{{=it.site.pathPrefix}}js/board.js"></script>
     {{?}}
     {{? it.extraScripts}}
         {{~it.extraScripts :script}}
             {{? script.source}}
-                <script type="text/javascript" src="{{=script.source}}"></script>
+                <script class="ajaxScripts" type="text/javascript" src="{{=script.source}}"></script>
             {{?? script.fileName}}
                 {{ out += it.script(script.fileName, script.noEmbed); }}
             {{?? script.value}}
@@ -125,34 +147,33 @@
     {{?}}
     <script type="text/javascript">
         (function() {
-            var settings = lord.settings();
+            var settings = lord.settings(),
+                prefix = lord.model("base").site.pathPrefix,
+                s = '';
             tumb.set.tileColor(settings.style.name);
-            document.open();
             if (lord.deviceType("mobile"))
-                document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, '
-                    + 'maximum-scale=1.0, user-scalable=no" />');
-            var prefix = lord.model("base").site.pathPrefix;
-            document.write('<link rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + lord.deviceType()
-                + '.css">');
-            document.write('<link id="stylesheet" rel="stylesheet" type="text/css" href="/' + prefix + 'css/' + settings.style.name
-                + '.css">');
-            var s = '<style type="text/css">';
+                s += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />';
+            s += '<style type="text/css">';
+            if(/firefox/i.test(navigator.userAgent))
+                s += "@font-face { font-family: 'PT Sans'; font-style: normal; font-weight: bold; src: local('PT Sans'), local('PTSans-Bold'), url(/res/fonts/ptsansb.woff) format('woff');}";
             if (!settings.shrinkPosts)
                 s += '.post, .opPost, .draft, .searchResult { width: 99%; max-width: 95vw; }';
             if (settings.addExpander)
                 s += 'blockquote:not(.draftBlockquote) { overflow-y: hidden; }';
+            if(!settings.drawingEnabled)
+                s += 'a[name="drawOnImageButton"] { display: none; } .fileByLinkButton ~ .fileByLinkButton { display: none; }';
             if (lord.compareRatings(settings.maxAllowedRating, "R-18G") < 0) {
-                var selectors = [];
-                var size = lord.deviceType("mobile") ? "140px" : "200px";
-                var addSelector = function(rating) {
-                    var sel = 'a[data-rating="' + rating + '"]';
-                    selectors.push(sel);
-                    var dots = "..";
-                    if (/\/((res|arch)\/\d+|catalog|archive)\.html$/.test(window.location.href))
-                        dots += "/..";
-                    s += sel + '{ background: url("' + dots + '/img/' + rating.toLowerCase() + '.png") center center; '
-                        + 'width: ' + size + '; height: ' + size + '; }';
-                };
+                var selectors = [],
+                    size = lord.deviceType("mobile") ? "140px" : "200px",
+                    addSelector = function(rating) {
+                        var sel = 'a[data-rating="' + rating + '"]',
+                            dots = "..";
+                        selectors.push(sel);
+                        if (/\/((res|arch)\/\d+|catalog|archive)\.html$/.test(window.location.pathname))
+                            dots += "/..";
+                        s += sel + '{ background: url("' + dots + '/img/' + rating.toLowerCase() + '.png") center center; '
+                            + 'width: ' + size + '; height: ' + size + '; }';
+                    };
                 addSelector("R-18G");
                 ["R-18", "R-15"].forEach(function(rating) {
                     if (lord.compareRatings(settings.maxAllowedRating, rating) < 0)
@@ -169,15 +190,19 @@
                 s += createSelector() + '{ display: inline-block; }';
                 s += createSelector(" > img") + '{ display: none; }';
             }
+            if(!lord.model("base").user.isModer())
+                s += "[name=editFileRatingButton] { display: none; }";
             s += '</style>';
             if (lord.getLocalObject("mumWatching", false)) {
-                document.write('<style id="mumWatchingStylesheet" type="text/css">'
+                s += '<style id="mumWatchingStylesheet" type="text/css">'
                     + '.postFileFile > a > img:not(:hover), .banner > a > img:not(:hover) { opacity: 0.05 !important; }'
-                    + '</style>');
+                    + '.hideIfMumWatching:not(:hover) { opacity: 0.05 !important; }'
+                    + '</style>';
             }
-            var appendScript = function(path) {
-                s += '<script type="text/javascript" src="/' + prefix + path + '"></s' + 'cript>';
-            };
+            var scriptsQueue = [],
+                appendScript = function(path) {
+                    scriptsQueue[scriptsQueue.length] = '/' + prefix + path;
+                };
             if (lord.model("base").user.isModer()) {
                 appendScript("js/3rdparty/jquery.datetimepicker.js");
                 lord.createStylesheetLink("3rdparty/jquery.datetimepicker.css", true);
@@ -195,12 +220,47 @@
                 lord.createStylesheetLink("3rdparty/literallycanvas.css", true);
                 lord.createStylesheetLink("3rdparty/jquery.minicolors.css", true);
             }
-            if (settings.userJavaScriptEnabled)
-                s += '<script type="text/javascript">' + lord.getLocalObject("userJavaScript", "") + "</s" + "cript>";
-            document.write(s);
-            document.close();
+            document.head.innerHTML += s;
             lord.createStylesheetLink("3rdparty/highlight.js/" + settings.codeStyle.name + ".css", true);
             lord.createStylesheetLink("3rdparty/jquery-ui/" + settings.style.name + "/jquery-ui.min.css", true, "jqui-stylesheet");
+            {{? it.isBoardPage}}
+                var style = lord.node("style");
+                style.id = "postBodySize";
+                style.type = "text/css";
+                var m = lord.deviceType("mobile") ? 0 : 270;
+                var k = lord.deviceType("mobile") ? 0 : 30;
+                var z = (!lord.deviceType("mobile") && lord.getLocalObject("showFrame", true)) ? 178 : 0;
+                var css = ".postBody { max-width: " + ($(window).width() - (30 + z)) + "px; }";
+                css += ".postFile ~ .postText > blockquote, .blockLatex, .codeBlock { max-width: " + ($(window).width() - (30 + k + m + z)) + "px; }";
+                if (style.styleSheet)
+                    style.styleSheet.cssText = css;
+                else
+                    style.appendChild(lord.node("text", css));
+                document.head.appendChild(style);
+                css = "";
+                lord.each(lord.getLocalObject("hiddenPosts", {}), function(val, key) {
+                    if (key.split("/").shift() != "{{=it.board.name}}" || !val)
+                        return;
+                    var pn = key.split("/").pop();
+                    css += '[data-number="' + pn + '"] > .postBody { display: none; }\n';
+                    css += '#thread' + pn + ' > .omittedPosts { display: none; }\n';
+                    css += '#thread' + pn + ' > .threadPosts { display: none; }\n';
+                });
+                style = lord.node("style");
+                style.id = "tmpHiddenPosts";
+                style.type = "text/css";
+                if (style.styleSheet)
+                    style.styleSheet.cssText = css;
+                else
+                    style.appendChild(lord.node("text", css));
+                document.head.appendChild(style);
+            {{?}}
+            if (settings.userJavaScriptEnabled) {
+                var js = lord.getLocalObject("userJavaScript", "");
+                var script = lord.node("script");
+                script.appendChild(lord.node("text", js));
+                document.head.appendChild(script);
+            }
             if (settings.userCssEnabled) {
                 var css = lord.getLocalObject("userCss", "");
                 var style = lord.node("style");
@@ -209,8 +269,16 @@
                     style.styleSheet.cssText = css;
                 else
                     style.appendChild(lord.node("text", css));
-                lord.queryOne("head").appendChild(style);
+                document.head.appendChild(style);
             }
+            if(settings.animatedEffects)
+                lord.createStylesheetLink("transition.css", true);
+            scriptsQueue.forEach(function(src) {
+                var script = lord.node('script');
+                script.src = src;
+                script.async = false;
+                document.head.appendChild(script);
+            });
         })();
     </script>
 </head>

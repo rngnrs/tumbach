@@ -93,6 +93,12 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <label><input type="checkbox" name="useWebSockets" value="true"
+                               {{? it.settings.useWebSockets}}checked="true"{{?}} />{{=it.tr.useWebSocketsLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <label><input type="checkbox" name="transparentHeader" value="true"
                                       {{? it.settings.transparentHeader}}checked="true"{{?}} />{{=it.tr.transparentHeaderLabelText}}</label>
                         <label><input type="checkbox" name="shrinkPosts" value="true"
@@ -101,9 +107,19 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-
                         <label><input type="checkbox" name="stickyToolbar" value="true"
                                {{? it.settings.stickyToolbar}}checked="true"{{?}} />{{=it.tr.stickyToolbarLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {{=it.tr.postFormLabelPassword}}
+                        <input type="password" name="password" size="16" value="{{=it.password}}"
+                               oninput="lord.passwordChanged(this);" />
+                        <button onclick="lord.showHidePassword(this); return false;"
+                                name="showHidePasswordButton">{{=it.tr.showPasswordButtonText}}</button>
+                        <button onclick="lord.newPassword(this); return false;"
+                                name="newPasswordButton">{{=it.tr.newPasswordButtonText}}</button>
                     </td>
                 </tr>
                 <tr>
@@ -183,6 +199,12 @@
                     <td>
                         <input type="number" min="0" name="hidePostPreviewDelay" class="numberSize4"
                                value="{{=it.settings.hidePostPreviewDelay}}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="infiniteScroll"
+                               {{? it.settings.infiniteScroll}}checked="true"{{?}} />{{=it.tr.infiniteScrollLabelText}}</label>
                     </td>
                 </tr>
             </tbody>
@@ -280,6 +302,25 @@
                             <option {{? it.settings.quickReplyAction == "goto_thread"}}selected="true"{{?}}
                                     value="goto_thread">{{=it.tr.quickReplyActionGotoThreadText}}</option>
                         </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="postformLabel">
+                        <b>{{=it.tr.postFormLabelMarkupMode}}</b>
+                    </td>
+                    <td class="postformField">
+                        <select name="markupMode" class="select">
+                            {{~it.markupModes :mode}}
+                            <option {{? mode.name == it.settings.markupMode}}selected="true"{{?}}
+                                    value="{{=mode.name}}">{{=mode.title}}</option>
+                            {{~}}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="showMarkupModes" value="true"
+                                      {{? it.settings.showMarkupModes}}checked="true"{{?}} />{{=it.tr.showMarkupModesLabelText}}</label>
                     </td>
                 </tr>
                 <tr>
@@ -444,6 +485,18 @@
                     <td colspan="2">
                         <label><input type="checkbox" name="drawingEnabled"
                                {{? it.settings.drawingEnabled}}checked="true"{{?}} />{{=it.tr.drawingLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="apiRequestCachingEnabled"
+                                      {{? it.settings.apiRequestCachingEnabled}}checked="true"{{?}} />{{=it.tr.apiRequestCachingLabelText}}</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <label><input type="checkbox" name="animatedEffects"
+                                      {{? it.settings.animatedEffects}}checked="true"{{?}} />{{=it.tr.animatedEffectsText}}</label>
                     </td>
                 </tr>
                 <tr>

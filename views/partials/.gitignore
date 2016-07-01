@@ -11,6 +11,7 @@
 !player.jst
 !postingSpeed.jst
 !searchAction.jst
+!sidebar.jst
 !threadActions.jst
 !toolbar.jst
 !.gitignore

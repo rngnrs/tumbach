@@ -2,21 +2,26 @@
 
 var cluster = require("cluster");
 var expressCluster = require("express-cluster");
+var HTTP = require("http");
 var Log4JS = require("log4js");
 var OS = require("os");
+var Util = require("util");
 
 var Global = require("./helpers/global");
 Global.Program = require("commander");
-Global.Program.version("1.1.0-beta")
+Global.Program.version("1.1.1")
     .option("-c, --config-file <file>", "Path to the config.json file")
+    .option("-r, --regenerate", "Regenerate the cache on startup")
+    .option("-a, --archive", "Regenerate archived threads, too")
     .parse(process.argv);
 
-var Cache = require("./helpers/cache");
 var config = require("./helpers/config");
 var controller = require("./helpers/controller");
 var BoardModel = require("./models/board");
 var Database = require("./helpers/database");
+var OnlineCounter = require("./helpers/online-counter");
 var Tools = require("./helpers/tools");
+var WebSocket = require("./helpers/websocket");
 
 Global.IPC = require("./helpers/ipc")(cluster);
 
@@ -50,20 +55,104 @@ var spawnCluster = function() {
     expressCluster(function(worker) {
         console.log("[PID: " + process.pid + "] Инициализация...");
         var express = require("express");
+        var Chat = require("./helpers/chat");
         var controller = require("./helpers/controller");
         var app = express();
         app.use(require("./middlewares"));
+        app.use("/redirect", function(req, res, next) {
+            if (!req.query.source)
+                return next();
+            res.redirect(307, "/" + config("site.pathPrefix", "") + req.query.source.replace(/^\//, ""));
+        });
         app.use(require("./controllers"));
-        app.use("*", function(req, res) {
-            controller.notFound(req, res);
+        app.use("*", function(req, res, next) {
+            var err = new Error();
+            err.status = 404;
+            err.path = req.baseUrl;
+            next(err);
+        });
+        app.use(function(err, req, res, next) {
+            switch (err.status) {
+            case 404:
+                Global.error(Tools.preferIPv4(req.ip), err.path, 404);
+                res.status(404).sendFile("notFound.html", { root: __dirname + "/public" });
+                break;
+            default:
+                Global.error(Tools.preferIPv4(req.ip), req.path, err.stack || err);
+                var model = {};
+                if (err.ban) {
+                    model.title = Tools.translate("Ban", "pageTitle");
+                    model.ban = err.ban;
+                } else {
+                    model.title = Tools.translate("Error", "pageTitle");
+                    if (Util.isError(err)) {
+                        model.errorMessage = Tools.translate("Internal error", "errorMessage");
+                        model.errorDescription = err.message;
+                    } else if (err.error) {
+                        model.errorMessage = error.description ? err.error
+                            : Tools.translate("Error", "errorMessage");
+                        model.errorDescription = err.description || err.error;
+                    } else {
+                        model.errorMessage = Tools.translate("Error", "errorMessage");
+                        model.errorDescription = Util.isString(err) ? err : "";
+                    }
+                }
+                res.json(model);
+                break;
+            }
         });
 
         BoardModel.initialize().then(function() {
             return controller.initialize();
         }).then(function() {
-            var sockets = {};
-            var nextSocketId = 0;
-            var server = app.listen(config("server.port", 8080), function() {
+            var sockets = {},
+                nextSocketId = 0,
+                server = HTTP.createServer(app),
+                ws = new WebSocket(server);
+            ws.installHandler("sendChatMessage", function(msg, conn) {
+                var data = msg.data || {};
+                return Chat.sendMessage({
+                    ip: conn.ip,
+                    hashpass: conn.hashpass
+                }, data.boardName, data.postNumber, data.text, ws).then(function(result) {
+                    var message = result.message;
+                    if (result.senderHash != result.receiverHash) {
+                        message.type = "in";
+                        var receiver = result.receiver;
+                        var ip = receiver.hashpass ? null : receiver.ip;
+                        ws.sendMessage("newChatMessage", {
+                            message: message,
+                            boardName: data.boardName,
+                            postNumber: data.postNumber
+                        }, ip, receiver.hashpass);
+                    }
+                    message.type = "out";
+                    return Promise.resolve(message);
+                });
+            });
+            var subscriptions = new Map();
+            ws.installHandler("subscribeToThreadUpdates", function(msg, conn) {
+                var data = msg.data || {},
+                    key = data.boardName + "/" + data.threadNumber;
+                if (subscriptions.has(key)) {
+                    subscriptions.get(key).add(conn);
+                } else {
+                    var s = new Set();
+                    s.add(conn);
+                    subscriptions.set(key, s);
+                }
+            });
+            ws.installHandler("unsubscribeFromThreadUpdates", function(msg, conn) {
+                var data = msg.data || {},
+                    key = data.boardName + "/" + data.threadNumber,
+                    s = subscriptions.get(key);
+                if (!s)
+                    return;
+                s.delete(conn);
+                if (s.size < 1)
+                    subscriptions.delete(key);
+            });
+            server.listen(config("server.port", 8080), function() {
                 console.log("[PID: " + process.pid + "] Прослушиваю порт " + config("server.port", 8080) + "...");
                 Global.IPC.installHandler("exit", function(status) {
                     process.exit(status);
@@ -71,12 +160,13 @@ var spawnCluster = function() {
                 Global.IPC.installHandler("stop", function() {
                     return new Promise(function(resolve, reject) {
                         server.close(function() {
+                            Tools.forIn(sockets, function(socket, socketId) {
+                                delete sockets[socketId];
+                                socket.destroy();
+                            });
+                            OnlineCounter.clear();
                             console.log("[PID: " + process.pid + "] Закрыт!");
                             resolve();
-                        });
-                        Tools.forIn(sockets, function(socket, socketId) {
-                            delete sockets[socketId];
-                            socket.destroy();
                         });
                     });
                 });
@@ -105,6 +195,20 @@ var spawnCluster = function() {
                         config.reload();
                     return Promise.resolve();
                 });
+                Global.IPC.installHandler("notifyAboutNewPosts", function(data) {
+                    Tools.forIn(data, function(_, key) {
+                        var s = subscriptions.get(key);
+                        if (!s)
+                            return;
+                        s.forEach(function(conn) {
+                            conn.sendMessage("newPost");
+                        });
+                    });
+                    return Promise.resolve();
+                });
+                Global.IPC.installHandler("getConnectionIPs", function() {
+                    return Promise.resolve(OnlineCounter.unique());
+                });
                 Global.IPC.send("ready").catch(function(err) {
                     Global.error(err);
                 });
@@ -126,34 +230,56 @@ var spawnCluster = function() {
 };
 
 if (cluster.isMaster) {
-    Database.initialize().then(function() {
+    var FS = require("q-io/fs");
+    var path = __dirname + "/public/node-captcha";
+    var initCallback;
+    FS.list(path).then(function(fileNames) {
+        return Tools.series(fileNames.filter(function(fileName) {
+            return fileName.split(".").pop() == "png" && /^[0-9]+$/.test(fileName.split(".").shift());
+        }), function(fileName) {
+            return FS.remove(path + "/" + fileName);
+        });
+    }).catch(function(err) {
+        console.error(err);
+        return Promise.resolve();
+    }).then(function() {
+        return Database.initialize();
+    }).then(function(cb) {
+        initCallback = cb;
         return controller.initialize();
     }).then(function() {
-        if (config("server.statistics.enabled", true)) {
-            setInterval(function() {
-                controller.generateStatistics().catch(function(err) {
-                    Global.error(err.stack || err);
-                });
-            }, config("server.statistics.ttl", 60) * Tools.Minute);
+        if (Global.Program.regenerate || config("system.regenerateCacheOnStartup", true)) {
+            return controller.regenerate(Global.Program.archive || config("system.regenerateArchive", false));
+        } else {
+            console.log("Сбор статистики...");
+            return controller.generateStatistics().catch(function(err) {
+                Global.error(err.stack || err);
+            });
         }
-        if (config("server.rss.enabled", true)) {
-            setInterval(function() {
-                BoardModel.generateRSS().catch(function(err) {
-                    Global.error(err.stack || err);
-                });
-            }, config("server.rss.ttl", 60) * Tools.Minute);
-        }
-        if (config("system.regenerateCacheOnStartup", true))
-            return controller.regenerate();
-        return Promise.resolve();
     }).then(function() {
         console.log("Создание воркеров...");
         spawnCluster();
         var ready = 0;
         Global.IPC.installHandler("ready", function() {
             ++ready;
-            if (ready == count)
+            if (ready == count) {
+                initCallback();
+                if (config("server.statistics.enabled", true)) {
+                    setInterval(function() {
+                        controller.generateStatistics().catch(function(err) {
+                            Global.error(err.stack || err);
+                        });
+                    }, config("server.statistics.ttl", 60) * Tools.Minute);
+                }
+                if (config("server.rss.enabled", true)) {
+                    setInterval(function() {
+                        BoardModel.generateRSS().catch(function(err) {
+                            Global.error(err.stack || err);
+                        });
+                    }, config("server.rss.ttl", 60) * Tools.Minute);
+                }
                 require("./helpers/commands")();
+            }
         });
         var lastFileName;
         var fileName = function() {
@@ -193,8 +319,11 @@ if (cluster.isMaster) {
             config.reload();
             return Global.IPC.send("reloadConfig");
         });
-        Global.IPC.installHandler("regenerateCache", function() {
-            return controller.regenerate();
+        Global.IPC.installHandler("notifyAboutNewPosts", function(data) {
+            return Global.IPC.send("notifyAboutNewPosts", data);
+        });
+        Global.IPC.installHandler("regenerateCache", function(regenerateArchive) {
+            return controller.regenerate(regenerateArchive);
         });
     }).catch(function(err) {
         Global.error(err.stack || err);

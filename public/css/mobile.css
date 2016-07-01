@@ -4,17 +4,23 @@
     height: 75px;
 }
 .titl {
-    padding: 23px 0;
-    font-size: 23px;
+    padding: 27px 0;
+    height: 75px;
 }
-header .searchAction, .desktopOnly {
+.toolbar, .desktopOnly {
     display: none;
+}
+#tplayer {
+    width: 100%;
 }
 #playerTrackTags {
     width: calc(100% - 70px);
 }
 #playerTrackInfo {
     width: 60px;
+}
+.navbar {
+    font-size: 1em;
 }
 /* /tumb rewrite */
 
@@ -27,10 +33,6 @@ body {
 
 .spoiler {
     cursor: pointer;
-}
-
-blockquote {
-    max-width: 550px;
 }
 
 .navbar.navbarFrame {
@@ -77,7 +79,6 @@ blockquote {
 
 .searchAction > form {
     white-space: nowrap;
-    /*width: 98%;*/
     width: 70%;
     margin: 0 auto;
 }
@@ -87,34 +88,20 @@ blockquote {
     height: 240px;
 }
 
-.login {
-    text-align: center;
-    white-space: nowrap;
+.postFilesInner {
+    display: block;
 }
 
-.buttonImage {
-    vertical-align: middle;
-    opacity: .65;
+.postFilesInnerRow {
+    display: block;
 }
 
-.buttonImage:disabled {
-    opacity: .4;
+.postText {
+    display: block;
 }
 
-.buttonImage:hover {
-    opacity: 1;
-}
-
-.buttonImage:disabled:hover {
-    opacity: .4;
-}
-
-input.buttonImage {
-    background-color: transparent;
-}
-
-.signImage {
-    vertical-align: middle;
+.postFile {
+    display: inline-block;
 }
 
 .boardSelectContainer {
@@ -127,8 +114,8 @@ input.buttonImage {
 .boardSelect {
     cursor: pointer;
     border: none;
-    background: url("../img/boards.png") left top no-repeat;
-    width: 36px;
+    background: url("../img/boards.png") left center no-repeat;
+    width: 16px;
 }
 
 .boardSelectForm {
@@ -156,9 +143,6 @@ input.buttonImage {
 }*/
 
 #playerDurationSlider {
-    width: -moz-calc(100% - 6px);
-    width: -webkit-calc(100% - 6px);
-    width: -o-calc(100% - 6px);
     width: calc(100% - 6px);
     margin-right: 0px;
 }
@@ -173,16 +157,10 @@ input.buttonImage {
 }*/
 
 .movablePlayerConstrolsSliders {
-    width: -moz-calc(100% - 28px);
-    width: -webkit-calc(100% - 28px);
-    width: -o-calc(100% - 28px);
     width: calc(100% - 28px);
 }
 
 .movablePlayerDurationSlider {
-    width: -moz-calc(100% - 6px);
-    width: -webkit-calc(100% - 6px);
-    width: -o-calc(100% - 6px);
     width: calc(100% - 6px);
     margin-right: 0px;
 }
@@ -215,24 +193,18 @@ div.bannedUser {
 
 .chatHistory {
     min-width: 200px;
-    max-width: 300px;
+    max-width: 200px;
     min-height: 400px;
     max-height: 400px;
 }
 
 .registeredUserHashpassInput {
     box-sizing: border-box;
-    width: -moz-calc(100% - 8px);
-    width: -webkit-calc(100% - 8px);
-    width: -o-calc(100% - 8px);
     width: calc(100% - 8px);
 }
 
 .registeredUserIpsInput {
     box-sizing: border-box;
-    width: -moz-calc(100% - 8px);
-    width: -webkit-calc(100% - 8px);
-    width: -o-calc(100% - 8px);
     width: calc(100% - 8px);
 }
 
@@ -245,8 +217,32 @@ div.bannedUser {
 }
 
 .frameContent {
-    width: -moz-calc(100% - 88px);
-    width: -webkit-calc(100% - 88px);
-    width: -o-calc(100% - 88px);
     width: calc(100% - 88px);
+}
+
+.settingsDialog,
+.settingsDialog input,
+.settingsDialog select,
+.settingsDialog button {
+    font-size: 12px !important;
+}
+
+.settingsDialog ul.tabWidget {
+    display: block;
+}
+
+.settingsDialog > div {
+    width: 100vw;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.settingsDialog ul.tabWidget > li > a {
+    padding: 6px 3px;
+}
+
+#fastSettings, .settingsDialog table {
+    width: 100vw;
+    max-width: 400px;
+    font-size: 12px;
 }

@@ -5,7 +5,7 @@
 {{#def.header}}
 <a id="top"></a>
 <div class="wrap" {{#def.baseData}} data-current-page="{{=it.currentPage}}" data-page-count="{{=it.pageCount}}">
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
@@ -19,34 +19,27 @@
             {{? it.board.captchaEnabled}}
                 <div id="hiddenCaptcha" style="display: none;"></div>
             {{?}}
-            {{~["top", "bottom"] :target}}
-                {{#def.navigationButton}}
-            {{~}}
-            {{~["previous", "next"] :target}}
-                {{#def.leafButton}}
-            {{~}}
             {{#def.banner}}
             <div class="theTitle">
                 <h1>
                     {{=it.board.title}}
                     <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/catalog.html"
-                       title="{{=it.tr.boardCatalogLinkText}}"><img src="/{{=it.site.pathPrefix}}img/catalog.png"
-                                                                    class="buttonImage" width="24" height="24"></a>
+                       title="{{=it.tr.boardCatalogLinkText}}"><i class="mdi mdi-24px mdi-apps"></i></a>
                     <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/archive.html"
-                       title="{{=it.tr.boardArchiveLinkText}}"><img src="/{{=it.site.pathPrefix}}img/archive.png"
-                                                                    class="buttonImage" width="24" height="24"></a>
+                       title="{{=it.tr.boardArchiveLinkText}}"><i class="mdi mdi-24px mdi-archive"></i></a>
                     <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/rss.xml" target="_blank"
-                       title="{{=it.tr.boardRssLinkText}}"><img src="/{{=it.site.pathPrefix}}img/rss.png" class="buttonImage"
-                                                                width="24" height="24"></a>
+                       title="{{=it.tr.boardRssLinkText}}"><i class="mdi mdi-24px mdi-rss"></i></a>
                 </h1>
             </div>
-            <script type="text/javascript">
+            <script id="boardPageUpperPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
-                    document.open();
-                    document.write(lord.template("boardPageUpper", model, true));
-                    document.close();
+                    var placeholder = lord.id("boardPageUpperPlaceholder");
+                    var html = lord.template("boardPageUpper", model);
+                    if (!html)
+                        return;
+                    placeholder.parentNode.replaceChild(html, placeholder);
                 })();
             </script>
             <div id="threads">
@@ -57,9 +50,9 @@
                             {{#def.post}}
                         {{~}}
                         {{? thread.omittedPosts > 0}}
-                            <div class="omittedPosts">
+                            <span class="omittedPosts" onclick="lord.expandCollapseThread(this); return false;">
                                 {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
-                            </div>
+                            </span>
                         {{?}}
                         <div class="threadPosts">
                             {{~thread.lastPosts :post}}
@@ -69,29 +62,88 @@
                     </div>
                 {{~}}
             </div>
-            <script type="text/javascript">
+            <script id="boardPageLowerPlaceholder" type="text/javascript">
                 (function() {
+                    var infScroll = lord.getLocalObject("infiniteScroll", lord.deviceType("mobile"));
+                    if (infScroll) {
+                        var w = $(window);
+                        var loading = false;
+                        var infiniteScrollPage;
+                        w.on("scroll", function() {
+                            if (loading)
+                                return;
+                            var pageCount = +lord.data("pageCount");
+                            if (isNaN(infiniteScrollPage))
+                                infiniteScrollPage = +lord.data("currentPage");
+                            if (infiniteScrollPage >= pageCount - 1)
+                                return;
+                            if ($(document).height() - w.height() == w.scrollTop()) {
+                                loading = true;
+                                ++infiniteScrollPage;
+                                $("#infiniteScrollLoading").show();
+                                lord.api(infiniteScrollPage, {}, lord.data("boardName")).then(function(pageModel) {
+                                    var threads = pageModel.threads.filter(function(thread) {
+                                        return !lord.id("thread" + thread.opPost.number);
+                                    });
+                                    var model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
+                                    var html = '<hr /><div style="font-size: 2em; text-align: center;">' + model.tr.pageText + " "
+                                        + infiniteScrollPage + '</div>' + threads.map(function(thread) {
+                                        model.thread = thread;
+                                        return "<hr />" + lord.template("thread", model, true);
+                                    }).join("");
+                                    $("#infiniteScrollLoading").hide();
+                                    lord.id("threads").innerHTML += html;
+                                    return lord.series(threads.map(function(thread) {
+                                        return lord.id("thread" + thread.opPost.number);
+                                    }), function(thread) {
+                                        return lord.processPosts(thread);
+                                    });
+                                }).then(function() {
+                                    lord.initFiles();
+                                    $("#infiniteScrollLoading").hide();
+                                    loading = false;
+                                }).catch(function(err) {
+                                    $("#infiniteScrollLoading").hide();
+                                    loading = false;
+                                    lord.handleError(err);
+                                });
+                            }
+                        });
+                    }
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
-                    document.open();
-                    document.write(lord.template("boardPageLower", model, true));
-                    document.close();
+                    var s = lord.template("boardPageLower", model, true);
+                    if (infScroll) {
+                        s += '<div id="infiniteScrollLoading" class="loadingMessage" style="display: none;">'
+                            + '<img src="/{{=it.site.pathPrefix}}img/loading_big.gif">'
+                            + '<h1 style="display: inline;">{{=it.tr.loadingThreadsMessage}}</h1>'
+                            + '</div>';
+                    }
+                    var placeholder = lord.id("boardPageLowerPlaceholder"),
+                            tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = s;
+                    placeholder.parentNode.replaceChild(tempDiv, placeholder);
                 })();
             </script>
             <hr />
-            <script type="text/javascript">
+            <script id="paginationPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["base", "tr", "board/" + lord.data("boardName")]);
                     model.pageCount = +lord.data("pageCount");
                     model.currentPage = +lord.data("currentPage");
-                    document.open();
-                    document.write(lord.template("pagination", model, true));
-                    document.close();
+                    var placeholder = lord.id("paginationPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("pagination", model), placeholder);
                 })();
             </script>
-            {{#def.navbar}}
             <hr />
+            {{#def.navbar}}
             {{#def.postingSpeed}}
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+            {{#def.leafButton}}
+            {{~}}
         </div>
     </div>
     {{#def.customFooter}}

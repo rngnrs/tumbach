@@ -10,12 +10,10 @@
                 <span class="tripcode">{{=post.tripcode}}</span>
             {{?}}
             <span class="postDateTime" name="dateTime">{{ out += it.formattedDate(post.createdAt); }}</span>
-            [<a href="javascript:void(0);" name="fillFormWithDraft" onclick="lord.fillFormWithDraft(this); return false;"
-                title="{{=it.tr.fillFormWithDraftText}}"><img src="/{{=it.site.pathPrefix}}img/fill_form.png"
-                                                              class="buttonImage"></a>]
-            [<a href="javascript:void(0);" name="deleteDraft" onclick="lord.deleteDraft(this); return false;"
-                title="{{=it.tr.deleteDraftText}}"><img src="/{{=it.site.pathPrefix}}img/delete.png"
-                                                              class="buttonImage"></a>]
+            <a href="javascript:void(0);" name="fillFormWithDraft" onclick="lord.fillFormWithDraft(this); return false;"
+                title="{{=it.tr.fillFormWithDraftText}}"><i class="mdi mdi-keyboard mdi-middle"></i></a>
+            <a href="javascript:void(0);" name="deleteDraft" onclick="lord.deleteDraft(this); return false;"
+                title="{{=it.tr.deleteDraftText}}"><i class="mdi mdi-delete mdi-middle"></i></a>
         </div>
         <table class="postBody">
             <tbody>

@@ -2,30 +2,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 {{#def.head}}
 <body>
-{{~["top", "bottom"] :target}}
-    {{#def.navigationButton}}
-{{~}}
 {{#def.header}}
 <a id="top"></a>
 <div class="wrap" {{#def.baseData}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
             {{#def.banner}}
             <div class="theTitle">
                 <h1>
-                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}">{{=it.board.title}}</a>
+                    <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/">{{=it.board.title}}</a>
                 </h1>
             </div>
-            <div id="threads">
+            <div id="threads" class="alignCenter">
                 {{~it.threads :thread}}
-                <a class="ajax" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/arch/{{=thread.number}}.html"
-                   class="archivalThreadLink">{{=thread.number}}.html</a>
+                <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/arch/{{=thread.number}}.html"
+                   class="archivalThreadLink ajax">{{=thread.number}}.html</a>
                 {{~}}
             </div>
             <hr />
             {{#def.postingSpeed}}
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
         </div>
     </div>
     {{#def.customFooter}}

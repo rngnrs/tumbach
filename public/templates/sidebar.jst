@@ -1,0 +1,130 @@
+<div>
+    <aside id="sidebar2" class="sidebar sidebar-fixed-right">
+        <section class="tabs">
+            <input id="tab_1" type="radio" name="tab" checked="checked" />
+            <input id="tab_2" type="radio" name="tab" />
+            <div class="tabs_cont">
+                <div id="tab_c1">
+                    <div class="frameLabels color-prim">
+                        <div class="rewind">
+                            <i title="{{=it.tr.playerPreviousTrackText}}" class="mdi mdi-rewind mdi-hc-2x" onclick="lord.playerPrevious();"></i>
+                        </div>
+                        <div class="stop">
+                            <i class="mdi mdi-stop mdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
+                        </div>
+                        <!--<div>
+                            <input type="checkbox" name="mute" id="mute" />
+                            <label for="mute">
+                                <i class="mdi mdi-volume-off mdi-hc-2x" onclick="lord.playerMute();"></i>
+                            </label>
+                        </div>-->
+                        <div class="shuffle">
+                            <input type="checkbox" name="shuffle" id="shuffle" />
+                            <label for="shuffle" title="Воспроизводить вперемешку">
+                                <i class="mdi mdi-shuffle mdi-hc-2x" onclick="lord.playerShuffle();"></i>
+                            </label>
+                        </div>
+                        <div class="loop">
+                            <input type="checkbox" name="loop" id="loop" />
+                            <label for="loop" title="Повторять композицию">
+                                <i class="mdi mdi-repeat mdi-hc-2x" onclick="lord.playerLoop();"></i>
+                            </label>
+                        </div>
+                        <div class="clr"></div>
+                    </div>
+                    <div class="scroll-window">
+                        <div id="playerTracks"></div>
+                    </div>
+                </div>
+                <div id="tab_c2">
+                    <div class="frameLabels color-prim">
+                        <div>
+                            <label for="mute">
+                                <i class="mdi mdi-volume-off mdi-hc-2x" onclick="lord.playerMute(event);"></i>
+                            </label>
+                        </div>
+                        <div class="stop">
+                            <i class="mdi mdi-stop mdi-hc-2x" title="Остановить и скрыть плеер" onclick="lord.setPlayerVisible(null, false);"></i>
+                        </div>
+                        <div class="clr"></div>
+                    </div>
+                    <div class="scroll-window">
+                        <div id="player-radio-list"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="clr"></div>
+            <div class="dropdown-labels color-prim">
+                <label for="tab_1" class="double-btn" id="tabl1">Музыка</label>
+                <label for="tab_2" class="double-btn" id="tabl2">Радио</label>
+                <div class="clr"></div>
+            </div>
+        </section>
+    </aside>
+    <aside id="sidebar" class="sidebar sidebar-stacked">
+        <div class="frameLabels color-prim">
+            <div>
+                <i class="mdi mdi-filter mdi-hc-2x" title="{{=it.tr.editSpellsText}}" onclick="lord.editSpells();return false;"></i>
+            </div>
+            <div>
+                <i class="mdi mdi-settings mdi-hc-2x" name="settingsButton" title="{{=it.tr.settingsButtonText}}" onclick="lord.showSettings(); return false;"></i>
+            </div>
+            <div>
+                <i class="mdi mdi-star mdi-hc-2x" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" onclick="lord.showFavorites(); return false;"></i>
+            </div>
+            <div>
+                <i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}} mdi-hc-2x" title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i>
+            </div>
+            <div class="clr"></div>
+        </div>
+        <div class="tumb-menu">
+            <nav>
+                <a class="list-item ajax" href="/{{=it.site.pathPrefix}}">{{=it.tr.toHomePageText}}</a>
+                {{~it.boards :board}}
+                    {{? it.settings.hiddenBoards.indexOf(board.name) < 0 && !board.hidden}}
+                        <span class="navbarItem navbarItemBoard">
+                            <a class="list-item ajax"
+                               href="/{{=it.site.pathPrefix}}{{=board.name}}/" title="/{{=board.name}}/"
+                               data-board-name="{{=board.name}}">
+                                {{=board.title}}
+                            </a>
+                        </span>
+                    {{?}}
+                {{~}}
+                <div class="clr"></div>
+                <hr/>
+                <a href="/{{=it.site.pathPrefix}}search.html" class="list-item ajax">
+                    Поиск
+                </a>
+                {{? it.settings.chatEnabled}}
+                <a name="chatButton" class="list-item" href="javascript:void(0);" onclick="lord.showChat(); return false;">
+                    {{=it.tr.chatText}}
+                </a>
+                {{?}}
+                <a class="list-item ajax" href="/{{=it.site.pathPrefix}}faq.html">{{=it.tr.toFaqPageText}}</a>
+                {{? it.user.isModer()}}
+                    <a class="list-item" href="/{{=it.site.pathPrefix}}manage.html">{{=it.tr.toManagePageText}}</a>
+                {{?}}
+                {{? it.user.loggedIn}}
+                <a href="javascript:void(0)" onclick="lord.doLogout(event, this.parent); return false;" class="list-item"
+                   {{? it.loginMessageText}}title="[{{=it.loginMessageText}}]"{{?}}>
+                    {{=it.tr.logoutText}}
+                </a>
+                {{??}}
+                <a href="/{{=it.site.pathPrefix}}login.html" onclick="lord.redirectToLoginPage(); return false;" class="list-item">
+                    {{=it.tr.loginText}}
+                </a>
+                {{?}}
+            </nav>
+        </div>
+        <div class="select_sidebar color-prim">
+            <select id="style-switcher" class="color-prim">
+                    {{~it.styles :style}}
+                    <option value="{{=style.name}}"{{? style.name == it.settings.style.name}} selected="true"{{?}}>
+                        {{=style.title}}
+                    </option>
+                    {{~}}
+            </select>
+        </div>
+    </aside>
+</div>

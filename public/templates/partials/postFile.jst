@@ -1,4 +1,4 @@
-<div id="file{{=fileInfo.name}}" class="postFile"
+<div id="file{{=fileInfo.name}}" class="postFile{{? post.fileInfos.length > 1}} postFileInlineBlock{{?}}"
     data-href="{{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=post.boardName}}/src/{{=fileInfo.name}}"
     data-file-name="{{=fileInfo.name}}"
     data-mime-type="{{=fileInfo.mimeType}}"
@@ -6,6 +6,7 @@
     data-size-text="{{=fileInfo.sizeText}}"
     data-width="{{ out += fileInfo.dimensions ? fileInfo.dimensions.width : 0; }}"
     data-height="{{ out += fileInfo.dimensions ? fileInfo.dimensions.height : 0; }}"
+    data-rating="{{=fileInfo.rating}}"
     {{? fileInfo.ihash}}data-ihash="{{=fileInfo.ihash}}"{{?}}
     {{? ("application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/") && fileInfo.extraData}}
         {{? fileInfo.extraData.duration}}data-duration="{{=fileInfo.extraData.duration}}"{{?}}
@@ -25,67 +26,39 @@
         ({{=fileInfo.sizeText}})
     </div>
     <div class="postFileSearch">
-        <a href="javascript:void(0);" name="deleteFileButton" target="_blank"
-           onclick="lord.deleteFile(this); return false;">
-           <img src="/{{=it.site.pathPrefix}}img/delete.png" title="{{=it.tr.deleteFileText}}"
-                class="buttonImage" /></a>
+        <a href="javascript:void(0);" name="deleteFileButton" onclick="lord.deleteFile(this); return false;">
+            <i class="mdi mdi-middle mdi-delete" title="{{=it.tr.deleteFileText}}"></i></a>
+        <a href="javascript:void(0);" name="editFileRatingButton" onclick="lord.editFileRating(this); return false;">
+           <i class="mdi mdi-middle mdi-shield" title="{{=it.tr.editFileRatingText}}"></i></a>
         {{? fileInfo.mimeType.substr(0, 6) == "image/"}}
-            <input type="image" src="/{{=it.site.pathPrefix}}img/hide.png" class="buttonImage"
-                   title="{{=it.tr.hideByImageText}}"
-                   onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;" />
+            <a href="javascript:void(0);" onclick="lord.showMenu(event, this, '#image{{=fileInfo.name.replace(".", "-")}}HideMenu'); return false;">
+                <i class="mdi mdi-middle mdi-eye-off" title="{{=it.tr.hideByImageText}}"></i></a>
             <ul id="image{{=fileInfo.name.replace(".", "-")}}HideMenu" name="hideByImageButton" class="menu">
                 <li class="nowrap">
                     <a href="javascript:void(0);"
                        onclick="lord.hideByImage(this, false);">{{=it.tr.hideByImageSizeText}}</a>
                 </li>
-                {{? fileInfo.ihash && "0" != fileInfo.ihash && "image/gif" != fileInfo.mimeType}}
+                {{? fileInfo.ihash && "0" != fileInfo.ihash}}
                     <li class="nowrap">
                         <a href="javascript:void(0);"
                            onclick="lord.hideByImage(this, true);">{{=it.tr.hideByImageHashText}}</a>
                     </li>
                 {{?}}
             </ul>
-            <a name="drawOnImageButton" onclick="lord.drawOnImage(this); return false;">
-                <img src="/{{=it.site.pathPrefix}}img/draw.png" title="{{=it.tr.drawOnImageText}}"
-                     class="buttonImage" /></a>
-            <input type="image" src="/{{=it.site.pathPrefix}}img/search.png" class="buttonImage"
-                   title="{{=it.tr.findSourceText}}"
-                   onclick="lord.showMenu(event, this, '#file{{=fileInfo.name.replace(".", "-")}}SearchMenu'); return false;" />
-            <ul id="file{{=fileInfo.name.replace(".", "-")}}SearchMenu" class="menu">
-                <li class="nowrap">
-                    <a href="//www.google.com/searchbyimage?image_url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
-                       target="_blank">
-                        <img src="//www.google.com/favicon.ico" width="16" height="16" class="signImage noInvert" /> Google</a>
-                </li>
-                <li class="nowrap">
-                    <a href="//yandex.ru/images/search?rpt=imageview&img_url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
-                       target="_blank">
-                        <img src="//www.yandex.ru/favicon.ico" width="16" height="16" class="signImage noInvert" /> Yandex</a>
-                </li>
-                <li class="nowrap">
-                    <a href="//tineye.com/search/?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
-                       target="_blank">
-                        <img src="//tineye.com/favicon.ico" width="16" height="16" class="signImage noInvert" /> TinEye</a>
-                </li>
-                <li class="nowrap">
-                    <a href="//saucenao.com/search.php?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
-                       target="_blank">
-                        <img src="//saucenao.com/favicon.ico" width="16" height="16" class="signImage noInvert"/> SauceNAO</a>
-                </li>
-                <li class="nowrap">
-                    <a href="http://iqdb.org/?url={{=it.site.protocol}}://{{=it.site.domain}}/{{=it.site.pathPrefix}}{{=it.board.name}}/src/{{=fileInfo.name}}"
-                       target="_blank">
-                        <img src="//iqdb.org/favicon.ico" width="16" height="16" class="signImage noInvert" /> Iqdb</a>
-                </li>
-            </ul>
+            <a href="javascript:void(0);" name="drawOnImageButton" onclick="lord.drawOnImage(this); return false;">
+                <i class="mdi mdi-middle mdi-brush" title="{{=it.tr.drawOnImageText}}"></i></a>
+            <a onclick="lord.showImageSearchMenu(event, this, '{{=fileInfo.name}}'); return false;">
+                <i class="mdi mdi-middle mdi-magnify" title="{{=it.tr.findSourceText}}"></i></a>
         {{?}}
         {{? "application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/"}}
             <a href="javascript:void(0);" onclick="lord.editAudioTags(this); return false;"
                title="{{=it.tr.editAudioTagsText}}">
-                <img src="/{{=it.site.pathPrefix}}img/audio_edit_tags.png" class="buttonImage"></a>
+                <i class="mdi mdi-middle mdi-label"></i></a>
+        {{?}}
+        {{? "application/ogg" == fileInfo.mimeType || fileInfo.mimeType.substr(0, 6) == "audio/" || fileInfo.mimeType.substr(0, 6) == "video/"}}
             <a href="javascript:void(0);" onclick="lord.addToPlaylist(this); return false;"
                title="{{=it.tr.addToPlaylistText}}">
-                <img src="/{{=it.site.pathPrefix}}img/player/16/player.png" class="buttonImage"></a>
+                <i class="mdi mdi-middle mdi-playlist-plus"></i></a>
         {{?}}
     </div>
     <div class="postFileFile">

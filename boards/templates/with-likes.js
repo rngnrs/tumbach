@@ -16,11 +16,20 @@ module.exports = function(name, title, options) {
         return [{
             method: "post",
             path: "/like",
-            handler: function(req, res) {
+            handler: function(req, res, next) {
                 var c = {};
                 Tools.parseForm(req).then(function(result) {
                     c.postNumber = +result.fields.postNumber;
                     c.fields = result.fields;
+                    return Database.db.hget("posts", board.name + ":" + c.postNumber);
+                }).then(function(post) {
+                    if (!post)
+                        return Promise.reject(Tools.translate("No such post"));
+                    c.post = JSON.parse(post);
+                    return Database.db.hget("threads:" + board.name, c.post.threadNumber);
+                }).then(function(thread) {
+                    if (!thread)
+                        return Promise.reject(Tools.translate("No such thread"));
                     return Board.prototype.loadExtraData.call(_this, c.postNumber);
                 }).then(function(extraData) {
                     c.extraData = extraData || {
@@ -38,23 +47,30 @@ module.exports = function(name, title, options) {
                     }
                     return Board.prototype.storeExtraData.call(_this, c.postNumber, c.extraData);
                 }).then(function() {
-                    return Database.db.hget("posts", "soc:" + c.postNumber);
-                }).then(function(post) {
-                    Global.generate("soc", JSON.parse(post).threadNumber, c.postNumber, "edit");
+                    Global.generate(board.name, c.post.threadNumber, c.postNumber, "edit");
                     res.send({});
                 }).catch(function(err) {
-                    controller.error(req, res, err, true);
+                    next(err);
                 });
             }
         },
         {
             method: "post",
             path: "/dislike",
-            handler: function(req, res) {
+            handler: function(req, res, next) {
                 var c = {};
                 Tools.parseForm(req).then(function(result) {
                     c.postNumber = +result.fields.postNumber;
                     c.fields = result.fields;
+                    return Database.db.hget("posts", board.name + ":" + c.postNumber);
+                }).then(function(post) {
+                    if (!post)
+                        return Promise.reject(Tools.translate("No such post"));
+                    c.post = JSON.parse(post);
+                    return Database.db.hget("threads:" + board.name, c.post.threadNumber);
+                }).then(function(thread) {
+                    if (!thread)
+                        return Promise.reject(Tools.translate("No such thread"));
                     return Board.prototype.loadExtraData.call(_this, c.postNumber);
                 }).then(function(extraData) {
                     c.extraData = extraData || {
@@ -72,19 +88,17 @@ module.exports = function(name, title, options) {
                     }
                     return Board.prototype.storeExtraData.call(_this, c.postNumber, c.extraData);
                 }).then(function() {
-                    return Database.db.hget("posts", "soc:" + c.postNumber);
-                }).then(function(post) {
-                    Global.generate("soc", JSON.parse(post).threadNumber, c.postNumber, "edit");
+                    Global.generate(board.name, c.post.threadNumber, c.postNumber, "edit");
                     res.send({});
                 }).catch(function(err) {
-                    controller.error(req, res, err, true);
+                    next(err);
                 });
             }
         }];
     };
 
     board.extraScripts = function() {
-        return [ { fileName: "soc.js" } ];
+        return [ { fileName: "with-likes.js" } ];
     };
 
     board.addTranslations = function(translate) {
@@ -119,7 +133,8 @@ module.exports = function(name, title, options) {
                 });
                 model.thread = thread;
                 model.post = post;
-                return controller.sync("socPostHeaderPart", model);
+                model.archived = thread.archived;
+                return controller.sync("withLikesPostHeaderPart", model);
             }
         };
     };

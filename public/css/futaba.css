@@ -40,16 +40,16 @@ a {
     color: #00E;
 }
 
-a.expandCollapse {
+a.expandCollapse, a i {
     color: #444;
 }
 
-a:hover {
+a:hover, a:hover i, a:focus {
     color: #D00;
 }
 
 a.expandCollapse:hover {
-    color: #666;
+    color: #777;
 }
 
 hr {
@@ -320,7 +320,7 @@ ul.tabWidget > li.activated {
     border: 1px solid #800000;
 }
 
-.track:hover {
+.track:hover, .pseudoTrack:hover {
     background-color: #DDC;
 }
 
@@ -348,4 +348,22 @@ ul.tabWidget > li.activated {
 
 ul.jqueryFileTree a {
     color: #800000 !important;
+}
+
+#postForm {
+    background-color: #FFE;
+}
+
+#postForm.floatingPostForm {
+    border: 2px solid #800000;
+}
+
+.postFormHeader {
+    background-color: #F0E0D6;
+    border: 1px solid #800000;
+}
+
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #800000;
 }

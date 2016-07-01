@@ -3,28 +3,31 @@
 {{#def.head}}
 <body>
 {{#def.header}}
+<a id="top"></a>
 <div class="wrap" {{#def.baseData}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
-            <script type="text/javascript">
+            <script id="customContentPlaceholder" type="text/javascript">
                 (function() {
-                    if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst")))
+                    if (!lord.addTemplate("custom-home", lord.get("/{{=it.site.pathPrefix}}templates/custom-home.jst", true)))
                         return;
-                    var model = lord.model(["base", "tr", "boards"]);
-                    model.settings = lord.settings();
-                    var data = lord.template("custom-home", model, true);
-                    if (!data)
-                        return;
-                    document.open();
-                    document.write(data);
-                    document.close();
+                    var customContentPlaceholder = lord.id("customContentPlaceholder");
+                    if (customContentPlaceholder) {
+                        var model = lord.model(["base", "tr", "boards"]);
+                        model.settings = lord.settings();
+                        var data = lord.template("custom-home", model);
+                        if (!data)
+                            return;
+                        customContentPlaceholder.parentNode.replaceChild(data, customContentPlaceholder);
+                    }
                 })();
             </script>
         </div>
     </div>
     {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>

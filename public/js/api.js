@@ -10,15 +10,6 @@ if (typeof $ != "undefined") {
             });
         });
     };
-    $.extend({
-        getQueryParameters: function(str) {
-            return (str || window.location.search).replace(/(^\?)/, "").split("&").map((function(n) {
-                n = n.split("=");
-                this[n[0]] = n[1];
-                return this;
-            }).bind({}))[0];
-        }
-    });
 }
 
 /*ololord global object*/
@@ -662,7 +653,7 @@ lord.gently = function(obj, f, options) {
     if (isNaN(n) || n < 1)
         n = 1;
     return new Promise(function(resolve, reject) {
-        if (Array.isArray(obj)) {
+        if (lord.isArray(obj)) {
             var arr = obj;
             var ind = 0;
             var g = function() {
@@ -790,7 +781,7 @@ lord.toCenter = function(element, sizeHintX, sizeHintY, border) {
         sizeHintX = +element.offsetWidth;
     if (isNaN(sizeHintY)  || sizeHintY <= 0)
         sizeHintY = +element.offsetHeight;
-    borded = +border;
+    border = +border;
     if (!isNaN(border)) {
         sizeHintX += border * 2;
         sizeHintY += border * 2;
@@ -819,6 +810,9 @@ lord.showNotification = function(title, body, icon) {
             "body": body,
             "icon": icon
         });
+        notification.onclick = function () {
+            window.focus();
+        };
     });
 };
 
@@ -876,33 +870,37 @@ lord.showDialog = function(body, options) {
                         $(this).dialog("close");
                     }
                 };
-            } else {
+            } else
                 return null;
-            }
         }).filter(function(button) {
             return button;
         });
-        var dlg = $(body).dialog({
+        var modal = (options && undefined != options.modal)? options.modal: true,
+            dlg = $(body).dialog({
             title: lord.text(options && options.title),
-            modal: true,
+            modal: modal,
             buttons: buttons,
             closeText: lord.text("closeButtonText"),
             width: "auto",
-            open: (options ? options.afterShow : undefined),
-            maxHeight: $(window).height() - 20,
+            maxHeight: $(window).height() - 42,
             maxWidth: $(window).width() - 40,
+            minHeight: 24,
             close: function() {
                 lord.dialogs.pop();
                 resolve(false);
                 $(this).dialog("destroy").remove();
             },
-            create: function() {
-                $("body").css({ overflow: "hidden" });
-                $(".navigationButton").css({ display: "none" });
+            create: function(e) {
+                (modal)?
+                    $("body").css("overflow", "hidden"):
+                    $(e.target).parent().css("position", "fixed");
+                $(".navigationButton").css("display", "none");
             },
+            open: (options? options.afterShow: undefined),
             beforeClose: function() {
-                $("body").css({ overflow: "inherit" });
-                if (lord.scrollHandler)
+                if (modal)
+                    $("body").css("overflow", "inherit");
+                if (lord.scrollHandler && lord.queryOne(".navigationButtonTop"))
                     lord.scrollHandler();
             }
         });
@@ -913,21 +911,21 @@ lord.showDialog = function(body, options) {
                 this.lastHeight = body.closest(".ui-dialog").height() + 8;
                 this.lastWidth = body.closest(".ui-dialog").width() + 16;
                 this.lastPosition = body.dialog("option", "position");
-                body.dialog("option", "maxHeight", $(window).height());
+                body.dialog("option", "maxHeight", $(window).height()-42);
                 body.dialog("option", "maxWidth", $(window).width());
-                body.dialog("option", "minHeight", $(window).height());
+                body.dialog("option", "minHeight", $(window).height()-42);
                 body.dialog("option", "minWidth", $(window).width());
-                body.dialog("option", "height", $(window).height());
+                body.dialog("option", "height", $(window).height()-42);
                 body.dialog("option", "width", $(window).width());
                 body.dialog("option", "position", {
                     my: "left top",
-                    at: "left top",
+                    at: "left top+42px",
                     of: window
                 });
             } else {
                 body.dialog("option", "minHeight", 150);
                 body.dialog("option", "minWidth", 150);
-                body.dialog("option", "maxHeight", $(window).height() - 20);
+                body.dialog("option", "maxHeight", $(window).height() - 42);
                 body.dialog("option", "maxWidth", $(window).width() - 40);
                 body.dialog("option", "height", this.lastHeight);
                 body.dialog("option", "width", this.lastWidth);
@@ -953,7 +951,7 @@ lord.activateTab = function(a) {
             return;
         node.style.display = ((node == page) ? "" : "none");
     });
-    lord.queryAll("ul > li", header.parentNode).forEach(function(node) {
+    lord.queryAll("li", lord.queryOne("ul", header.parentNode)).forEach(function(node) {
         $(node).removeClass("activated");
     });
     $(tab).addClass("activated");
@@ -967,16 +965,20 @@ lord.soundEnabled = function() {
     return lord.getLocalObject("playAutoUpdateSound", false);
 };
 
-lord.playSound = function() {
-    if (!lord.sound) {
-        lord.sound = lord.node("audio");
+lord.playSound = function(type) {
+    type = type || "signal";
+    if (["signal", "message"].indexOf(type) < 0)
+        return;
+    var key = "sound_" + type;
+    if (!lord[key]) {
+        lord[key] = lord.node("audio");
         var source = lord.node("source");
-        source.type = "audio/ogg";
-        source.src = "/" + lord.data("sitePathPrefix") + "audio/signal.ogg";
-        lord.sound.volume = lord.getLocalObject("soundNotificationsVolume", 100) / 100;
-        lord.sound.appendChild(source);
+        source.type = "audio/mp3";
+        source.src = "/" + lord.data("sitePathPrefix") + "audio/" + type + ".mp3";
+        lord[key].volume = lord.getLocalObject("soundNotificationsVolume", 100) / 100;
+        lord[key].appendChild(source);
     }
-    lord.sound.play();
+    lord[key].play();
 };
 
 lord.hash = function(hash) {
@@ -1146,7 +1148,7 @@ lord.compareRatings = function(r1, r2) {
 };
 
 lord.model = function(modelName) {
-    if (Array.isArray(modelName)) {
+    if (lord.isArray(modelName)) {
         var models = modelName.map(function(modelName) {
             return lord.model(modelName);
         });
@@ -1222,6 +1224,7 @@ lord.model = function(modelName) {
         });
         model.customPostBodyPart = lord.customPostBodyPart;
         model.customPostHeaderPart = lord.customPostHeaderPart;
+        model.password = lord.getLocalObject("password", "");
         return model;
     }
 };
@@ -1241,7 +1244,7 @@ lord.api = function(entity, parameters, prefix) {
     prefix = prefix || "api";
     var query = "";
     lord.each(parameters, function(val, key) {
-        if (!Array.isArray(val))
+        if (!lord.isArray(val))
             val = [val];
         val.forEach(function(val) {
             if (query)
@@ -1312,11 +1315,12 @@ lord.settings = function() {
         style: { name: lord.getLocalObject("style", "tumbach") },
         codeStyle: { name: lord.getLocalObject("codeStyle", "default") },
         shrinkPosts: lord.getLocalObject("shrinkPosts", true),
+        useWebSockets: lord.getLocalObject("useWebSockets", true),
         markupMode: lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE"),
         stickyToolbar: lord.getLocalObject("stickyToolbar", true),
-        maxAllowedRating: lord.getLocalObject("maxAllowedRating", "R-18G"),
-        hidePostformRules: lord.getLocalObject("hidePostformRules", false),
-        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", false),
+        maxAllowedRating: lord.getLocalObject("maxAllowedRating", "SFW"),
+        hidePostformRules: lord.getLocalObject("hidePostformRules", true),
+        hidePostformMarkup: lord.getLocalObject("hidePostformMarkup", true),
         minimalisticPostform: lord.getLocalObject("minimalisticPostform", lord.deviceType("mobile")),
         hiddenBoards: lord.getLocalObject("hiddenBoards", []),
         autoUpdateThreadsByDefault: lord.getLocalObject("autoUpdateThreadsByDefault", false),
@@ -1327,7 +1331,7 @@ lord.settings = function() {
         addExpander: lord.getLocalObject("addExpander", true),
         signOpPostLinks: lord.getLocalObject("signOpPostLinks", true),
         signOwnPostLinks: lord.getLocalObject("signOwnPostLinks", true),
-        showLeafButtons: lord.getLocalObject("showLeafButtons", true),
+        showLeafButtons: lord.getLocalObject("showLeafButtons", false),
         leafThroughImagesOnly: lord.getLocalObject("leafThroughImagesOnly", true),
         imageZoomSensitivity: lord.getLocalObject("imageZoomSensitivity", 20),
         defaultAudioVideoVolume: lord.getLocalObject("defaultAudioVideoVolume", 100),
@@ -1343,25 +1347,29 @@ lord.settings = function() {
         hideTripcodes: lord.getLocalObject("hideTripcodes", false),
         hideUserNames: lord.getLocalObject("hideUserNames", false),
         strikeOutHiddenPostLinks: lord.getLocalObject("strikeOutHiddenPostLinks", true),
-        spellsEnabled: lord.getLocalObject("spellsEnabled", true),
-        ihashDistance: lord.getLocalObject("ihashDistance", 15),
+        spellsEnabled: lord.getLocalObject("spellsEnabled", false),
+        ihashDistance: lord.getLocalObject("ihashDistance", 10),
         showNewPosts: lord.getLocalObject("showNewPosts", true),
         hotkeysEnabled: lord.getLocalObject("hotkeysEnabled", true),
         userCssEnabled: lord.getLocalObject("userCssEnabled", true),
         userJavaScriptEnabled: lord.getLocalObject("userJavaScriptEnabled", true),
         sourceHighlightingEnabled: lord.getLocalObject("sourceHighlightingEnabled", false),
-        chatEnabled: lord.getLocalObject("chatEnabled", true),
-        drawingEnabled: lord.getLocalObject("drawingEnabled", true),
+        chatEnabled: lord.getLocalObject("chatEnabled", false),
+        drawingEnabled: lord.getLocalObject("drawingEnabled", false),
         autoUpdatePlayer: lord.getLocalObject("autoUpdatePlayer", !lord.deviceType("mobile")),
-        resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", false),
+        resetFileScaleOnOpening: lord.getLocalObject("resetFileScaleOnOpening", true),
         closeFilesByClickingOnly: lord.getLocalObject("closeFilesByClickingOnly", false),
         viewPostPreviewDelay: lord.getLocalObject("viewPostPreviewDelay", 200),
         hidePostPreviewDelay: lord.getLocalObject("hidePostPreviewDelay", 1000),
+        infiniteScroll: lord.getLocalObject("infiniteScroll", lord.deviceType("mobile")),
         apiRequestCachingEnabled: lord.getLocalObject("apiRequestCachingEnabled", false),
         bannersMode: lord.getLocalObject("bannersMode", "random"),
 
-        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 60),
-        transparentHeader: lord.getLocalObject("transparentHeader", true)
+        showNewPostsInterval: lord.getLocalObject("showNewPostsInterval", 30),
+        showFrame: lord.getLocalObject("showFrame", false),
+        transparentHeader: lord.getLocalObject("transparentHeader", true),
+        showMarkupModes: lord.getLocalObject("showMarkupModes", false),
+        animatedEffects: lord.getLocalObject("animatedEffects", true)
     };
 };
 
@@ -1462,28 +1470,150 @@ lord.readAs = function(blob, method) {
     });
 };
 
-lord.series = function(arr, f) {
+lord.series = function(arr, f, container) {
+    if (container && typeof container != "object")
+        container = [];
+    var isArray = lord.isArray(container);
+    var isObject = (typeof container == "object");
     var p = Promise.resolve();
-    if (Array.isArray(arr)) {
+    if (lord.isArray(arr)) {
         arr.forEach(function(el) {
             p = p.then(function() {
                 return f(el);
+            }).then(function(result) {
+                if (isArray)
+                    container.push(result);
+                else if (isObject)
+                    container[el] = result;
             });
         });
-    } else if (typeof arr == "object") {
-        forIn(arr, function(el, key) {
+    } else if (lord.isObject(arr)) {
+        lord.each(arr, function(el, key) {
             p = p.then(function() {
                 return f(el, key);
+            }).then(function(result) {
+                if (isArray)
+                    container.push(result);
+                else if (isObject)
+                    container[key] = result;
             });
         });
     }
-    return p;
+    if (!container)
+        return p;
+    return p.then(function() {
+        return Promise.resolve(container);
+    });
 };
 
-lord.inIframe = function() {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
+lord.prompt = function(options) {
+    var div = lord.node("div");
+    if (options && options.label) {
+        div.appendChild(lord.node("text"), lord.text(options.label));
+        div.appendChild(lord.node("br"));
     }
+    var inp;
+    switch (options && options.type) {
+    case "password":
+        inp = lord.node("input");
+        inp.type = "password";
+        break;
+    case "textarea":
+        inp = lord.node("textarea");
+        break;
+    case "input":
+    default:
+        inp = lord.node("input");
+        inp.type = "text";
+        break;
+    }
+    if (options && options.readOnly)
+        inp.readOnly = true;
+    if (options && options.value)
+        inp.value = options.value;
+    var style = {
+        boxSizing: "border-box",
+        width: "100%"
+    };
+    if (options && typeof options.style == "object")
+        style = merge(style, options.style);
+    $(inp).css(style);
+    div.appendChild(inp);
+    return lord.showDialog(div, {
+        title: options && options.title,
+        afterShow: function() {
+            if (!options || typeof options.select == "undefined" || options.select)
+                inp.select();
+        },
+        buttons: ((options && options.readOnly) ? ["close"] : ["ok", "cancel"])
+    }).then(function(result) {
+        if (!result)
+            return Promise.resolve({ accepted: false });
+        return Promise.resolve({
+            accepted: true,
+            value: inp.value
+        });
+    });
+};
+
+lord.detectSwipe = function(el, callback) {
+    if (typeof callback != "function")
+        return;
+    (function() {
+        var touches = {};
+        if (typeof el == "string")
+            el = lord.queryOne(el);
+        else if (el.selector)
+            el = el[0];
+        else if (typeof el != "object")
+            return;
+        el.addEventListener("touchstart", function(e) {
+            lord.toArray(e.changedTouches).forEach(function(t) {
+                if (!touches[t.identifier]) {
+                    touches[t.identifier] = {
+                        touchstartX: t.pageX,
+                        touchstartY: t.pageY,
+                        touchendX: t.pageX,
+                        touchendY: t.pageY
+                    };
+                }
+            });
+        }, false);
+        el.addEventListener("touchend", function(e) {
+            lord.toArray(e.changedTouches).forEach(function(t) {
+                if (!touches[t.identifier])
+                    return;
+                var tt = touches[t.identifier];
+                tt.touchendX = t.pageX;
+                tt.touchendY = t.pageY;
+                var types = [];
+                if (tt.touchendX < tt.touchstartX)
+                    types.push("swipeleft");
+                if (tt.touchendX > tt.touchstartX)
+                    types.push("swiperight");
+                if (tt.touchendY > tt.touchstartY)
+                    types.push("swipedown");
+                if (tt.touchendY < tt.touchstartY)
+                    types.push("swipeup");
+                if (tt.touchendX == tt.touchstartX && tt.touchendY == tt.touchstartY)
+                    types.push("tap");
+                callback({
+                    startX: tt.touchstartX,
+                    startY: tt.touchstartY,
+                    endX: tt.touchendX,
+                    endY: tt.touchendY,
+                    distanceX: tt.touchendX - tt.touchstartX,
+                    distanceY: tt.touchendY - tt.touchstartY,
+                    types: types
+                });
+                delete touches[t.identifier];
+            });
+        }, false);
+    })();
+};
+
+lord.getWords = function(text) {
+    if (typeof text != "string")
+        return [];
+    return text.replace(/\s+/g, " ").replace(new XRegExp("[^\\p{L} ]", "gi"), "").trim().substring(0, 800).split(" ");
 };

@@ -14,13 +14,15 @@ lord.loginImplementation = function(form, session) {
         expires: ((session && !realHashpass) ? session.expire : lord.Billion),
         path: "/"
     });
+    lord.removeLocalObject("lastChatCheckDate");
     if (session) {
         lord.setCookie("vkAuth", "true", {
             expires: session.expire,
             path: "/"
         });
     }
-    window.location = window.location.search.substr(8);
+    window.location = "/" + lord.data("sitePathPrefix") + "redirect?source="
+        + URI(window.location.href).search(true).source;
 };
 
 lord.doLogin = function(event, form) {
@@ -31,7 +33,12 @@ lord.doLogin = function(event, form) {
 lord.generateHashpass = function() {
     var form = lord.id("loginForm");
     var hashpass = lord.nameOne("hashpass", form).value;
-    prompt(lord.text("hashpassLabelText"), sha1(hashpass));
+    lord.prompt({
+        title: "hashpassLabelText",
+        value: sha1(hashpass),
+        style: { minWidth: "350px" },
+        readOnly: true
+    });
 };
 
 lord.vkAuth = function() {
@@ -42,11 +49,12 @@ lord.vkAuth = function() {
     }, VK.access.AUDIO);
 };
 
-window.addEventListener("load", function load() {
-    window.removeEventListener("load", load, false);
+(document.readyState === "complete") ? load_n() : window.addEventListener("load", load_n, false);
+
+function load_n() {
     var vkButton = lord.id("vkontakteLoginButton");
     if (!vkButton)
         return;
     VK.UI.button("vkontakteLoginButton");
     vkButton.style.width = "";
-}, false);
+}

@@ -36,13 +36,29 @@ var Board = function(name, title, options) {
     this.defineSetting("title", function() {
         return Tools.translate(title);
     });
+    this.defineProperty("priority", function() {
+        var def;
+        if (options && !isNaN(+options.priority) && +options.priority)
+            def = +options.priority;
+        else
+            def = 0;
+        return config("board." + name + ".priority", config("board.priority", def));
+    });
     this.defineProperty("defaultUserName", function() {
         var def;
         if (options && options.defaultUserName)
-            def = Tools.translate(options && options.defaultUserName);
+            def = Tools.translate(options.defaultUserName);
         else
             def = Tools.translate("Anonymous", "defaultUserName");
         return config("board." + name + ".defaultUserName", config("board.defaultUserName", def));
+    });
+    this.defineProperty("groupName", function() {
+        var def;
+        if (options && options.groupName)
+            def = options.groupName;
+        else
+            def = "";
+        return config("board." + name + ".groupName", config("board.groupName", def));
     });
     this.defineProperty("captchaEnabled", function() {
         return config("board.captchaEnabled", true) && config("board." + name + ".captchaEnabled", true);
@@ -147,10 +163,12 @@ Board.boards = {};
 };
 
 /*public*/ Board.prototype.info = function() {
+    var _this = this;
     var model = {
         name: this.name,
         title: this.title,
         defaultUserName: this.defaultUserName,
+        groupName: this.groupName,
         showWhois: this.showWhois,
         hidden: this.hidden,
         postingEnabled: this.postingEnabled,
@@ -174,7 +192,7 @@ Board.boards = {};
         opModeration: this.opModeration
     };
     this.customBoardInfoFields().forEach(function(field) {
-        model[field] = board[field];
+        model[field] = _this[field];
     });
     return model;
 };
@@ -279,7 +297,7 @@ var renderFileInfo = function(fi) {
 };
 
 /*public*/ Board.prototype.renderPost = function(post, req, opPost) {
-    post.fileInfos.forEach(function(fileInfo) {
+    (post.fileInfos || []).forEach(function(fileInfo) {
         renderFileInfo(fileInfo);
     });
     post.rawSubject = post.subject;
@@ -436,13 +454,14 @@ var getRules = function(boardName) {
             });
         } else if (Tools.isVideoType(file.mimeType)) {
             file.extraData = {};
-            return new Promise(function(resolve, reject) {
+            var defaultThumb = false;
+            return (new Promise(function(resolve, reject) {
                 ffmpeg.ffprobe(file.path, function(err, metadata) {
                     if (err)
                         return reject(err);
                     resolve(metadata);
                 });
-            }).then(function(metadata) {
+            })).then(function(metadata) {
                 if (!isNaN(+metadata.streams[0].width) && !isNaN(+metadata.streams[0].height)) {
                     file.dimensions = {
                         width: metadata.streams[0].width,
@@ -459,10 +478,17 @@ var getRules = function(boardName) {
             }).catch(function(err) {
                 Global.error(err.stack || err);
                 file.thumbPath = thumbPath;
+                defaultThumb = true;
                 return Tools.generateRandomImage(file.hash, file.mimeType, thumbPath);
             }).then(function() {
                 return ImageMagick.identify(file.thumbPath);
             }).then(function(info) {
+                if (!file.dimensions && !defaultThumb) {
+                    file.dimensions = {
+                        width: info.width,
+                        height: info.height
+                    };
+                }
                 if (info.width <= 200 && info.height <= 200)
                     return Promise.resolve();
                 return ImageMagick.convert([
@@ -501,8 +527,8 @@ var getRules = function(boardName) {
                     width: info.width,
                     height: info.height
                 };
-                if ("image/gif" != file.mimeType) {
-                    return Tools.generateImageHash(file.path + suffix).then(function(hash) {
+                if (config("system.phash.enabled", true)) {
+                    return Tools.generateImageHash(thumbPath).then(function(hash) {
                         file.ihash = hash;
                     });
                 }

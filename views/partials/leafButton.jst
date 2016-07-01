@@ -1,8 +1,8 @@
 {{? target == "previous"}}
     <a class="leafButton leafButtonPrevious" title="{{=it.tr.previousFileText}}"
        onclick="lord.previousFile(); return false;"
-       style="display: none;"><img src="/{{=it.site.pathPrefix}}img/left.png"></a>
+       style="display: none;"><i class="mdi mdi-36px mdi-arrow-left-bold-circle"></i></a>
 {{?? target == "next"}}
     <a class="leafButton leafButtonNext" title="{{=it.tr.nextFileText}}" onclick="lord.nextFile(); return false;"
-       style="display: none;"><img src="/{{=it.site.pathPrefix}}img/right.png"></a>
+       style="display: none;"><i class="mdi mdi-36px mdi-arrow-right-bold-circle"></i></a>
 {{?}}

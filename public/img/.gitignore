@@ -3,6 +3,7 @@
 !404/
 !ban_level/
 !banners/
+!favicons/
 !flags/
 !markup/
 !player/
@@ -42,7 +43,6 @@
 !file.png
 !fill_form.png
 !fixed.png
-!frame.png
 !gear.png
 !gif_file.png
 !go.png
@@ -69,7 +69,6 @@
 !mum_watching.png
 !neutron_line.png
 !node-captcha-fail.png
-!noframe.png
 !ogg_file.png
 !open.png
 !open_voting.png
@@ -86,8 +85,11 @@
 !right.png
 !rss.png
 !search.png
+!search_hide.png
 !settings.png
+!shield.png
 !show.png
+!similar.png
 !source_text.png
 !storage.png
 !thread_back.png

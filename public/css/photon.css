@@ -41,16 +41,16 @@ a {
     color: #F60;
 }
 
-a.expandCollapse {
+a.expandCollapse, a i {
     color: #444;
 }
 
-a:hover {
+a:hover, a:hover i, a:focus {
     color: #06F;
 }
 
 a.expandCollapse:hover {
-    color: #666;
+    color: #777;
 }
 
 hr {
@@ -353,7 +353,7 @@ ul.tabWidget > li.activated > a {
     border: 1px solid #CCC;
 }
 
-.track:hover {
+.track:hover, .pseudoTrack:hover {
     background-color: #CCC;
     border: 1px solid #BBB;
 }
@@ -370,8 +370,8 @@ ul.tabWidget > li.activated > a {
 }
 
 .searchResult {
-    background-color: #DDDDDD;
-    border: 1px solid #CCCCCC;
+    background-color: #DDD;
+    border: 1px solid #CCC;
 }
 
 .searchResultHighlighted {
@@ -384,4 +384,26 @@ ul.tabWidget > li.activated > a {
 
 ul.jqueryFileTree a {
     color: black !important;
+}
+
+.theTitle h1 {
+    color: #F60;
+}
+
+#postForm {
+    background-color: #EEE;
+}
+
+#postForm.floatingPostForm {
+    border: 2px solid #BBB;
+}
+
+.postFormHeader {
+    background-color: #DDD;
+    border: 1px solid #CCC;
+}
+
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #CCC;
 }

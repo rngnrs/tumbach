@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script id="bannerPlaceholder" type="text/javascript">
     (function() {
         var model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
         model.settings = lord.settings();
@@ -39,8 +39,7 @@
         model.bannerFileName = bannerFileName;
         model.bannerBoardName = bannerBoardName;
         model.bannerBoardTitle = bannerBoardTitle;
-        document.open();
-        document.write(lord.template("banner", model, true));
-        document.close();
+        var placeholder = lord.id("bannerPlaceholder");
+        placeholder.parentNode.replaceChild(lord.template("banner", model), placeholder);
     })();
 </script>

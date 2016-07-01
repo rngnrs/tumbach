@@ -15,8 +15,8 @@ module.exports = function(tr) {
     translate("Hide by image hash", "hideByImageHashText");
     translate("Hide by image size", "hideByImageSizeText");
     translate("Draw on this image", "drawOnImageText");
-    translate("Answer", "toThread");
-    translate("Answers:", "referencedByText");
+    translate("Reply", "toThread");
+    translate("Replies:", "referencedByText");
     translate("Fixed", "fixedText");
     translate("The thread is closed", "closedText");
     translate("To drafts", "addToDraftsText");
@@ -33,12 +33,13 @@ module.exports = function(tr) {
     translate("Move", "moveThreadText");
     translate("Show IP", "showUserIpText");
     translate("Ban", "banUserText");
-    translate("Download all files as a .zip archive", "downloadThreadText");
+    translate("Download all files", "downloadThreadFilesText");
     translate("Add to favorites", "addThreadToFavoritesText");
     translate("Remove thread from favorites", "removeThreadFromFavoritesText");
     translate("Delete", "deletePostText");
     translate("Hide", "hidePostText");
     translate("Show", "showPostText");
+    translate("Add radio stream", "addRadioText");
     translate("Minimize player", "minimizePlayerText");
     translate("Maximize player", "maximizePlayerText");
     translate("Play", "playerPlayText");
@@ -47,9 +48,12 @@ module.exports = function(tr) {
     translate("Next track", "playerNextTrackText");
     translate("Mute", "playerMuteText");
     translate("Unmute", "playerUnmuteText");
+    translate("Title:", "playerRadioTitleLabelText");
+    translate("URL:", "playerRadioURLLabelText");
     translate("Last modified:", "modificationDateTimeText");
     translate("User was banned for this post", "bannedForText");
     translate("Delete file", "deleteFileText");
+    translate("Edit file rating", "editFileRatingText");
     translate("Find source...", "findSourceText");
     translate("Edit audio file tags", "editAudioTagsText");
     translate("Add to playlist", "addToPlaylistText");
@@ -83,6 +87,7 @@ module.exports = function(tr) {
     translate("Previous post (in thread/on board)", "hotkeyPreviousPostLabelText");
     translate("Next post (inthread/on board)", "hotkeyNextPostLabelText");
     translate("Hide post/thread", "hotkeyHidePostLabelText");
+    translate("Hide similar", "hideSimilarPostsText");
     translate("Go to thread", "hotkeyGoToThreadLabelText");
     translate("Expand thread", "hotkeyExpandThreadLabelText");
     translate("Expand post file", "hotkeyExpandImageLabelText");
@@ -101,6 +106,7 @@ module.exports = function(tr) {
     translate("Style:", "styleLabelText");
     translate("Code style:", "codeStyleLabelText");
     translate("Shrink posts", "postShrinkingLabelText");
+    translate("Use WebSockets", "useWebSocketsLabelText");
     translate("Sticky toolbar", "stickyToolbarLabelText");
     translate("Time:", "timeLabelText");
     translate("Device type:", "deviceTypeLabelText");
@@ -382,6 +388,10 @@ module.exports = function(tr) {
     translate("Synchronize", "synchronizationText");
     translate("Synchronize settings", "synchronizeSettingsLabelText");
     translate("Synchronize CSS and JS", "synchronizeCssAndJsLabelText");
+    translate("Synchronize password", "synchronizePasswordLabelText");
+    translate("Show", "showPasswordButtonText");
+    translate("Hide", "hidePasswordButtonText");
+    translate("New", "newPasswordButtonText");
     translate("No password specified, and not logged in", "noPasswordNotLoggedInError");
     translate("Synchronization data will be available within 5 minutes", "synchronizationTimeoutText");
     translate("Synchronization completed successfully", "synchronizationSuccessfulText");
@@ -415,6 +425,7 @@ module.exports = function(tr) {
     translate("Add directory", "addDirectoryButtonText");
     translate("Rename directory", "renameDirectoryButtonText");
     translate("Delete directory", "deleteDirectoryButtonText");
+    translate("Download file", "downloadFileButtonText");
     translate("Edit file", "editFileButtonText");
     translate("Rename file", "renameFileButtonText");
     translate("Delete file", "deleteFileButtonText");
@@ -438,7 +449,18 @@ module.exports = function(tr) {
     translate("Reload templates", "reloadTemplatesButtonText");
     translate("Reload everything", "reloadAllButtonText");
     translate("Image similarity:", "ihashDistanceLabelText");
+    translate("Infinite scroll", "infiniteScrollLabelText");
+    translate("Page", "pageText");
+    translate("Regenerate archived threads", "regenerateArchivedThreadsLabelText");
+    translate("Show search field", "showSearchActionText");
+    translate("Start dragging to make post form float", "postFormHeaderLabelText");
+    translate("Fixed", "postFormFixedButtonText");
+    translate("Not fixed", "postFormUnfixedButtonText");
+    translate("Close", "closePostFormButtonText");
 
+    translate("Failed to prepare captcha", "failedToPrepareCaptchaText");
     translate("Transparent header", "transparentHeaderLabelText");
+    translate("Show markup modes into the post form", "showMarkupModesLabelText");
+    translate("Animated effects", "animatedEffectsText");
     return tr;
 };

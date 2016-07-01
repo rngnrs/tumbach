@@ -12,7 +12,7 @@
                 {{?}}
             {{~}}
         </select>
-        <input style="background:url(/{{=it.site.pathPrefix}}img/search.png) no-repeat;border:none;width:16px;height:16px;outline:none;position:relative;top:-1px;"
-               type="submit" title="{{=it.tr.searchButtonText}}" class="buttonImage" value="" />
+        <input id="search-action" style="display:none;" type="submit" value="" />
+        <label for="search-action" title="{{=it.tr.searchButtonText}}" ><i class="mdi mdi-middle mdi-magnify" style="font-size:20px;"></i></label>
     </form>
 </div>

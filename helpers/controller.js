@@ -1,4 +1,3 @@
-var Crypto = require("crypto");
 var dot = require("dot");
 var FS = require("q-io/fs");
 var FSSync = require("fs");
@@ -6,7 +5,6 @@ var Highlight = require("highlight.js");
 var merge = require("merge");
 var mkpath = require("mkpath");
 var moment = require("moment");
-var Path = require("path");
 var random = require("random-js")();
 var Util = require("util");
 
@@ -21,11 +19,7 @@ var publicTemplates;
 var langNames = require("../misc/lang-names.json");
 var ipBans = {};
 
-var controller;
-
-mkpath.sync(config("system.tmpPath", __dirname + "/../tmp") + "/cache-html");
-
-controller = function(templateName, modelData) {
+var controller = function(templateName, modelData) {
     var baseModelData = merge.recursive(controller.baseModel(), controller.translationsModel());
     baseModelData = merge.recursive(baseModelData, controller.boardsModel());
     baseModelData.compareRegisteredUserLevels = Database.compareRegisteredUserLevels;
@@ -80,11 +74,15 @@ controller = function(templateName, modelData) {
     if (!template)
         return Promise.reject(Tools.translate("Invalid template"));
     modelData = merge.recursive(baseModelData, modelData);
+    var extraScriptsGlobal = config("site.extraScripts._global");
     var extraScripts = config(`site.extraScripts.${templateName}`);
-    if (extraScripts) {
+    if (extraScripts || extraScriptsGlobal) {
         if (!modelData.extraScripts)
             modelData.extraScripts = [];
-        modelData.extraScripts = modelData.extraScripts.concat(extraScripts);
+        if (extraScriptsGlobal)
+            modelData.extraScripts = modelData.extraScripts.concat(extraScriptsGlobal);
+        if (extraScripts)
+            modelData.extraScripts = modelData.extraScripts.concat(extraScripts);
     }
     return Promise.resolve(template(modelData));
 };
@@ -106,72 +104,6 @@ controller.sync = function(templateName, modelData) {
         return null;
     modelData = merge.recursive(baseModelData, modelData);
     return template(modelData);
-};
-
-controller.error = function(req, res, error, ajax) {
-    if (!ajax && Util.isNumber(error) && 404 == error)
-        return controller.notFound(req, res);
-    if (error)
-        Global.error(Tools.preferIPv4(req.ip), req.path, error.stack || error);
-    var f = function(error) {
-        var model = {};
-        model.title = Tools.translate("Error", "pageTitle");
-        if (Util.isError(error)) {
-            model.errorMessage = Tools.translate("Internal error", "errorMessage");
-            model.errorDescription = error.message;
-        } else if (Util.isObject(error) && (error.error || error.ban)) {
-            if (error.ban) {
-                model.ban = error.ban;
-            } else {
-                model.errorMessage = error.description ? error.error : Tools.translate("Error", "errorMessage");
-                model.errorDescription = error.description || error.error;
-            }
-        } else {
-            model.errorMessage = Tools.translate("Error", "errorMessage");
-            model.errorDescription = (error && Util.isString(error)) ? error
-                : ((404 == error) ? Tools.translate("404 (not found)", "errorMessage") : "");
-        }
-        return model;
-    };
-    var g = function(error) {
-        try {
-            res.send(f(error));
-        } catch (err) {
-            return Promise.reject(err);
-        }
-        return Promise.resolve();
-    };
-    var h = function(error) {
-        try {
-            res.send(error);
-        } catch (err) {
-            return Promise.reject(err);
-        }
-        return Promise.resolve();
-    };
-    if (Util.isObject(error) && error.ban) {
-        var model = {};
-        model.title = Tools.translate("Ban", "pageTitle");
-        model.ban = error.ban;
-        if (ajax)
-            return h(error);
-        return controller("ban", model).then(function(data) {
-            res.send(data);
-        }).catch(h);
-    } else {
-        return ajax ? g(error) : controller("error", f(error)).then(function(data) {
-            res.send(data);
-        }).catch(g);
-    }
-};
-
-controller.notFound = function(req, res) {
-    Cache.getHTML("notFound").then(function(data) {
-        res.status(404).send(data.data);
-        Global.error(Tools.preferIPv4(req.ip), req.baseUrl, 404);
-    }).catch(function(err) {
-        controller.error(req, res, err);
-    });
 };
 
 controller.checkBan = function(req, res, boardNames, write) {
@@ -198,9 +130,6 @@ controller.checkBan = function(req, res, boardNames, write) {
 
 controller.baseModel = function() {
     return {
-        server: {
-            uptime: process.uptime()
-        },
         site: {
             protocol: config("site.protocol", "http"),
             domain: config("site.domain", "localhost:8080"),
@@ -214,6 +143,9 @@ controller.baseModel = function() {
             },
             twitter: {
                 integrationEnabled: !!config("site.twitter.integrationEnabled", true)
+            },
+            ws: {
+                transports: config("site.ws.transports", "")
             }
         },
         styles: Tools.styles(),
@@ -250,7 +182,10 @@ controller.boardsModel = function() {
     var boards = Board.boardNames().map(function(boardName) {
         return Board.board(boardName).info();
     });
-    return { boards: boards };
+    return {
+        boards: boards,
+        boardGroups: config("boardGroups", {})
+    };
 };
 
 controller.boardModel = function(board) {
@@ -410,46 +345,53 @@ controller.postingSpeedString = function(board, lastPostNumber) {
     }
 };
 
-var sendCachedContent = function(req, res, id, type, ajax) {
-    var ifModifiedSince = new Date(req.headers["if-modified-since"]);
-    return Cache[`get${type}`](id, ifModifiedSince).then(function(result) {
-        res.setHeader("Last-Modified", result.lastModified.toUTCString());
-        if (+ifModifiedSince >= +result.lastModified)
-            res.status(304);
-        res.send(result.data);
-    }).catch(function(err) {
-        if ("ENOENT" == err.code)
-            controller.notFound(req, res);
-        else
-            controller.error(res, err, ajax);
-    });
-};
-
-controller.sendCachedHTML = function(req, res, id) {
-    return sendCachedContent(req, res, id, Cache.Types.HTML);
-};
-
-controller.sendCachedJSON = function(req, res, id) {
-    return sendCachedContent(req, res, id, Cache.Types.JSON);
-};
-
-controller.sendCachedRSS = function(req, res, id) {
-    return sendCachedContent(req, res, id, Cache.Types.RSS);
-};
-
-controller.regenerate = function() {
-    return Cache.cleanup().then(function() {
-        return Tools.series(["JSON", "HTML"], function(type) {
-            console.log(`Генерация ${type} кэша...`);
-            return Tools.series(require("../controllers").routers, function(router) {
-                var f = router[`generate${type}`];
-                if (typeof f != "function")
-                    return Promise.resolve();
-                return f.call(router).then(function(result) {
-                    return Tools.series(result, function(data, id) {
-                        return Cache[`set${type}`](id, data);
+controller.regenerate = function(regenerateArchived) {
+    return Tools.series(["JSON", "HTML"], function(type) {
+        console.log(`Генерация ${type} кэша...`);
+        return Tools.series(require("../controllers").routers, function(router) {
+            var f = router[`generate${type}`];
+            if (typeof f != "function")
+                return Promise.resolve();
+            return f.call(router).then(function(result) {
+                return Tools.series(result, function(data, id) {
+                    return Cache.writeFile(id, data);
+                });
+            });
+        });
+    }).then(function() {
+        if (!regenerateArchived)
+            return Promise.resolve();
+        console.log(`Генерация кэша арихивированных тредов...`);
+        return Tools.series(Board.boardNames(), function(boardName) {
+            var archPath = `${__dirname}/../public/${boardName}/arch`;
+            return FS.exists(archPath).then(function(exists) {
+                return Tools.promiseIf(exists, function() {
+                    var board = Board.board(boardName);
+                    return FS.list(archPath).then(function(fileNames) {
+                        return Tools.series(fileNames.filter(function(fileName) {
+                            return fileName.split(".").pop() == "json";
+                        }), function(fileName) {
+                            var threadNumber = +fileName.split(".").shift();
+                            var c = {};
+                            return BoardModel.getThread(board, threadNumber, true).then(function(model) {
+                                c.model = model;
+                                return FS.write(`${archPath}/${threadNumber}.json`, JSON.stringify(c.model));
+                            }).then(function() {
+                                return BoardModel.generateThreadHTML(board, threadNumber, c.model, true);
+                            }).then(function(data) {
+                                return FS.write(`${archPath}/${threadNumber}.html`, data);
+                            }).catch(function(err) {
+                                Global.error(err.stack || err);
+                            }).then(function() {
+                                return Promise.resolve();
+                            });
+                        });
                     });
                 });
+            }).catch(function(err) {
+                Global.error(err.stack || err);
+            }).then(function() {
+                return Promise.resolve();
             });
         });
     }).then(function() {
@@ -480,66 +422,94 @@ controller.generateStatistics = function() {
     };
     var ld = Tools.now().valueOf();
     var brd;
-    return Tools.series(Board.boardNames(), function(boardName) {
-        var board = Board.board(boardName);
-        var bld = board.launchDate.valueOf();
-        if (!brd || bld < ld) {
-            brd = board;
-            ld = bld;
-        }
-        var bo = {
-            name: board.name,
-            title: board.title,
-            hidden: board.hidden,
-            diskUsage: 0
-        };
-        var path = __dirname + "/../public/" + board.name + "/";
-        return Database.lastPostNumber(board.name).then(function(lastPostNumber) {
-            o.total.postCount += lastPostNumber;
-            bo.postCount = lastPostNumber;
-            bo.postingSpeed = controller.postingSpeedString(board, lastPostNumber);
-            return FS.list(path + "src");
-        }).then(function(list) {
-            var fileCount = list ? list.length : 0;
-            bo.fileCount = fileCount;
-            o.total.fileCount += fileCount;
-            return Tools.du(path + "src");
-        }).catch(function(err) {
-            if ("ENOENT" != err.code)
-                Global.error(err.stack || err);
-            return Tools.du(path + "src");
-        }).then(function(size) {
-            bo.diskUsage += size;
-            o.total.diskUsage += size;
-            return Tools.du(path + "thumb");
-        }).catch(function(err) {
-            if ("ENOENT" != err.code)
-                Global.error(err.stack || err);
-            return Tools.du(path + "thumb");
-        }).then(function(size) {
-            bo.diskUsage += size;
-            o.total.diskUsage += size;
-            return Tools.du(path + "arch");
-        }).catch(function(err) {
-            if ("ENOENT" != err.code)
-                Global.error(err.stack || err);
-            return Tools.du(path + "arch");
-        }).then(function(size) {
-            bo.diskUsage += size;
-            o.total.diskUsage += size;
-            return Promise.resolve();
-        }).catch(function(err) {
-            if ("ENOENT" != err.code)
-                Global.error(err.stack || err);
-            return Promise.resolve();
-        }).then(function() {
-            o.boards.push(bo);
-            return Promise.resolve();
+    return Database.db.keys("userPostNumbers:*").then(function(keys) {
+        var uniqueUsers = Board.boardNames().reduce(function(acc, boardName) {
+            acc[boardName] = 0;
+            return acc;
+        }, {});
+        var users = {};
+        keys.forEach(function(key) {
+            var boardName = key.split(":").pop();
+            if (!uniqueUsers.hasOwnProperty(boardName))
+                return;
+            users[key.split(":").slice(1, -1).join(":")] = {};
+            ++uniqueUsers[boardName];
+        });
+        o.total.uniqueIPCount = Object.keys(users).length;
+        return Tools.series(Board.boardNames(), function(boardName) {
+            var board = Board.board(boardName);
+            var bld = board.launchDate.valueOf();
+            if (!brd || bld < ld) {
+                brd = board;
+                ld = bld;
+            }
+            var bo = {
+                name: board.name,
+                title: board.title,
+                hidden: board.hidden,
+                diskUsage: 0,
+                uniqueIPCount: uniqueUsers[board.name]
+            };
+            var path = __dirname + "/../public/" + board.name + "/";
+            return Database.lastPostNumber(board.name).then(function(lastPostNumber) {
+                o.total.postCount += lastPostNumber;
+                bo.postCount = lastPostNumber;
+                bo.postingSpeed = controller.postingSpeedString(board, lastPostNumber);
+                return FS.list(path + "src");
+            }).then(function(list) {
+                var fileCount = list ? list.length : 0;
+                bo.fileCount = fileCount;
+                o.total.fileCount += fileCount;
+                return Tools.du(path + "src");
+            }).catch(function(err) {
+                if ("ENOENT" != err.code)
+                    Global.error(err.stack || err);
+                return Tools.du(path + "src");
+            }).then(function(size) {
+                bo.diskUsage += size;
+                o.total.diskUsage += size;
+                return Tools.du(path + "thumb");
+            }).catch(function(err) {
+                if ("ENOENT" != err.code)
+                    Global.error(err.stack || err);
+                return Tools.du(path + "thumb");
+            }).then(function(size) {
+                bo.diskUsage += size;
+                o.total.diskUsage += size;
+                return Tools.du(path + "arch");
+            }).catch(function(err) {
+                if ("ENOENT" != err.code)
+                    Global.error(err.stack || err);
+                return Tools.du(path + "arch");
+            }).then(function(size) {
+                bo.diskUsage += size;
+                o.total.diskUsage += size;
+                return Promise.resolve();
+            }).catch(function(err) {
+                if ("ENOENT" != err.code)
+                    Global.error(err.stack || err);
+                return Promise.resolve();
+            }).then(function() {
+                o.boards.push(bo);
+                return Promise.resolve();
+            });
         });
     }).then(function() {
         o.total.postingSpeed = controller.postingSpeedString(brd, o.total.postCount);
-        Cache.setJSON(`statistics`, JSON.stringify(o));
+        return Global.IPC.send("getConnectionIPs");
+    }).then(function(data) {
+        o.online = data.reduce(function(acc, ips) {
+            Tools.forIn(ips, function(_, ip) {
+                acc.add(ip);
+            });
+            return acc;
+        }, new Set()).size;
+        o.uptime = process.uptime();
+    }).catch(function(err) {
+        Global.error(err);
         return Promise.resolve();
+    }).then(function() {
+        return Cache.writeFile("misc/statistics.json", JSON.stringify(o));
     });
 };
 
@@ -548,7 +518,6 @@ module.exports = controller;
 var Board = require("../boards/board");
 var BoardModel = require("../models/board");
 var Captcha = require("../captchas");
-var config = require("./config");
 var Database = require("./database");
 var markup = require("./markup");
 var Tools = require("./tools");

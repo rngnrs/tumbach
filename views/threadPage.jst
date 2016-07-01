@@ -10,7 +10,7 @@
      {{? it.thread.postingEnabled}}data-posting-enabled="true"{{?}}
      {{? it.thread.postLimitReached}}data-post-limit-reached="true"{{?}}
      {{? it.thread.bumpLimitReached}}data-bump-limit-reached="true"{{?}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
@@ -24,29 +24,22 @@
             {{? it.board.captchaEnabled}}
                 <div id="hiddenCaptcha" style="display: none;"></div>
             {{?}}
-            {{~["top", "bottom"] :target}}
-                {{#def.navigationButton}}
-            {{~}}
-            {{~["previous", "next"] :target}}
-                {{#def.leafButton}}
-            {{~}}
             {{#def.banner}}
             <div class="theTitle">
                 <h1>{{!it.title}}</h1>
             </div>
-            <script type="text/javascript">
+            <script id="threadPageUpperPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
                     model.thread = {
-                        archived: lord.data("archived"),
+                        archived: {{=it.thread.archived}},
                         postingEnabled: lord.data("postingEnabled"),
                         postLimitReached: lord.data("postLimitReached"),
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
-                    document.open();
-                    document.write(lord.template("threadPageUpper", model, true));
-                    document.close();
+                    var placeholder = lord.id("threadPageUpperPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("threadPageUpper", model), placeholder);
                 })();
             </script>
             <hr />
@@ -61,9 +54,9 @@
                             {{#def.post}}
                         {{~}}
                         {{? thread.omittedPosts > 0}}
-                            <div class="omittedPosts">
+                            <span class="omittedPosts" onclick="lord.expandCollapseThread(this); return false;">
                                 {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
-                            </div>
+                            </span>
                         {{?}}
                         <div class="threadPosts">
                             {{~thread.lastPosts :post}}
@@ -78,24 +71,28 @@
             {{~["Bottom"] :position}}
                 {{#def.threadActions}}
             {{~}}
-            <script type="text/javascript">
+            <script id="threadPageLowerPlaceholder" type="text/javascript">
                 (function() {
                     var model = lord.model(["tr", "board/" + lord.data("boardName")]);
                     model.settings = lord.settings();
                     model.thread = {
-                        archived: lord.data("archived"),
+                        archived: {{=it.thread.archived}},
                         postingEnabled: lord.data("postingEnabled"),
                         postLimitReached: lord.data("postLimitReached"),
                         bumpLimitReached: lord.data("bumpLimitReached")
                     };
-                    document.open();
-                    document.write(lord.template("threadPageLower", model, true));
-                    document.close();
+                    var placeholder = lord.id("threadPageLowerPlaceholder");
+                    placeholder.parentNode.replaceChild(lord.template("threadPageLower", model), placeholder);
                 })();
             </script>
-            {{#def.navbar}}
             <hr />
-
+            {{#def.navbar}}
+            {{~["top", "bottom"] :target}}
+            {{#def.navigationButton}}
+            {{~}}
+            {{~["previous", "next"] :target}}
+            {{#def.leafButton}}
+            {{~}}
         </div>
     </div>
     {{#def.customFooter}}

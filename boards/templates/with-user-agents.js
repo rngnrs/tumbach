@@ -19,7 +19,11 @@ module.exports = function(name, title, options) {
                 if (!post.extraData)
                     return "";
                 var model = {
-                    userAgent: post.extraData,
+                    userAgent: post.extraData.replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;"),
                     post: post
                 };
                 return controller.sync("dPostBodyPart", model);

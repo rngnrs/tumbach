@@ -3,8 +3,9 @@
 {{#def.head}}
 <body>
 {{#def.header}}
+<a id="top"></a>
 <div class="wrap" {{#def.baseData}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
@@ -14,25 +15,28 @@
                 </h1>
             </div>
             <div>
-                <ul class="tabWidget nowrap">
+                <ul id="tabsPlaceholder" class="tabWidget nowrap">
                     <li data-index="0"
-                        class="activated"><a onclick="lord.activateTab(this); return false;">{{=it.tr.bansTabText}}</a></li>
-                    {{? it.superuserContentVisible}}
-                    <li data-index="1"><a onclick="lord.activateTab(this); lord.loadTabContent('users'); return false;">{{=it.tr.usersTabText}}</a></li>
-                    <li data-index="2"><a onclick="lord.activateTab(this); lord.loadTabContent('content'); return false;">{{=it.tr.contentTabText}}</a></li>
-                    {{?}}
-                </ul>
+                        class="activated"><a onclick="lord.activateTab(this); return false;">{{=it.tr.bansTabText}}</a></li></ul>
+                <script type="text/javascript">
+                    (function() {
+                        if (lord.compareRegisteredUserLevels(lord.model("base").user.level(), "SUPERUSER") < 0)
+                            return;
+                        var s = '<li data-index="1"><a onclick="lord.activateTab(this); lord.loadTabContent(\'users\'); return false;">{{=it.tr.usersTabText}}</a></li>' +
+                                '<li data-index="2"><a onclick="lord.activateTab(this); lord.loadTabContent(\'content\'); return false;">{{=it.tr.contentTabText}}</a></li>';
+                        $("#tabsPlaceholder").append(s);
+                    })();
+                </script>
                 <div>
                     <div id="bans" data-index="0" class="loadingMessage">
                         <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">
                         <h1 style="display: inline;">{{=it.tr.loadingBansMessage}}</h1>
                     </div>
-                    {{? it.superuserContentVisible}}
                     <div id="users" data-index="1" class="loadingMessage" style="display: none;">
                         <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">
                         <h1 style="display: inline;">{{=it.tr.loadingUsersMessage}}</h1>
                     </div>
-                    <div id="content" data-index="2" style="display: none;">
+                    <div id="contentData" data-index="2" style="display: none;">
                         <div class="contentFileTreeColumn"><div id="contentFileTree"></div></div>
                         <div class="contentFileActionColumn">
                             <div>
@@ -51,6 +55,8 @@
                                     {{=it.tr.currentFileLabelText}}
                                 </h3>
                                 <div class="fileActions">
+                                    <button id="downloadFile"
+                                            onclick="lord.downloadFile();">{{=it.tr.downloadFileButtonText}}</button>
                                     <button id="editFile" onclick="lord.editFile();">{{=it.tr.editFileButtonText}}</button>
                                     <button id="renameFile" onclick="lord.renameFile();">{{=it.tr.renameFileButtonText}}</button>
                                     <button id="deleteFile" onclick="lord.deleteFile();">{{=it.tr.deleteFileButtonText}}</button>
@@ -80,12 +86,12 @@
                             </div>
                         </div>
                     </div>
-                    {{?}}
                 </div>
             </div>
         </div>
     </div>
     {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>

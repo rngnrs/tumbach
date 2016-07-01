@@ -1,34 +1,25 @@
-<div>
-    {{? it.settings.stickyToolbar}}
-        <div class="toolbar sticky">
-    {{??}}
-        <div class="toolbar" style="margin-top: 0px;">
-    {{?}}
-        [<input type="image" name="settingsButton" title="{{=it.tr.settingsButtonText}}" class="buttonImage"
-                src="/{{=it.site.pathPrefix}}img/settings.png" onclick="lord.showSettings(); return false;" />]
-        [<input type="image" name="favoritesButton" title="{{=it.tr.showFavoritesText}}" class="buttonImage"
-                src="/{{=it.site.pathPrefix}}img/favorite.png" onclick="lord.showFavorites(); return false;" />]
-        [<a onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"
-            title="{{=it.tr.mumWatchingText}}"><img src="/{{=it.site.pathPrefix}}img/{{? it.mumWatching}}hide{{??}}show{{?}}.png"
-                                                    class="buttonImage"></a>]
+<div class="toolbar">
+    {{? "mobile" != it.deviceType}}
+        <a href="javascript:void(0);"><i class="mdi mdi-filter-variant"
+                                     title="{{=it.tr.showHiddenPostListText}}" name="hiddenPostsButton" onclick="lord.showHiddenPostList(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-settings"
+                                     title="{{=it.tr.settingsButtonText}}" name="settingsButton" onclick="lord.showSettings(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-star"
+                                     title="{{=it.tr.showFavoritesText}}" name="favoritesButton" onclick="lord.showFavorites(); return false;"></i></a>
+        <a href="javascript:void(0);"><i class="mdi mdi-eye{{? it.mumWatching}}-off{{?}}"
+                                     title="{{=it.tr.mumWatchingText}}" onclick="lord.switchMumWatching(); return false;" name="switchMumWatchingButton"></i></a>
         {{? it.user.loggedIn}}
             <form method="post" accept-charset="utf-8" action="/{{=it.site.pathPrefix}}action/logout"
                   enctype="application/x-www-form-urlencoded" class="inlineForm"
                   onsubmit="lord.doLogout(event, this); return false;">
-                [<input type="image" name="submit" src="/{{=it.site.pathPrefix}}img/logout.png" class="buttonImage"
-                        title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}" />]
+                <input type="submit" name="submit" id="logout" style="display: none;" />
+                <a href="javascript:void(0);"><label for="logout"><i class="mdi mdi-logout-variant"
+                                       title="{{=it.tr.logoutText}}{{? it.loginMessageText}} [{{=it.loginMessageText}}]{{?}}"></i></label></a>
             </form>
         {{??}}
-            [<a href="javascript:void(0);"
-                onclick="lord.redirectToLoginPage();"><img src="/{{=it.site.pathPrefix}}img/login.png"
-                                                           class="buttonImage" title="{{=it.tr.loginText}}"></a>]
+            <a href="javascript:void(0);"><i class="mdi mdi-login-variant"
+                                             title="{{=it.tr.loginText}}" onclick="lord.redirectToLoginPage();"></i></a>
         {{?}}
-        {{? "mobile" != it.deviceType}}
-            |
-        {{?}}
-        {{#def.innerNavbar}}
-        {{? it.settings.stickyToolbar}}
-            <hr style="margin-top: 3px; margin-bottom: 0;" />
-        {{?}}
-    </div>
+    {{?}}
+    {{#def.innerNavbar}}
 </div>

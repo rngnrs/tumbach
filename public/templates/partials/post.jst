@@ -3,7 +3,7 @@
      data-board-name="{{=post.boardName}}"
      data-number="{{=post.number}}"
      data-thread-number="{{=post.threadNumber}}"
-     data-file-count={{=post.fileInfos.length}}
+     data-file-count="{{=post.fileInfos.length}}"
      {{? post.plainText}}data-plain-text="{{!post.plainText}}"{{?}}
      {{? post.isOp}}
         data-is-op="true"
@@ -20,55 +20,36 @@
             {{?}}
             {{? post.isOp}}
                 {{? thread.fixed}}
-                    <img src="/{{=it.site.pathPrefix}}img/fixed.png" class="signImage" title="{{=it.tr.fixedText}}">
+                    <i class="mdi mdi-middle mdi-pin" title="{{=it.tr.fixedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[10]}}
                     {{ out += it.customPostHeaderPart[10](it, thread, post); }}
                 {{?}}
                 {{? thread.closed}}
-                    <img src="/{{=it.site.pathPrefix}}img/closed.png" class="signImage" title="{{=it.tr.closedText}}">
+                    <i class="mdi mdi-middle mdi-lock" title="{{=it.tr.closedText}}"></i>
                 {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[20]}}
                     {{ out += it.customPostHeaderPart[20](it, thread, post); }}
                 {{?}}
                 {{? thread.postLimitReached}}
-                    <img src="/{{=it.site.pathPrefix}}img/postlimit.png" class="signImage"
-                         title="{{=it.tr.postLimitReachedText}}">
+                    <i class="mdi mdi-middle mdi-block-helper" title="{{=it.tr.postLimitReachedText}}"></i>
                 {{?? thread.bumpLimitReached}}
-                    <img src="/{{=it.site.pathPrefix}}img/bumplimit.png" class="signImage"
-                          title="{{=it.tr.bumpLimitReachedText}}">
+                    <i class="mdi mdi-middle mdi-alert" title="{{=it.tr.bumpLimitReachedText}}"></i>
                 {{?}}
             {{?}}
         </span>
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[30]}}
-            {{ out += it.customPostHeaderPart[30](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[30]}}{{ out += it.customPostHeaderPart[30](it, thread, post); }}{{?}}
         {{#def.postSubject}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[40]}}
-            {{ out += it.customPostHeaderPart[40](it, thread, post); }}
-        {{?}}
-        {{? post.options.showTripcode && it.compareRegisteredUserLevels(post.user.level, "USER") >= 0}}
-            <img src="/{{=it.site.pathPrefix}}img/registered.png" class="signImage" title="{{=it.tr.registeredText}}">
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}
-            {{ out += it.customPostHeaderPart[50](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[40]}}{{ out += it.customPostHeaderPart[40](it, thread, post); }}{{?}}
+        {{? post.options.showTripcode && it.compareRegisteredUserLevels(post.user.level, "USER") >= 0}}<i class="mdi mdi-middle mdi-marker-check"
+                                                                                                          title="{{=it.tr.registeredText}}"></i>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}{{ out += it.customPostHeaderPart[50](it, thread, post); }}{{?}}
         {{#def.postName}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}
-            {{ out += it.customPostHeaderPart[60](it, thread, post); }}
-        {{?}}
-        {{? post.opIp && post.options.signAsOp}}
-            <span class="opSign">[OP]</span>
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}
-            {{ out += it.customPostHeaderPart[70](it, thread, post); }}
-        {{?}}
-        {{? post.options.showTripcode && post.tripcode}}
-            <span class="tripcode">{{=post.tripcode}}</span>
-        {{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[80]}}
-            {{ out += it.customPostHeaderPart[80](it, thread, post); }}
-        {{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}{{ out += it.customPostHeaderPart[60](it, thread, post); }}{{?}}
+        {{? post.opIp && post.options.signAsOp}}<span class="opSign">[OP]</span>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}{{ out += it.customPostHeaderPart[70](it, thread, post); }}{{?}}
+        {{? post.options.showTripcode && post.tripcode}}<span class="tripcode">{{=post.tripcode}}</span>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[80]}}{{ out += it.customPostHeaderPart[80](it, thread, post); }}{{?}}
         {{? it.board.showWhois && post.geolocation.flagName}}
             {{? post.geolocation.cityName}}
                 <img src="/{{=it.site.pathPrefix}}img/flags/{{=post.geolocation.flagName}}" class="flag"
@@ -103,24 +84,23 @@
                 {{ out += it.customPostHeaderPart[130](it, thread, post); }}
             {{?}}
             {{? thread.postingEnabled && !thread.archived && !thread.postLimitReached}}
-                <span name="quickReplyContainer">[<a href="javascript:void(0);" name="quickReply"
+                <span name="quickReplyContainer"><a href="javascript:void(0);" name="quickReply"
                                                      onclick="lord.quickReply(this); return false;"
-                                                     title="{{=it.tr.quickReplyText}}"><img src="/{{=it.site.pathPrefix}}img/reply.png"
-                                                                                            class="buttonImage"></a>]</span>
+                                                     title="{{=it.tr.quickReplyText}}"><i class="mdi b-icon mdi-reply"></i></a></span>
             {{?}}
             {{? it.customPostHeaderPart && it.customPostHeaderPart[140]}}
                 {{ out += it.customPostHeaderPart[140](it, thread, post); }}
             {{?}}
-            <span name="postActionsContainer">[<input type="image" src="/{{=it.site.pathPrefix}}img/post_actions.png" class="buttonImage"
-                                                      name="postActions" title="{{=it.tr.postActionsText}}"
-                                                      onclick="lord.showPostActionsMenu(event, this, {{=post.number}}); return false;">]</span>
+            <span name="postActionsContainer"><a href="javascript:void(0);" name="postActions"
+                                                 onclick="lord.showPostActionsMenu(event, this, {{=post.number}}); return false;"
+                                                 title="{{=it.tr.postActionsText}}"><i class="mdi b-icon mdi-dots-horizontal"></i></a></span>
             {{? it.customPostHeaderPart && it.customPostHeaderPart[150]}}
                 {{ out += it.customPostHeaderPart[150](it, thread, post); }}
             {{?}}
             {{? post.isOp && !it.isThreadPage}}
                 <span name="toThread" class="postToThread postToThreadDesktop">
                     [<a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.number}}.html"
-                        name="toThreadLink">{{=it.tr.toThread}}</a>]
+                        name="toThreadLink" class="ajax">{{=it.tr.toThread}}</a>]
                 </span>
             {{?}}
                 {{? it.customPostHeaderPart && it.customPostHeaderPart[160]}}
@@ -133,15 +113,23 @@
             {{ out += it.customPostBodyPart[0](it, thread, post); }}
         {{?}}
         <div class="postFiles">
-            {{~post.fileInfos :fileInfo}}
-                {{#def.postFile}}
-            {{~}}
-            {{? it.customPostBodyPart && it.customPostBodyPart[10]}}
-                {{ out += it.customPostBodyPart[10](it, thread, post); }}
-            {{?}}
-            <div class="postText">
-                <blockquote {{? it.isThreadPage}}class="blockquoteThread"{{?}}
-                            id="post{{=post.number}}Text">{{ out += (post.text || ""); }}</blockquote>
+            <div class="{{? post.fileInfos.length > 1}}postFilesInnerBlock{{??}}postFilesInner{{?}}">
+                <div class="{{? post.fileInfos.length > 1}}postFilesInnerRowBlock{{??}}postFilesInnerRow{{?}}">
+                    {{~post.fileInfos :fileInfo}}
+                        {{#def.postFile}}
+                    {{~}}
+                    {{? it.customPostBodyPart && it.customPostBodyPart[10]}}
+                        {{ out += it.customPostBodyPart[10](it, thread, post); }}
+                    {{?}}
+                    {{? post.fileInfos.length > 1}}
+                        </div>
+                        <div class="{{? post.fileInfos.length > 1}}postFilesInnerRowBlock{{??}}postFilesInnerRow{{?}}">
+                    {{?}}
+                    <div class="postText">
+                        <blockquote {{? it.isThreadPage}}class="blockquoteThread"{{?}}
+                                    id="post{{=post.number}}Text">{{ out += (post.text || ""); }}</blockquote>
+                    </div>
+                </div>
             </div>
         </div>
         {{? it.customPostBodyPart && it.customPostBodyPart[20]}}
@@ -178,7 +166,7 @@
     {{? post.isOp && !it.isThreadPage}}
         <span name="toThread" class="postToThread postToThreadMobile">
             <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.number}}.html"
-               name="toThreadLink"><button class="button">{{=it.tr.toThread}}</button></a>
+               name="toThreadLink" class="ajax"><button class="button">{{=it.tr.toThread}}</button></a>
         </span>
     {{?}}
 </div>

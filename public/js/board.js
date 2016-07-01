@@ -2,11 +2,6 @@
 
 var lord = lord || {};
 
-/*Constants*/
-
-lord.MovablePlayerBorderWidth = 5;
-lord.BaseScaleFactor = 10 * 1000 * 1000 * 1000;
-
 /*Variables*/
 
 lord.postPreviews = {};
@@ -31,10 +26,12 @@ lord.autoUpdateTimer = null;
 lord.blinkTimer = null;
 lord.pageVisible = "visible";
 lord.loadingImage = null;
+lord.postFormFixed = true;
 
 /*Classes*/
 
 /*constructor*/ lord.AutoUpdateTimer = function(intervalSeconds) {
+    this.useWebSockets = lord.getLocalObject("useWebSockets", true);
     this.intervalSeconds = intervalSeconds;
     this.updateTimer = null;
     this.countdownTimer = null;
@@ -61,7 +58,12 @@ lord.loadingImage = null;
         return;
     var _this = this;
     ["Top", "Bottom"].forEach(function(position) {
-        $("#autoUpdate" + position).val(_this.secondsLeft).trigger("change");
+        if (_this.useWebSockets) {
+            var color = (_this.secondsLeft % 2) ? "#5E5E5E" : "#2F2F2F";
+            $("#autoUpdate" + position).trigger("configure", { fgColor: color });
+        } else {
+            $("#autoUpdate" + position).val(_this.secondsLeft).trigger("change");
+        }
     });
 };
 
@@ -69,9 +71,8 @@ lord.loadingImage = null;
     if (this.updateTimer)
         return;
     this.updateTimer = setInterval((function() {
-        var boardName = lord.data("boardName");
-        var threadNumber = +lord.data("threadNumber");
-        lord.updateThread(true);
+        if (!this.useWebSockets)
+            lord.updateThread(true);
         if (this.countdownTimer) {
             clearInterval(this.countdownTimer);
             this.createCountdownTimer();
@@ -95,397 +96,13 @@ lord.loadingImage = null;
     this.update();
 };
 
-/*constructor*/ lord.MovablePlayer = function(fileInfo, options) {
-    this.imageZoomSensitivity = Math.floor((options && options.imageZoomSensitivity) || 25);
-    if (this.imageZoomSensitivity < 1 || this.imageZoomSensitivity > 100)
-        this.imageZoomSensitivity = 25;
-    this.minimumContentWidth = (options && options.minimumContentWidth)
-        || (lord.isImageType(fileInfo.mimeType) ? 50 : 200);
-    this.minimumContentHeight = (options && options.minimumContentHeight)
-        || (lord.isImageType(fileInfo.mimeType) ? 50 : 200);
-    this.scaleFactor = lord.BaseScaleFactor * 100;
-    this.scaleFactorModifier = 1;
-    this.fileInfo = fileInfo;
-    var model = merge.recursive({
-        fileInfo: this.fileInfo,
-        isAudioType: lord.isAudioType,
-        isVideoType: lord.isVideoType,
-        isImageType: lord.isImageType
-    }, lord.model(["base", "tr"]));
-    this.node = lord.template("movablePlayer", model);
-    this.trackInfo = lord.queryOne(".movablePlayerTrackInfo", this.node);
-    this.contentContainer = lord.queryOne(".movablePlayerContent", this.node);
-    this.contentImage = this.contentContainer.firstElementChild;
-    this.content = this.contentContainer.lastElementChild;
-    this.contentImage.addEventListener("mousedown", this.mousedownHandler.bind(this), false);
-    this.contentImage.addEventListener("mouseup", this.mouseupHandler.bind(this), false);
-    this.contentImage.addEventListener("mousemove", this.mousemoveHandler.bind(this), false);
-    this.contentImage.addEventListener("mousewheel", this.mousewheelHandler.bind(this), false);
-    this.contentImage.addEventListener("DOMMouseScroll", this.mousewheelHandler.bind(this), false); //Firefox
-    this.controls = lord.queryOne(".movablePlayerControls", this.node);
-    $(this.controls).click(function(e) {
-        e.stopPropagation();
-    });
-    $(this.contentImage).click(function(e) {
-        e.stopPropagation();
-    });
-    if (!lord.isImageType(this.fileInfo.mimeType)) {
-        var _this = this;
-        var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
-        var remember = lord.getLocalObject("rememberAudioVideoVolume", false);
-        var volume = remember ? lord.getLocalObject("audioVideoVolume", defVol) : defVol;
-        if (!volume)
-            this.lastVolume = 0.01;
-        this.content.volume = volume;
-        this.playPauseButton = lord.nameOne("playerPlayPauseButton", this.controls);
-        this.muteButton = lord.nameOne("playerMuteButton", this.controls);
-        this.durationSlider = lord.queryOne(".movablePlayerDurationSlider", this.controls);
-        this.volumeSlider = lord.queryOne(".movablePlayerVolumeSlider", this.controls);
-        this.playPauseButton.addEventListener("click", (function() {
-            this.content[this.content.paused ? "play" : "pause"]();
-            this.updateButtons();
-        }).bind(this), false);
-        this.muteButton.addEventListener("click", (function() {
-            if (this.content.volume) {
-                this.lastVolume = this.content.volume;
-                this.content.volume = 0;
-                $(this.volumeSlider).slider("value", 0);
-            } else {
-                this.content.volume = this.lastVolume || volume;
-                $(this.volumeSlider).slider("value", this.lastVolume);
-            }
-            this.updateButtons();
-        }).bind(this), false);
-        if (options && options.loop)
-            this.content.loop = true;
-        this.controls.addEventListener("mouseover", (function() {
-            this.preventHideControls = true;
-            if (this.controlsHideTimer) {
-                clearInterval(this.controlsHideTimer);
-                this.controlsHideTimer = null;
-            }
-        }).bind(this), false);
-        this.controls.addEventListener("mouseleave", (function() {
-            this.preventHideControls = false;
-            this.controlsHideTimer = setTimeout(this.hideControls.bind(this), lord.Second);
-        }).bind(this), false);
-        this.content.addEventListener("pause", (function() {
-            this.updateButtons();
-        }).bind(this), false);
-        this.content.addEventListener("ended", (function() {
-            this.updateButtons();
-        }).bind(this), false);
-        this.content.addEventListener("timeupdate", (function() {
-            if (this.userSliding)
-                return;
-            $(this.durationSlider).slider("value", this.content.currentTime);
-            this.updateTrackInfo();
-        }).bind(this), false);
-        this.content.addEventListener("durationchange", (function() {
-            $(this.durationSlider).slider("destroy");
-            $(this.durationSlider).slider({
-                min: 0,
-                max: this.content.duration,
-                step: 1,
-                value: 0,
-                start: function() {
-                    _this.userSliding = true;
-                },
-                stop: function() {
-                    _this.userSliding = false;
-                    _this.content.currentTime = +$(this).slider("value");
-                }
-            });
-        }).bind(this), false);
-        $(this.durationSlider).slider({
-            min: 0,
-            max: 0,
-            step: 0,
-            value: 0,
-            disabled: true
-        });
-        $(this.volumeSlider).slider({
-            min: 0,
-            max: 1,
-            step: 0.01,
-            value: volume,
-            slide: function() {
-                var volume = +$(this).slider("value");
-                _this.content.volume = volume;
-                _this.updateButtons();
-            }
-        });
-        if (options && options.play) {
-            if (+options.play > 0) {
-                setTimeout((function() {
-                    this.content.play();
-                    this.updateButtons();
-                }).bind(this), +options.play);
-            } else {
-                this.content.play();
-                this.updateButtons();
-            }
-        }
-        this.updateTrackInfo();
-    } else {
-        lord.queryOne(".movablePlayerConstrolsSliders", this.controls).style.display = "none";
-    }
-    this.visible = false;
-    this.isInitialized = false;
-    this.eventListeners = {
-        requestClose: []
-    };
-};
-
-/*private*/ lord.MovablePlayer.prototype.scaled = function(n, factor) {
-    factor = +factor || this.scaleFactor;
-    return Math.round((+n || 0) * (factor / lord.BaseScaleFactor / 100));
-};
-
-/*private*/ lord.MovablePlayer.prototype.updateButtons = function() {
-    this.playPauseButton.src = this.playPauseButton.src.replace(/\/(play|pause)\.png$/,
-        "/" + (this.content.paused ? "play" : "pause") + ".png");
-    this.playPauseButton.title = lord.text(this.content.paused ? "playerPlayText" : "playerPauseText");
-    this.muteButton.src = this.muteButton.src.replace(/(on|off)\.png$/, (this.content.volume ? "on" : "off") + ".png");
-    this.muteButton.title = lord.text(this.content.volume ? "playerMuteText" : "playerUnmuteText");
-};
-
-/*private*/ lord.MovablePlayer.prototype.updateTrackInfo = function() {
-    $(this.trackInfo).empty();
-    var s = lord.durationToString(this.content.currentTime) + " / " + lord.durationToString(this.content.duration);
-    this.trackInfo.appendChild(lord.node("text", s));
-};
-
-/*private*/ lord.MovablePlayer.prototype.dispatchEvent = function(e) {
-    if (typeof e != "object")
-        return false;
-    var listeners = this.eventListeners[e.type];
-    if (!listeners)
-        return false;
-    var c = false;
-    e.cancel = function() {
-        c = true;
-    };
-    var cancelled = listeners.some(function(f) {
-        f(e);
-        if (c)
-            return true;
-    });
-    if (cancelled)
-        return true;
-    if (typeof e.action == "function")
-        e.action.call(e);
-    return true;
-};
-
-/*private*/ lord.MovablePlayer.prototype.hideControls = function() {
-    this.trackInfo.style.display = "none";
-    this.controls.style.display = "none";
-    this.controlsHideTimer = null;
-};
-
-/*private*/ lord.MovablePlayer.prototype.mousedownHandler = function(e) {
-    if (e.button)
-        return;
-    e.preventDefault();
-    e.stopPropagation();
-    this.isMoving = true;
-    this.mouseStartPosition = {
-        x: e.clientX,
-        y: e.clientY
-    };
-    this.mousePositon = merge.recursive(true, this.mouseStartPosition);
-};
-
-/*private*/ lord.MovablePlayer.prototype.mouseupHandler = function(e) {
-    if (e.button)
-        return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (!this.isMoving)
-        return;
-    this.isMoving = false;
-    if (this.mouseStartPosition.x === e.clientX && this.mouseStartPosition.y === e.clientY) {
-        this.dispatchEvent({
-            type: "requestClose",
-            action: (function() {
-                this.hide();
-            }).bind(this)
-        });
-    }
-};
-
-/*private*/ lord.MovablePlayer.prototype.mousemoveHandler = function(e) {
-    if (!lord.isImageType(this.fileInfo.mimeType)) {
-        if ("none" == this.controls.style.display) {
-            this.trackInfo.style.display = "";
-            this.controls.style.display = "";
-            if (!this.preventHideControls)
-                this.controlsHideTimer = setTimeout(this.hideControls.bind(this), lord.Second);
-        } else if (this.controlsHideTimer) {
-            clearInterval(this.controlsHideTimer);
-            this.controlsHideTimer = null;
-            if (!this.preventHideControls)
-                this.controlsHideTimer = setTimeout(this.hideControls.bind(this), lord.Second);
-        }
-    }
-    if (!this.isMoving)
-        return;
-    e.preventDefault();
-    e.stopPropagation();
-    var dx = e.clientX - this.mousePositon.x;
-    var dy = e.clientY - this.mousePositon.y;
-    this.mousePositon.x = e.clientX;
-    this.mousePositon.y = e.clientY;
-    var node = $(this.node);
-    var pos = node.position();
-    node.css({
-        top: pos.top + dy,
-        left: pos.left + dx
-    });
-};
-
-/*private*/ lord.MovablePlayer.prototype.resetScale = function() {
-    var container = $(this.contentContainer);
-    var previousContainerWidth = container.width();
-    var previousContainerHeight = container.height();
-    var width = this.scaled(this.fileInfo.width);
-    var height = this.scaled(this.fileInfo.height);
-    container.width(width);
-    container.height(height);
-    var dx = (container.width() - previousContainerWidth) / 2;
-    var dy = (container.height() - previousContainerHeight) / 2;
-    var node = $(this.node);
-    var pos = node.position();
-    node.css({
-        top: (pos.top - dy) + "px",
-        left: (pos.left - dx) + "px"
-    });
-    this.showScalePopup();
-};
-
-/*private*/ lord.MovablePlayer.prototype.mousewheelHandler = function(e) {
-    e.preventDefault();
-    var imageZoomSensitivity = this.imageZoomSensitivity;
-    if ((e.wheelDelta || -e.detail) < 0)
-        imageZoomSensitivity *= -1;
-    var previousScaleFactor = this.scaleFactor;
-    var previousScaleFactorModifier = this.scaleFactorModifier;
-    if (imageZoomSensitivity < 0) {
-        while ((this.scaleFactor + imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier) <= 0)
-            this.scaleFactorModifier *= 10;
-    } else {
-        var changed = false;
-        while (this.scaleFactorModifier >= 1
-            && (this.scaleFactor * this.scaleFactorModifier - imageZoomSensitivity * lord.BaseScaleFactor) >= 0) {
-            this.scaleFactorModifier /= 10;
-            changed = true;
-        }
-        if (changed)
-            this.scaleFactorModifier *= 10;
-    }
-    this.scaleFactor += (imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier);
-    if (this.scaled(this.fileInfo.width) < this.minimumContentWidth
-        || this.scaled(this.fileInfo.height) < this.minimumContentHeight) {
-        this.scaleFactor = previousScaleFactor;
-        this.scaleFactorModifier = previousScaleFactorModifier;
-    }
-    this.resetScale();
-};
-
-/*public*/ lord.MovablePlayer.prototype.on = function(eventType, handler) {
-    if (!this.eventListeners.hasOwnProperty(eventType) || typeof handler != "function")
-        return false;
-    this.eventListeners[eventType].push(handler);
-    return true;
-};
-
-/*public*/ lord.MovablePlayer.prototype.show = function() {
-    if (this.visible)
-        return;
-    document.body.appendChild(this.node);
-    this.visible = true;
-    if (!this.isInitialized) {
-        this.reset();
-        this.isInitialized = true;
-    }
-};
-
-/*public*/ lord.MovablePlayer.prototype.hide = function() {
-    if (!this.visible)
-        return;
-    if (!lord.isImageType(this.fileInfo.mimeType)) {
-        lord.setLocalObject("audioVideoVolume", +this.content.volume);
-        this.content.pause();
-    }
-    document.body.removeChild(this.node);
-    this.visible = false;
-};
-
-/*public*/ lord.MovablePlayer.prototype.reset = function() {
-    var width = this.fileInfo.width;
-    var height = this.fileInfo.height;
-    var toolbarHeight = lord.queryOne(".toolbar.sticky") ? $(".toolbar.sticky").height() : 0;
-    var w = $(window);
-    var windowWidth = w.width();
-    var windowHeight = w.height();
-    var borderWidth = 2 * lord.MovablePlayerBorderWidth;
-    this.scaleFactor = lord.BaseScaleFactor * 100;
-    this.scaleFactorModifier = 1;
-    if (width > (windowWidth - borderWidth) || height > (windowHeight - borderWidth - toolbarHeight)) {
-        while (this.scaled(this.fileInfo.width) >= (windowWidth - borderWidth)) {
-            if ((this.scaleFactor - this.imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier) > 0)
-                this.scaleFactor -= (this.imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier);
-            else
-                this.scaleFactorModifier *= 10;
-        }
-        while (this.scaled(this.fileInfo.height) >= (windowHeight - borderWidth - toolbarHeight)) {
-            if ((this.scaleFactor - this.imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier) > 0)
-                this.scaleFactor -= (this.imageZoomSensitivity * lord.BaseScaleFactor / this.scaleFactorModifier);
-            else
-                this.scaleFactorModifier *= 10;
-        }
-    }
-    this.resetScale();
-    width = this.scaled(width);
-    height = this.scaled(height);
-    var node = $(this.node);
-    var containerWidth = width + borderWidth;
-    var containerHeight = height + borderWidth;
-    node.css({
-        top: ((windowHeight - containerHeight - toolbarHeight) / 2 + toolbarHeight) + "px",
-        left: ((windowWidth - containerWidth) / 2) + "px",
-    });
-    if (lord.isAudioType(this.fileInfo.mimeType) || lord.isVideoType(this.fileInfo.mimeType)) {
-        this.content.currentTime = 0;
-        var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
-        var remember = lord.getLocalObject("rememberAudioVideoVolume", false);
-        this.content.volume = remember ? lord.getLocalObject("audioVideoVolume", defVol) : defVol;
-    }
-};
-
-/*public*/ lord.MovablePlayer.prototype.showScalePopup = function() {
-    var width = this.scaled(this.fileInfo.width);
-    var height = this.scaled(this.fileInfo.height);
-    var text = width + "x" + height + " (" + (this.scaleFactor / lord.BaseScaleFactor) + "%)";
-    if (this.scalePopup) {
-        this.scalePopup.resetText(text);
-        this.scalePopup.resetTimeout(lord.Second);
-        clearTimeout(this.scalePopupTimer);
-    } else {
-        this.scalePopup = lord.showPopup(text, { "timeout": lord.Second });
-    }
-    this.scalePopupTimer = setTimeout((function() {
-        this.scalePopup = null;
-        this.scalePopupTimer = null;
-    }).bind(this), lord.Second);
-};
-
 /*Functions*/
 
 lord.checkExpander = function(post) {
     var bq = $("blockquote", post);
     if (bq[0].scrollHeight <= bq.innerHeight())
+        return;
+    if (bq.parent()[0].getElementsByClassName("postTextExpander").length > 0)
         return;
     var a = lord.node("a");
     a.appendChild(lord.node("text", lord.text("expandPostTextText")));
@@ -636,14 +253,15 @@ lord.processPost = function(hiddenPosts, post, data) {
     var info = hiddenPosts[boardName + "/" + postNumber];
     if (!info)
         return;
-    $(post).addClass("hidden");
+    if (!$(post).hasClass("temporary"))
+        $(post).addClass("hidden");
     if (info.reason)
         lord.queryOne(".hideReason", post).appendChild(lord.node("text", info.reason));
     var thread = lord.id("thread" + postNumber);
     if (!thread)
         return;
     $(thread).addClass("hidden");
-}
+};
 
 lord.removeReferences = function(postNumber, referencedOnly) {
     postNumber = +postNumber;
@@ -657,7 +275,7 @@ lord.removeReferences = function(postNumber, referencedOnly) {
         if ($(parent).hasClass("referencedBy")) {
             parent.removeChild(a);
             if (parent.children.length <= 1)
-                parent.style.display = "none";
+                parent.parentNode.style.display = "none";
         } else if (!referencedOnly) {
             parent.replaceChild(lord.node("text", a.textContent), a);
         }
@@ -819,7 +437,10 @@ lord.updatePost = function(postNumber) {
 lord.clearFileInput = function(div) {
     if (!div)
         return;
-    lord.queryOne("img.postformFilePreview", div).src = "/" + lord.data("sitePathPrefix") + "img/addfile.png";
+    var pf = lord.queryOne("img.postformFilePreview", div);
+    pf.style.display = "none";
+    lord.queryOne("#filePreviewLabel", div).style.display = "";
+    $(div).removeClass("postFormSelected");
     $(lord.queryOne("span.postformFileText", div)).empty();
     lord.removeFileHash(div);
     if (div.hasOwnProperty("fileInput"))
@@ -913,7 +534,7 @@ lord.initFiles = function(reset) {
     lord.files = [];
     lord.filesMap = {};
     lord.queryAll(".postFile").forEach(function(td) {
-        var href = lord.data("href", td);
+        var href = lord.data("href", td).replace(/^https?\:\/\/[^\/]+/, "");
         var mimeType = lord.data("mimeType", td);
         if ("application/pdf" == mimeType
             || ((lord.isAudioType(mimeType) || lord.isVideoType(mimeType)) && !lord.isMediaTypeSupported(mimeType))) {
@@ -937,7 +558,7 @@ lord.nextOrPreviousFile = function(previous) {
     var href = lord.currentMovablePlayer.fileInfo.href;
     if (!href)
         return null;
-    var ind = lord.filesMap[href];
+    var ind = lord.filesMap[href.replace(/^https?\:\/\/[^\/]+/, "")];
     if (ind < 0)
         return null;
     if (!!previous)
@@ -966,8 +587,80 @@ lord.addPostToHidden = function(hiddenPosts, boardName, postNumber, threadNumber
         lord.setLocalObject("hiddenPosts", hiddenPosts);
 };
 
+lord.makeFormFloat = function(e) {
+    e.preventDefault();
+    var postForm = lord.id("postForm"),
+        container = postForm.parentNode,
+        match = container.id.match(/^postFormContainer(Top|Bottom)$/);
+    if (match)
+        lord.id("showHidePostFormButton" + match[1]).innerHTML = lord.text("showPostFormText");
+    var pos = $(postForm).offset();
+    pos.left -= window.scrollX;
+    pos.top -= window.scrollY;
+    var setPos = function(p) {
+        $(postForm).css({
+            left: p.left + "px",
+            top: p.top + "px"
+        });
+    };
+    setPos(pos);
+    $(postForm).addClass("floatingPostForm");
+    var previous = {
+        x: e.clientX,
+        y: e.clientY
+    };
+    $("#postForm .postFormHeaderLabel").css("display", "none");
+    $("#postForm .postFormHeader").removeAttr("draggable").on("mousedown", function(e) {
+        previous = {
+            x: e.clientX,
+            y: e.clientY
+        };
+    }).on("mouseup", function(e) {
+        previous = null;
+    });
+    $(document.body).on("mousemove", function(e) {
+        if (!previous)
+            return;
+        pos.left += e.clientX - previous.x;
+        pos.top += e.clientY - previous.y;
+        setPos(pos);
+        previous = {
+            x: e.clientX,
+            y: e.clientY
+        };
+    });
+};
+
+lord.makeFormNotFloat = function() {
+    $("#postForm").removeClass("floatingPostForm");
+    $("#postForm .postFormHeaderLabel").css("display", "");
+    $("#postForm .postFormHeader").attr("draggable", true).off("mousedown").off("mouseup");
+    $(document.body).off("mousemove");
+};
+
+lord.setPostFormFixed = function() {
+    lord.postFormFixed = !lord.postFormFixed;
+    var i = lord.queryOne("#postForm [name='fixPostFormButton'] > i");
+    i.className = i.className.replace(/(pin|pin-off)$/, lord.postFormFixed ? "pin" : "pin-off");
+    lord.queryOne("#postForm [name='fixPostFormButton']").title =
+        lord.text(lord.postFormFixed ? "postFormFixedButtonText" : "postFormUnfixedButtonText");
+};
+
+lord.closePostForm = function() {
+    lord.makeFormNotFloat();
+    lord.hidePostForm();
+};
+
 lord.showHidePostForm = function(el) {
+    if ($("#postForm").hasClass("floatingPostForm")) {
+        if (lord.postFormFixed)
+            return;
+        lord.makeFormNotFloat();
+        lord.hidePostForm();
+    }
     var postForm = lord.id("postForm");
+    if(!postForm)
+        return;
     var position = lord.data("position", el);
     var container = postForm.parentNode;
     var hide = ("postFormContainer" + position) == container.id;
@@ -988,11 +681,17 @@ lord.quickReply = function(el) {
     var post = lord.id(postNumber);
     if (!post)
         return;
-    var postForm = lord.id("postForm");
-    var targetContainer = post.parentNode;
-    var same = (postForm.parentNode == targetContainer
-            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling);
-    var selection = document.getSelection().toString();
+    if ($("#postForm").hasClass("floatingPostForm")) {
+        if (lord.postFormFixed)
+            return;
+        lord.makeFormNotFloat();
+        //lord.hidePostForm();
+    }
+    var postForm = lord.id("postForm"),
+        targetContainer = post.parentNode,
+        same = (postForm.parentNode == targetContainer
+            && post.nextSibling && postForm.nextSibling == post.nextSibling.nextSibling),
+        selection = document.getSelection().toString();
     lord.hidePostForm();
     if (same)
         return;
@@ -1005,16 +704,15 @@ lord.quickReply = function(el) {
         postForm.appendChild(inputThread);
         postForm.action = postForm.action.replace("createThread", "createPost");
     }
-    if (post.nextSibling)
-        targetContainer.insertBefore(postForm, post.nextSibling);
-    else
+    (post.nextSibling)?
+        targetContainer.insertBefore(postForm, post.nextSibling):
         targetContainer.appendChild(postForm);
     lord.insertPostNumber(postNumber);
     lord.quoteSelectedText(selection);
     var tripcode = lord.nameOne("tripcode", postForm);
     if (tripcode) {
         var threadNumber = lord.nameOne("threadNumber", postForm);
-        tripcode.checked = lord.showTripcode(threadNumber ? threadNumber.value : null);
+        tripcode.checked = lord.showTripcode(threadNumber? threadNumber.value: null);
         $(tripcode).button("refresh");
     }
 };
@@ -1037,16 +735,16 @@ lord.hidePostForm = function() {
 };
 
 lord.switchShowTripcode = function() {
-    var postForm = lord.id("postForm");
-    var sw = lord.nameOne("tripcode", postForm);
-    var showTripcode = lord.getLocalObject("showTripcode", {});
-    var key;
-    var threadNumber = lord.nameOne("threadNumber", postForm);
+    var postForm = lord.id("postForm"),
+        sw = lord.nameOne("tripcode", postForm),
+        showTripcode = lord.getLocalObject("showTripcode", {}),
+        key,
+        threadNumber = lord.nameOne("threadNumber", postForm);
     if (threadNumber) {
-        lord.showPopup(lord.text(sw.checked ? "threadTripcodeActivatedText" : "threadTripcodeDeactivatedText"));
+        lord.showPopup(lord.text("threadTripcode" + (sw.checked? "A": "Dea") + "ctivatedText"));
         key = lord.data("boardName") + "/" + +threadNumber.value;
     } else {
-        lord.showPopup(lord.text(sw.checked ? "globalTripcodeActivatedText" : "globalTripcodeDeactivatedText"));
+        lord.showPopup(lord.text("globalTripcode" + (sw.checked? "A": "Dea") + "ctivatedText"));
         key = "global";
     }
     if (sw.checked)
@@ -1067,8 +765,8 @@ lord.countSymbols = function(textarea) {
 };
 
 lord.showPostSourceText = function(el) {
-    var boardName = lord.data("boardName", el, true);
-    var postNumber = +lord.data("number", el, true);
+    var boardName = lord.data("boardName", el, true),
+        postNumber = +lord.data("number", el, true);
     if (!boardName || isNaN(postNumber) || postNumber <= 0)
         return;
     lord.api("post", {
@@ -1077,48 +775,68 @@ lord.showPostSourceText = function(el) {
     }).then(function(post) {
         var textArea = lord.node("textarea");
         textArea.value = post.rawText;
-        textArea.rows = "28";
-        textArea.cols = "43";
+        textArea.rows = 28;
+        textArea.cols = 43;
         return lord.showDialog(textArea, {
             title: "postSourceText",
-            buttons: ["close"]
+            buttons: []
         });
     }).catch(lord.handleError);
 };
 
 lord.chatWithUser = function(el) {
+    if(lord.dialogs.length > 0)
+        return;
     var boardName = lord.data("boardName", el, true);
     if (!boardName)
         return;
     var postNumber = +lord.data("number", el, true);
     if (!postNumber)
         return;
-    var div = lord.node("div");
-    var ta = lord.node("textArea");
+    var div = lord.node("div"),
+        ta = lord.node("textArea");
     ta.rows = 10;
     ta.cols = 43;
     div.appendChild(ta);
-    lord.showDialog(div, { title: "chatText" }).then(function(result) {
+    lord.showDialog(div, { modal: false, title: "chatText" }).then(function(result) {
         if (!result)
             return Promise.resolve();
         if (!ta.value)
             return Promise.resolve();
-        var formData = new FormData();
-        formData.append("boardName", lord.data("boardName"));
-        formData.append("postNumber", postNumber);
-        formData.append("text", ta.value);
-        return lord.post("/" + lord.data("sitePathPrefix") + "action/sendChatMessage", formData);
-    }).then(function(result) {
-        if (!result)
-            return Promise.resolve();
-        lord.checkChats();
+        if (lord.getLocalObject("useWebSockets", true)) {
+            return lord.sendWSMessage("sendChatMessage", {
+                boardName: boardName,
+                postNumber: postNumber,
+                text: ta.value
+            }).then(function(msg) {
+                var key = boardName + ":" + postNumber,
+                    chats = lord.getLocalObject("chats", {});
+                if (!chats[key])
+                    chats[key] = [msg];
+                else
+                    chats[key].push(msg);
+                lord.setLocalObject("chats", chats);
+                lord.updateChat([key]);
+            });
+        } else {
+            var formData = new FormData();
+            formData.append("boardName", boardName);
+            formData.append("postNumber", postNumber);
+            formData.append("text", ta.value);
+            var action = "/" + lord.data("sitePathPrefix") + "action/sendChatMessage";
+            return lord.post(action, formData).then(function(result) {
+                if (!result)
+                    return Promise.resolve();
+                lord.checkChats();
+            });
+        }
     }).catch(lord.handleError);
 };
 
 lord.deletePost = function(el) {
-    var c = {};
-    var postNumber = +lord.data("number", el, true);
-    var model = lord.model(["base", "tr"]);
+    var c = {},
+        postNumber = +lord.data("number", el, true),
+        model = lord.model(["base", "tr"]);
     model.boardName = lord.data("boardName", el, true);
     model.postNumber = postNumber;
     c.div = lord.node("div");
@@ -1128,16 +846,16 @@ lord.deletePost = function(el) {
     lord.showDialog(c.div, { title: "enterPasswordTitle" }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var form = lord.queryOne("form", c.div);
-        var formData = new FormData(form);
+        var form = lord.queryOne("form", c.div),
+            formData = new FormData(form);
         if (lord.data("archived", el, true) == "true")
             formData.append("archived", true);
         return lord.post(form.action, formData);
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var ownPosts = lord.getLocalObject("ownPosts", {});
-        var key = model.boardName + "/" + postNumber;
+        var ownPosts = lord.getLocalObject("ownPosts", {}),
+            key = model.boardName + "/" + postNumber;
         if (ownPosts.hasOwnProperty(key))
             delete ownPosts[key];
         lord.setLocalObject("ownPosts", ownPosts);
@@ -1146,14 +864,13 @@ lord.deletePost = function(el) {
             return Promise.reject("noSuchPostErrorText");
         if (lord.data("isOp", post)) {
             if (!isNaN(+lord.data("threadNumber"))) {
-                window.location = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
+                var loc = window.location.protocol + "//" + model.site.domain + "/" + model.site.pathPrefix
                     + lord.data("boardName") + ((lord.data("archived", el, true) == "true") ? "/archive.html" : "");
-            } else {
+                (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
+            } else
                 lord.reloadPage();
-            }
-        } else {
+        } else
             post.parentNode.removeChild(post);
-        }
         lord.removeReferences(postNumber);
     }).catch(lord.handleError);
 };
@@ -1179,8 +896,8 @@ lord.setThreadClosed = function(el, closed) {
 };
 
 lord.setThreadUnbumpable = function(el, unbumpable) {
-    var postNumber = +lord.data("number", el, true);
-    var formData = new FormData();
+    var postNumber = +lord.data("number", el, true),
+        formData = new FormData();
     formData.append("boardName", lord.data("boardName"));
     formData.append("threadNumber", postNumber);
     formData.append("unbumpable", unbumpable);
@@ -1192,12 +909,12 @@ lord.setThreadUnbumpable = function(el, unbumpable) {
 };
 
 lord.moveThread = function(el) {
-    var boardName = lord.data("boardName");
-    var threadNumber = +lord.data("threadNumber", el, true);
+    var boardName = lord.data("boardName"),
+        threadNumber = +lord.data("threadNumber", el, true);
     if (!boardName || isNaN(threadNumber) || threadNumber <= 0)
         return;
-    var c = {};
-    var model = lord.model(["base", "tr", "boards"]);
+    var c = {},
+        model = lord.model(["base", "tr", "boards"]);
     model.boardName = boardName;
     model.threadNumber = threadNumber;
     c.div = lord.template("moveThreadDialog", model);
@@ -1209,15 +926,16 @@ lord.moveThread = function(el) {
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
+        var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
             + ".html";
+        (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
     }).catch(lord.handleError);
 };
 
 lord.editBanReason = function(a) {
-    var inp = $(a).closest("tr").find("[name^='banReason_'], [name='reason']")[0];
-    var div = lord.node("div");
-    var input = lord.node("input");
+    var inp = $(a).closest("tr").find("[name^='banReason_'], [name='reason']")[0],
+        div = lord.node("div"),
+        input = lord.node("input");
     input.type = "text";
     input.size = 40;
     input.value = inp.value;
@@ -1231,13 +949,13 @@ lord.editBanReason = function(a) {
 };
 
 lord.banUser = function(el) {
-    var boardName = lord.data("boardName", el, true);
-    var postNumber = +lord.data("number", el, true);
+    var boardName = lord.data("boardName", el, true),
+        postNumber = +lord.data("number", el, true);
     if (!boardName || isNaN(postNumber) || postNumber <= 0)
         return;
-    var model = lord.model(["base", "tr", "boards"]);
-    var settings = lord.settings();
-    var timeOffset = ("local" == settings.time) ? +settings.timeZoneOffset : model.site.timeOffset;
+    var model = lord.model(["base", "tr", "boards"]),
+        settings = lord.settings(),
+        timeOffset = ("local" == settings.time) ? +settings.timeZoneOffset : model.site.timeOffset;
     model.formattedDate = function(date) {
         return moment(date).utcOffset(timeOffset).locale(model.site.locale).format("DD/MM/YYYY HH:mm");
     };
@@ -1274,8 +992,8 @@ lord.banUser = function(el) {
     }).then(function(result) {
         if (!result)
             return Promise.resolve();
-        var form = lord.queryOne("form", c.div);
-        var formData = new FormData(form);
+        var form = lord.queryOne("form", c.div),
+            formData = new FormData(form);
         formData.append("timeOffset", timeOffset);
         return lord.post(form.action, formData);
     }).then(function(result) {
@@ -1435,6 +1153,36 @@ lord.editPost = function(el) {
     }).catch(lord.handleError);
 };
 
+lord.hideSimilarPosts = function(el) {
+    var boardName = lord.data("boardName", el, true);
+    var postNumber = +lord.data("number", el, true);
+    var threadNumber = +lord.data("threadNumber", el, true);
+    var text = lord.data("plainText", el, true);
+    if (!boardName || isNaN(postNumber) || postNumber < 1 || isNaN(threadNumber) || threadNumber < 1 || !text)
+        return;
+    var post = lord.id(postNumber);
+    if (!post)
+        return;
+    var thread = lord.id("thread" + postNumber);
+    var hidden = $(post).hasClass("hidden");
+    if (hidden)
+        return;
+    var similarText = lord.getLocalObject("similarText", {});
+    var key = boardName + "/" + postNumber;
+    if (similarText.hasOwnProperty(key))
+        return;
+    similarText[key] = lord.getWords(text);
+    lord.setLocalObject("similarText", similarText);
+    $(post).addClass("hidden");
+    $(lord.queryOne(".hideReason", post)).empty();
+    if (thread)
+        $(thread).addClass("hidden");
+    var reason = "similar to >>/" + boardName + "/" + postNumber;
+    lord.addPostToHidden(null, boardName, postNumber, threadNumber, reason);
+    lord.strikeOutHiddenPostLinks();
+    lord.applySpells(lord.queryAll(".post, .opPost")).catch(lord.handleError);
+};
+
 lord.setPostHidden = function(el) {
     var boardName = lord.data("boardName", el, true);
     var postNumber = +lord.data("number", el, true);
@@ -1453,11 +1201,20 @@ lord.setPostHidden = function(el) {
     if (thread)
         $(thread)[fName]("hidden");
     var list = lord.getLocalObject("hiddenPosts", {});
+    var key = boardName + "/" + postNumber;
     if (!hidden) {
         lord.addPostToHidden(null, boardName, postNumber, threadNumber);
-    } else if (list[boardName + "/" + postNumber]) {
-        delete list[boardName + "/" + postNumber];
+    } else if (list[key]) {
+        if (list[key].reason)
+            list[key] = false;
+        else
+            delete list[key];
         lord.setLocalObject("hiddenPosts", list);
+        var similarText = lord.getLocalObject("similarText", {});
+        if (similarText.hasOwnProperty(key)) {
+            delete similarText[key];
+            lord.setLocalObject("similarText", similarText);
+        }
     }
     lord.strikeOutHiddenPostLinks();
 };
@@ -1486,10 +1243,19 @@ lord.applySpells = function(posts, force) {
         }
         var promises = lord.chunk(posts, 100).map(function(list, i) {
             var data = list.map(lord.getPostData.bind(lord));
+            var similartext = "";
+            try {
+                similarText = localStorage.getItem("similarText") || "";
+            } catch (ex) {
+                similarText = "";
+            }
             return lord.doWork("processPosts", {
                 posts: data,
                 spells: lord.spells,
-                options: { ihashDistance: lord.getLocalObject("ihashDistance", 10) }
+                options: {
+                    ihashDistance: lord.getLocalObject("ihashDistance", 10),
+                    similarText: similarText
+                }
             }).then(function(result) {
                 var map = (result && result.posts) ? result.posts.reduce(function(acc, data) {
                     acc[data.postNumber] = data;
@@ -1505,6 +1271,7 @@ lord.applySpells = function(posts, force) {
         });
         return Promise.all(promises);
     }).then(function() {
+        $("#tmpHiddenPosts").remove();
         return Promise.resolve();
     });
 };
@@ -1568,7 +1335,7 @@ lord.draw = function(options) {
     var backgroundShape;
     if (options && options.imageUrl) {
         var backgroundImage = new Image();
-        backgroundImage.src = options.imageUrl;
+        backgroundImage.src = options.imageUrl.replace(/^https?\:\/\/[^\/]+/, "");
         backgroundShape = LC.createShape("Image", {
             x: 0,
             y: 0,
@@ -1654,7 +1421,7 @@ lord.drawOnImage = function(a) {
     lord.showDialog(dlg, {
         title: "drawingOptionsDialogTitle",
         afterShow: function() {
-            $(dlg).css({ minHeight: "180px" });
+            $(dlg).css({ minHeight: "240px" });
             $("button", dlg).button();
             $("[name='backgroundTypeGroup']", dlg).buttonset();
             $("input[name='backgroundColor']", dlg).minicolors({
@@ -1702,6 +1469,23 @@ lord.deleteFile = function(el) {
     }).catch(lord.handleError);
 };
 
+lord.editFileRating = function(el) {
+    var model = lord.model(["base", "tr"]);
+    model.fileInfo = {
+        name: lord.data("fileName", el, true),
+        rating: lord.data("rating", el, true)
+    };
+    var div = lord.template("editFileRatingDialog", model);
+    lord.showDialog(div, { title: "editFileRatingText" }).then(function(result) {
+        if (!result)
+            return Promise.resolve();
+        var form = lord.queryOne("form", div);
+        return lord.post(form.action, new FormData(form));
+    }).then(function(result) {
+        return lord.updatePost(+lord.data("number", el, true));
+    }).catch(lord.handleError);
+};
+
 lord.addToPlaylist = function(a) {
     var mimeType = lord.data("mimeType", a, true);
     if (!lord.isMediaTypeSupported(mimeType)) {
@@ -1716,6 +1500,7 @@ lord.addToPlaylist = function(a) {
     });
     if (exists)
         return;
+    var title = (mimeType.substr(0, 6) == "video/") ? fileName : lord.data("audioTagTitle", a, true);
     tracks.push({
         boardName: lord.data("boardName", a, true),
         fileName: fileName,
@@ -1724,8 +1509,10 @@ lord.addToPlaylist = function(a) {
         duration: lord.data("duration", a, true),
         album: lord.data("audioTagAlbum", a, true),
         artist: lord.data("audioTagArtist", a, true),
-        title: lord.data("audioTagTitle", a, true),
-        year: lord.data("audioTagYear", a, true)
+        title: title,
+        year: lord.data("audioTagYear", a, true),
+        width: +lord.data("width", a, true),
+        height: +lord.data("height", a, true)
     });
     lord.setLocalObject("playerTracks", tracks);
     lord.checkPlaylist();
@@ -1740,23 +1527,19 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
     if (post) {
         post = post.cloneNode(true);
         $(lord.queryOne(".hideReason", post)).remove();
-        $(lord.nameOne("postActionsContainer", post)).remove();
-        $(lord.nameOne("quickReplyContainer", post)).remove();
         lord.nameAll("toThread", post).forEach(function(el) {
             $(el).remove();
         });
-        $(post).removeClass("opPost hidden");
-        $(post).addClass("post temporary");
         p = Promise.resolve(post);
-    } else {
+    } else
         p = lord.api("post", {
             boardName: boardName,
             postNumber: postNumber
         }).then(function(post) {
             return lord.createPostNode(post, false);
         });
-    }
     p.then(function(post) {
+        $(post).removeClass("opPost hidden").addClass("post temporary");
         if (!lord.deviceType("mobile")) {
             post.onmouseout = function(event) {
                 var next = post;
@@ -1780,6 +1563,8 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
                     hide();
             };
             post.onmouseover = function(event) {
+                $(post).removeClass("newPost");
+                $(lord.id(postNumber)).removeClass("newPost");
                 post.mustHide = false;
                 if (post.hideTimer) {
                     clearTimeout(post.hideTimer);
@@ -1800,9 +1585,9 @@ lord.viewPost = function(a, boardName, postNumber, hiddenPost) {
         document.body.appendChild(post);
         if (!lord.deviceType("mobile")) {
             post.style.position = "absolute";
-            var doc = document.documentElement;
-            var coords = a.getBoundingClientRect();
-            var linkCenter = coords.left + (coords.right - coords.left) / 2;
+            var doc = document.documentElement,
+                coords = a.getBoundingClientRect(),
+                linkCenter = coords.left + (coords.right - coords.left) / 2;
             if (linkCenter < 0.6 * doc.clientWidth) {
                 post.style.maxWidth = doc.clientWidth - linkCenter + "px";
                 post.style.left = linkCenter + "px";
@@ -1939,6 +1724,7 @@ lord.fileAddedCommon = function(div) {
     } else {
         p = lord.api("fileHeaders", { url: encodeURIComponent(div.fileUrl) }).then(function(headers) {
             var size = +headers["content-length"];
+            $(div).addClass("postFormSelected");
             if (!size)
                 return Promise.resolve("");
             return lord.readableSize(size);
@@ -1964,7 +1750,6 @@ lord.fileAddedCommon = function(div) {
     lord.removeFileHash(div);
     var prefix = lord.data("sitePathPrefix");
     if (div.file && lord.getLocalObject("checkFileExistence", true)) {
-        var c = {};
         lord.readAs(div.file).then(function(data) {
             div.fileHash = sha1(data);
             return lord.api("fileExistence", { fileHash: div.fileHash });
@@ -1975,12 +1760,11 @@ lord.fileAddedCommon = function(div) {
             var ratingSelect = lord.queryOne("[name='ratingSelectContainer'] > select", div);
             if (ratingSelect)
                 ratingSelect.name = "file_" + div.fileHash + "_rating";
-            var img = lord.node("img");
-            img.src = "/" + prefix + "img/storage.png";
-            $(img).addClass("signImage");
-            img.title = lord.text("fileExistsOnServerText");
+            var i = lord.node("i");
+            i.className = "mdi mdi-server";
+            i.title = lord.text("fileExistsOnServerText");
             lord.queryOne("span", div).appendChild(lord.node("text", " "));
-            lord.queryOne("span", div).appendChild(img);
+            lord.queryOne("span", div).appendChild(i);
             lord.checkPostformTextareaSize();
             var fileHashes = lord.getFileHashes(div);
             if (fileHashes.value.indexOf(div.fileHash) < 0)
@@ -1999,8 +1783,9 @@ lord.fileAddedCommon = function(div) {
         lord.readAs(div.file, "DataURL").then(function(url) {
             var img = lord.queryOne("img", div);
             img.src = url;
-            if ("neutron" == lord.settings().style.name)
-                $(img).addClass("noInvert");
+            img.style.display = "";
+            lord.queryOne("#filePreviewLabel", div).style.display = "none";
+            $(div).addClass("postFormSelected");
             img.addEventListener("load", function load() {
                 img.removeEventListener("load", load, false);
                 lord.checkPostformTextareaSize();
@@ -2011,16 +1796,20 @@ lord.fileAddedCommon = function(div) {
         if (!fileName.match(/\.(jpe?g)$/i) || !lord.getLocalObject("stripExifFromJpeg", true))
             preview();
     } else {
-        var match = fileNameFull.match(/\.(jpe?g|png|gif|mpeg|mp1|m1a|m2a|mpa|mp3|mpg|mp4|ogg|ogv|webm|wav|pdf)$/i);
+        var match = fileNameFull.match(/\.(jpe?g|png|gif|mpeg|mp1|m1a|m2a|mpa|mp3|mpg|mp4|ogg|ogv|webm|wav|pdf)$/i),
+            img = lord.queryOne("img", div);
         if (match) {
             var extension = match[1].replace("jpg", "jpeg").replace("ogv", "ogg").toLowerCase();
             ["mpeg", "mp1", "m1a", "m2a", "mpa", "mpg"].forEach(function(alias) {
                 extension = extension.replace(alias, "mp3");
             });
-            lord.queryOne("img", div).src = "/" + prefix + "img/" + extension + "_file.png";
-        } else {
-            lord.queryOne("img", div).src = "/" + prefix + "img/file.png";
-        }
+            img.src = "/" + prefix + "img/" + extension + "_file.png";
+        } else
+            img.src = "/" + prefix + "img/file.png";
+        img.style.display = "";
+        $(img).removeClass("noInvert");
+        lord.queryOne("#filePreviewLabel", div).style.display = "none";
+        $(div).addClass("postFormSelected");
     }
     if (div.file && fileNameFull.match(/\.(jpe?g)$/i) && lord.getLocalObject("stripExifFromJpeg", true)) {
         lord.readAs(div.file).then(function(data) {
@@ -2088,12 +1877,17 @@ lord.fileSelected = function(div) {
 
 lord.attachFileByLink = function(a) {
     var div = a.parentNode;
-    var url = prompt(lord.text("linkLabelText"), div.fileUrl);
-    if (null === url)
-        return;
-    lord.clearFileInput(div);
-    div.fileUrl = url;
-    lord.fileAddedCommon(div);
+    lord.prompt({
+        title: "linkLabelText",
+        value: div.fileUrl,
+        style: { minWidth: "350px" }
+    }).then(function(result) {
+        if (!result.accepted || !result.value)
+            return;
+        lord.clearFileInput(div);
+        div.fileUrl = result.value;
+        lord.fileAddedCommon(div);
+    }).catch(lord.handleError);
 };
 
 lord.setDrawingBackgroundColor = function(btn, color) {
@@ -2136,6 +1930,7 @@ lord.attachFileByDrawing = function(a) {
                     });
                 };
                 img.src = url;
+                $(div).addClass("postFormSelected");
             });
         }).then(function(options) {
             var model = lord.model(["base", "tr"]);
@@ -2148,7 +1943,7 @@ lord.attachFileByDrawing = function(a) {
             return lord.showDialog(dlg, {
                 title: "drawingOptionsDialogTitle",
                 afterShow: function() {
-                    $(dlg).css({ minHeight: "180px" });
+                    $(dlg).css({ minHeight: "200px" });
                     $("button", dlg).button();
                     $("[name='backgroundTypeGroup']", dlg).buttonset();
                     $("input[name='backgroundColor']", dlg).minicolors({
@@ -2182,7 +1977,7 @@ lord.attachFileByDrawing = function(a) {
         p = lord.showDialog(dlg, {
             title: "drawingOptionsDialogTitle",
             afterShow: function() {
-                $(dlg).css({ minHeight: "180px" });
+                $(dlg).css({ minHeight: "200px" });
                 $("button", dlg).button();
                 $("input[name='backgroundColor']", dlg).minicolors({
                     control: "wheel",
@@ -2266,6 +2061,15 @@ lord.removeFile = function(div) {
         lord.queryOne("a.postformFileRemoveButton", div).style.display = "none";
     }
     lord.checkPostformTextareaSize();
+    for (var i = 0; i < parent.children.length; ++i) {
+        var c = parent.children[i];
+        if ("none" == lord.queryOne("a.postformFileRemoveButton", c).style.display)
+            return;
+    }
+    var ndiv = div.cloneNode(true);
+    lord.queryOne("a.postformFileRemoveButton", ndiv).style.display = "none";
+    lord.clearFileInput(ndiv);
+    parent.appendChild(ndiv);
 };
 
 lord.browseFile = function(e, div) {
@@ -2538,8 +2342,6 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
         lord.setLocalObject("favoriteThreads", favoriteThreads);
         var opPost = lord.id(threadNumber);
         var btn = lord.nameOne("addToFavoritesButton", opPost);
-        var img = lord.queryOne("img", btn);
-        img.src = img.src.replace("favorite.png", "favorite_active.png");
         var div = lord.id("favorites");
         var span = lord.queryOne("span", btn);
         $(span).empty();
@@ -2569,7 +2371,11 @@ lord.showUserIp = function(a) {
         boardName: boardName,
         postNumber: postNumber
     }).then(function(result) {
-        prompt("IP:", result.ipv4 || result.ip);
+        return lord.prompt({
+            title: "IP:",
+            value: result.ipv4 || result.ip,
+            readOnly: true
+        });
     }).catch(lord.handleError);
 };
 
@@ -2597,6 +2403,7 @@ lord.submitted = function(event, form) {
     lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
+    lord.setLocalObject("password", lord.nameOne("password", form).value || "");
     var formData = new FormData(form);
     lord.queryAll(".postformFile", form).forEach(function(div) {
         if (div.file)
@@ -2638,8 +2445,10 @@ lord.submitted = function(event, form) {
             resetButton();
             var threadId = +lord.nameOne("threadNumber", postForm).value;
             lord.resetPostForm();
-            if (["postFormContainerTop", "postFormContainerBottom"].indexOf(form.parentNode.id) < 0)
+            if (["postFormContainerTop", "postFormContainerBottom"].indexOf(form.parentNode.id) < 0
+                && (!$("#postForm").hasClass("floatingPostForm") || !lord.postFormFixed)) {
                 lord.hidePostForm();
+            }
             lord.resetCaptcha();
             var currentThreadNumber = lord.data("threadNumber");
             if (currentThreadNumber) {
@@ -2650,8 +2459,9 @@ lord.submitted = function(event, form) {
             } else {
                 var action = lord.getLocalObject("quickReplyAction", "append_post");
                 if ("goto_thread" == action) {
-                    window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/"
+                   var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/"
                         + result.threadNumber + ".html#" + result.number;
+                    (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
                     return;
                 } else if (threadId) {
                     var thread = lord.id("thread" + threadId);
@@ -2673,8 +2483,9 @@ lord.submitted = function(event, form) {
         } else {
             c.progressBar.hide(200);
             resetButton();
-            window.location = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
+            var loc = "/" + lord.data("sitePathPrefix") + result.boardName + "/res/" + result.threadNumber
                 + ".html";
+            (lord.getLocalObject('enableAjax', false)) ? tumb.ajax(loc) : window.location = loc;
         }
         return Promise.resolve();
     }).catch(function(err) {
@@ -2704,7 +2515,7 @@ lord.appendDraft = function(draft, visible) {
     var model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
     model.settings = lord.settings();
     model.draft = draft;
-    model.draft.user = model.user;
+    model.draft.user = { level: model.user.level(lord.data("boardName")) };
     var settings = lord.settings();
     var locale = model.site.locale;
     var dateFormat = model.site.dateFormat;
@@ -2733,14 +2544,14 @@ lord.fillFormWithDraft = function(a) {
     }
     if (!draft)
         return;
-    var postForm = lord.id("postForm");
-    var email = lord.nameOne("email", postForm);
-    var name = lord.nameOne("name", postForm);
-    var subject = lord.nameOne("subject", postForm);
-    var text = lord.nameOne("text", postForm);
-    var op = lord.nameOne("signAsOp", postForm);
-    var tripcode = lord.nameOne("tripcode", postForm);
-    var markupMode = lord.nameOne("markupMode", postForm);
+    var postForm = lord.id("postForm"),
+        email = lord.nameOne("email", postForm),
+        name = lord.nameOne("name", postForm),
+        subject = lord.nameOne("subject", postForm),
+        text = lord.nameOne("text", postForm),
+        op = lord.nameOne("signAsOp", postForm),
+        tripcode = lord.nameOne("tripcode", postForm),
+        markupMode = lord.nameOne("markupMode", postForm);
     //TODO: confirm if form not empty
     email.value = draft.email;
     name.value = draft.name;
@@ -2955,7 +2766,7 @@ lord.strikeOutHiddenPostLinks = function(parent) {
 
 lord.signOpPostLinks = function(parent) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     lord.queryAll("a", parent).forEach(function(a) {
         lord.signOpPostLink(a);
     });
@@ -2963,14 +2774,14 @@ lord.signOpPostLinks = function(parent) {
 
 lord.signOwnPostLinks = function(parent, ownPosts) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     ownPosts = ownPosts || lord.getLocalObject("ownPosts", {});
     lord.queryAll("a", parent).forEach(function(a) {
         lord.signOwnPostLink(a, ownPosts);
     });
 };
 
-lord.downloadThread = function(el) {
+lord.downloadThreadFiles = function(el) {
     var suffix = lord.data("archived", el, true) ? "arch" : "res";
     var p;
     var title;
@@ -3035,7 +2846,7 @@ lord.downloadThread = function(el) {
 
 lord.processPosts = function(parent) {
     if (!parent)
-        parent = document.body;
+        parent = lord.queryOne(".wrap");
     $(".postBody", parent).css("maxWidth", ($(window).width() - 30) + "px");
     var posts = ($(parent).hasClass("post") || $(parent).hasClass("opPost")) ? [parent]
         : lord.queryAll(".post, .opPost", parent);
@@ -3060,8 +2871,15 @@ lord.processPosts = function(parent) {
                 span.style.display = "none";
             });
         }
-        if (lord.getLocalObject("spellsEnabled", true))
+        if (lord.getLocalObject("spellsEnabled", true)) {
             lord.applySpells(posts).catch(lord.handleError);
+        } else {
+            var hiddenPosts = lord.getLocalObject("hiddenPosts", {});
+            posts.forEach(function(post) {
+                lord.processPost(hiddenPosts, post);
+            });
+            $("#tmpHiddenPosts").remove();
+        }
         return Promise.resolve();
     });
 };
@@ -3107,10 +2925,10 @@ lord.hotkey_previousPageImage = function() {
         lord.previousFile();
         return false;
     }
-    if (+lord.data("threadNumber"))
+    if (+lord.data("threadNumber") || lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
         return;
-    var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.queryAll(".pagesItem:not(.metaPage)");
+    var curr = lord.queryOne(".pagesItem.currentPage"),
+        list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 1; i < list.length; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i - 1]).href;
@@ -3124,10 +2942,10 @@ lord.hotkey_nextPageImage = function() {
         lord.nextFile();
         return false;
     }
-    if (+lord.data("threadNumber"))
+    if (+lord.data("threadNumber") || lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
         return;
-    var curr = lord.queryOne(".pagesItem.currentPage");
-    var list = lord.queryAll(".pagesItem:not(.metaPage)");
+    var curr = lord.queryOne(".pagesItem.currentPage"),
+        list = lord.queryAll(".pagesItem:not(.metaPage)");
     for (var i = 0; i < list.length - 1; ++i) {
         if (curr == list[i]) {
             window.location.href = lord.queryOne("a", list[i + 1]).href;
@@ -3160,6 +2978,8 @@ lord.currentThread = function(selectLast) {
 };
 
 lord.previousNextThreadPostCommon = function(next, post) {
+    if (lord.queryOne("textarea:focus, input:focus", lord.id("wrapper")))
+        return;
     var iterationLoop = function(container, el) {
         for (var i = 0; i < container.length; i += 1) {
             if (container[i] == el) {
@@ -3337,10 +3157,18 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.getLocalObject("showFrame", false) && tumb.go.width >= 1024) ? 210 : 0;
+    var fw = (lord.settings().showFrame && lord.deviceType("desktop")) ? $("#sidebar").width() : 0,
+        ic = input.getBoundingClientRect(),
+        html = document.documentElement,
+        of = {
+            "x" : html.clientWidth-ic.right < lord.currentMenu.width(),
+            "y" : (window.pageYOffset+ic.top < lord.currentMenu.width()) ? false : html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
+        },
+        cx = pageXOffset + ic.left + (of.x ? -lord.currentMenu.width() : 0) - fw,
+        cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
-    lord.currentMenu.css("top", lord.queryOne(selector).parentNode.getBoundingClientRect().top+pageYOffset-24);
-    lord.currentMenu.css("left", input.getBoundingClientRect().left+pageXOffset-fw);
+    lord.currentMenu.css("left", cx);
+    lord.currentMenu.css("top", cy);
 };
 
 lord.hotkey = function(name, hotkeys) {
@@ -3352,7 +3180,7 @@ lord.hotkey = function(name, hotkeys) {
 
 lord.showPostActionsMenu = function(e, input, postNumber) {
     var id = "post" + postNumber + "ActionsMenu";
-    $(lord.id(id)).remove();
+    $("#" + id).remove();
     var post = lord.id(postNumber);
     if (!post)
         return;
@@ -3364,7 +3192,7 @@ lord.showPostActionsMenu = function(e, input, postNumber) {
             rawText: lord.queryOne("blockquote", post).textContent,
             fileInfos: lord.queryAll(".postFile", post),
             isOp: $(post).hasClass("opPost"),
-            hidden: lord.getLocalObject("hiddenPosts", {}).hasOwnProperty(boardName + "/" + postNumber)
+            hidden: lord.getLocalObject("hiddenPosts", {})[boardName + "/" + postNumber]
         },
         thread: {
             fixed: lord.data("fixed", post),
@@ -3381,6 +3209,20 @@ lord.showPostActionsMenu = function(e, input, postNumber) {
     if (lord.getLocalObject("hotkeysEnabled", true) && !lord.deviceType("mobile"))
         model.hideActionShortcut = lord.hotkey("hidePost");
     post.appendChild(lord.template("postActionsMenu", model));
+    return lord.showMenu(e, input, "#" + id);
+};
+
+lord.showImageSearchMenu = function(e, input, fileName) {
+    var id = "file" + fileName.replace(".", "-") + "SearchMenu";
+    $("#" + id).remove();
+    var file = lord.id("file" + fileName);
+    if (!file)
+        return;
+    var model = lord.model(["base", "board/" + lord.data("boardName")]);
+    model.fileInfo = { name: fileName };
+    model.siteProtocol = window.location.protocol;
+    model.siteDomain = window.location.host;
+    file.appendChild(lord.template("imageSearchMenu", model));
     return lord.showMenu(e, input, "#" + id);
 };
 
@@ -3444,7 +3286,7 @@ lord.appendHotkeyShortcuts = function() {
 };
 
 lord.initializeOnLoadBoard = function() {
-    $(".postBody", document.body).css("maxWidth", ($(window).width() - 30) + "px");
+    lord.adjustPostBodySize();
     var c = {};
     c.model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
     c.model.settings = lord.settings();
@@ -3460,7 +3302,7 @@ lord.initializeOnLoadBoard = function() {
             bumpLimitReached: lord.data("bumpLimitReached")
         };
     }
-    if (c.threadOrBoard && c.model.board.captchaEnabled) {
+    if (c.threadOrBoard) {
         c.model.customPostFormField = lord.customPostFormField;
         c.model.customPostFormOption = lord.customPostFormOption;
         c.model.postformRules = JSON.parse(lord.id("model-postformRules").innerHTML);
@@ -3489,44 +3331,47 @@ lord.initializeOnLoadBoard = function() {
                 $("#markup").width($(this).width() + 8);
             }).width(400).resize();
         }
-        var captcha = lord.selectCaptchaEngine();
-        var appendCaptchaWidgetToContainer = function(container) {
-            if (captcha && captcha.widgetHtml)
-                container.innerHTML = captcha.widgetHtml;
-            else if (captcha && captcha.widgetTemplate)
-                container.appendChild(lord.template(captcha.widgetTemplate, captcha));
-        };
-        lord.api("captchaQuota", { boardName: lord.data("boardName") }).then(function(result) {
-            var quota = result.quota;
-            if (quota > 0) {
-                appendCaptchaWidgetToContainer(lord.id("hiddenPostForm"));
-                var span = lord.node("span");
-                span.appendChild(lord.node("text", lord.text("noCaptchaText") + ". "
-                    + lord.text("captchaQuotaText") + " " + quota));
-                lord.id("captchaContainer").appendChild(span);
-            } else {
-                appendCaptchaWidgetToContainer(lord.id("captchaContainer"));
-            }
-            if (captcha && captcha.script) {
-                var script = lord.node("script");
-                script.type = "text/javascript";
-                script.innerHTML = captcha.script;
-                lord.queryOne("head").appendChild(script);
-            }
-            if (captcha && captcha.scriptSource) {
-                var script = lord.node("script");
-                script.type = "text/javascript";
-                script.src = captcha.scriptSource;
-                lord.queryOne("head").appendChild(script);
-            }
-            if (typeof lord.postFormLoaded == "function")
-                lord.postFormLoaded();
-        }).catch(lord.handleError);
-    }
-    if (lord.queryOne(".opPost[data-archived='true']")) {
-        lord.nameAll("backButton").forEach(function(btn) {
-            btn.href += "/archive.html";
-        });
+        if (c.model.board.captchaEnabled) {
+            var captcha = lord.selectCaptchaEngine();
+            var appendCaptchaWidgetToContainer = function(container) {
+                if (captcha && captcha.widgetHtml)
+                    container.innerHTML = captcha.widgetHtml;
+                else if (captcha && captcha.widgetTemplate)
+                    if (container)
+                        container.appendChild(lord.template(captcha.widgetTemplate, captcha));
+                    else
+                        return lord.handleError("failedToPrepareCaptchaText");
+            };
+            lord.api("captchaQuota", { boardName: lord.data("boardName") }).then(function(result) {
+                var quota = result.quota;
+                if (quota > 0) {
+                    appendCaptchaWidgetToContainer(lord.id("hiddenPostForm"));
+                    var span = lord.node("span");
+                    span.appendChild(lord.node("text", lord.text("noCaptchaText") + ". "
+                        + lord.text("captchaQuotaText") + " " + quota));
+                    if(lord.id("captchaContainer"))
+                        lord.id("captchaContainer").appendChild(span);
+                    else
+                        return Promise.reject("failedToPrepareCaptchaText");
+                } else {
+                    appendCaptchaWidgetToContainer(lord.id("captchaContainer"));
+                }
+                if (captcha && captcha.script) {
+                    var script = lord.node("script");
+                    script.type = "text/javascript";
+                    script.innerHTML = captcha.script;
+                    lord.queryOne("head").appendChild(script);
+                }
+                if (captcha && captcha.scriptSource) {
+                    var script = lord.node("script");
+                    script.type = "text/javascript";
+                    script.src = captcha.scriptSource;
+                    lord.queryOne("head").appendChild(script);
+                }
+                if (typeof lord.postFormLoaded == "function")
+                    lord.postFormLoaded();
+            }).catch(lord.handleError);
+        }
     }
     if (lord.deviceType("mobile"))
         lord.setTooltips();
@@ -3555,7 +3400,7 @@ lord.initializeOnLoadBoard = function() {
             }
         }
     }
-    lord.processPosts(document.body);
+    lord.processPosts(lord.queryOne(".wrap"));
     var lastLang = lord.getLocalObject("lastCodeLang", "-");
     var sel = lord.queryOne(".postformMarkup > span > [name='codeLang']");
     if (sel) {
@@ -3579,17 +3424,21 @@ lord.initializeOnLoadBoard = function() {
 
 lord.initializeOnLoadThread = function() {
     lord.addVisibilityChangeListener(lord.visibilityChangeListener);
-    var enabled = lord.getLocalObject("autoUpdate", {})[+lord.data("threadNumber")];
+    var enabled = lord.getLocalObject("autoUpdate", {})[lord.data("boardName") + "/" +lord.data("threadNumber")];
     if (true === enabled || (false !== enabled && lord.getLocalObject("autoUpdateThreadsByDefault", false)))
         lord.setAutoUpdateEnabled(true);
 };
 
 lord.scrollHandler = function() {
     var k = 1300;
-    var top = ((window.innerHeight + window.scrollY + k) >= document.body.offsetHeight);
+    var top = ((window.innerHeight + window.scrollY + k) >= lord.queryOne(".wrap").scrollHeight);
     var bottom = (window.scrollY <= k);
-    lord.queryOne(".navigationButtonTop").style.display = bottom ? "none" : "";
-    lord.queryOne(".navigationButtonBottom").style.display = top ? "none" : "";
+    var nbTop = lord.queryOne(".navigationButtonTop");
+    if (nbTop)
+        nbTop.style.display = bottom ? "none" : "";
+    var nbBottom = lord.queryOne(".navigationButtonBottom");
+    if (nbBottom)
+        nbBottom.style.display = top ? "none" : "";
 };
 
 lord.addVisibilityChangeListener = function(callback) {
@@ -3651,6 +3500,12 @@ lord.blinkFaviconNewMessage = function() {
         link.href = link.href.replace("favicon_newmessage.ico", "favicon.ico");
 };
 
+if (lord.getLocalObject("useWebSockets", true)) {
+    lord.wsHandlers["newPost"] = function(msg) {
+        lord.updateThread(true);
+    };
+}
+
 lord.updateThread = function(silent) {
     var boardName = lord.data("boardName");
     var threadNumber = +lord.data("threadNumber");
@@ -3698,10 +3553,9 @@ lord.updateThread = function(silent) {
             return Promise.resolve();
         c.threadInfo = threadInfo;
         c.sequenceNumber = c.posts[c.posts.length - 1].sequenceNumber;
-        var promises = c.posts.map(function(post) {
+        return lord.series(c.posts, function(post) {
             return lord.createPostNode(post, true, c.threadInfo);
-        });
-        return Promise.all(promises);
+        }, true);
     }).then(function(posts) {
         if (!posts || !posts.length || posts.length < 1)
             return Promise.resolve();
@@ -3782,6 +3636,19 @@ lord.updateThread = function(silent) {
 };
 
 lord.setAutoUpdateEnabled = function(enabled) {
+    var list = lord.getLocalObject("autoUpdate", {});
+    var boardName = lord.data("boardName");
+    var threadNumber = +lord.data("threadNumber");
+    list[boardName + "/" + threadNumber] = enabled;
+    lord.setLocalObject("autoUpdate", list);
+    if (lord.getLocalObject("useWebSockets", true)) {
+        lord.sendWSMessage((enabled ? "subscribeToThreadUpdates" : "unsubscribeFromThreadUpdates"), {
+            boardName: boardName,
+            threadNumber: threadNumber,
+        }).then(function(msg) {
+            lord.updateThread(true);
+        }).catch(lord.handleError);
+    }
     if (enabled) {
         var intervalSeconds = lord.getLocalObject("autoUpdateInterval", 15);
         lord.autoUpdateTimer = new lord.AutoUpdateTimer(intervalSeconds);
@@ -3790,10 +3657,6 @@ lord.setAutoUpdateEnabled = function(enabled) {
         lord.autoUpdateTimer.stop();
         lord.autoUpdateTimer = null;
     }
-    var list = lord.getLocalObject("autoUpdate", {});
-    var threadNumber = +lord.data("threadNumber");
-    list[threadNumber] = enabled;
-    lord.setLocalObject("autoUpdate", list);
 };
 
 (document.readyState === "complete") ? load_b() : window.addEventListener("load", load_b, false);
@@ -3805,5 +3668,4 @@ function load_b() {
         lord.initializeOnLoadThread();
 }
 
-if(!lord.getLocalObject('enableAjax', false))
-    window.addEventListener("scroll", lord.scrollHandler, false);
+window.addEventListener("scroll", lord.scrollHandler, false);

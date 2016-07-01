@@ -88,7 +88,7 @@ var MarkupTags = {
     "[spoiler]": {
         op: "<span class=\"spoiler\">",
         cl: "</span>"
-    },
+    }
 };
 
 var ListTypes = {
@@ -135,6 +135,10 @@ var matchYoutubeLink = function(href) {
 
 var matchCoubLink = function(href) {
     return href.match(/^https?:\/\/coub\.com\/view\/[^\/\?]+.*$/);
+};
+
+var matchVocarooLink = function(href) {
+    return href.match(/^https?:\/\/vocaroo\.com\/i\/[a-zA-Z0-9]+$/);
 };
 
 var getTwitterEmbeddedHtml = function(href, defaultHtml) {
@@ -265,6 +269,17 @@ var getCoubEmbeddedHtml = function(href, defaultHtml) {
     }).then(function(html) {
         return Promise.resolve(html);
     });
+};
+
+var getVocarooEmbeddedHtml = function(href, defaultHtml) {
+    var match = href.match(/^https?:\/\/vocaroo\.com\/i\/([a-zA-Z0-9]+)$/);
+    var audioId = match ? match[1] : null;
+    if (!audioId)
+        return Promise.resolve(defaultHtml);
+    var html = controller.sync("vocarooAudioLink", { info: { id: audioId } });
+    if (!html)
+        return Promise.reject(Tools.translate("Failed to create Vocaroo audio embedded container"));
+    return Promise.resolve(html);
 };
 
 var ProcessingInfo = function(text, boardName, referencedPosts, deletedPost, referencesToReplace) {
@@ -567,6 +582,8 @@ var checkLangsMatch = function(info, matchs, matche) {
 };
 
 var checkExternalLink = function(info, matchs) {
+    if (matchs.index > 0 && ["@", "#"].indexOf(info.text[matchs.index - 1]) >= 0)
+        return false;
     return /^\d+\.\d+\.\d+\.\d+$/.test(matchs[2]) || Tools.externalLinkRootZoneExists(matchs[4]);
 };
 
@@ -641,6 +658,8 @@ var convertExternalLink = function(info, text, matchs, _, options) {
         return getYoutubeEmbeddedHtml(href, def);
     if (matchCoubLink(href))
         return getCoubEmbeddedHtml(href, def);
+    if (matchVocarooLink(href))
+        return getVocarooEmbeddedHtml(href, def);
     return Promise.resolve(def);
 };
 
@@ -682,7 +701,7 @@ var convertPostLink = function(info, _, matchs, _, options) {
             if (postNumber != post.threadNumber)
                 href += "#" + postNumber;
             href += "\"";
-            var result = "<a " + href + " data-board-name=\"" + boardName + "\" data-post-number=\"" + postNumber
+            var result = "<a class='ajax' " + href + " data-board-name=\"" + boardName + "\" data-post-number=\"" + postNumber
                 + "\" data-thread-number=\"" + post.threadNumber + "\">" + escaped + "</a>";
             return result;
         });
@@ -731,6 +750,8 @@ var convertUrl = function(info, text, matchs, matche, options) {
         return getYoutubeEmbeddedHtml(href, def);
     if (matchCoubLink(href))
         return getCoubEmbeddedHtml(href, def);
+    if (matchVocarooLink(href))
+        return getVocarooEmbeddedHtml(href, def);
     return Promise.resolve(def);
 };
 
@@ -919,7 +940,7 @@ var processPostText = function(boardName, text, options) {
             }, { checkFunction: checkExternalLink });
         }).then(function() {
             return process(info, convertProtocol, {
-                op: /(mailto|irc|news):(\S+)/gi,
+                op: /(mailto|irc|news)\:(\S+)/gi,
                 cl: null
             });
         }).then(function() {

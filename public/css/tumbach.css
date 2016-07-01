@@ -1,4 +1,4 @@
-/*Tumbach (beta)*/
+/*Tumbach*/
 
 .color-prim {
     background-color: #99D9EA;
@@ -11,7 +11,7 @@
 body, aside {
     background-color: #EEE;
 }
-a {
+a, .cspoilerTitle {
     text-decoration:none;
     color: rgba(0, 127, 255, .87);
     transition: .1s color;
@@ -19,11 +19,15 @@ a {
 .card-paper a, .post a {
     text-decoration: underline;
 }
-a.expandCollapse {
+a.expandCollapse, a i {
     color: #444;
 }
+a.expandCollapse:hover {
+    color: #777;
+}
 .postSequenceNumber,
-a:hover {
+.cspoilerTitle:hover,
+a:hover, a:hover i, a:focus {
     color: #F80;
 }
 a.expandCollapse:hover {
@@ -32,12 +36,21 @@ a.expandCollapse:hover {
 hr {
     background-color: #CCC;
 }
-span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
+span.spoiler {
     background: #BBB;
     color: #BBB;
+    transition: .2s background;
+}
+span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
+    opacity: 0;
+    transition: .2s opacity;
 }
 span.spoiler:hover {
-    color: #333;
+    color: inherit;
+    background: inherit;
+}
+span.spoiler:hover * {
+    opacity: 1;
 }
 .select {
     background: #EAEAEA;
@@ -69,21 +82,65 @@ span.spoiler:hover {
     background-color: #99D9EA;
     border: 1px solid #7AB;
 }
-.track.selected {
+.track.selected, .track:hover, .pseudoTrack:hover {
     background-color: #7AB;
     border: 1px solid #99D9EA;
 }
 .chatMessage {
     border: 1px solid #CCC;
-    background-color: rgba(0, 188, 212, .25);
+}
+.chatContact {
+    background-color: rgba(153, 217, 234, .25);
+}
+.chatContact.selected, .chatMessage, .chatContact:hover {
+    background-color: rgba(153, 217, 234, .75);
 }
 ul.tabWidget > li {
-    background-color: #DDD;
+    background-color: rgba(153, 217, 234, .25);
     border: 1px solid #CCC;
 }
 ul.tabWidget > li.activated {
-    background-color: #AAA;
+    background-color: #99D9EA;
 }
 .scrollAreaH60 {
     border: 1px solid #CCC;
+}
+.searchResultHighlighted {
+    background-color: #FF0;
+}
+.ui-tooltip {
+    border: 1px solid #CCC !important;
+}
+.ui-tooltip-content::after {
+    border-color: #CCC transparent;
+}
+.ui-slider, .ui-slider-handle {
+    border: 1px solid #000 !important;
+}
+.newPost {
+    background-color: #CCC;
+}
+.post:target, .opPost:target {
+    background-color: #BDD;
+}
+.opSign {
+    color: #080;
+}
+.submitContainer > input {
+    border-color: #99D9EA;
+    background: #99D9EA;
+}
+#postForm {
+    background-color: #EEE;
+}
+#postForm.floatingPostForm {
+    border: 2px solid #BBB;
+}
+.postFormHeader {
+    background-color: #99D9EA;
+    border: 1px solid #CCC;
+}
+#postForm.floatingPostForm > .postFormHeader {
+    border: none;
+    border-bottom: 1px solid #CCC;
 }

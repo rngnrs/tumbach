@@ -3,17 +3,13 @@
 {{#def.head}}
 <body>
 {{#def.header}}
+<a id="top"></a>
 <div class="wrap" {{#def.baseData}}>
-    {{#def.toolbar}}
+    {{#def.sidebar}}
     <div class="wrappie">
         {{#def.customHeader}}
         <div id="wrapper">
-            <div class="mobileOnly">
-                {{#def.searchAction}}
-            </div>
-            <div class="theTitle desktopOnly">
-                <h1>{{=it.tr.searchResultsMessage}}</h1>
-            </div>
+            {{#def.searchAction}}
             <div id="searchResultsPlaceholder" class="loadingMessage">
                 <img src="/{{=it.site.pathPrefix}}img/loading_big.gif">
                 <h1 style="display: inline;">{{=it.tr.searchingMessage}}</h1>
@@ -22,5 +18,6 @@
     </div>
     {{#def.customFooter}}
 </div>
+<a id="bottom"></a>
 </body>
 </html>

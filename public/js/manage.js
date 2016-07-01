@@ -233,6 +233,9 @@ lord.initFileTree = function() {
     }).on("filetreeclicked", function(e, data) {
         $(".fileActions > button").button("enable");
         lord.currentFile = data.rel;
+        var TEXT_FORMATS = ["txt", "js", "json", "jst", "html", "xml", "css", "md", "example", "gitignore", "log"];
+        if (TEXT_FORMATS.indexOf(lord.currentFile.split(".").pop()) < 0)
+            $("#editFile").button("disable");
         var lbl = lord.id("currentFileLabel");
         $(lbl).empty();
         lbl.appendChild(lord.node("text", lord.text("currentFileLabelText") + " " + data.rel));
@@ -329,6 +332,25 @@ lord.deleteFile = function(isDir) {
     }).catch(lord.handleError);
 };
 
+lord.downloadFile = function() {
+    if (!lord.currentFile)
+        return;
+    lord.api("fileContent", { fileName: lord.currentFile }).then(function(result) {
+        var blob;
+        if ("Buffer" == result.content.type) {
+            var buffer = new ArrayBuffer(result.content.data.length);
+            var arr = new Uint8Array(buffer);
+            result.content.data.forEach(function(b, i) {
+                arr[i] = b;
+            });
+            blob = new Blob([buffer]);
+        } else {
+            blob = new Blob([result.content], {type: "text/plain;charset=utf-8"});
+        }
+        saveAs(blob, lord.currentFile.split("/").pop());
+    }).catch(lord.handleError);
+};
+
 lord.editFile = function(fileName) {
     if (!fileName && !lord.currentFile)
         return;
@@ -382,10 +404,17 @@ lord.editFile = function(fileName) {
 lord.regenerateCache = function() {
     var div = lord.node("div");
     div.appendChild(lord.node("text", lord.text("reloadWarningText")));
+    div.appendChild(lord.node("br"));
+    var inp = lord.node("input");
+    inp.type = "checkbox";
+    div.appendChild(inp);
+    div.appendChild(lord.node("text", lord.text("regenerateArchivedThreadsLabelText")));
     lord.showDialog(div, { title: lord.text("confirmationText") }).then(function(result) {
         if (!result)
             return Promise.resolve();
         var formData = new FormData();
+        if (inp.checked)
+            formData.append("regenerateArchive", "true");
         return lord.post("/" + lord.data("sitePathPrefix") + "action/superuserRegenerateCache", formData);
     }).catch(lord.handleError);
 };

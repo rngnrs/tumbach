@@ -3,63 +3,64 @@
 importScripts("3rdparty/Promise.min.js");
 importScripts("3rdparty/underscore-min.js");
 importScripts("3rdparty/BigInteger.min.js");
+importScripts("3rdparty/xregexp-all.min.js");
 importScripts("api.js");
 
 /*Constants*/
 
 //TODO: Individual argument regexp
 lord.TokenTypes = [{
-    "name": "all"
+    name: "all"
 }, {
-    "name": "words",
-    "args": true
+    name: "words",
+    args: true
 }, {
-    "name": "op"
+    name: "op"
 }, {
-    "name": "wipe",
-    "args": true
+    name: "wipe",
+    args: true
 }, {
-    "name": "subj",
-    "args": "opt"
+    name: "subj",
+    args: "optrx"
 }, {
-    "name": "name",
-    "args": "opt"
+    name: "name",
+    args: "opt"
 }, {
-    "name": "trip",
-    "args": "opt"
+    name: "trip",
+    args: "opt"
 }, {
-    "name": "sage",
-    "args": false
+    name: "sage",
+    args: false
 }, {
-    "name": "tlen",
-    "args": "opt"
+    name: "tlen",
+    args: "opt"
 }, {
-    "name": "num",
-    "args": true
+    name: "num",
+    args: true
 }, {
-    "name": "img",
-    "args": "opt"
+    name: "img",
+    args: "opt"
 }, {
-    "name": "imgn",
-    "args": true
+    name: "imgn",
+    args: true
 }, {
-    "name": "ihash",
-    "args": true
+    name: "ihash",
+    args: true
 }, {
-    "name": "exp",
-    "args": true
+    name: "exp",
+    args: "rx"
 }, {
-    "name": "exph",
-    "args": true
+    name: "exph",
+    args: "rx"
 }, {
-    "name": "video",
-    "args": "opt"
+    name: "video",
+    args: "optrx"
 }, {
-    "name": "vauthor",
-    "args": true
+    name: "vauthor",
+    args: true
 }, {
-    "name": "rep",
-    "args": true
+    name: "rep",
+    args: "rx"
 }];
 
 /*Functions*/
@@ -85,6 +86,7 @@ lord.parseSpells = function(text) {
         pos += first;
         return text.slice(first);
     };
+    var inRegexp;
     var nextToken = function(text) {
         if (text.search(/[&\|\!\(\)]/) == 0) { //Special tokens
             pos += 1;
@@ -100,10 +102,22 @@ lord.parseSpells = function(text) {
         for (var i = 0; i < lord.TokenTypes.length; ++i) {
             var TokenType = lord.TokenTypes[i];
             var pattern = "^\\#" + TokenType.name + "(\\[(\\w+)(\\,(\\d+))?\\])?";
-            if ("opt" == TokenType.args)
+            switch (TokenType.args) {
+            case "opt":
                 pattern += "\\(((\\\\\\)|[^\\)])*?)\\)";
-            else if (TokenType.args)
+                break;
+            case "rx":
+                pattern += "\\((\/.*\/(i|igm?|img?|g|gmi?|gim?|m|mig?|mgi?)?)?\\)";
+                break;
+            case "optrx":
+                pattern += "\\(\/.*\/(i|igm?|img?|g|gmi?|gim?|m|mig?|mgi?)?\\)";
+                break;
+            case true:
                 pattern += "\\(((\\\\\\)|[^\\)])+?)\\)";
+                break;
+            default:
+                break;
+            }
             var rx = new RegExp(pattern);
             if (0 != text.search(rx))
                 continue;
@@ -709,7 +723,32 @@ lord.applySpells = function(post, spells, options) {
     if (!post || !spells || spells.length < 1)
         return Promise.resolve(null);
     var npost = { replacements: [] };
-    var promises = spells.map(function(spell) {
+    var words = lord.getWords(post.text);
+    var len = words.length;
+    options.similarText.some(function(sample) {
+        var i = sample.words.length;
+        var slen = i;
+        var slen2 = i;
+        var n = 0;
+	    if (len < slen * 0.4 || len > slen * 3)
+    		return;
+        while (i--) {
+            if (slen > 6 && sample.words[i].length < 3) {
+                --slen2;
+                continue;
+            }
+            var j = len;
+            while (j--) {
+                if(words[j] === sample.words[i] || sample.words[i].match(/>>\d+/) && words[j].match(/>>\d+/))
+                    n++;
+            }
+        }
+        if (n < slen2 * 0.4 || len > slen2 * 3)
+            return;
+        npost.hidden = "similar to >>/" + sample.boardName + "/" + sample.postNumber;
+        return true;
+    });
+    return lord.series(spells, function(spell) {
         if (npost.hidden && ("SPELL" != spell.value.type || "rep" != spell.value.value.name))
             return Promise.resolve();
         return lord.applySpell(post, spell.value, options).then(function(result) {
@@ -720,8 +759,7 @@ lord.applySpells = function(post, spells, options) {
                 npost.replacements = npost.replacements.concat(result.replacements);
             return Promise.resolve();
         });
-    });
-    return Promise.all(promises).then(function() {
+    }).then(function() {
         return Promise.resolve(npost);
     });
 };
@@ -729,30 +767,22 @@ lord.applySpells = function(post, spells, options) {
 lord.processPosts = function(posts, spells, options) {
     if (!posts)
         return Promise.reject("internalErrorText");
-    var data = { posts: [] };
     return lord.series(posts, function(post) {
         var npost = {
             "boardName": post.boardName,
             "postNumber": post.postNumber
         };
-        var p = Promise.resolve();
-        if (spells && !post.hidden) {
-            p = p.then(function() {
-                return lord.applySpells(post, spells, options);
-            }).then(function(result) {
-                if (result) {
-                    npost.hidden = result.hidden;
-                    npost.replacements = result.replacements;
-                }
-                return Promise.resolve();
-            });
-        }
-        return p.then(function() {
-            data.posts.push(npost);
-            return Promise.resolve();
+        if (!spells || post.hidden)
+            return Promise.resolve(npost);
+        return lord.applySpells(post, spells, options).then(function(result) {
+            if (result) {
+                npost.hidden = result.hidden;
+                npost.replacements = result.replacements;
+            }
+            return Promise.resolve(npost);
         });
-    }).then(function() {
-        return Promise.resolve(data);
+    }, true).then(function(posts) {
+        return Promise.resolve({ posts: posts });
     });
 };
 
@@ -765,7 +795,22 @@ lord.message_parseSpells = function(data) {
 lord.message_processPosts = function(data) {
     if (!data)
         return Promise.reject("invalidDataErrorText");
-    var options = { ihashDistance: (data.options && data.options.ihashDistance) || 15 };
+    var similarText = {};
+    try {
+        similarText = (data.options && data.options.similarText && JSON.parse(data.options.similarText)) || {};
+    } catch (ex) {
+        similarText = {};
+    }
+    var options = {
+        ihashDistance: (data.options && data.options.ihashDistance) || 10,
+        similarText: lord.reduce(similarText, function(acc, val, key) {
+            return acc.concat({
+                words: val,
+                boardName: key.split("/").shift(),
+                postNumber: key.split("/").pop()
+            });
+        }, [])
+    };
     return lord.processPosts(data.posts, data.spells, options);
 };
 

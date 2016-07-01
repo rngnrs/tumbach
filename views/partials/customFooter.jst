@@ -1,19 +1,17 @@
 <footer class="color-prim">
     <noindex>
-        <script type="text/javascript">
+        <script id="customFooterPlaceholder" type="text/javascript">
             (function() {
-                var settings = lord.settings();
                 var model = lord.model(["base", "tr", "boards"]);
                 if (lord.data("boardName"))
                     model.board = lord.model("board/" + lord.data("boardName")).board;
-                model.settings = settings;
+                model.settings = lord.settings();
                 model.compareRegisteredUserLevels = lord.compareRegisteredUserLevels;
-                var html = lord.template("custom-footer", model, true);
+                var html = lord.template("custom-footer", model);
                 if (!html)
                     return;
-                document.open();
-                document.write(html);
-                document.close();
+                var customFooterPlaceholder = lord.id("customFooterPlaceholder");
+                customFooterPlaceholder.parentNode.replaceChild(html, customFooterPlaceholder);
             })();
         </script>
     </noindex>

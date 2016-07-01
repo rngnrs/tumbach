@@ -4,6 +4,7 @@ var express = require("express");
 
 var config = require("../helpers/config");
 var Global = require("../helpers/global");
+var OnlineCounter = require("../helpers/online-counter");
 var Tools = require("../helpers/tools");
 
 var excludePaths = {};
@@ -71,11 +72,14 @@ var log = function(req, res, next) {
 
 module.exports = [];
 
-if (config("system.log.middleware.before", "all") == "all") {
+if (config("system.log.middleware.before", "all") == "all")
     module.exports.push(log);
-}
 
 module.exports.push(require("./ip-fix"));
+module.exports.push(function(req, res, next) {
+    OnlineCounter.alive(req.ip);
+    next();
+});
 
 var setupDdos = function() {
     if (config("system.log.middleware.before", "all") == "ddos")
@@ -89,6 +93,31 @@ var setupDdos = function() {
             maxWeight: config("server.ddosProtection.maxWeight", 10),
             checkInterval: config("server.ddosProtection.checkInterval", 1000),
             rules: config("server.ddosProtection.rules", [
+                {
+                    string: "/misc/base.json",
+                    maxWeight: 6,
+                    queueSize: 4
+                },
+                {
+                    string: "/api/chatMessages.json",
+                    maxWeight: 4,
+                    queueSize: 2
+                },
+                {
+                    string: "/api/lastPostNumbers.json",
+                    maxWeight: 4,
+                    queueSize: 2
+                },
+                {
+                    string: "/api/captchaQuota.json",
+                    maxWeight: 4,
+                    queueSize: 2
+                },
+                {
+                    string: "/api/lastPostNumber.json",
+                    maxWeight: 4,
+                    queueSize: 2
+                },
                 {
                     regexp: "^/api.*",
                     maxWeight: 6,
@@ -127,9 +156,14 @@ if (config("system.log.middleware.before", "all") == "middleware")
 
 module.exports = module.exports.concat([
     cookieParser(),
-    require("./cookies"),
+    function(req, res, next) {
+        req.hashpass = Tools.hashpass(req);
+        next();
+    },
     require("./registered-user")
 ]);
 
 if (config("system.log.middleware.before", "all") == "request")
     module.exports.push(log);
+
+module.exports.push(require("./cookies"));

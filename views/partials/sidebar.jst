@@ -1,0 +1,30 @@
+<script id="sidebarPlaceholder" type="text/javascript">
+    (function() {
+        var model = lord.model(["base", "tr", "boards"]);
+        model.mumWatching = lord.getLocalObject("mumWatching", false);
+        lord.processBoardGroups(model);
+        if (model.user.loggedIn) {
+            if (model.user.isSuperuser())
+                model.loginMessageText = lord.text("loginMessageSuperuserText");
+            else if (model.user.isAdmin())
+                model.loginMessageText = lord.text("loginMessageAdminText");
+            else if (model.user.isModer())
+                model.loginMessageText = lord.text("loginMessageModerText");
+            else if (model.user.isUser())
+                model.loginMessageText = lord.text("loginMessageUserText");
+            else
+                model.loginMessageText = lord.text("loginMessageNoneText");
+        }
+        var placeholder = lord.id("sidebarPlaceholder");
+        placeholder.parentNode.replaceChild(lord.template("sidebar", model), placeholder);
+        $('body').append('<div class="overlay"></div>');
+        tumb.go = {
+            sb: $('#sidebar'),
+            sb2: $('#sidebar2'),
+            ov: $('.overlay'),
+            wr: $('.wrap'),
+            width: $(window).width()
+        };
+        tumb.toggle.frame();
+    })();
+</script>
