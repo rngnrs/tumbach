@@ -12,7 +12,9 @@
             &nbsp;
         {{?}}
     </div>
-    <span class="trackActions">{{=it.duration}}</span>
+    {{? it.duration}}
+        <span class="trackActions">{{=it.duration}}</span>
+    {{?}}
     <div class="trackActions">
         {{? it.duration}}
             <a title="{{=it.tr.downloadPlaylistFileText}}" draggable="false" onclick="event.stopPropagation();"
