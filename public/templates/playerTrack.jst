@@ -2,27 +2,28 @@
      ondragstart="lord.trackDrag(event);" ondragover="lord.allowTrackDrop(event);" ondrop="lord.trackDrop(event);"
      {{? it.boardName}}data-board-name="{{=it.boardName}}"{{?}} {{? it.fileName}}data-file-name="{{=it.fileName}}"{{?}}
      {{? it.href}}data-href="{{=it.href}}"{{?}} draggable="true">
-    <span class="trackInfo">
+    <div class="trackInfo">
         {{? it.artist || it.title || it.year}}
-            <br />
             {{? it.artist}}{{=it.artist}}{{?}}
             {{? it.artist && it.title}}—{{?}}
             {{? it.title}}{{=it.title}}{{?}}
             {{? it.year}}({{=it.year}}){{?}}
+        {{??}}
+            &nbsp;
         {{?}}
-    </span>
-    <span class="trackActions">
+    </div>
+    <span class="trackActions">{{=it.duration}}</span>
+    <div class="trackActions">
         {{? it.duration}}
-            {{=it.duration}}{{? it.bitrate}} | {{=it.bitrate}}kbps{{?}}
             <a title="{{=it.tr.downloadPlaylistFileText}}" draggable="false" onclick="event.stopPropagation();"
                href="/{{=it.site.pathPrefix}}{{=it.boardName}}/src/{{=it.fileName}}"
-               download="{{=it.fileName}}"><i class="mdi mdi-middle mdi-20px mdi-download"></i></a>
+               download="{{=it.fileName}}"><i class="mdi mdi-18px mdi-download"></i></a>
             {{? "application/ogg" == it.mimeType || it.mimeType.substr(0, 6) == "audio/"}}
                 <a href="javascript:void(0);" onclick="lord.editAudioTags(this, event); return false;" draggable="false"
-                   title="{{=it.tr.editAudioTagsText}}"><i class="mdi mdi-middle mdi-20px mdi-label"></i></a>
+                   title="{{=it.tr.editAudioTagsText}}"><i class="mdi mdi-18px mdi-label"></i></a>
             {{?}}
         {{?}}
         <a href="javascript:void(0);" draggable="false" onclick="lord.removeFromPlaylist(event, this);"
-           title="{{=it.tr.removeFromPlaylistText}}"><i class="mdi mdi-middle mdi-20px mdi-window-close"></i></a>
-    </span>
+           title="{{=it.tr.removeFromPlaylistText}}"><i class="mdi mdi-18px mdi-window-close"></i></a>
+    </div>
 </div>

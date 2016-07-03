@@ -890,7 +890,7 @@ lord.setPlayerVisible = function(e, visible) {
 
 lord.durationToString = function(duration) {
     if (!duration)
-        return "00:00:00";
+        return "00:00";
     duration = Math.floor(+duration);
     var hours = "" + Math.floor(duration / 3600);
     if (hours.length < 2)
@@ -902,7 +902,7 @@ lord.durationToString = function(duration) {
     var seconds = "" + (duration % 60);
     if (seconds.length < 2)
         seconds = "0" + seconds;
-    return hours + ":" + minutes + ":" + seconds;
+    return ((hours > 0)? hours+":": "") + minutes + ":" + seconds;
 };
 
 lord.updatePlayerTrackTags = function() {
@@ -927,8 +927,8 @@ lord.updatePlayerTrackInfo = function() {
     if (!lord.currentTrack)
         return;
     var s = lord.durationToString(lord.playerElement.currentTime);
-    if (+lord.currentTrack.duration)
-        s += " / " + lord.currentTrack.duration;
+    if (lord.currentTrack.duration)
+        s += "/" + lord.currentTrack.duration;
     info.appendChild(lord.node("text", s));
 };
 
@@ -1216,7 +1216,7 @@ lord.initRadio = function() {
     $.getJSON(file, function (data) {
         $.each(data, function (key, val) {
             html += "<div id='track/"+val.href+"' class='track' data-title='" + val.title + "' data-href='" + val.href + "' onclick='lord.addRadio(null,$(this).data(\"title\"),$(this).data(\"href\"));lord.playTrack(this);'>" +
-            "<span class='trackInfo' title='" + val.title + "'>" + val.title + "</span><div class='clr'></div></div>";
+            "<div class='trackInfo' title='" + val.title + "'>" + val.title + "</div><div class='clr'></div></div>";
         });
         cont.append(html);
         cont.data("loaded", true);

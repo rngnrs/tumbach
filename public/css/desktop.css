@@ -12,7 +12,7 @@
     display: none;
 }
 #playerTrackTags {
-    width: 68%;
+    width: calc(100% - 113px);
 }
 .searchAction {
     max-width: 38%;

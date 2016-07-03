@@ -933,10 +933,6 @@ input.buttonImage {
     display: none;
 }
 
-.playerHeader {
-    padding: 1px 2px;
-}
-
 .playerSliderContainer {
     text-align: center;
 }
@@ -969,8 +965,8 @@ input.buttonImage {
 .trackActions {
     display: inline-block;
     position: absolute;
-    top: 2px;
-    right: 4px;
+    top: 4px;
+    right: 2px;
 }
 
 #playerMinimizeButton {

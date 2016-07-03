@@ -134,4 +134,23 @@ tumb.onLoad = function(){
 		if ($("#player-radio-list").data("loaded") != true)
 			lord.initRadio();
 	});
+	$('#sidebar2').on('mouseenter', '.track', function() {
+			var $trackName = $(this).find('.trackInfo');
+			if($trackName[0].scrollWidth <= $trackName[0].offsetWidth)
+				return;
+			$trackName.stop().addClass('no-overflow');
+			$trackName.animate({
+				scrollLeft: $trackName.width()
+			}, $trackName.width()*15, 'linear');
+		})
+		.on('mouseleave', '.track', function() {
+			var $trackName = $(this).find('.trackInfo');
+			if($trackName[0].scrollWidth <= $trackName[0].offsetWidth)
+				return;
+			$trackName.stop().animate({
+				scrollLeft: 0
+			}, 'slow', 'linear', function() {
+				$trackName.removeClass('no-overflow');
+			});
+		})
 };

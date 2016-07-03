@@ -1051,6 +1051,11 @@ var createPost = function(req, fields, files, transaction, threadNumber, date) {
         return Promise.all(files.map(function(fileInfo) {
             fileInfo.boardName = board.name;
             fileInfo.postNumber = c.postNumber;
+            if(fileInfo.extraData && fileInfo.extraData.duration.split(":")[2]) {
+                var hours = fileInfo.extraData.duration.slice(0, 2);
+                if(hours == "00")
+                    fileInfo.extraData.duration = fileInfo.extraData.duration.slice(-5);
+            }
             return db.hset("fileInfos", fileInfo.name, JSON.stringify(fileInfo)).then(function() {
                 return db.sadd("postFileInfoNames:" + board.name + ":" + c.postNumber, fileInfo.name);
             });

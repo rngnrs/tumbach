@@ -247,12 +247,29 @@ footer:after {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    font-size: 13px;
+    padding: 1px 2px;
 }
-.track > .float-l {
-    width: 187px;
+.track:hover span {
+    opacity: 0;
+}
+.track:hover .trackActions a {
+    opacity: 1;
+}
+.track .trackActions a {
+    opacity: 0;
+}
+.trackActions a {
+    margin: 0 -3px;
+}
+.track .trackInfo {
+    width: 220px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+.trackInfo.no-overflow {
+    text-overflow: clip;
 }
 .frameLabels {
     position: relative;
@@ -355,7 +372,7 @@ div.scroll-window {
 }
 #tplayer .pmain {
     width: calc(100% - 80px);
-    padding: 0 4px;
+    padding: 1px 4px;
 }
 #tplayer {
     float: right;
