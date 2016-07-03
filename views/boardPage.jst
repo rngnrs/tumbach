@@ -50,9 +50,11 @@
                             {{#def.post}}
                         {{~}}
                         {{? thread.omittedPosts > 0}}
-                            <span class="omittedPosts" onclick="lord.expandCollapseThread(this); return false;">
-                                {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
-                            </span>
+                            <div>
+                                <span class="omittedPosts" onclick="lord.expandCollapseThread(this); return false;">
+                                    {{=it.tr.omittedPostsText}} {{=thread.omittedPosts}}
+                                </span>
+                            </div>
                         {{?}}
                         <div class="threadPosts">
                             {{~thread.lastPosts :post}}
