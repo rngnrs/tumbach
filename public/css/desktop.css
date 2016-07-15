@@ -28,7 +28,7 @@
         max-width: 500px !important;
     }
     .toolbar {
-        width: calc(100% - 500px) !important;
+        width: calc(100% - 510px) !important;
     }
 }
 /* /tumb rewrite */

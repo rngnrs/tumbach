@@ -49,7 +49,7 @@ $(function() {
                 $(".overlay").addClass("toggled over");
             });
         }
-        return Promise.resolve(url);
+        return Promise.reject("Не задана обёртка!");
     }
     function htmlToSel(data) {
         content.html($(data).find(selector));
@@ -63,8 +63,6 @@ $(function() {
         }).catch(lord.handleError);
         lord.initializeOnLoadBase();
         lord.checkFavoriteThreads();
-        //if (!lord.getLocalObject("transparentHeader", true))
-        //    window.removeEventListener("hashchange", lord.hashChangeHandler, false);
         window.removeEventListener("scroll", lord.scrollHandler, true);
         if(lord.autoUpdateTimer) {
             lord.autoUpdateTimer.stop();
