@@ -2209,7 +2209,6 @@ lord.setTooltips = function(parent) {
         _this.tooltip({
             position: {
                 using: function() {
-                    var pos = _this.position();
                     $(this).css({
                         position: "absolute",
                         left: Math.max(e.pageX - 100, 5) + "px",
@@ -2323,7 +2322,7 @@ lord.initializeOnLoadBase = function() {
                 ++retryCount;
                 if (retryCount > 5)
                     lord.handleError(err);
-                if (retryCount > 10)
+                if (retryCount > 60)
                     return;
                 setTimeout(f, retryCount * lord.Second);
             });
@@ -2435,7 +2434,7 @@ lord.initializeOnLoadBase = function() {
         lord.detectSwipe(document.body, function(e) {
             var visible1 = $("#sidebar").hasClass("open");
             var visible2 = $("#sidebar2").hasClass("open");
-            if (Math.abs(e.distanceY) >= 15 || Math.abs(e.distanceX) < 100 || lord.dialogs.length > 0)
+            if (Math.abs(e.distanceY) >= 10 || Math.abs(e.distanceX) < 100 || lord.dialogs.length > 0)
                 return;
             if ((e.types.indexOf("swiperight") >= 0 && !visible1 && !visible2) || (e.types.indexOf("swipeleft") >= 0 && visible1 && !visible2))
                 tumb.toggle.frame(true);
@@ -2478,21 +2477,21 @@ lord.processBoardGroups = function(model) {
     });
     model.boardGroups.sort(function(g1, g2) {
         if (!g1.priority && !g2.priority)
-            return (g1.name < g2.name) ? -1 : ((g1.name > g2.name) ? 1 : 0);
-        return ((g1.priority || 0) < (g2.priority || 0)) ? -1
-            : (((g1.priority || 0) > (g2.priority || 0)) ? 1 : 0);
+            return (g1.name < g2.name)? -1: ((g1.name > g2.name)? 1: 0);
+        return ((g1.priority || 0) < (g2.priority || 0))? -1
+            : (((g1.priority || 0) > (g2.priority || 0))? 1: 0);
     });
     model.boardGroups.forEach(function(group) {
         group.boards.sort(function(b1, b2) {
             if (!b1.priority && !b2.priority)
-                return (b1.name < b2.name) ? -1 : ((b1.name > b2.name) ? 1 : 0);
-            return ((b1.priority || 0) < (b2.priority || 0)) ? -1
-                : (((b1.priority || 0) > (b2.priority || 0)) ? 1 : 0);
+                return (b1.name < b2.name)? -1: ((b1.name > b2.name)? 1: 0);
+            return ((b1.priority || 0) < (b2.priority || 0))? -1
+                : (((b1.priority || 0) > (b2.priority || 0))? 1: 0);
         });
     });
 };
 
-(document.readyState === "complete") ? load() : window.addEventListener("load", load, false);
+(document.readyState === "complete")? load(): window.addEventListener("load", load, false);
 
 function load() {
     window.removeEventListener("load", load, false);
