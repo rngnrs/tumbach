@@ -441,7 +441,7 @@ var generateThread = function(boardName, threadNumber) {
             l = lastPosts.length,
             ps = config("board.expandPostCount", 100);
         if (l > ps)
-            c.model.thread.lastPosts = lastPosts.slice(l - ps + 1, l + 1);
+            c.model.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
         return Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.model));
     });
 };
