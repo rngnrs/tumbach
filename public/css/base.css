@@ -572,6 +572,7 @@ ul.tabWidget > li > a {
     font-size: 1.2em;
     position: relative;
     z-index: 1;
+    text-align: center;
 }
 
 .toolbar.sticky {

@@ -14,10 +14,10 @@
     width: 100%;
 }
 #playerTrackTags {
-    width: calc(100% - 70px);
+    width: calc(100% - 90px);
 }
 #playerTrackInfo {
-    width: 60px;
+    width: 80px;
 }
 .navbar {
     font-size: 1em;

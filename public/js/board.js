@@ -3158,15 +3158,15 @@ lord.showMenu = function(e, input, selector) {
         }
     }
     lord.currentMenu = $(selector);
-    var fw = (lord.settings().showFrame && lord.deviceType("desktop")) ? $("#sidebar").width() : 0,
+    var fw = (lord.settings().showFrame && lord.deviceType("desktop"))? document.getElementById("sidebar").offsetWidth: 0,
         ic = input.getBoundingClientRect(),
         html = document.documentElement,
         of = {
             "x" : html.clientWidth-ic.right < lord.currentMenu.width(),
-            "y" : (window.pageYOffset+ic.top < lord.currentMenu.width()) ? false : html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
+            "y" : (window.pageYOffset+ic.top < lord.currentMenu.width())? false: html.clientHeight-ic.bottom < lord.currentMenu.height()+ic.height
         },
-        cx = pageXOffset + ic.left + (of.x ? -lord.currentMenu.width() : 0) - fw,
-        cy = pageYOffset + (of.y ? ic.top-lord.currentMenu.height()-ic.height : ic.bottom) - $("header").height();
+        cx = pageXOffset + ic.left + (of.x? -lord.currentMenu.width(): 0) - fw,
+        cy = pageYOffset + (of.y? ic.top-lord.currentMenu.height()-ic.height: ic.bottom) - document.getElementById("header").offsetHeight;
     lord.currentMenu.menu({ items: "> :not(.ui-widget-header)" }).toggle().show();
     lord.currentMenu.css("left", cx);
     lord.currentMenu.css("top", cy);
