@@ -29,7 +29,7 @@ var appenders = [];
 var logTargets = config("system.log.targets", ["console", "file"]);
 if (logTargets.indexOf("console") >= 0)
     appenders.push({ type: "console" });
-if (logTargets.indexOf("console") >= 0) {
+if (logTargets.indexOf("file") >= 0) {
     appenders.push({
         type: "file",
         filename: __dirname + "/logs/ololord.log",

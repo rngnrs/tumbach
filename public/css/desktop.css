@@ -17,18 +17,15 @@
 .searchAction {
     max-width: 38%;
 }
-#tplayer {
+#tplayer.toggle {
     width: 50%;
 }
 @media screen and (min-width: 1084px) {
     .searchAction {
-        max-width: 420px !important;
+        max-width: 420px !important
     }
-    #tplayer {
-        max-width: 500px !important;
-    }
-    .toolbar {
-        width: calc(100% - 510px);
+    #tplayer.toggle {
+        max-width: 500px !important
     }
 }
 /* /tumb rewrite */

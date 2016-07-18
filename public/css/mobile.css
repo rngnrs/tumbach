@@ -1,26 +1,23 @@
 /* tumb rewrite */
 .logo-big {
     width: 75px;
-    height: 75px;
+    height: 75px
 }
 .titl {
     padding: 27px 0;
-    height: 75px;
+    height: 75px
 }
 .toolbar, .desktopOnly {
-    display: none;
+    display: none
 }
 #tplayer {
-    width: 100%;
+    width: 100%
 }
 #playerTrackTags {
-    width: calc(100% - 90px);
-}
-#playerTrackInfo {
-    width: 80px;
+    width: calc(100% - 90px)
 }
 .navbar {
-    font-size: 1em;
+    font-size: 1em
 }
 /* /tumb rewrite */
 

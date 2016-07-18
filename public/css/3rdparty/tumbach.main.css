@@ -351,6 +351,12 @@ div.scroll-window {
     line-height: initial;
     opacity: 0;
     visibility: hidden;
+    width: 0;
+    overflow: hidden
+}
+#tplayer.toggle {
+    visibility: visible;
+    opacity: 1
 }
 #header .player-menu {
     font-size: 30px;

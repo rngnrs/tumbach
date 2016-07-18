@@ -866,8 +866,7 @@ lord.setPlayerVisible = function(e, visible) {
         e.stopPropagation();
     var player = lord.id("tplayer");
     if (!visible) {
-        player.style.visibility = "hidden";
-        player.style.opacity = 0;
+        player.className = player.className.split("toggle").join("");
         if (lord.playerElement) {
             lord.playerElement.pause();
             lord.playerElement.currentTime = 0;
@@ -878,8 +877,7 @@ lord.setPlayerVisible = function(e, visible) {
         }
         lord.currentTrack = {};
     } else {
-        player.style.visibility = "visible";
-        player.style.opacity = 1;
+        player.className = "toggle";
         if (lord.playerElement)
             if (lord.playerElement.movablePlayer) {
                 lord.playerElement.movablePlayer.show();
