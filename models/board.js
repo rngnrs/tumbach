@@ -743,7 +743,13 @@ module.exports.do_generateThread = function(key, data) {
             return p;
         }).then(function() {
             c.thread.thread.lastPosts = Tools.toArray(c.lastPosts);
-            return Cache.writeFile(threadId, JSON.stringify(c.thread));
+            Cache.writeFile(threadId, JSON.stringify(c.thread));
+            var lastPosts = c.thread.thread.lastPosts,
+                l = lastPosts.length,
+                ps = config("board.expandPostCount", 100);
+            if (l > ps)
+                c.thread.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
+            return Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.thread));
         }).then(function() {
             return generateThreadHTML(board, threadNumber, c.thread);
         });
@@ -751,6 +757,8 @@ module.exports.do_generateThread = function(key, data) {
     case "delete": {
         return Database.db.sadd("deletedThreads", data.boardName + ":" + data.threadNumber).then(function() {
             return Cache.removeFile(`${boardName}/res/${threadNumber}.json`);
+        }).then(function() {
+            return Cache.removeFile(`${boardName}/res/${threadNumber}-last.json`);
         }).then(function() {
             return Cache.removeFile(`${boardName}/res/${threadNumber}.html`);
         });

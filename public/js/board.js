@@ -2891,20 +2891,20 @@ lord.expandCollapseThread = function(el) {
 lord.expandThread = function(thread) {
     if (!thread)
         return;
-    var div = lord.node("div");
-    var img = lord.node("img");
+    var div = lord.node("div"),
+        img = lord.node("img"),
+        h1 = lord.node("h1");
     img.src = "/" + lord.data("sitePathPrefix") + "img/loading_big.gif";
     div.appendChild(img);
-    var h1 = lord.node("h1");
     h1.style.display = "inline";
     h1.appendChild(lord.node("text", " " + lord.text("loadingPostsMessage")));
     div.appendChild(h1);
     thread.appendChild(div);
-    var threadNumber = +thread.id.replace("thread", "");
-    var c = {};
+    var threadNumber = +thread.id.replace("thread", ""),
+        c = {};
     c.model = lord.model(["base", "tr", "boards", "board/" + lord.data("boardName")]);
     c.model.settings = lord.settings();
-    lord.api(threadNumber+"-last", {}, lord.data("boardName") + "/res").then(function(model) {
+    lord.api(threadNumber + "-last", {}, lord.data("boardName") + "/res").then(function(model) {
         thread.removeChild(div);
         c.model.thread = model.thread;
         c.model.thread.expanded = !lord.data("expanded", thread);
@@ -2914,7 +2914,7 @@ lord.expandThread = function(thread) {
             c.model.thread.lastPosts = c.model.thread.lastPosts.slice(offset);
         }
         return lord.createDocumentFragment(lord.template("thread", c.model, true));
-    }).then(function(nthread) {
+    }).then(function (nthread) {
         lord.processPosts(nthread);
         thread.parentNode.replaceChild(nthread, thread);
         lord.initFiles();

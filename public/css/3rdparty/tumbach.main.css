@@ -2,7 +2,6 @@
     Created on: 01.12.2015, 21:30:00
     Author    : rngnrs <sup@tumba.ch>
 */
-/*@import url(material-design-iconic-font.min.css);*/
 @import url(materialdesignicons.min.css);
 .mdi-middle, .b-icon {
     vertical-align: middle;
@@ -21,7 +20,7 @@
     font-family: 'PT Sans';
     font-style: normal;
     font-weight: 400;
-    src: local('PT Sans'), local('PTSans-Regular'), url(/res/fonts/ptsans.woff) format('woff');
+    src: local('PT Sans'), local('PTSans-Regular'), url(../../res/fonts/ptsans.woff) format('woff');
 }
 body {
     position:relative;
