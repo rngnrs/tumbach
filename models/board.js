@@ -429,21 +429,22 @@ var generateThread = function(boardName, threadNumber) {
     var board = Board.board(boardName);
     if (!board)
         return Promise.reject(Tools.translate("Invalid board"));
-    var c = {};
+    var c = {},
+        m = {};
     return getThread(board, threadNumber).then(function(model) {
         c.model = model;
         return renderThread(board, c.model.thread);
     }).then(function() {
         return generateThreadHTML(board, threadNumber, c.model);
     }).then(function() {
-        var cache = Cache.writeFile(`${board.name}/res/${threadNumber}.json`, JSON.stringify(c.model)),
-            lastPosts = c.model.thread.lastPosts,
+        m.model = JSON.parse(JSON.stringify(c.model)); // NOTE: Dirty hack
+        var lastPosts = m.model.thread.lastPosts,
             l = lastPosts.length,
             ps = config("board.expandPostCount", 100);
         if (l > ps)
-            c.model.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
-        Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.model));
-        return cache;
+            m.model.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
+        Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(m.model));
+        return Cache.writeFile(`${board.name}/res/${threadNumber}.json`, JSON.stringify(c.model));
     });
 };
 
@@ -657,7 +658,7 @@ var addTask = function(map, key, funcName, data) {
             };
             return g();
         });
-    };
+    }
 };
 
 module.exports.do_generateThread = function(key, data) {
@@ -687,9 +688,9 @@ module.exports.do_generateThread = function(key, data) {
         return generateThread(boardName, threadNumber);
     }
     case "edit": {
-        var c = {};
-        var threadId = `${boardName}/res/${threadNumber}.json`;
-        var board = Board.board(boardName);
+        var c = {},
+            threadId = `${boardName}/res/${threadNumber}.json`,
+            board = Board.board(boardName);
         if (!board)
             return Promise.reject(Tools.translate("Invalid board"));
         return Cache.readFile(threadId).then(function(data) {
@@ -744,14 +745,14 @@ module.exports.do_generateThread = function(key, data) {
             return p;
         }).then(function() {
             c.thread.thread.lastPosts = Tools.toArray(c.lastPosts);
-            var cache = Cache.writeFile(threadId, JSON.stringify(c.thread)),
-                lastPosts = c.thread.thread.lastPosts,
+            var thr = JSON.parse(JSON.stringify(c.thread)),
+                lastPosts = thr.thread.lastPosts,
                 l = lastPosts.length,
                 ps = config("board.expandPostCount", 100);
             if (l > ps)
-                c.thread.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
-            Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.thread));
-            return cache;
+                thr.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
+            Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(thr));
+            return Cache.writeFile(threadId, JSON.stringify(c.thread));
         }).then(function() {
             return generateThreadHTML(board, threadNumber, c.thread);
         });
