@@ -744,13 +744,14 @@ module.exports.do_generateThread = function(key, data) {
             return p;
         }).then(function() {
             c.thread.thread.lastPosts = Tools.toArray(c.lastPosts);
-            Cache.writeFile(threadId, JSON.stringify(c.thread));
-            var lastPosts = c.thread.thread.lastPosts,
+            var cache = Cache.writeFile(threadId, JSON.stringify(c.thread)),
+                lastPosts = c.thread.thread.lastPosts,
                 l = lastPosts.length,
                 ps = config("board.expandPostCount", 100);
             if (l > ps)
                 c.thread.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
-            return Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.thread));
+            Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.thread));
+            return cache;
         }).then(function() {
             return generateThreadHTML(board, threadNumber, c.thread);
         });
