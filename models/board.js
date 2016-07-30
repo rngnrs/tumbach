@@ -436,13 +436,14 @@ var generateThread = function(boardName, threadNumber) {
     }).then(function() {
         return generateThreadHTML(board, threadNumber, c.model);
     }).then(function() {
-        Cache.writeFile(`${board.name}/res/${threadNumber}.json`, JSON.stringify(c.model));
-        var lastPosts = c.model.thread.lastPosts,
+        var cache = Cache.writeFile(`${board.name}/res/${threadNumber}.json`, JSON.stringify(c.model)),
+            lastPosts = c.model.thread.lastPosts,
             l = lastPosts.length,
             ps = config("board.expandPostCount", 100);
         if (l > ps)
             c.model.thread.lastPosts = lastPosts.slice(l - ps, l + 1);
-        return Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.model));
+        Cache.writeFile(`${board.name}/res/${threadNumber}-last.json`, JSON.stringify(c.model));
+        return cache;
     });
 };
 
