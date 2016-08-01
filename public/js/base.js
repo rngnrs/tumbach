@@ -1803,14 +1803,14 @@ lord.updateChat = function(keys) {
     if (!lord.chatDialog) {
         lord.queryAll("[name='chatButton']").forEach(function(a) {
             var i = lord.queryOne("i", a);
-            if (i && i.className.replace("mdi-comment-outline", "") == "mdi mdi-middle ")
-                i.className = i.className.replace("mdi-comment-outline", "mdi-comment");
-            else
-                if (!i) {
-                    var i = lord.node("i");
-                    i.className = "mdi mdi-comment";
-                    a.appendChild(i);
-                }
+            if (i) {
+                i.classList.add("mdi-comment");
+                i.classList.remove("mdi-comment-outline");
+            } else {
+                i = lord.node("i");
+                i.className = "mdi mdi-comment";
+                a.appendChild(i);
+            }
         });
         var div = lord.node("div"),
             a = lord.node("a"),
@@ -1829,12 +1829,12 @@ lord.updateChat = function(keys) {
         keys.forEach(function(key) {
             var div = lord.nameOne(key, lord.chatDialog);
             if (div) {
-                if ($(div).hasClass("selected")) {
+                if (div.classList.contains("selected"))
                     lord.populateChatHistory(key);
-                } else {
+                else {
                     var newMessages = lord.queryOne(".chatContactNewMessages", div);
-                    $(newMessages).empty();
-                    newMessages.appendChild(lord.node("text", "!!!"));
+                    newMessages.innerHTML = "";
+                    newMessages.appendChild(lord.node("text", "!!! "));
                 }
             } else {
                 var contacts = lord.queryOne(".chatContactList", lord.chatDialog);
@@ -1848,13 +1848,13 @@ lord.updateChat = function(keys) {
 
 if (lord.getLocalObject("useWebSockets", true)) {
     lord.wsHandlers["newChatMessage"] = function(msg) {
-        var chats = lord.getLocalObject("chats", {});
-        var data = msg.data;
-        var key = data.boardName + ":" + data.postNumber;
+        var chats = lord.getLocalObject("chats", {}),
+            data = msg.data,
+            key = data.boardName + ":" + data.postNumber;
         if (!chats[key])
             chats[key] = [];
-        var list = chats[key];
-        var message = data.message;
+        var list = chats[key],
+            message = data.message;
         for (var i = 0; i < list.length; ++i) {
             var m = list[i];
             if (message.type == m.type && message.date == m.date && message.text == m.text)
@@ -1870,10 +1870,9 @@ if (lord.getLocalObject("useWebSockets", true)) {
 }
 
 lord.checkChats = function() {
-    if (!lord.getLocalObject("useWebSockets", true)) {
+    if (!lord.getLocalObject("useWebSockets", true))
         if (lord.checkChats.timer)
             clearTimeout(lord.checkChats.timer);
-    }
     lord.api("chatMessages", { lastRequestDate: lord.lastChatCheckDate || "" }).then(function(model) {
         if (!model)
             return Promise.resolve();
@@ -1922,8 +1921,8 @@ lord.showChat = function(key) {
         return;
     lord.queryAll(".navbarItem > [name='chatButton']").forEach(function(a) {
         var i = lord.queryOne("i", a);
-        if (i && i.className.replace("mdi-comment", "") != "mdi mdi-middle -outline")
-            i.className = i.className.replace("mdi-comment", "mdi-comment-outline");
+        i.classList.add("mdi-comment-outline");
+        i.classList.remove("mdi-comment");
     });
     var btn = lord.queryOne(".list-item[name='chatButton']");
     if (btn) {
