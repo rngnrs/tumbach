@@ -131,7 +131,7 @@ tumb.onLoad = function(){
 		tumb.go.ov.removeClass('toggled');
     });
 	$(document).on("click", "#tabl2", function() {
-		if ($("#player-radio-list").data("loaded") != true)
+		if ($("#playerRadios").data("loaded") != true)
 			lord.initRadio();
 	});
 	$('#sidebar2').on('mouseenter', '.track', function() {

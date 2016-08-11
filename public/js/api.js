@@ -1148,18 +1148,18 @@ lord.compareRatings = function(r1, r2) {
 };
 
 lord.model = function(modelName) {
+    var model;
     if (lord.isArray(modelName)) {
         var models = modelName.map(function(modelName) {
             return lord.model(modelName);
         });
-        var model = (models.length > 0) ? merge.clone(models[0]) : {};
+        model = (models.length > 0)? merge.clone(models[0]): {};
         models.slice(1).forEach(function(m) {
             model = merge.recursive(model, m);
         });
         return model;
     } else {
         var match = modelName.match(/^board\/(\S+)$/);
-        var model;
         if (match) {
             var boards = lord.models["boards"].boards;
             for (var i = 0; i < boards.length; ++i) {
@@ -1167,9 +1167,8 @@ lord.model = function(modelName) {
                     return { board: boards[i] };
             }
             model = lord.models["boards"].boards[match[1]];
-        } else {
+        } else
             model = lord.models[modelName];
-        }
         if (!model)
             return model;
         var settings = lord.settings();
@@ -1252,7 +1251,7 @@ lord.api = function(entity, parameters, prefix) {
             query += (key + "=" + val);
         });
     });
-    query = (query ? "?" : "") + query;
+    query = (query? "?": "") + query;
     return new Promise(function(resolve, reject) {
         $.ajax({
             url: "/" + lord.data("sitePathPrefix") + prefix + "/" + entity + ".json" + query,

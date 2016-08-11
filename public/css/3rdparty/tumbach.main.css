@@ -328,7 +328,7 @@ footer:after {
      top: 0;
      opacity: 0;
 }
-.scroll-window, #player-audio-list, #player-radio-list {
+.scroll-window, #playerTracks, #playerRadios {
     height: 100%;
     overflow-y: auto;
     position: relative;

@@ -990,7 +990,7 @@ input.buttonImage {
     margin-top: -1.5em;
 }
 
-#player-radio-list:empty:after {
+#playerRadios:empty:after {
     content: "Список радио пуст. Проверьте Интернет-соединение. Если оно хорошее, то попросите админа добавить парочку радиостанций.";
     text-align: center;
     position: absolute;

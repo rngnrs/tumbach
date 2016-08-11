@@ -51,6 +51,7 @@ lord.notificationQueue = [];
 lord.pageProcessors = [];
 lord.postProcessors = [];
 lord.currentTracks = {};
+lord.currentRadios = {};
 lord.wsMessages = {};
 lord.wsHandlers = {};
 lord.lastWindowSize = {
@@ -977,7 +978,19 @@ lord.resetPlayerSource = function(track) {
     lord.playerElement.volume = lord.getLocalObject("playerVolume", defVol);
     if (!movablePlayer)
         lord.playerElement.style.display = "none";
-    lord.setLocalObject("playerLastTrack", track);
+    var lastTrack = {};
+    lastTrack.href = track.href;
+    lastTrack.title = track.title;
+    lastTrack.artist = track.artist;
+    lastTrack.duration = track.duration;
+    lastTrack.album = track.album;
+    lastTrack.bitrate = track.bitrate;
+    lastTrack.fileName = track.fileName;
+    lastTrack.width = track.width;
+    lastTrack.year = track.year;
+    lastTrack.height = track.height;
+    lastTrack.mimeType = track.mimeType;
+    lord.setLocalObject("playerLastTrack", lastTrack);
     if (!movablePlayer) {
         var source = lord.node("source");
         if (track.mimeType)
@@ -1009,7 +1022,8 @@ lord.resetPlayerSource = function(track) {
         lord.updatePlayerButtons();
     }, false);
     lord.playerElement.addEventListener("timeupdate", function() {
-        lord.setSessionObject("playerCurrentTime", lord.playerElement.currentTime);
+        if(lord.currentTrack.hasOwnProperty("duration"))
+            lord.setSessionObject("playerCurrentTime", lord.playerElement.currentTime);
         if (lord.playerUserSliding)
             return;
         slider.slider("value", lord.playerElement.currentTime);
@@ -1074,27 +1088,10 @@ lord.playerAddRadio = function() {
     lord.showDialog(div, { title: "addRadioText" }).then(function(r){
         var title = lord.nameOne("title", div).value,
             href = lord.nameOne("href", div).value;
-        return [r, title, href];
+        return [title, href];
     }).then(function(r) {
-        lord.addRadio(r[0], r[1], r[2])
+        lord.addRadio({title: r[0], href: r[1]})
     }).catch(lord.handleError);
-};
-
-lord.addRadio = function(result, title, href){
-    if (!title || !href)
-        return;
-    var tracks = lord.getLocalObject("playerTracks", []);
-    var exists = tracks.some(function(track) {
-        return href == track.href;
-    });
-    if (exists)
-        return;
-    tracks.push({
-        href: href,
-        title: title
-    });
-    lord.setLocalObject("playerTracks", tracks);
-    lord.checkPlaylist();
 };
 
 lord.playerPlayPause = function(e, time) {
@@ -1127,7 +1124,7 @@ lord.playerPreviousOrNext = function(next, e) {
     var current = lord.queryOne(".track.selected", lord.id("playerTracks"));
     if (!current)
         return;
-    var el = current[next ? "nextElementSibling" : "previousElementSibling"];
+    var el = current[next? "nextElementSibling": "previousElementSibling"];
     if (!el && e) {
         var list = lord.queryAll(".track", lord.id("playerTracks"));
         if (!list)
@@ -1198,6 +1195,8 @@ lord.playTrack = function(el) {
     });
     $(el).addClass("selected");
     lord.currentTrack = lord.currentTracks[el.id.replace(/^track\//, "")];
+    if(lord.currentTrack == undefined)
+        lord.currentTrack = lord.currentRadios[el.id.replace(/^track\//, "")];
     lord.resetPlayerSource(lord.currentTrack);
     lord.playerElement.play();
     if (lord.playerElement.movablePlayer)
@@ -1208,20 +1207,19 @@ lord.playTrack = function(el) {
 
 lord.initRadio = function() {
     var file = lord.data("sitePathPrefix")+"/assets/radio.json",
-        ncont = "#player-radio-list",
+        ncont = lord.id("playerRadios"),
         cont = $(ncont),
-        html = "";
-    $.getJSON(file, function (data) {
-        $.each(data, function (key, val) {
-            html += "<div id='track/"+val.href+"' class='track' data-title='" + val.title + "' data-href='" + val.href + "' onclick='lord.addRadio(null,$(this).data(\"title\"),$(this).data(\"href\"));lord.playTrack(this);'>" +
-            "<div class='trackInfo' title='" + val.title + "'>" + val.title + "</div><div class='clr'></div></div>";
+        model = lord.model("tr");
+    if(!cont.data('loaded') && !lord.getLocalObject("playerRadios", false)) {
+        $.getJSON(file, function(data) {
+            $.each(data, function(key, val) {
+                lord.addRadio(val);
+            });
         });
-        cont.append(html);
-        cont.data("loaded", true);
-    });
-    var model = lord.model("tr");
+    }
     cont.prepend("<div class='pseudoTrack' onclick='lord.playerAddRadio();'>" +
         "<i class='mdi mdi-radio'></i> "+model.tr.addRadioText+"</div>");
+    cont.data("loaded", true);
 };
 
 lord.allowTrackDrop = function(e) {
@@ -1274,6 +1272,25 @@ lord.addTrack = function(track) {
     lord.currentTracks[track.fileName || track.href] = track;
     var model = merge.recursive(track, lord.model(["base", "tr"]));
     lord.id("playerTracks").appendChild(lord.template("playerTrack", model));
+};
+
+lord.addRadio = function(track){
+    if (!track)
+        return;
+    lord.currentRadios[track.href] = track;
+    var model = merge.recursive(track, lord.model(["base", "tr"]));
+    lord.id("playerRadios").appendChild(lord.template("playerTrack", model));
+    var tracks = lord.getLocalObject("playerRadios", []),
+        exists = tracks.some(function(t) {
+            return track.href == t.href;
+        });
+    if (exists)
+        return;
+    tracks.push({
+        href: track.href,
+        title: track.title
+    });
+    lord.setLocalObject("playerRadios", tracks);
 };
 
 lord.editAudioTags = function(el, e) {
@@ -1333,17 +1350,33 @@ lord.editAudioTags = function(el, e) {
 
 lord.removeFromPlaylist = function(e, a) {
     e.stopPropagation();
-    var href = lord.data("href", a, true);
-    var fileName = lord.data("fileName", a, true);
-    var tracks = lord.getLocalObject("playerTracks", []);
-    var exists = tracks.some(function(track, i) {
-        var exists = fileName ? (fileName == track.fileName) : (href == track.href);
+    var href = lord.data("href", a, true),
+        fileName = lord.data("fileName", a, true),
+        tracks = lord.getLocalObject("playerTracks", []),
+        duration = lord.queryOne(".trackActions", a);
+        exists = tracks.some(function(track, i) {
+        var exists = fileName? (fileName == track.fileName): (href == track.href);
         if (exists)
             tracks.splice(i, 1);
         return exists;
     });
     if (!exists)
-        return;
+        if (duration)
+            return;
+        else {
+            var radios = lord.getLocalObject("playerRadios", []);
+            radios.some(function(radio, i) {
+                var exists = fileName? (fileName == radio.fileName): (href == radio.href);
+                if (exists)
+                    radios.splice(i, 1);
+                return exists;
+            });
+            lord.setLocalObject("playerRadios", radios);
+            $(lord.id("track/" + (fileName || href))).remove();
+            if (lord.currentRadios.hasOwnProperty(fileName || href))
+                delete lord.currentRadios[fileName || href];
+            return true;
+        }
     lord.setLocalObject("playerTracks", tracks);
     $(lord.id("track/" + (fileName || href))).remove();
     if (lord.currentTracks.hasOwnProperty(fileName || href))
@@ -1357,6 +1390,7 @@ lord.checkPlaylist = function() {
     if (reorder) {
         $("#playerTracks").empty();
         lord.currentTracks = {};
+        lord.currentRadios = {};
         lastCurrentTrack = lord.currentTrack;
         lord.currentTrack = null;
     }
@@ -1376,9 +1410,25 @@ lord.checkPlaylist = function() {
             return;
         lord.addTrack(track);
     });
+    var radios = lord.getLocalObject("playerRadios", []);
+    if (!reorder) {
+        trackMap = radios.reduce(function(acc, radio) {
+            acc[radio.fileName || radio.href] = radio;
+            return acc;
+        }, {});
+        lord.each(lord.currentRadios, function(radio) {
+            if (!trackMap.hasOwnProperty(radio.fileName || radio.href))
+                $(lord.id("track/" + (radio.fileName || radio.href))).remove();
+        });
+    }
+    radios.forEach(function(radio) {
+        if (!reorder && lord.currentRadios.hasOwnProperty(radio.fileName || radio.href))
+            return;
+        lord.addRadio(radio);
+    });
     if (!lord.queryOne(".track.selected", lord.id("playerTracks"))) {
-        var storedLastTrack = lord.getLocalObject("playerLastTrack", {});
-        var node = lord.id("track/" + (storedLastTrack.fileName || storedLastTrack.href));
+        var storedLastTrack = lord.getLocalObject("playerLastTrack", {}),
+            node = lord.id("track/" + (storedLastTrack.fileName || storedLastTrack.href));
         if (lastCurrentTrack && lord.currentTracks.hasOwnProperty(lastCurrentTrack.fileName || lastCurrentTrack.href))
             lord.currentTrack = lastCurrentTrack;
         else if (node)
