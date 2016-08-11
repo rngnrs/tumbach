@@ -971,15 +971,15 @@ lord.resetPlayerSource = function(track) {
         lord.playerElement = movablePlayer.content;
         lord.playerElement.movablePlayer = movablePlayer;
         movablePlayer.show();
-    } else {
-        lord.playerElement = lord.node("audio");
-    }
+    } else
+        lord.playerElement = new Audio();
     var defVol = lord.getLocalObject("defaultAudioVideoVolume", 100) / 100;
     lord.playerElement.volume = lord.getLocalObject("playerVolume", defVol);
     if (!movablePlayer)
         lord.playerElement.style.display = "none";
     var lastTrack = {};
     lastTrack.href = track.href;
+    lastTrack.boardName = track.boardName;
     lastTrack.title = track.title;
     lastTrack.artist = track.artist;
     lastTrack.duration = track.duration;
