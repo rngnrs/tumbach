@@ -25,221 +25,162 @@ body {
     -moz-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    font-size: 14px;
+    font-size: 14px
 }
-
 .spoiler {
-    cursor: pointer;
+    cursor: pointer
 }
-
 .navbar.navbarFrame {
-    font-size: 1.2em;
+    font-size: 1.2em
 }
-
 .postFileName {
-    font-size: .9em;
+    font-size: .9em
 }
-
 .postFileSize {
-    font-size: .6em;
+    font-size: .6em
 }
-
 .postFileSearch {
-    padding-bottom: 4px;
+    padding-bottom: 4px
 }
-
 .postFileThumbImage {
     max-width: 140px;
-    max-height: 140px;
+    max-height: 140px
 }
-
 .postToThread {
-    display: block;
+    display: block
 }
-
 .postToThread > a > button {
-    width: 100%;
+    width: 100%
 }
-
 .postSubject {
-    font-size: .8em;
+    font-size: .8em
 }
-
 .tripcode {
     font-size: .8em;
-    display: block;
+    display: block
 }
-
 .postDateTime, .someName {
-    font-size: .8em;
+    font-size: .8em
 }
-
 .searchAction > form {
     white-space: nowrap;
     width: 70%;
-    margin: 0 auto;
+    margin: 0 auto
 }
-
 .externalThreadFrame {
     width: 120px;
-    height: 240px;
+    height: 240px
 }
-
-.postFilesInner {
-    display: block;
+.postFilesInner, .postFilesInnerRow, .postText {
+    display: block
 }
-
-.postFilesInnerRow {
-    display: block;
-}
-
-.postText {
-    display: block;
-}
-
 .postFile {
-    display: inline-block;
+    display: inline-block
 }
-
 .boardSelectContainer {
     display: inline-block;
     vertical-align: top;
     width: 16px;
-    overflow: hidden;
+    overflow: hidden
 }
-
 .boardSelect {
     cursor: pointer;
     border: none;
     background: url("../img/boards.png") left center no-repeat;
-    width: 16px;
+    width: 16px
 }
-
 .boardSelectForm {
-    display: inline;
+    display: inline
 }
-
 .postToThreadDesktop {
-    display: none;
+    display: none
 }
-
 #player {
-    width: 80%;
+    width: 80%
 }
-
 .playerMinimizedActionsDesktop {
-    display: none;
+    display: none
 }
-
 .playerMinimizedActionsMobile {
-    display: inline-block;
+    display: inline-block
 }
-
-/*#playerTrackInfo {
-    font-size: 1.1em;
-}*/
-
 #playerDurationSlider {
     width: calc(100% - 6px);
-    margin-right: 0px;
+    margin-right: 0
 }
-
 #playerVolumeSlider,
 [name='playerMuteButton'] {
-    display: none;
+    display: none
 }
-
-/*#playerTrackTags {
-    font-size: 1.1em;
-}*/
-
 .movablePlayerConstrolsSliders {
-    width: calc(100% - 28px);
+    width: calc(100% - 28px)
 }
-
 .movablePlayerDurationSlider {
     width: calc(100% - 6px);
-    margin-right: 0px;
+    margin-right: 0
 }
-
 .movablePlayerVolumeSlider {
-    display: none;
+    display: none
 }
-
 div.bannedUser {
-    overflow-x: auto;
+    overflow-x: auto
 }
-
 .chatContactList {
     min-width: 100px;
-    max-width: 100px;
+    max-width: 100px
 }
-
 .chatContact > input[type="image"] {
-    display: none;
+    display: none
 }
-
 .chatContactList:hover {
     min-width: 150px;
-    max-width: 150px;
+    max-width: 150px
 }
-
 .chatContactList:hover > .chatContact > input[type="image"] {
-    display: inline;
+    display: inline
 }
-
 .chatHistory {
     min-width: 200px;
     max-width: 200px;
     min-height: 400px;
-    max-height: 400px;
+    max-height: 400px
 }
-
 .registeredUserHashpassInput {
     box-sizing: border-box;
-    width: calc(100% - 8px);
+    width: calc(100% - 8px)
 }
-
 .registeredUserIpsInput {
     box-sizing: border-box;
-    width: calc(100% - 8px);
+    width: calc(100% - 8px)
 }
-
 .banExpiresInput {
-    width: 130px;
+    width: 130px
 }
-
 .frameList {
-    width: 80px;
+    width: 80px
 }
-
 .frameContent {
-    width: calc(100% - 88px);
+    width: calc(100% - 88px)
 }
-
 .settingsDialog,
 .settingsDialog input,
 .settingsDialog select,
 .settingsDialog button {
-    font-size: 12px !important;
+    font-size: 12px !important
 }
-
 .settingsDialog ul.tabWidget {
-    display: block;
+    display: block
 }
-
 .settingsDialog > div {
     width: 100vw;
     max-width: 400px;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
-
 .settingsDialog ul.tabWidget > li > a {
-    padding: 6px 3px;
+    padding: 6px 3px
 }
-
 #fastSettings, .settingsDialog table {
     width: 100vw;
     max-width: 400px;
-    font-size: 12px;
+    font-size: 12px
 }

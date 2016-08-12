@@ -1,409 +1,302 @@
 /*Photon*/
 /* tumb rewrite */
 .color-prim {
-    background-color: #DDD;
+    background-color: #DDD
 }
 .color-prim-inv {
-    background-color: #000;
+    background-color: #000
 }
 aside {
-    background-color: #EEE;
+    background-color: #EEE
 }
 /* /tumb rewrite */
 
 .ui-tooltip {
-    border: 1px solid #CCC !important;
+    border: 1px solid #CCC !important
 }
-
 .ui-tooltip-content {
     /*font-family: Verdana,sans-serif;*/
-    background-color: #DDD;
+    background-color: #DDD
 }
-
 .ui-tooltip-content::after {
-    border-color: #CCC transparent;
+    border-color: #CCC transparent
 }
-
 .ui-slider {
-    border: 1px solid black !important;
+    border: 1px solid black !important
 }
-
 .ui-slider-handle {
-    border: 1px solid black !important;
+    border: 1px solid black !important
 }
-
 body  {
-    background-color: #EEE;
     /*font-family: Verdana,sans-serif;*/
+    background-color: #EEE
 }
-
 a {
-    color: #F60;
+    color: #F60
 }
-
 a.expandCollapse, a i {
-    color: #444;
+    color: #444
 }
-
 a:hover, a:hover i, a:focus {
-    color: #06F;
+    color: #06F
 }
-
 a.expandCollapse:hover {
-    color: #777;
+    color: #777
 }
-
 hr {
     color: #CCC;
     background-color: #CCC;
     border: none;
     height: 1px;
-    clear: both;
+    clear: both
 }
-
 .select {
     background: #EAEAEA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .selectOption {
-    background: #EAEAEA;
+    background: #EAEAEA
 }
-
 .input {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .button, .checkbox {
     background: #EAEAEA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .popup {
     background-color: #DDD;
-    border: 1px solid #BBB;
+    border: 1px solid #BBB
 }
-
 .favorites {
-    background-color: #EEE;
+    background-color: #EEE
 }
-
 .favorites > div {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .scrollAreaH60 {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .postSequenceNumber {
-    color: green;
+    color: #008000
 }
-
 .hiddenPostList > div:nth-child(even) {
-    background-color: #EEE;
+    background-color: #EEE
 }
-
 .ban {
-    background-color: #DDD;
+    background-color: #DDD
 }
-
 span.spoiler, span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     background: #BBB;
-    color: #BBB;
+    color: #BBB
 }
-
 span.spoiler:hover {
-    color: #333;
+    color: #333
 }
-
 span.spoiler:hover a {
-    color: #F60;
+    color: #F60
 }
-
 span.spoiler:hover .cspoilerTitle {
-    color: #304070;
+    color: #304070
 }
-
 span.spoiler:hover .quotation {
-    color: #789922;
+    color: #789922
 }
-
 .spoilerMarkupButton {
-    background-color: #EEE;
+    background-color: #EEE
 }
-
 .spoilerMarkupButton.spoiler {
-    color: #333;
+    color: #333
 }
-
 span.tooltip {
-    color: #304070;
+    color: #304070
 }
-
 span.newPostCount {
-    color: green;
+    color: green
 }
-
 .postLimitReached {
-    color: red;
+    color: red
 }
-
 .bumpLimitReached {
-    color: olive;
+    color: olive
 }
-
 .quotation {
-    color: #789922;
+    color: #789922
 }
-
 .cspoilerTitle {
-    color: #304070;
+    color: #304070
 }
-
 .cspoilerBody {
     background-color: #BBB;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .catalogContainer {
-    color: #333;
+    color: #333
 }
-
 .catalogItem {
     background-color: #DDD;
     border: 1px solid #CCC;
-    color: #333;
+    color: #333
 }
-
 .opSign {
-    color: green;
+    color: green
 }
-
 .error {
-    background-color: #DDD;
+    background-color: #DDD
 }
-
-.sectionBody {
+.sectionBody, .post, .draft {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
-.post {
-    background-color: #DDD;
-    border: 1px solid #CCC;
-}
-
-.draft {
-    background-color: #DDD;
-    border: 1px solid #CCC;
-}
-
 .newPost {
-    background-color: #CDCDCD;
+    background-color: #CDCDCD
 }
-
 .post:target, .opPost:target {
-    background-color: #EEDACB;
+    background-color: #EEDACB
 }
-
 .post.temporary {
-    border: 1px solid #000;
+    border: 1px solid #000
 }
-
 .postFileSize {
-    color: #444;
+    color: #444
 }
-
 .menu {
-    background: #DDD !important;
-    border: 1px solid #CCC !important;
     /*font-family: Verdana,sans-serif !important;*/
+    background: #DDD !important;
+    border: 1px solid #CCC !important
 }
-
 .bannedFor {
-    color: red;
+    color: red
 }
-
 .modificationDateTime {
-    font-style: italic;
+    font-style: italic
 }
-
 .postSubject {
-    font-weight: bold;
+    font-weight: bold
 }
-
 .tripcode {
-    color: green;
+    color: green
 }
-
 .moderName {
     font-weight: bold;
-    color: blue;
+    color: blue
 }
-
 .postformFile.drag {
     background-color: #DDD;
-    border: 1px dashed #555;
+    border: 1px dashed #555
 }
-
 .referencedBy {
-    color: #555;
+    color: #555
 }
-
 ul.tabWidget > li {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 ul.tabWidget > li > a {
-    color: black;
+    color: black
 }
-
 ul.tabWidget > li.activated {
     background-color: #AAA;
-    border: 1px solid #666;
+    border: 1px solid #666
 }
-
 ul.tabWidget > li.activated > a {
-    color: white;
+    color: #FFF
 }
-
 .toolbar.sticky {
-    background-color: #EEE;
+    background-color: #EEE
 }
-
 .vote {
     background-color: #CCC;
-    border: 1px solid #BBB;
+    border: 1px solid #BBB
 }
-
 .voteText {
-    font-weight: bold;
+    font-weight: bold
 }
-
 .voteCount {
-    font-style: italic;
+    font-style: italic
 }
-
 .chatContactList {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
-.chatContact:hover {
-    color: #FFF;
-    background-color: #666;
-}
-
-.chatContact.selected {
-    color: #000;
-    background-color: #DDD;
-}
-
+.chatContact:hover,
 .chatContact.selected:hover {
     color: #FFF;
-    background-color: #666;
+    background-color: #666
 }
-
+.chatContact.selected {
+    color: #000;
+    background-color: #DDD
+}
 .chatContactNewMessages {
-    color: red;
+    color: red
 }
-
 .chatTarget {
-    background-color: #DDD;
+    background-color: #DDD
 }
-
 .chatHistory {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .chatMessage {
     border: 1px solid #CCC;
-    background-color: #DDD;
+    background-color: #DDD
 }
-
 .chatMessageDate {
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted black
 }
-
 .bordered {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .submitContainer > input {
-    border-color: #F60;
+    border-color: #F60
 }
-
 .hideReason {
-    font-weight: bold;
+    font-weight: bold
 }
-
-#player {
-    background-color: #EEE;
-    border: 1px solid #CCC;
-}
-
-#player.minimized {
-    background-color: #DDD;
-}
-
 .track {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .track:hover, .pseudoTrack:hover {
     background-color: #CCC;
-    border: 1px solid #BBB;
+    border: 1px solid #BBB
 }
-
 .track.selected {
     background-color: #AAA;
-    border: 1px solid #666;
+    border: 1px solid #666
 }
-
 .track.selected > .trackInfo,
 .bannedUserHeader,
 .registeredUserHeader {
-    font-weight: bold;
+    font-weight: bold
 }
-
 .searchResult {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 .searchResultHighlighted {
-    background-color: yellow;
+    background-color: yellow
 }
-
 .delallHeader {
-    font-weight: bold;
+    font-weight: bold
 }
-
 ul.jqueryFileTree a {
-    color: black !important;
+    color: black !important
 }
-
 .theTitle h1 {
-    color: #F60;
+    color: #F60
 }
-
 #postForm {
-    background-color: #EEE;
+    background-color: #EEE
 }
-
 #postForm.floatingPostForm {
-    border: 2px solid #BBB;
+    border: 2px solid #BBB
 }
-
 .postFormHeader {
     background-color: #DDD;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
-
 #postForm.floatingPostForm > .postFormHeader {
     border: none;
-    border-bottom: 1px solid #CCC;
+    border-bottom: 1px solid #CCC
 }

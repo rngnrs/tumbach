@@ -1,24 +1,24 @@
 /* tumb rewrite */
 .logo-big {
     width: 150px;
-    min-height: 150px;
+    min-height: 150px
 }
 .titl {
     padding: 42px 0;
     font-size: 50px;
-    height: 150px;
+    height: 150px
 }
 .mobileOnly {
-    display: none;
+    display: none
 }
 #playerTrackTags {
-    width: calc(100% - 113px);
+    width: calc(100% - 113px)
 }
 .searchAction {
-    max-width: 38%;
+    max-width: 38%
 }
 #tplayer.toggle {
-    width: 50%;
+    width: 50%
 }
 @media screen and (min-width: 1084px) {
     .searchAction {
@@ -31,151 +31,110 @@
 /* /tumb rewrite */
 
 body, input, select {
-    font-size: 14.4px;
+    font-size: 14.4px
 }
-
 .navbar.navbarFrame {
-    font-size: 1em;
+    font-size: 1em
 }
-
 .postHeader {
-    white-space: nowrap;
+    white-space: nowrap
 }
-
 .postFileSize {
-    font-size: .8em;
+    font-size: .8em
 }
-
 .postFileSearch {
-    padding-bottom: 4px;
+    padding-bottom: 4px
 }
-
 .externalThreadFrame {
     width: 300px;
-    height: 400px;
+    height: 400px
 }
-
 .loginDescription {
     max-width: 80%;
-    margin-left: 10%;
+    margin-left: 10%
 }
-
-.postFilesInner {
-    display: table;
+.postFilesInner, .postFilesInnerRow {
+    display: table
 }
-
-.postFilesInnerRow {
-    display: table;
+.postFilesInnerBlock, .postFilesInnerRowBlock {
+    display: block
 }
-
-.postFilesInnerBlock {
-    display: block;
+.postText, .postFile {
+    display: table-cell
 }
-
-.postFilesInnerRowBlock {
-    display: block;
-}
-
-.postText {
-    display: table-cell;
-}
-
-.postFile {
-    display: table-cell;
-}
-
 .postFileInlineBlock {
-    display: inline-block;
+    display: inline-block
 }
-
 .postToThreadMobile {
-    display: none;
+    display: none
 }
-
 #player {
-    width: 400px;
+    width: 400px
 }
-
 .playerMinimizedActionsDesktop {
-    display: inline-block;
+    display: inline-block
 }
-
 .playerMinimizedActionsMobile {
-    display: none;
+    display: none
 }
-
 #playerDurationSlider {
-    width: calc(75% - 5px);
+    width: calc(75% - 5px)
 }
-
 #playerVolumeSlider {
     display: inline-block;
-    width: calc(25% - 4px);
+    width: calc(25% - 4px)
 }
 .movablePlayerConstrolsSliders {
-    width: calc(100% - 44px);
+    width: calc(100% - 44px)
 }
-
 .movablePlayerDurationSlider {
-    width: calc(75% - 12px);
+    width: calc(75% - 12px)
 }
-
 .movablePlayerVolumeSlider {
     display: inline-block;
-    width: calc(25% - 8px);
+    width: calc(25% - 8px)
 }
-
 .chatContactList {
-    min-width: 125px;
+    min-width: 125px
 }
-
 .chatHistory {
     min-width: 300px;
-    min-height: 300px;
+    min-height: 300px
 }
-
 .registeredUserHeader {
-    font-size: 1.1em;
+    font-size: 1.1em
 }
-
 .registeredUserHashpassInput, .registeredUserIpsInput {
     box-sizing: border-box;
-    width: 400px;
+    width: 400px
 }
-
 .banExpiresInput {
-    width: 120px;
+    width: 120px
 }
-
 .contentFileTreeColumn {
-    display: inline-block;
+    display: inline-block
 }
-
 .contentFileActionColumn {
     display: inline-block;
-    vertical-align: top;
+    vertical-align: top
 }
-
 #contentFileTree {
     min-width: 300px;
     height: 500px;
     overflow-x: auto;
     overflow-y: auto;
-    box-sizing: border-box;
+    box-sizing: border-box
 }
-
 #postForm {
     display: inline-block;
     padding-left: 4px;
-    padding-right: 4px;
+    padding-right: 4px
 }
-
 #postForm.floatingPostForm {
     position: fixed;
     z-index: 3;
-    overflow: hidden;
+    overflow: hidden
 }
-
 .postFormHeader {
     position: relative;
     height: 20px;
@@ -184,43 +143,36 @@ body, input, select {
     left: 4px;
     text-align: left;
     padding-left: 2px;
-    cursor: move;
+    cursor: move
 }
-
 #postForm.floatingPostForm > .postFormHeader {
     width: calc(100% + 6px);
-    left: -4px;
+    left: -4px
 }
-
 .postFormHeaderButtons {
     display: inline-block;
     position: absolute;
     right: 0;
     top: 0;
-    padding: 0;
+    padding: 0
 }
-
 .postFormHeaderButtons .buttonImage {
-    vertical-align: top;
+    vertical-align: top
 }
-
 .settingsDialog > ul.tabWidget {
     width: 128px;
-    float: left;
+    float: left
 }
-
 .settingsDialog > ul.tabWidget > li {
     display: block;
-    width: 100%;
+    width: 100%
 }
-
 #settingsDialog_window {
     float: left;
     min-width: calc(100% - 128px);
-    max-width: 50vw;
+    max-width: 50vw
 }
-
 #fastSettings, .settingsDialog table {
     font-size: 14px;
-    width: 394px;
+    width: 394px
 }

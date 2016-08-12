@@ -1,146 +1,145 @@
 /*Tumbach*/
-
 .color-prim {
     background-color: #99D9EA;
-    color: #000;
+    color: #000
 }
 .color-prim-inv {
     background-color: #000;
-    color: #99D9EA;
+    color: #99D9EA
 }
 body, aside {
-    background-color: #EEE;
+    background-color: #EEE
 }
 a, .cspoilerTitle {
     text-decoration:none;
     color: rgba(0, 127, 255, .87);
-    transition: .1s color;
+    transition: .1s color
 }
 .card-paper a, .post a {
-    text-decoration: underline;
+    text-decoration: underline
 }
 a.expandCollapse, a i {
-    color: #444;
+    color: #444
 }
 a.expandCollapse:hover {
-    color: #777;
+    color: #777
 }
 .postSequenceNumber,
 .cspoilerTitle:hover,
 a:hover, a:hover i, a:focus {
-    color: #F80;
+    color: #F80
 }
 a.expandCollapse:hover {
-    color: #666;
+    color: #666
 }
 hr {
-    background-color: #CCC;
+    background-color: #CCC
 }
 span.spoiler {
     background: #BBB;
     color: #BBB;
-    transition: .2s background;
+    transition: .2s background
 }
 span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {
     opacity: 0;
-    transition: .2s opacity;
+    transition: .2s opacity
 }
 span.spoiler:hover {
     color: inherit;
-    background: inherit;
+    background: inherit
 }
 span.spoiler:hover * {
-    opacity: 1;
+    opacity: 1
 }
 .select {
     background: #EAEAEA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .selectOption {
-    background: #EAEAEA;
+    background: #EAEAEA
 }
 .input {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .button {
     background: #EAEAEA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .popup {
     background-color: #DDD;
-    border: 1px solid #BBB;
+    border: 1px solid #BBB
 }
 .sectionBody, .post, .draft, .catalogItem, .searchResult {
     background: #FAFAFA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .cspoilerBody {
     background-color: #BBB;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .track {
     background-color: #99D9EA;
-    border: 1px solid #7AB;
+    border: 1px solid #7AB
 }
 .track.selected, .track:hover, .pseudoTrack:hover {
     background-color: #7AB;
-    border: 1px solid #99D9EA;
+    border: 1px solid #99D9EA
 }
 .chatMessage {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .chatContact {
-    background-color: rgba(153, 217, 234, .25);
+    background-color: rgba(153, 217, 234, .25)
 }
 .chatContact.selected, .chatMessage, .chatContact:hover {
-    background-color: rgba(153, 217, 234, .75);
+    background-color: rgba(153, 217, 234, .75)
 }
 ul.tabWidget > li {
     background-color: rgba(153, 217, 234, .25);
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 ul.tabWidget > li.activated {
-    background-color: #99D9EA;
+    background-color: #99D9EA
 }
 .scrollAreaH60 {
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 .searchResultHighlighted {
-    background-color: #FF0;
+    background-color: #FF0
 }
 .ui-tooltip {
-    border: 1px solid #CCC !important;
+    border: 1px solid #CCC !important
 }
 .ui-tooltip-content::after {
-    border-color: #CCC transparent;
+    border-color: #CCC transparent
 }
 .ui-slider, .ui-slider-handle {
-    border: 1px solid #000 !important;
+    border: 1px solid #000 !important
 }
 .newPost {
-    background-color: #CCC;
+    background-color: #CCC
 }
 .post:target, .opPost:target {
-    background-color: #BDD;
+    background-color: #BDD
 }
 .opSign {
-    color: #080;
+    color: #080
 }
 .submitContainer > input {
     border-color: #99D9EA;
-    background: #99D9EA;
+    background: #99D9EA
 }
 #postForm {
-    background-color: #EEE;
+    background-color: #EEE
 }
 #postForm.floatingPostForm {
-    border: 2px solid #BBB;
+    border: 2px solid #BBB
 }
 .postFormHeader {
     background-color: #99D9EA;
-    border: 1px solid #CCC;
+    border: 1px solid #CCC
 }
 #postForm.floatingPostForm > .postFormHeader {
     border: none;
-    border-bottom: 1px solid #CCC;
+    border-bottom: 1px solid #CCC
 }
