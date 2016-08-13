@@ -807,6 +807,10 @@ lord.showFavorites = function() {
     var div = lord.id("favorites");
     if (div)
         return;
+    lord.queryAll("[name='favoritesButton']").forEach(function(a) {
+        a.classList.add("mdi-star-outline");
+        a.classList.remove("mdi-star");
+    });
     var model = lord.model(["base", "tr"]);
     model.favorites = lord.toArray(lord.getLocalObject("favoriteThreads", {}));
     div = lord.template("favoritesDialog", model);
@@ -1208,8 +1212,7 @@ lord.playTrack = function(el) {
 lord.initRadio = function() {
     var file = lord.data("sitePathPrefix")+"/assets/radio.json",
         ncont = lord.id("playerRadios"),
-        cont = $(ncont),
-        model = lord.model("tr");
+        cont = $(ncont);
     if(!cont.data('loaded') && !lord.getLocalObject("playerRadios", false)) {
         $.getJSON(file, function(data) {
             $.each(data, function(key, val) {
@@ -1217,8 +1220,10 @@ lord.initRadio = function() {
             });
         });
     }
-    cont.prepend("<div class='pseudoTrack' onclick='lord.playerAddRadio();'>" +
-        "<i class='mdi mdi-radio'></i> "+model.tr.addRadioText+"</div>");
+    var div = lord.node("div");
+    div.innerHTML = "<div class='pseudoTrack' onclick='lord.playerAddRadio();'>" +
+    "<i class='mdi mdi-radio'></i> "+ lord.models.tr.tr.addRadioText+"</div>";
+    ncont.parentNode.insertBefore(div, ncont.parentNode.firstChild);
     cont.data("loaded", true);
 };
 
@@ -1232,20 +1237,21 @@ lord.trackDrag = function(e) {
 
 lord.trackDrop = function(e) {
     e.preventDefault();
-    var data = e.dataTransfer.getData("text");
-    var parent = lord.id("playerTracks");
-    var draggedTrack = lord.id(data);
-    var replacedTrack = $(e.target).closest(".track")[0];
+    var data = e.dataTransfer.getData("text"),
+        draggedTrack = lord.id(data),
+        replacedTrack = $(e.target).closest(".track")[0];
     if (!draggedTrack || !replacedTrack)
         return;
-    var draggedFileName = lord.data("fileName", draggedTrack);
-    var draggedHref = lord.data("href", draggedTrack);
-    var replacedFileName = lord.data("fileName", replacedTrack);
-    var replacedHref = lord.data("href", replacedTrack);
-    var draggedIndex;
-    var replacedIndex;
-    var tracks = lord.getLocalObject("playerTracks", []);
-    tracks.some(function(track, i) {
+    var draggedFileName = lord.data("fileName", draggedTrack),
+        draggedHref = lord.data("href", draggedTrack),
+        replacedFileName = lord.data("fileName", replacedTrack),
+        replacedHref = lord.data("href", replacedTrack),
+        draggedIndex,
+        replacedIndex,
+        tracks = lord.getLocalObject("playerTracks", []),
+        radios = lord.getLocalObject("playerRadios", []);
+    var list = (/http/.test(data))? radios: tracks;
+    list.some(function(track, i) {
         if ((track.fileName && draggedFileName == track.fileName) || (track.href && draggedHref == track.href)) {
             draggedIndex = i;
             if (replacedIndex >= 0)
@@ -1259,8 +1265,8 @@ lord.trackDrop = function(e) {
     });
     if (draggedIndex < 0 || replacedIndex < 0 || draggedIndex == replacedIndex)
         return;
-    tracks.splice(replacedIndex, 0, tracks.splice(draggedIndex, 1)[0]);
-    lord.setLocalObject("playerTracks", tracks);
+    list.splice(replacedIndex, 0, list.splice(draggedIndex, 1)[0]);
+    lord.setLocalObject("player" + ((/http/.test(data))? "Radio": "Track") + "s", list);
     lord.setLocalObject("playerMustReorder", lord.WindowID);
     lord.checkPlaylist();
     setTimeout(function() {
@@ -1389,6 +1395,7 @@ lord.checkPlaylist = function() {
     var lastCurrentTrack;
     if (reorder) {
         $("#playerTracks").empty();
+        $("#playerRadios").empty();
         lord.currentTracks = {};
         lord.currentRadios = {};
         lastCurrentTrack = lord.currentTrack;
@@ -1485,53 +1492,73 @@ lord.removeThreadFromFavorites = function(boardName, threadNumber) {
     span.appendChild(lord.node("text", lord.text("addThreadToFavoritesText")));
 };
 
-lord.checkFavoriteThreads = function() {
-    var favoriteThreads = lord.getLocalObject("favoriteThreads", {});
-    var parameters = lord.toArray(favoriteThreads).map(function(fav) {
-        return fav.boardName + ":" + fav.threadNumber;
-    });
-    if (parameters.length <= 0)
+lord.checkFavoriteThreads = function(showOverride) {
+    var favoriteThreads = lord.getLocalObject("favoriteThreads", {}),
+        parameters = lord.toArray(favoriteThreads).map(function(fav) {
+            return fav.boardName + ":" + fav.threadNumber;
+        });
+    if (parameters.length <= 0 || typeof showOverride != "undefined")
         return;
     lord.api("threadLastPostNumbers", { threads: parameters }).then(function(lastPostNumbers) {
         favoriteThreads = lord.getLocalObject("favoriteThreads", {});
-        var div = lord.id("favorites");
-        var show = false;
+        var div = lord.id("favorites"),
+            diff = {},
+            show = false;
         lord.toArray(favoriteThreads).forEach(function(fav, i) {
-            var lastPostNumber = lastPostNumbers[i];
+            var lastPostNumber = lastPostNumbers[i],
+                d = fav.lastPostNumber - fav.previousLastPostNumber;
+            diff[fav.boardName + "/" + fav.threadNumber] = d;
             if (!lastPostNumber)
                 fav.subject = "[404] " + fav.subject;
             fav.lastPostNumber = lastPostNumber;
-            if (fav.lastPostNumber > fav.previousLastPostNumber) {
+            if (fav.lastPostNumber > fav.previousLastPostNumber && (typeof showOverride == "undefined")) {
                 var sameThread = (+lord.data("threadNumber") == fav.threadNumber);
-                if (!sameThread && lord.notificationsEnabled()) {
-                    lord.notificationQueue.push({
-                        key: fav.boardName + "/" + fav.threadNumber,
-                        boardName: fav.boardName,
-                        postNumber: fav.lastPostNumber,
-                        threadNumber: fav.threadNumber
-                    });
-                }
-                if (!sameThread && lord.soundEnabled())
-                    lord.playSound();
-                if (div) {
-                    var postDiv = lord.id("favorite/" + fav.boardName + "/" + fav.threadNumber);
-                    if (!postDiv)
-                        return;
-                    var fnt = lord.queryOne("font", postDiv);
-                    $(fnt).empty();
-                    var diff = fav.lastPostNumber - fav.previousLastPostNumber;
-                    fnt.appendChild(lord.node("text", "+" + diff));
-                } else if (!sameThread) {
-                    show = true;
+                if (!sameThread) {
+                    if (lord.notificationsEnabled())
+                        lord.notificationQueue.push({
+                            key: fav.boardName + "/" + fav.threadNumber,
+                            boardName: fav.boardName,
+                            postNumber: fav.lastPostNumber,
+                            threadNumber: fav.threadNumber
+                        });
+                    if (lord.soundEnabled())
+                        lord.playSound();
                 }
             }
-            if (show) {
-                lord.setLocalObject("favoriteThreads", favoriteThreads);
-                lord.showFavorites();
-            }
+            if (div) {
+                var postDiv = lord.id("favorite/" + fav.boardName + "/" + fav.threadNumber);
+                if (!postDiv)
+                    return;
+                var fnt = lord.queryOne("font", postDiv);
+                fnt.innerHTML = '';
+                fnt.appendChild(lord.node("text", "+" + diff[fav.boardName + "/" + fav.threadNumber]));
+            } else if (!sameThread && d > 0)
+                show = true;
         });
+        if (show) {
+            lord.queryAll("[name='favoritesButton']").forEach(function(a) {
+                a.classList.add("mdi-star");
+                a.classList.remove("mdi-star-outline");
+            });
+            div = lord.node("div");
+            var a = lord.node("a");
+            i = lord.node("i");
+            i.className = "mdi mdi-star";
+            a.title = lord.text("newPostsText") + diff;
+            a.appendChild(i);
+            div.onclick = lord.showFavorites;
+            div.appendChild(a);
+            div.appendChild(lord.node("text", " " + lord.text("newPostsText")));
+            if (diff) {
+                for (var key in diff) {
+                    var val = diff[key];
+                    div.appendChild(lord.node("text", " [" + key + ": " + val + "]"));
+                }
+            }
+            lord.showPopup(div, { type: "node", timeout: 15 * lord.Second });
+        }
         lord.setLocalObject("favoriteThreads", favoriteThreads);
-        setTimeout(lord.checkFavoriteThreads, 15 * lord.Second);
+        setTimeout(function(){lord.checkFavoriteThreads(false)}, 15 * lord.Second);
     });
 };
 
@@ -1957,7 +1984,7 @@ lord.checkChats = function() {
             lord.updateChat(keys);
         if (!lord.getLocalObject("useWebSockets", true)) {
             lord.checkChats.timer = setTimeout(lord.checkChats.bind(lord),
-                lord.chatDialog ? (5 * lord.Second) : lord.Minute);
+                lord.chatDialog? (5 * lord.Second): lord.Minute);
         }
     }).catch(function(err) {
         lord.handleError(err);
@@ -2107,8 +2134,8 @@ lord.checkNotificationQueue = function() {
         boardName: notification.boardName,
         postNumber: notification.postNumber
     }).then(function(post) {
-        var sitePathPrefix = lord.data("sitePathPrefix");
-        var icon = "/" + sitePathPrefix;
+        var sitePathPrefix = lord.data("sitePathPrefix"),
+            icon = "/" + sitePathPrefix;
         if (post && post.fileInfos && post.fileInfos.length > 0)
             icon += notification.boardName + "/thumb/" + post.fileInfos[0].thumb.name;
         else
@@ -2341,9 +2368,9 @@ lord.initializeOnLoadBase = function() {
                     } else {
                         var msg = lord.wsMessages[message.id];
                         if (!msg) {
-                            if ("_error" == message.id) {
+                            if ("_error" == message.id)
                                 lord.handleError(message.error);
-                            } else {
+                            else {
                                 var handler = lord.wsHandlers[message.type];
                                 if (handler)
                                     handler(message);
@@ -2369,8 +2396,9 @@ lord.initializeOnLoadBase = function() {
                 ++retryCount;
                 if (retryCount > 5)
                     lord.handleError(err);
-                if (retryCount > 60)
-                    return;
+                if (retryCount > 60) {
+                    return lord.showPopup("Switching to AJAX...");
+                }
                 setTimeout(f, retryCount * lord.Second);
             });
         };

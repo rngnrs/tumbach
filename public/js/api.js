@@ -791,7 +791,7 @@ lord.toCenter = function(element, sizeHintX, sizeHintY, border) {
 };
 
 lord.reloadPage = function() {
-    document.location.reload(true);
+    location.reload(true);
 };
 
 lord.showPopup = function(text, options) {
@@ -1337,7 +1337,7 @@ lord.settings = function() {
         rememberAudioVideoVolume: lord.getLocalObject("rememberAudioVideoVolume", true),
         playAudioVideoImmediately: lord.getLocalObject("playAudioVideoImmediately", true),
         loopAudioVideo: lord.getLocalObject("loopAudioVideo", true),
-        quickReplyAction: lord.getLocalObject("quickReplyAction", "goto_thread"),
+        quickReplyAction: lord.getLocalObject("quickReplyAction", "append_post"),
         moveToPostOnReplyInThread: lord.getLocalObject("moveToPostOnReplyInThread", false),
         checkFileExistence: lord.getLocalObject("checkFileExistence", true),
         showAttachedFilePreview: lord.getLocalObject("showAttachedFilePreview", true),
@@ -1437,12 +1437,10 @@ lord.handleError = function(error) {
                     text = lord.text("error0Text");
                 break;
             }
-        } else {
+        } else
             text = lord.text(error);
-        }
-    } else {
+    } else
         text = lord.text("errorUnknownText");
-    }
     lord.showPopup(text, {type: "critical"});
 };
 
