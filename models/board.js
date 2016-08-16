@@ -971,12 +971,6 @@ module.exports.generateRSS = function(currentProcess) {
                             + "/thumb/" + fileInfo.thumb.name + "\"><br />";
                     }).join("\n") + (post.text || "") + "\n";
                     var t = (post.name)? post.name.indexOf('#'): -1;
-                    if (post.options.showTripcode)
-                        post.tripcode = Tools.generateTripcode(post.user.hashpass);
-                    else if (t > 0) {
-                        post.tripcode = Tools.tripcode(post.name.slice(t + 1));
-                        post.options.showTripcode = !0;
-                    }
                     if (t > 0)
                         post.name = post.name.slice(0, t);
                     return {
@@ -988,7 +982,7 @@ module.exports.generateRSS = function(currentProcess) {
                             _: link + "#" + post.number,
                             $: { isPermalink: true }
                         },
-                        "dc:creator": (post.name + post.tripcode || board.defaultUserName)
+                        "dc:creator": (post.name || board.defaultUserName)
                     };
                 });
             }).then(function() {
