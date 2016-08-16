@@ -200,8 +200,15 @@ router.post("/action/markupText", function(req, res, next) {
             },
             createdAt: date.toISOString()
         };
+        var t = c.fields.name.indexOf('#');
         if (req.hashpass && c.fields.tripcode)
             data.tripcode = Tools.generateTripcode(req.hashpass);
+        else if (t > 0) {
+            data.tripcode = Tools.tripcode(c.fields.name.slice(t + 1));
+            data.options.showTripcode = !0;
+        }
+        if (t > 0)
+            data.name = c.fields.name.slice(0, t);
         res.send(data);
     }).catch(function(err) {
         next(err);

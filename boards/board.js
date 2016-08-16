@@ -303,8 +303,15 @@ var renderFileInfo = function(fi) {
     post.rawSubject = post.subject;
     post.isOp = (post.number == post.threadNumber);
     post.opIp = (opPost && post.user.ip == opPost.user.ip);
+    var t = (post.name)? post.name.indexOf('#'): -1;
     if (post.options.showTripcode)
         post.tripcode = Tools.generateTripcode(post.user.hashpass);
+    else if (t > 0) {
+        post.tripcode = Tools.tripcode(post.name.slice(t + 1));
+        post.options.showTripcode = !0;
+    }
+    if (t > 0)
+        post.name = post.name.slice(0, t);
     delete post.user.ip;
     delete post.user.hashpass;
     delete post.user.password;

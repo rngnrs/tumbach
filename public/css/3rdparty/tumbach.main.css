@@ -468,6 +468,7 @@ h1 {
 }
 .tripcode {
     color: green;
+    margin-left: -3px
 }
 .moderName {
     font-weight: bold;

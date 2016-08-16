@@ -1,4 +1,3 @@
-var Address4 = require("ip-address").Address4;
 var Address6 = require("ip-address").Address6;
 var Canvas = require("canvas");
 var ChildProcess = require("child_process");
@@ -15,16 +14,13 @@ var MathJax = require("mathjax-node/lib/mj-single.js");
 var merge = require("merge");
 var mkpath = require("mkpath");
 var Multiparty = require("multiparty");
-var Path = require("path");
 var phash = require("phash-image");
 var promisify = require("promisify-node");
 var Util = require("util");
 var UUID = require("uuid");
-var XRegExp = require("xregexp");
+var tripcode = require('tripcode');
 
 var config = require("./config");
-var Global = require("./global");
-
 var translate = require("cute-localize")({
     locale: config("site.locale", "en"),
     extraLocations: __dirname + "/../translations/custom",
@@ -642,4 +638,10 @@ module.exports.writeFile = function(filePath, data) {
     }).then(function() {
         return FS.rename(tmpFilePath, filePath);
     });
+};
+
+module.exports.tripcode = function(t) {
+    if(!t.length || typeof t != "string")
+        return "";
+    return "!" + tripcode(t);
 };

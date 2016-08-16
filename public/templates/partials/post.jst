@@ -45,10 +45,10 @@
                                                                                                           title="{{=it.tr.registeredText}}"></i>{{?}}
         {{? it.customPostHeaderPart && it.customPostHeaderPart[50]}}{{ out += it.customPostHeaderPart[50](it, thread, post); }}{{?}}
         {{#def.postName}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}{{ out += it.customPostHeaderPart[60](it, thread, post); }}{{?}}
-        {{? post.opIp && post.options.signAsOp}}<span class="opSign">[OP]</span>{{?}}
-        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}{{ out += it.customPostHeaderPart[70](it, thread, post); }}{{?}}
         {{? post.options.showTripcode && post.tripcode}}<span class="tripcode">{{=post.tripcode}}</span>{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[60]}}{{ out += it.customPostHeaderPart[60](it, thread, post); }}{{?}}
+        {{? it.customPostHeaderPart && it.customPostHeaderPart[70]}}{{ out += it.customPostHeaderPart[70](it, thread, post); }}{{?}}
+        {{? post.opIp && post.options.signAsOp}}<span class="opSign">[OP]</span>{{?}}
         {{? it.customPostHeaderPart && it.customPostHeaderPart[80]}}{{ out += it.customPostHeaderPart[80](it, thread, post); }}{{?}}
         {{? it.board.showWhois && post.geolocation.flagName}}
             {{? post.geolocation.cityName}}
@@ -68,10 +68,11 @@
             {{ out += it.customPostHeaderPart[100](it, thread, post); }}
         {{?}}
         <span class="nowrap">
-            <a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.threadNumber}}.html{{? post.threadNumber != post.number}}#{{=post.number}}{{?}}"
+            <a name="number" href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.threadNumber}}.html{{? post.threadNumber != post.number}}#{{=post.number}}{{?}}">
+            #</a><a href="/{{=it.site.pathPrefix}}{{=it.board.name}}/res/{{=post.threadNumber}}.html{{? post.threadNumber != post.number}}#{{=post.number}}{{?}}"
                 {{? thread.postingEnabled && !thread.archived}}onclick="lord.insertPostNumber({{=post.number}}); return false;"{{?}}
                 name="number" data-board-name="{{=post.boardName}}" data-post-number="{{=post.number}}"
-                data-thread-number="{{=post.threadNumber}}">#{{=post.number}}</a>
+                data-thread-number="{{=post.threadNumber}}">{{=post.number}}</a>
             {{? it.customPostHeaderPart && it.customPostHeaderPart[110]}}
                 {{ out += it.customPostHeaderPart[110](it, thread, post); }}
             {{?}}

@@ -2403,6 +2403,7 @@ lord.submitted = function(event, form) {
     lord.setLocalObject("markupMode", markupMode.options[markupMode.selectedIndex].value);
     btn.disabled = true;
     btn.value = "0%";
+    lord.setLocalObject("name", lord.nameOne("name", form).value || "");
     lord.setLocalObject("password", lord.nameOne("password", form).value || "");
     var formData = new FormData(form);
     lord.queryAll(".postformFile", form).forEach(function(div) {
@@ -2605,6 +2606,7 @@ lord.addToDrafts = function(a) {
     var formData = new FormData();
     formData.append("boardName", boardName);
     formData.append("text", lord.nameOne("text", postForm).value);
+    formData.append("name", lord.nameOne("name", postForm).value);
     if (lord.nameOne("signAsOp", postForm).checked)
         formData.append("signAsOp", "true");
     var tripcode = lord.nameOne("tripcode", postForm);
@@ -2624,7 +2626,7 @@ lord.addToDrafts = function(a) {
     }).then(function(result) {
         c.progressBar.hideDelayed(200);
         result.email = lord.nameOne("email", postForm).value;
-        result.name = lord.nameOne("name", postForm).value;
+        result.name = result.name || lord.nameOne("name", postForm).value;
         result.subject = lord.nameOne("subject", postForm).value;
         result.markupMode = markupMode;
         var key = boardName + (threadNumber ? ("/" + threadNumber) : "");
@@ -3307,6 +3309,7 @@ lord.initializeOnLoadBoard = function() {
         c.model.customPostFormField = lord.customPostFormField;
         c.model.customPostFormOption = lord.customPostFormOption;
         c.model.postformRules = JSON.parse(lord.id("model-postformRules").innerHTML);
+        c.model.name = lord.getLocalObject("name", "");
         var form = lord.template("postForm", c.model);
         lord.id("hiddenPostForm").appendChild(form);
         lord.toArray(lord.id("options").childNodes).forEach(function(node) {
