@@ -303,7 +303,7 @@ var renderFileInfo = function(fi) {
     post.rawSubject = post.subject;
     post.isOp = (post.number == post.threadNumber);
     post.opIp = (opPost && post.user.ip == opPost.user.ip);
-    var t = (post.name)? post.name.indexOf('#'): -1;
+    var t = (post.name && /\w(?=#)/.test(post.name))? post.name.indexOf('#'): -1;
     if (post.options.showTripcode)
         post.tripcode = Tools.generateTripcode(post.user.hashpass);
     else if (t > 0) {

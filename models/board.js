@@ -970,7 +970,7 @@ module.exports.generateRSS = function(currentProcess) {
                         return "<img src=\"" + site.protocol + "://" + site.domain + "/" + site.pathPrefix + boardName
                             + "/thumb/" + fileInfo.thumb.name + "\"><br />";
                     }).join("\n") + (post.text || "") + "\n";
-                    var t = (post.name)? post.name.indexOf('#'): -1;
+                    var t = (post.name && /\w(?=#)/.test(post.name))? post.name.indexOf('#'): -1;
                     if (t > 0)
                         post.name = post.name.slice(0, t);
                     return {
