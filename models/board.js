@@ -474,7 +474,7 @@ var generatePage = function(boardName, pageNumber) {
         c.model.postingSpeed = controller.postingSpeedString(board, lastPostNumber);
         return Cache.writeFile(`${board.name}/${pageNumber}.json`, JSON.stringify(c.model));
     }).then(function() {
-        c.model.title = board.title;
+        c.model.title = "/" + board.name + "/ &mdash; " + board.title;
         c.model.isBoardPage = true;
         c.model.board = controller.boardModel(board).board;
         c.model.extraScripts = board.extraScripts();
@@ -520,7 +520,7 @@ var generateCatalog = function(boardName) {
             return Cache.writeFile(`${board.name}/catalog${("date" != sortMode) ? ("-" + sortMode) : ""}.json`,
                 JSON.stringify(c.model));
         }).then(function() {
-            c.model.title = board.title;
+            c.model.title = "/" + board.name + "/ &mdash; " + board.title;
             c.model.isBoardPage = true;
             c.model.board = controller.boardModel(board).board;
             c.model.sortMode = sortMode;
@@ -569,7 +569,7 @@ var generateArchive = function(boardName) {
         model.postingSpeed = controller.postingSpeedString(board, lastPostNumber);
         return Cache.writeFile(`${board.name}/archive.json`, JSON.stringify(model));
     }).then(function() {
-        model.title = board.title;
+        model.title = "/" + board.name + "/ &mdash; " + board.title;
         model.board = controller.boardModel(board).board;
         model.tr = controller.translationsModel();
         return controller("archivePage", model);
