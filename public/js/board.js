@@ -358,7 +358,7 @@ lord.createPostNode = function(post, permanent, threadInfo) {
         c.node = lord.template("post", c.model);
         if (lord.deviceType("mobile"))
             lord.setTooltips(c.node);
-        if (!permanent) {
+        if (!permanent) { // TODO: Fix non-permanent posts
             var actions = lord.nameOne("postActionsContainer", c.node);
             if (actions)
                 actions.parentNode.removeChild(actions);
@@ -2337,14 +2337,15 @@ lord.addThreadToFavorites = function(boardName, threadNumber) {
             threadNumber: threadNumber,
             lastPostNumber: result.lastPostNumber,
             previousLastPostNumber: result.lastPostNumber,
+            viewedLastPostNumber: result.lastPostNumber,
             subject: txt.substring(0, 150)
         };
         lord.setLocalObject("favoriteThreads", favoriteThreads);
-        var opPost = lord.id(threadNumber);
-        var btn = lord.nameOne("addToFavoritesButton", opPost);
-        var div = lord.id("favorites");
-        var span = lord.queryOne("span", btn);
-        $(span).empty();
+        var opPost = lord.id(threadNumber),
+            btn = lord.nameOne("addToFavoritesButton", opPost),
+            div = lord.id("favorites"),
+            span = lord.queryOne("span", btn);
+        span.innerHTML = '';
         span.appendChild(lord.node("text", lord.text("removeThreadFromFavoritesText")));
         if (!div)
             return Promise.resolve();

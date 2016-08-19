@@ -823,7 +823,7 @@ lord.showFavorites = function() {
     }).then(function() {
         var favoriteThreads = lord.getLocalObject("favoriteThreads", {});
         lord.each(favoriteThreads, function(fav) {
-            fav.previousLastPostNumber = fav.lastPostNumber;
+            fav.viewedLastPostNumber = fav.lastPostNumber;
         });
         lord.setLocalObject("favoriteThreads", favoriteThreads);
     }).catch(lord.handleError);
@@ -1503,40 +1503,38 @@ lord.checkFavoriteThreads = function(showOverride) {
         favoriteThreads = lord.getLocalObject("favoriteThreads", {});
         var div = lord.id("favorites"),
             diff = {},
-            show = false;
+            show = false,
+            notify = false;
         lord.toArray(favoriteThreads).forEach(function(fav, i) {
             var lastPostNumber = lastPostNumbers[i],
-                d = fav.lastPostNumber - fav.previousLastPostNumber;
-            diff[fav.boardName + "/" + fav.threadNumber] = d;
+                realD = lastPostNumber - fav.previousLastPostNumber,
+                viewedD = lastPostNumber - fav.viewedLastPostNumber;
+            diff[fav.boardName + "/" + fav.threadNumber] = viewedD;
             if (!lastPostNumber)
                 fav.subject = "[404] " + fav.subject;
-            fav.lastPostNumber = lastPostNumber;
-            if (fav.lastPostNumber > fav.previousLastPostNumber && (typeof showOverride == "undefined")) {
+            if (realD > 0 && (typeof showOverride == "undefined")) {
                 var sameThread = (+lord.data("threadNumber") == fav.threadNumber);
-                if (!sameThread) {
-                    if (lord.notificationsEnabled())
-                        lord.notificationQueue.push({
-                            key: fav.boardName + "/" + fav.threadNumber,
-                            boardName: fav.boardName,
-                            postNumber: fav.lastPostNumber,
-                            threadNumber: fav.threadNumber
-                        });
-                    if (lord.soundEnabled())
-                        lord.playSound();
-                }
+                if (sameThread)
+                    fav.viewedLastPostNumber = lastPostNumber;
+                else
+                    notify = true;
             }
-            if (div) {
+            if(viewedD > 0)
+                show = true;
+            if (div && viewedD > 0) {
                 var postDiv = lord.id("favorite/" + fav.boardName + "/" + fav.threadNumber);
                 if (!postDiv)
                     return;
                 var fnt = lord.queryOne("font", postDiv);
                 fnt.innerHTML = '';
                 fnt.appendChild(lord.node("text", "+" + diff[fav.boardName + "/" + fav.threadNumber]));
-            } else if (!sameThread && d > 0)
-                show = true;
+            } else if (!sameThread && realD > 0)
+                notify = true;
+            fav.lastPostNumber = lastPostNumber;
+            fav.previousLastPostNumber = lastPostNumber;
         });
         if (show) {
-            lord.queryAll("[name='favoritesButton']").forEach(function(a) {
+            lord.queryAll("[name='favoritesButton']").forEach(function (a) {
                 a.classList.add("mdi-star");
                 a.classList.remove("mdi-star-outline");
             });
@@ -1552,13 +1550,26 @@ lord.checkFavoriteThreads = function(showOverride) {
             if (diff) {
                 for (var key in diff) {
                     var val = diff[key];
-                    div.appendChild(lord.node("text", " [" + key + ": " + val + "]"));
+                    if (val > 0) {
+                        div.appendChild(lord.node("text", " [" + key + ": " + val + "]"));
+                        if (notify) {
+                            if (lord.notificationsEnabled())
+                                lord.notificationQueue.push({
+                                    key: key,
+                                    boardName: key.slice(0,key.indexOf("/")),
+                                    postNumber: favoriteThreads[key].lastPostNumber,
+                                    threadNumber: key.slice(key.indexOf("/")+1,key.length)
+                                });
+                            if (lord.soundEnabled())
+                                lord.playSound();
+                            lord.showPopup(div, { type: "node", timeout: 15 * lord.Second });
+                        }
+                    }
                 }
             }
-            lord.showPopup(div, { type: "node", timeout: 15 * lord.Second });
         }
         lord.setLocalObject("favoriteThreads", favoriteThreads);
-        setTimeout(function(){lord.checkFavoriteThreads(false)}, 15 * lord.Second);
+        setTimeout(function(){lord.checkFavoriteThreads(/*false*/)}, 15 * lord.Second);
     });
 };
 
