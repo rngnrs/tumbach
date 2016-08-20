@@ -158,6 +158,8 @@ span.tooltip {
 span.newPostCount {
     font-size: 85%
 }
+span.newPostCount:before { content: " (" }
+span.newPostCount:after { content: ")" }
 
 .pages {
     display: block;

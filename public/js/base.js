@@ -1621,7 +1621,7 @@ lord.showNewPosts = function() {
                         return;
                     var span = lord.node("span");
                     $(span).addClass("newPostCount");
-                    span.appendChild(lord.node("text", " +" + newPostCount));
+                    span.appendChild(lord.node("text", newPostCount));
                     a.appendChild(span);
                 });
             });

@@ -37,7 +37,7 @@ hr {
 }
 span.spoiler {
     background: #BBB;
-    color: #BBB;
+    color: transparent;
     transition: .2s background
 }
 span.spoiler a, span.spoiler .cspoilerTitle, span.spoiler .quotation {

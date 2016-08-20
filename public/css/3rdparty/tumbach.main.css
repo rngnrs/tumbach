@@ -480,6 +480,8 @@ h1 {
     font-size: 100% !important;
     color: green;
 }
+.list-item .newPostCount:before {  content: "+"  }
+.list-item .newPostCount:after {  content: ""  }
 .voteText {
     font-weight: bold;
 }
