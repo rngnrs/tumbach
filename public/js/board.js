@@ -709,7 +709,8 @@ lord.quickReply = function(el) {
         tripcode.checked = lord.showTripcode(threadNumber? threadNumber.value: null);
         $(tripcode).button("refresh");
     }
-    lord.id("postFormReplyNumber").innerHTML = "&gt;&gt;" + lord.data("threadNumber", el, true);
+    if(lord.deviceType("desktop"))
+        lord.id("postFormReplyNumber").innerHTML = "&gt;&gt;" + lord.data("threadNumber", el, true);
     if ($("#postForm").hasClass("floatingPostForm")) {
         if (lord.postFormFixed)
             return;
@@ -732,7 +733,8 @@ lord.hidePostForm = function() {
             lord.id("showHidePostFormButton" + position).innerHTML = lord.text("showPostFormText");
         }
     });
-    lord.id("postFormReplyNumber").innerHTML = "";
+    if(lord.deviceType("desktop"))
+        lord.id("postFormReplyNumber").innerHTML = "";
 };
 
 lord.switchShowTripcode = function() {
