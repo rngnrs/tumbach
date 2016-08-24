@@ -2892,6 +2892,7 @@ lord.processPosts = function(parent) {
 };
 
 lord.expandCollapseThread = function(el) {
+    lord.hidePostForm();
     lord.expandThread($(el).closest(".thread")[0]);
 };
 
