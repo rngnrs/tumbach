@@ -1,9 +1,17 @@
 <form id="postForm" method="post" accept-charset="utf-8" enctype="multipart/form-data"
       action="/{{=it.site.pathPrefix}}action/{{? it.thread}}createPost{{??}}createThread{{?}}"
       onsubmit="lord.submitted(event, this); return false;">
+    {{? it.settings.minimalisticPostform}}
+         <style>
+             .postformField { text-align: center }
+         </style>
+    {{?}}
     {{? "mobile" != it.deviceType}}
         <div class="postFormHeader" ondragstart="lord.makeFormFloat(event);" draggable="true">
-            <span class="postFormHeaderLabel">{{=it.tr.postFormHeaderLabelText}}</span>
+            <span class="postFormHeaderLabel" title="{{=it.tr.postFormHeaderLabelText}}">
+                <i class="mdi mdi-cursor-move"></i>
+            </span>
+            <span id="postFormReplyNumber">{{? it.thread}}&gt;&gt;{{=it.thread.number}}{{?}}</span>
             <div class="postFormHeaderButtons">
                 <a name="fixPostFormButton" href="javascript:void(0);" title="{{=it.tr.postFormFixedButtonText}}"
                    onclick="lord.setPostFormFixed(); return false;"><i class="mdi mdi-middle mdi-pin"></i></a>
@@ -24,13 +32,22 @@
             {{? it.customPostFormField && it.customPostFormField[0]}}
                 {{ out += it.customPostFormField[0](it); }}
             {{?}}
-            <tr>
-                {{? it.settings.minimalisticPostform}}
-                    <td class="postformField nowrap" colspan="2">
-                       <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
-                              placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
+            {{? it.settings.minimalisticPostform}}
+                <tr>
+                    <td class="postformField nowrap">
+                        <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email" class="postFormInput"
+                               placeholder="{{=it.tr.postFormPlaceholderEmail}}" />
                     </td>
-                {{??}}
+                    <td class="postformField">
+                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
+                               value="{{!it.name || ''}}" placeholder="{{=it.tr.postFormPlaceholderName}}" />
+                    </td>
+                </tr>
+                {{? it.customPostFormField && it.customPostFormField[10]}}
+                    {{ out += it.customPostFormField[10](it); }}
+                {{?}}
+            {{??}}
+                <tr>
                     <td class="postformLabel">
                         <b>{{=it.tr.postFormLabelEmail}}</b>
                     </td>
@@ -38,18 +55,11 @@
                         <input type="text" maxlength="{{=it.board.maxEmailLength}}" name="email"
                                class="postFormInput" />
                     </td>
+                </tr>
+                {{? it.customPostFormField && it.customPostFormField[10]}}
+                    {{ out += it.customPostFormField[10](it); }}
                 {{?}}
-            </tr>
-            {{? it.customPostFormField && it.customPostFormField[10]}}
-                {{ out += it.customPostFormField[10](it); }}
-            {{?}}
-            <tr>
-                {{? it.settings.minimalisticPostform}}
-                    <td class="postformField" colspan="2">
-                        <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
-                               value="{{!it.name || ''}}" placeholder="{{=it.tr.postFormPlaceholderName}}" />
-                    </td>
-                {{??}}
+                <tr>
                     <td class="postformLabel">
                         <b>{{=it.tr.postFormLabelName}}</b>
                     </td>
@@ -57,8 +67,8 @@
                         <input type="text" maxlength="{{=it.board.maxNameLength}}" name="name" class="postFormInput"
                             value="{{!it.name || ''}}" />
                     </td>
-                {{?}}
-            </tr>
+                </tr>
+            {{?}}
             {{? it.customPostFormField && it.customPostFormField[20]}}
                 {{ out += it.customPostFormField[20](it); }}
             {{?}}
@@ -85,7 +95,7 @@
                 {{? it.settings.minimalisticPostform}}
                     <td class="postformField" colspan="2">
                         <div class="symbolCounterContainer postFormInput">
-                            <textarea name="text" rows="10" cols="41"
+                            <textarea name="text" rows="5"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       class="postFormTextarea"></textarea>
                         </div>
@@ -96,7 +106,7 @@
                     </td>
                     <td class="postformField">
                         <div class="symbolCounterContainer postFormInput">
-                            <textarea name="text" rows="5" cols="41" class="postFormTextarea"
+                            <textarea name="text" rows="5" class="postFormTextarea"
                                       placeholder="{{=it.tr.postFormTextPlaceholder}} {{=it.board.maxTextLength}}"
                                       {{? "mobile" != it.deviceType}}style="min-width: 400px;"{{?}}
                                       oninput="lord.countSymbols(this);"></textarea>
@@ -121,11 +131,9 @@
             {{? it.customPostFormField && it.customPostFormField[40]}}
                 {{ out += it.customPostFormField[40](it); }}
             {{?}}
-            {{? !it.settings.minimalisticPostform}}
                 <tr name="postformMarkup">
-                    <td class="postformLabel">
-                    </td>
-                    <td class="postformMarkup">
+                    {{? !it.settings.minimalisticPostform}}<td class="postformLabel"></td>{{?}}
+                    <td class="postformMarkup" {{? it.settings.minimalisticPostform}}colspan="2"{{?}}>
                         <span id="markup">
                             {{? it.board.markupElements.indexOf("BOLD") >= 0}}
                                 <button class="spoilerMarkupButton bordered" onclick="lord.markup('b'); return false;"><i class="mdi mdi-format-bold" title="{{=it.tr.markupBold}}"></i></button>
@@ -238,7 +246,6 @@
                         </span>
                     </td>
                 </tr>
-            {{?}}
             {{? it.customPostFormField && it.customPostFormField[50]}}
                 {{ out += it.customPostFormField[50](it); }}
             {{?}}
@@ -348,7 +355,7 @@
                         <b>{{=it.tr.postFormLabelCaptcha}}</b>
                     </td>
                 {{?}}
-                <td id="captchaContainer" class="postformField">
+                <td id="captchaContainer" class="postformField" {{? it.settings.minimalisticPostform}}colspan="2"{{?}}>
                     {{? !it.board.captchaEnabled}}
                         <span class="noCaptchaText">{{=it.tr.noCaptchaText}}</span>
                     {{?}}

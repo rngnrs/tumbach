@@ -681,12 +681,6 @@ lord.quickReply = function(el) {
     var post = lord.id(postNumber);
     if (!post)
         return;
-    if ($("#postForm").hasClass("floatingPostForm")) {
-        if (lord.postFormFixed)
-            return;
-        lord.makeFormNotFloat();
-        //lord.hidePostForm();
-    }
     var postForm = lord.id("postForm"),
         targetContainer = post.parentNode,
         same = (postForm.parentNode == targetContainer
@@ -715,6 +709,12 @@ lord.quickReply = function(el) {
         tripcode.checked = lord.showTripcode(threadNumber? threadNumber.value: null);
         $(tripcode).button("refresh");
     }
+    lord.id("postFormReplyNumber").innerHTML = "&gt;&gt;" + lord.data("threadNumber", el, true);
+    if ($("#postForm").hasClass("floatingPostForm")) {
+        if (lord.postFormFixed)
+            return;
+        lord.makeFormNotFloat();
+    }
 };
 
 lord.hidePostForm = function() {
@@ -732,6 +732,7 @@ lord.hidePostForm = function() {
             lord.id("showHidePostFormButton" + position).innerHTML = lord.text("showPostFormText");
         }
     });
+    lord.id("postFormReplyNumber").innerHTML = "";
 };
 
 lord.switchShowTripcode = function() {
@@ -1786,6 +1787,7 @@ lord.fileAddedCommon = function(div) {
             img.style.display = "";
             lord.queryOne("#filePreviewLabel", div).style.display = "none";
             $(div).addClass("postFormSelected");
+            $(img).addClass("noInvert");
             img.addEventListener("load", function load() {
                 img.removeEventListener("load", load, false);
                 lord.checkPostformTextareaSize();
@@ -2649,7 +2651,7 @@ lord.resetPostForm = function() {
     postForm.reset();
     var divs = lord.queryAll(".postformFile", postForm);
     for (var i = divs.length - 1; i >= 0; --i)
-    lord.removeFile(lord.queryOne("a", divs[i]));
+        lord.removeFile(lord.queryOne("a", divs[i]));
     var trip = lord.nameOne("tripcode", postForm);
     if (trip) {
         var threadNumber = lord.nameOne("threadNumber", postForm);
@@ -2657,7 +2659,7 @@ lord.resetPostForm = function() {
         $(trip).button("refresh");
     }
     var markupMode = lord.nameOne("markupMode", postForm);
-    for (var i = 0; i < markupMode.options.length; ++i) {
+    for (i = 0; i < markupMode.options.length; ++i) {
         if (markupMode.options[i].value == lord.getLocalObject("markupMode", "EXTENDED_WAKABA_MARK,BB_CODE")) {
             markupMode.selectedIndex = i;
             break;
