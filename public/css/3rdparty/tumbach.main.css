@@ -332,6 +332,7 @@ footer:after {
     overflow-y: auto;
     position: relative;
     width: 100%;
+    min-height: 90%;
 }
 div.scroll-window {
     height: calc(100% - 29px);
