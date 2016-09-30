@@ -217,6 +217,7 @@ span.newPostCount,
 
 .post:not(.hidden) {
     background: #2C2C2C url("../favicon.ico") no-repeat right bottom;
+    background-size: 28px;
 }
 
 .newPost {
