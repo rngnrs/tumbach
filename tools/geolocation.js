@@ -9,23 +9,19 @@ var SQLite3 = require("sqlite3");
 var path = process.argv[2];
 
 if (!FS.existsSync(path)) {
-    console.log("Неверный путь");
+    console.log("Invalid path");
     process.exit(0);
 }
 
-var dbPath = __dirname + "/../geolocation";
-
-mkpath.sync(dbPath);
-
-var db = new SQLite3.Database(dbPath + "/ip2location.sqlite");
+var db = new SQLite3.Database(__dirname + "/../sqlite/ip2location.sqlite");
 db.pexec = promisify(db.exec);
 db.prun = promisify(db.run);
 var stream = FS.createReadStream(path, "utf8");
 
-console.log("Начало транзакции...");
+console.log("Beginning transaction...");
 
 db.pexec("BEGIN").then(function () {
-    console.log("Создание таблицы...");
+    console.log("Creating table...");
     return db.prun("CREATE TABLE IF NOT EXISTS ip2location(ipFrom INTEGER, "
         + "ipTo INTEGER, "
         + "countryCode TEXT, "
@@ -33,10 +29,10 @@ db.pexec("BEGIN").then(function () {
         + "regionName TEXT, "
         + "cityName TEXT)");
 }).then(function() {
-    console.log("Создание индекса...");
+    console.log("Creating index...");
     return db.prun("CREATE INDEX indexIpTo ON ip2location(ipTo)");
 }).then(function() {
-    console.log("Заполнение базы данных...");
+    console.log("Populating database...");
     return new Promise(function(resolve, reject) {
         CSV.fromStream(stream, {
             headers: ["ipFrom", "ipTo", "countryCode", "countryName", "regionName", "cityName", "_", "_", "_", "_",
@@ -62,10 +58,10 @@ db.pexec("BEGIN").then(function () {
         });
     });
 }).then(function() {
-    console.log("Подтверждение транзакции...");
+    console.log("Committing the transaction...");
     return db.pexec("COMMIT");
 }).then(function() {
-    console.log("Готово!");
+    console.log("Done!");
     process.exit(0);
 }).catch(function(err) {
     console.log(err);

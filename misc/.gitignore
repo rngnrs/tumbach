@@ -1,6 +1,8 @@
 *
 !rules
-!bans.json.example
+!thumbs
+!geo-bans.json.example
+!ip-bans.json.example
 !lang-names.json
 !root-zones.json
 !.gitignore

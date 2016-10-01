@@ -70,14 +70,10 @@ Example:
         },
         "yandex-captcha-rus": {
             "privateKey": "Your Yandex captcha private key"
-        },
-        "codecha": {
-            "privateKey": "Your Codecha private key",
-            "publicKey": "Your Codecha public key"
         }
     },
     "permissions": {
-        "addFilesToPost": "MODER",
+        "addFilesToPost: "MODER",
         "deleteFile": 0,
         "deletePost": 0,
         "editPost": "MODER"

@@ -1,12 +1,7 @@
 *
-!audio
-!css
-!img
-!js
-!node-captcha
-!res
-!templates
-!robots.txt
-!favicon.ico
-!favicon_newmessage.ico
+!audio/
+!css/
+!img/
+!js/
+!node-captcha/
 !.gitignore
