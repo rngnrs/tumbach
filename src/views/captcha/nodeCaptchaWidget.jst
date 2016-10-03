@@ -1,6 +1,10 @@
 <div id="captcha">
-    <div name="image"></div>
+    <div name="image" style="display:inline-block;vertical-align:middle"></div>
     <input type="hidden" name="nodeCaptchaChallenge" />
-    <input type="text" name="nodeCaptchaResponse" style="width: {{=it.width/2}}px;" />
-    <span name="countdown"></span>
+    <div style="display:inline-block;vertical-align:middle">
+        <input type="text" maxlength="{{=it.size}}" class='post-form-input' name="nodeCaptchaResponse" style="width: {{=it.width/2}}px;height: {{=it.height/2}}px" />
+        <div>
+            <span name="countdown"></span>
+        </div>
+    </div>
 </div>

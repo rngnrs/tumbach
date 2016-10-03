@@ -79,7 +79,6 @@
   font-size: 0.8em;
 }
 
-#captcha-container > div,
 #no-captcha {
   text-align: center
 }
@@ -88,11 +87,19 @@
   margin: 0 auto
 }
 
-.post-form-input[name="name"],
-.post-form-input[name="subject"] {
-  max-width: ~"calc(50% - 2.5px)"
+.post-form-input {
+  box-sizing: border-box;
+  border-radius: 5px !important;
+
+  &[name="subject"] {
+    width: ~"calc(50% - 2px)"
+  }
+}
+
+.post-form-row-4 input {
+  width: ~"calc(25% - 3px)";
 }
 
 #markup {
-  text-align: center
+  text-align: right
 }

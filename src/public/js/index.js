@@ -456,13 +456,30 @@ export function initializeSidebar() {
 }
 
 export function initializeToolbar() {
-  let toolbar = $('#toolbar');
+  var toolbar = $('#toolbar');
   if ('toolbar' !== Settings.navbarMode()) {
     toolbar.hide();
     toolbar.next('.toolbar-placeholder').hide();
   }
   initializeDragAndDrop('#toolbar');
   initializeNavbar(toolbar);
+  $('body').on('DOMMouseScroll mousewheel', function (event) {
+    if ('toolbar' !== Settings.navbarMode())
+      return;
+    let cTop = toolbar[0].style.top.split('px').join('');
+    if (event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0) {
+      if (cTop == 0 && toolbar[0].offsetHeight) {
+        toolbar[0].style.top = '-' + toolbar[0].offsetHeight + 'px';
+        if (window.scrollY)
+          event.preventDefault();
+      }
+    } else {
+      if (cTop < 0) {
+        toolbar[0].style.top = 0;
+        event.preventDefault();
+      }
+    }
+  });
 }
 
 export function resetBanner() {

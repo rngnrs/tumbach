@@ -21,14 +21,19 @@
              data-bind='value: settings.markupMode' />
     </div>
     <div class='post-form-row'>{{#def['custom/postFormField/0'] || ''}}</div>
-    <div class='post-form-row'>
+    <div class='post-form-row post-form-row-4'>
       <input name='name' type='text' class='post-form-input' maxlength='{{!it.board.maxNameLength}}'
              placeholder='{{!it.translate('Name', 'postFormPlaceholderName')}}' />
       {{#def['custom/postFormField/10'] || ''}}
       <input name='subject' type='text' class='post-form-input' maxlength='{{!it.board.maxSubjectLength}}'
              placeholder='{{!it.translate('Subject', 'postFormPlaceholderSubject')}}' />
+      <input name='password' type='password' class='post-form-input' maxlength='{{!it.board.maxPasswordLength}}'
+             placeholder='{{!it.translate('Password', 'postFormPlaceholderPassword')}}'
+      data-bind='textInput: password' />
     </div>
     <div class='post-form-row'>{{#def['custom/postFormField/20'] || ''}}</div>
+    <div class='js-only post-form-row' data-bind='visible: !settings.hidePostFormMarkup()'>{{#def['postForm/markup']}}</div>
+    <div class='post-form-row'>{{#def['custom/postFormField/30'] || ''}}</div>
     <div class='post-form-row post-form-textarea-container'>
       <textarea name='text' class='post-form-input post-form-textarea' rows='5' cols='40'
                 placeholder='{{!it.translate('Comment. Max length:')}} {{!it.board.maxTextLength}}'
@@ -41,20 +46,8 @@
                     click: toggleMarkupVisibility'></a>
       <span class='symbol-counter'><span class='js-symbols-used'>0</span>/{{!it.board.maxTextLength}}</span>
     </div>
-    <div class='post-form-row'>{{#def['custom/postFormField/30'] || ''}}</div>
-    <div class='js-only post-form-row' data-bind='visible: !settings.hidePostFormMarkup()'>{{#def['postForm/markup']}}</div>
     <div class='post-form-row'>{{#def['custom/postFormField/40'] || ''}}</div>
-    <div class='post-form-row'>
-      <input name='password' type='password' class='post-form-input' maxlength='{{!it.board.maxPasswordLength}}'
-             placeholder='{{!it.translate('Password', 'postFormPlaceholderPassword')}}'
-      data-bind='textInput: password' />
-    </div>
     <div class='post-form-row'>{{#def['custom/postFormField/50'] || ''}}</div>
-    <!--<div class='post-form-row'>
-      <div class='post-form-input'>
-
-      </div>
-    </div>-->
     <div class='post-form-row'>{{#def['custom/postFormField/60'] || ''}}</div>
     <div class='post-form-row js-file-inputs'>
       <noscript>

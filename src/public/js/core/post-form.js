@@ -123,15 +123,15 @@ function resetTarget(threadNumber) {
 export function quickReply(postNumber, threadNumber) {
   postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
   threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
-  if (!postNumber || !threadNumber) {
+  if (!postNumber || !threadNumber)
     return;
-  }
   let post = $(`#post-${postNumber}`);
-  if (!post[0]) {
+  if (!post[0])
     return;
-  }
   let postForm = $('#post-form');
   let selection = window.document.getSelection().toString();
+  insertPostNumber(postNumber);
+  Markup.quoteSelectedText(selection);
   resetTarget(threadNumber);
   if (floatingPostForm) {
     if (!Storage.postFormFixed()) {
@@ -145,8 +145,7 @@ export function quickReply(postNumber, threadNumber) {
     post.after(postForm);
     resetTarget(threadNumber); //NOTE: Required after hidePostForm() call
   }
-  insertPostNumber(postNumber);
-  Markup.quoteSelectedText(selection);
+
 }
 
 function hidePostForm() {

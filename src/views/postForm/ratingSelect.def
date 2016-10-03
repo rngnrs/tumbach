@@ -1,4 +1,3 @@
-<span>{{!it.translate('Rating:', 'ratingLabelText')}}</span>
 <select name='file_rating{{? typeof index !== 'undefined'}}_{{!(index + 1).toString()}}{{?}}' class='js-rating-select'
         data-bind='click: function(_, e) { e.stopPropagation(); }{{? it.rating}}, value: rating{{?}}'>
   {{~['SFW', 'R-15', 'R-18', 'R-18G'] :rating}}
