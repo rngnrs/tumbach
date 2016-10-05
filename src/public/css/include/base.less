@@ -16,49 +16,44 @@
 @import './sidebar';
 @import './search';
 @import './toolbar';
+@import './tumbach-tweak';
 @import './widget';
 
 body {
-  margin: 0px;
+  margin: 0;
   display: flex;
   flex-direction: row;
   position: absolute;
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
 }
 
-.content-wrapper {
-  width: ~'calc(100% - 16px)';
-  height: ~'calc(100% - 16px)';
-  padding: 8px;
+#content {
+  min-width: ~'calc(100% - 16px)';
+  min-height: ~'calc(100% - 44px)';
+  padding: 8px
 }
-
-header {
-  padding-top: 2px;
-  padding-bottom: 8px;
+.content-wrapper {
+  width: 100%
 }
 
 footer {
-  padding-top: 8px;
-  padding-bottom: 2px;
+  height: 28px;
+  padding: 6px;
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+  position: relative
 }
 
 header:empty, footer:empty {
-  display: none;
+  display: none
 }
 
-.select {
-  cursor: pointer;
-}
-
-.button {
-  cursor: pointer;
-}
-
-.checkbox {
-  cursor: pointer;
+.select, .button, .checkbox {
+  cursor: pointer
 }
 
 .popup {
@@ -68,7 +63,7 @@ header:empty, footer:empty {
   z-index: 50;
   vertical-align: middle;
   text-align: center;
-  padding: 10px 10px 10px 10px;
+  padding: 10px;
   cursor: pointer;
 }
 
