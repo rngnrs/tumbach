@@ -63,15 +63,15 @@ export default class NodeCaptcha extends Captcha {
     super(Tools.NODE_CAPTCHA_ID, Tools.translate.noop('Node captcha'));
     this.challenges = new Map();
     this.defineSetting('size', 6);
-    this.defineSetting('height', 60);
+    this.defineSetting('height', 48);
     this.defineSetting('color', 'rgb(0,0,0)');
     this.defineSetting('background', 'rgb(255,255,255)');
     this.defineSetting('lineWidth', 4);
     this.defineSetting('noise', true);
     this.defineSetting('complexity', 1);
-    this.defineSetting('spacing', 4);
+    this.defineSetting('spacing', 5);
     this.defineProperty('width', () => {
-      return config('captcha.node-captcha.width', Math.round((this.size * this.height) / 1.8));
+      return config('captcha.node-captcha.width', Math.round((this.size * this.height) / 2.4));
     });
     this.defineProperty('noiseColor', () => {
       return config('captcha.node-captcha.noiseColor', this.color);

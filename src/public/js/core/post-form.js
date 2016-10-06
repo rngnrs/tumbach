@@ -291,6 +291,12 @@ export function initialize() {
       sageEnabled(enabled);
       return true;
     },
+    toggleNokoEnabled: () => {
+      let enabled = !Storage.nokoEnabled();
+      Storage.nokoEnabled(enabled);
+      nokoEnabled(enabled);
+      return true;
+    },
     toggleShowTripcode: () => {
       let show = !Storage.showTripcode();
       Storage.showTripcode(show);

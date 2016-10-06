@@ -48,7 +48,7 @@
   font-size: 14px;
 }
 
-.symbol-counter-container {
+.symbol-counter-container, .post-form-options {
   margin-top: 0 !important; //NOTE: Fixing extra space
   display: flex;
   flex-direction: row;
@@ -68,6 +68,10 @@
 
 .post-form-option {
   white-space: nowrap;
+
+  &:empty {
+    display: none
+  }
 }
 
 .post-form-captcha-label {
@@ -92,12 +96,12 @@
   border-radius: 5px !important;
 
   &[name="subject"] {
-    width: ~"calc(50% - 2px)"
+    width: 67%
   }
 }
 
-.post-form-row-4 input {
-  width: ~"calc(25% - 3px)";
+.post-form-row-3 input {
+  width: ~"calc(33% - 4px)"
 }
 
 #markup {
