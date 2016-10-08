@@ -2980,10 +2980,10 @@
     },
     "SAGE": {
         "_default": {
-            "value": "САЖА"
+            "value": "sage"
         },
         "postFormLabelSAGE": {
-            "value": "САЖА"
+            "value": "sage"
         }
     },
     "JavaScript is disabled": {

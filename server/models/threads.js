@@ -5,11 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setThreadUnbumpable = exports.setThreadClosed = exports.setThreadFixed = exports.moveThread = exports.createThread = exports.removeThread = exports.clearDeletedThreads = exports.setThreadDeleted = exports.isThreadDeleted = exports.setThreadUpdateTime = exports.getThreadLastPostNumber = exports.getThreadInfo = exports.getThreads = exports.getThread = exports.getThreadNumbers = exports.getThreadPosts = exports.removeThreadPostNumber = exports.addThreadPostNumber = exports.getThreadPostNumbers = exports.getThreadPostCount = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var getThreadPostCount = exports.getThreadPostCount = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(boardName, threadNumber) {
-    var _ref2 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref2.archived;
     var source;
@@ -81,7 +81,7 @@ var getThreadPostNumbers = exports.getThreadPostNumbers = function () {
 
 var addThreadPostNumber = exports.addThreadPostNumber = function () {
   var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName, threadNumber, postNumber) {
-    var _ref5 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref5 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref5.archived;
     var source;
@@ -108,7 +108,7 @@ var addThreadPostNumber = exports.addThreadPostNumber = function () {
 
 var removeThreadPostNumber = exports.removeThreadPostNumber = function () {
   var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(boardName, threadNumber, postNumber) {
-    var _ref7 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref7 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref7.archived;
     var source;
@@ -135,7 +135,7 @@ var removeThreadPostNumber = exports.removeThreadPostNumber = function () {
 
 var addDataToThread = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(thread) {
-    var _ref9 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var withPostNumbers = _ref9.withPostNumbers;
     var source;
@@ -176,7 +176,7 @@ var addDataToThread = function () {
 
 var getThreadPosts = exports.getThreadPosts = function () {
   var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(boardName, threadNumber) {
-    var _ref11 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref11 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var reverse = _ref11.reverse;
     var limit = _ref11.limit;
@@ -184,7 +184,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
     var withExtraData = _ref11.withExtraData;
     var withFileInfos = _ref11.withFileInfos;
     var withReferences = _ref11.withReferences;
-    var board, threadPostNumbers, postNumbers;
+    var board, postNumbers;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -213,8 +213,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
             return getThreadPostNumbers(boardName, threadNumber);
 
           case 8:
-            threadPostNumbers = _context6.sent;
-            postNumbers = Tools.cloned(threadPostNumbers);
+            postNumbers = _context6.sent;
 
             if (notOP) {
               postNumbers.splice(0, 1);
@@ -228,13 +227,13 @@ var getThreadPosts = exports.getThreadPosts = function () {
             if (limit) {
               postNumbers.splice(limit);
             }
-            _context6.next = 16;
+            _context6.next = 15;
             return PostsModel.getPosts(boardName, postNumbers, { withExtraData: withExtraData, withFileInfos: withFileInfos, withReferences: withReferences });
 
-          case 16:
+          case 15:
             return _context6.abrupt('return', _context6.sent);
 
-          case 17:
+          case 16:
           case 'end':
             return _context6.stop();
         }
@@ -249,7 +248,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
 
 var getThreadNumbers = exports.getThreadNumbers = function () {
   var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(boardName) {
-    var _ref13 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref13 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var archived = _ref13.archived;
     var source;
@@ -593,7 +592,7 @@ var getThreadLastPostNumber = exports.getThreadLastPostNumber = function () {
 
 var setThreadUpdateTime = exports.setThreadUpdateTime = function () {
   var _ref20 = _asyncToGenerator(regeneratorRuntime.mark(function _callee13(boardName, threadNumber, dateTme) {
-    var _ref21 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref21 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref21.archived;
     var source;
@@ -683,7 +682,7 @@ var clearDeletedThreads = exports.clearDeletedThreads = function () {
 
 var removeThread = exports.removeThread = function () {
   var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee19(boardName, threadNumber) {
-    var _ref26 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref26 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref26.archived;
     var source, key, updateTimeSource;
@@ -1552,7 +1551,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var mkpath = (0, _promisifyNode2.default)('mkpath');
 

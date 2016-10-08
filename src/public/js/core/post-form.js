@@ -291,7 +291,7 @@ export function initialize() {
       sageEnabled(enabled);
       return true;
     },
-    toggleNokoEnabled: () => {
+    toggleNokoEnabled: () => { // TODO: Noko
       let enabled = !Storage.nokoEnabled();
       Storage.nokoEnabled(enabled);
       nokoEnabled(enabled);

@@ -1,14 +1,15 @@
 .toolbar {
   left: 0;
   top: 0;
-  width: ~'calc(100% - 16px)';
+  width: 100%;
   padding: 4px 8px;
   text-align: center;
+  box-sizing: border-box;
   transition: ease-in-out .2s
 }
 
 #sidebar-switch:checked:not(:disabled) ~ .content-wrapper #toolbar {
-  width: ~'calc(100% - 208px)';
+  width: ~'calc(100% - 200px)';
   left: 200px
 }
 

@@ -30,7 +30,9 @@ export let now = function() {
 let _requireModel = () => null;
 
 export function initialize(requireModel) {
+  let rm = _requireModel;
   _requireModel = requireModel;
+  console.log(rm, _requireModel);
   $.datepicker.setDefaults($.datepicker.regional[_requireModel('base').site.locale]);
   translate.setLocale(_requireModel('tr').tr);
 }
@@ -599,14 +601,13 @@ export let pad = function(s, c, n) {
 
 export function formatTime(duration) {
   duration = Math.floor(option(duration, 'number', 0, { test: (d) => { return d > 0; } }));
-  if (!duration) {
-    return '00:00:00';
-  }
+  if (!duration)
+    return '00:00';
   let hours = pad(Math.floor(duration / 3600));
   duration %= 3600;
-  let minutes = pad(Math.floor(duration / 60));
-  let seconds = pad(duration % 60);
-  return `${hours}:${minutes}:${seconds}`;
+  let minutes = pad(Math.floor(duration / 60)),
+      seconds = pad(duration % 60);
+  return ((hours != '00')? `${hours}:`: '') + `${minutes}:${seconds}`;
 }
 
 export function captchaEngine(id) {

@@ -794,7 +794,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var TEMPLATES_SOURCE_PATH = _path2.default.resolve(__dirname + '/../../src/views');
 var TEMPLATES_PATH = _path2.default.resolve(__dirname + '/../../views');
@@ -951,7 +951,7 @@ function postingSpeedString(launchDate, lastPostNumber) {
 }
 
 function plainText(text) {
-  var _ref20 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  var _ref20 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   var brToNewline = _ref20.brToNewline;
 

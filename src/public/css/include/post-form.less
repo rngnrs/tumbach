@@ -48,11 +48,15 @@
   font-size: 14px;
 }
 
-.symbol-counter-container, .post-form-options {
+.symbol-counter-container, .post-form-options, #captcha {
   margin-top: 0 !important; //NOTE: Fixing extra space
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+#captcha input, .post-form-submit-button {
+  margin-left: 6px
 }
 
 .toggle-post-form-markup-visibility-button,
@@ -62,8 +66,7 @@
 }
 
 .post-form-submit-button {
-  font-size: 1.2em;
-  max-width: 50%;
+  font-size: 1.2em
 }
 
 .post-form-option {
@@ -106,4 +109,8 @@
 
 #markup {
   text-align: right
+}
+[name="nodeCaptchaResponse"] {
+  box-sizing: border-box;
+  text-align: center
 }

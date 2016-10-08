@@ -105,7 +105,7 @@ registerAction('expandCollapseYoutubeVideo', expandCollapseVideo.bind(null, (vid
   let iframe = DOM.node('iframe');
   let start = Tools.option(+DOM.data('start', a, true), 'number', 0, { test: (s) => { return s > 0; } });
   iframe.src = `//youtube.com/embed/${videoId}?autoplay=1&start=${start}`;
-  iframe.allowfullscreen = true;
+  iframe.attr('allowfullscreen', true);
   iframe.frameborder = '0px';
   iframe.height = '360';
   iframe.width = '640';
@@ -117,7 +117,7 @@ registerAction('expandCollapseCoubVideo', expandCollapseVideo.bind(null, (videoI
   let iframe = DOM.node('iframe');
   const OPTIONS = 'muted=false&autostart=false&originalSize=false&hideTopBar=false&startWithHD=false';
   iframe.src = `//coub.com/embed/${videoId}?${OPTIONS}`;
-  iframe.allowfullscreen = true;
+  iframe.attr('allowfullscreen', true);
   iframe.frameborder = '0px';
   iframe.height = '360';
   iframe.width = '480';

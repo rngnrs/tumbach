@@ -45,41 +45,50 @@
             data-bind='click: togglePlayerVisibility'></span>
     </div>
     <div class='player-header player-current-track-actions'>
-      <span class='icon button-icon'
-            data-bind='attr: {
-                         title: playing() ? "{{!it.translate('Pause', 'playerPauseText')}}"
-                           : "{{!it.translate('Play', 'playerPlayText')}}"
-                       },
-                       css: {
-                         "icon-play-32": !playing(),
-                         "icon-pause-32": playing(),
-                         "button-icon-disabled": !currentTrack()
-                       },
-                       click: playPause'></span>
-      <span class='icon icon-backward-32 button-icon'
-            title='{{!it.translate('Previous track', 'playerPreviousTrackText')}}'
-            data-bind='css: {
-                         "button-icon-disabled": !currentTrack() || (tracks().length < 2)
-                       },
-                       click: playPreviousTrack'></span>
-      <span class='icon icon-forward-32 button-icon' title='{{!it.translate('Next track', 'playerNextTrackText')}}'
-            data-bind='css: {
-                         "button-icon-disabled": !currentTrack() || (tracks().length < 2)
-                       },
-                       click: playNextTrack'></span>
       <div class='player-current-track-info-container'>
-        <span class='player-current-track-info' data-bind='text: trackInfoText'></span>
+          <span class='player-current-track-info' data-bind='text: trackInfoText'></span>
       </div>
-      <span class='desktop-only icon button-icon'
-            data-bind='attr: {
+    </div>
+    <div class='player-content'>
+        <div id='player-preview toggled' data-bind='text: playing() ? "Playing"
+        : "Not playing"
+        ,
+        css: {
+        "toggle": !playing(),
+        "toggled": playing()
+        }'></div>
+        <span class='icon button-icon'
+              data-bind='attr: {
+                         title: playing() ? "{{!it.translate('Pause', 'playerPauseText')}}"
+        : "{{!it.translate('Play', 'playerPlayText')}}"
+        },
+        css: {
+        "icon-play-32": !playing(),
+        "icon-pause-32": playing(),
+        "button-icon-disabled": !currentTrack()
+        },
+        click: playPause'></span>
+        <span class='icon icon-backward-32 button-icon'
+              title='{{!it.translate('Previous track', 'playerPreviousTrackText')}}'
+        data-bind='css: {
+        "button-icon-disabled": !currentTrack() || (tracks().length < 2)
+        },
+        click: playPreviousTrack'></span>
+        <span class='icon icon-forward-32 button-icon' title='{{!it.translate('Next track', 'playerNextTrackText')}}'
+        data-bind='css: {
+        "button-icon-disabled": !currentTrack() || (tracks().length < 2)
+        },
+        click: playNextTrack'></span>
+        <span class='desktop-only icon button-icon'
+              data-bind='attr: {
                          title: ((volume() > 0) ? "{{!it.translate('Mute', 'playerMuteText')}}"
-                           : "{{!it.translate('Unmute', 'playerUnmuteText')}}")
-                       },
-                       css: {
-                         "icon-volume-32": volume() > 0,
-                         "icon-volume-mute-32": volume() <= 0
-                       },
-                       click: toggleMute'></span>
+        : "{{!it.translate('Unmute', 'playerUnmuteText')}}")
+        },
+        css: {
+        "icon-volume-32": volume() > 0,
+        "icon-volume-mute-32": volume() <= 0
+        },
+        click: toggleMute'></span>
     </div>
     <div class='player-header player-current-track-tags'
          data-bind='style: { display: (trackTagsVisible() ? "" : "none") },

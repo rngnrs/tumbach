@@ -78,7 +78,7 @@ var getChatMessages = exports.getChatMessages = function () {
 
 var addChatMessage = exports.addChatMessage = function () {
   var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3() {
-    var _ref4 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     var user = _ref4.user;
     var boardName = _ref4.boardName;
@@ -270,7 +270,7 @@ var addChatMessage = exports.addChatMessage = function () {
 
 var deleteChatMessages = exports.deleteChatMessages = function () {
   var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-    var _ref6 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     var user = _ref6.user;
     var boardName = _ref6.boardName;
@@ -340,7 +340,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var Chat = new _orderedSet2.default((0, _redisClientFactory2.default)(), 'chat');
 var ChatMembers = new _unorderedSet2.default((0, _redisClientFactory2.default)(), 'chatMembers');

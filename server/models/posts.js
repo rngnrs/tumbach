@@ -7,11 +7,11 @@ exports.pushPostToArchive = exports.updateMovedThreadRelatedPosts = exports.rere
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var addDataToPost = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(board, post) {
-    var _ref2 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var withExtraData = _ref2.withExtraData;
     var withFileInfos = _ref2.withFileInfos;
@@ -328,7 +328,7 @@ var getPosts = exports.getPosts = function () {
 
 var getPostKeys = exports.getPostKeys = function () {
   var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6() {
-    var _ref8 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     var archived = _ref8.archived;
     var nonArchived = _ref8.nonArchived;
@@ -381,7 +381,7 @@ var getPostKeys = exports.getPostKeys = function () {
 
 var createPost = exports.createPost = function () {
   var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(req, fields, files, transaction) {
-    var _ref10 = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+    var _ref10 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
     var postNumber = _ref10.postNumber;
     var date = _ref10.date;
@@ -594,7 +594,7 @@ var createPost = exports.createPost = function () {
 
 var rerenderPost = exports.rerenderPost = function () {
   var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(boardName, postNumber) {
-    var _ref12 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref12 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var nogenerate = _ref12.nogenerate;
     var post, referencedPosts, text, source;
@@ -663,7 +663,7 @@ var rerenderPost = exports.rerenderPost = function () {
 
 var removePost = exports.removePost = function () {
   var _ref13 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(boardName, postNumber) {
-    var _ref14 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref14 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var removingThread = _ref14.removingThread;
     var board, key, post, source;
@@ -1872,7 +1872,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var mkpath = (0, _promisifyNode2.default)('mkpath');
 

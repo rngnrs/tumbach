@@ -155,7 +155,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var CAPTCHA_PATH = __dirname + '/../../tmp/node-captcha-noscript';
 
@@ -245,15 +245,15 @@ var NodeCaptchaNoscript = function (_Captcha) {
 
     _this2.challenges = new Map();
     _this2.defineSetting('size', 6);
-    _this2.defineSetting('height', 60);
+    _this2.defineSetting('height', 48);
     _this2.defineSetting('color', 'rgb(0,0,0)');
     _this2.defineSetting('background', 'rgb(255,255,255)');
     _this2.defineSetting('lineWidth', 4);
     _this2.defineSetting('noise', true);
     _this2.defineSetting('complexity', 1);
-    _this2.defineSetting('spacing', 4);
+    _this2.defineSetting('spacing', 5);
     _this2.defineProperty('width', function () {
-      return (0, _config2.default)('captcha.node-captcha.width', Math.round(_this2.size * _this2.height / 1.8));
+      return (0, _config2.default)('captcha.node-captcha.width', Math.round(_this2.size * _this2.height / 2.4));
     });
     _this2.defineProperty('noiseColor', function () {
       return (0, _config2.default)('captcha.node-captcha.noiseColor', _this2.color);

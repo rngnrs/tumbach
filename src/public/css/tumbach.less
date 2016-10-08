@@ -3,7 +3,7 @@
     font-family: 'PT Sans';
     font-style: normal;
     font-weight: 400;
-    src: local('PT Sans'), local('PTSans-Regular'), url(../../res/fonts/ptsans.woff) format('woff');
+    src: local('PT Sans'), local('PTSans-Regular'), url(../fonts/ptsans.woff) format('woff');
 }
 @color-primary: #000;
 @color-link: #007fff;
@@ -45,7 +45,10 @@
 body {
   font-family: @font-family;
   font-weight: @font-weight-primary;
-  color: @color-primary;
+  color: @color-primary
+}
+
+body, .sidebar {
   background-color: @background-color-secondary
 }
 

@@ -290,7 +290,7 @@ var getFileInfosByHashes = exports.getFileInfosByHashes = function () {
 
 var addFileInfo = exports.addFileInfo = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(fileInfo) {
-    var _ref9 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var archived = _ref9.archived;
     var source;
@@ -440,7 +440,7 @@ var removeFileHashes = exports.removeFileHashes = function () {
 
 var removeFileInfos = exports.removeFileInfos = function () {
   var _ref14 = _asyncToGenerator(regeneratorRuntime.mark(function _callee13(fileInfoNames) {
-    var _ref15 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref15 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var archived = _ref15.archived;
     var source;
@@ -479,7 +479,7 @@ var removeFileInfos = exports.removeFileInfos = function () {
 
 var addFilesToPost = exports.addFilesToPost = function () {
   var _ref16 = _asyncToGenerator(regeneratorRuntime.mark(function _callee15(boardName, postNumber, files) {
-    var _ref17 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref17 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref17.archived;
     var source;
@@ -679,7 +679,7 @@ var editAudioTags = exports.editAudioTags = function () {
 
 var getPostFileCount = exports.getPostFileCount = function () {
   var _ref23 = _asyncToGenerator(regeneratorRuntime.mark(function _callee20(boardName, postNumber) {
-    var _ref24 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref24 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref24.archived;
     var source;
@@ -709,7 +709,7 @@ var getPostFileCount = exports.getPostFileCount = function () {
 
 var getPostFileInfos = exports.getPostFileInfos = function () {
   var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(boardName, postNumber) {
-    var _ref26 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref26 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref26.archived;
     var namesSource, infosSource, fileNames;
@@ -745,7 +745,7 @@ var getPostFileInfos = exports.getPostFileInfos = function () {
 
 var removePostFileInfos = exports.removePostFileInfos = function () {
   var _ref27 = _asyncToGenerator(regeneratorRuntime.mark(function _callee24(boardName, postNumber) {
-    var _ref28 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref28 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref28.archived;
     var key, namesSource, fileNames, fileInfos, paths;
@@ -1003,7 +1003,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var ArchivedFileHashes = new _unorderedSet2.default((0, _sqlClientFactory2.default)(), 'archivedFileHashes');
 var ArchivedFileInfos = new _hash2.default((0, _sqlClientFactory2.default)(), 'archivedFileInfos');

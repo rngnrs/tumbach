@@ -44,7 +44,7 @@ var addReferencesToPost = exports.addReferencesToPost = function () {
 
 var addReferencedPosts = exports.addReferencedPosts = function () {
   var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(post, referencedPosts) {
-    var _ref3 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var nogenerate = _ref3.nogenerate;
     var archived = _ref3.archived;
@@ -119,7 +119,7 @@ var removeReferences = exports.removeReferences = function () {
     var threadNumber = _ref6.threadNumber;
     var archived = _ref6.archived;
 
-    var _ref7 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref7 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var nogenerate = _ref7.nogenerate;
     var key, referencedSource, referencedPosts;
@@ -191,7 +191,7 @@ var rerenderReferringPosts = exports.rerenderReferringPosts = function () {
     var threadNumber = _ref10.threadNumber;
     var archived = _ref10.archived;
 
-    var _ref11 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     var removingThread = _ref11.removingThread;
     var referringSource, referringPosts;
@@ -250,7 +250,7 @@ var rerenderReferringPosts = exports.rerenderReferringPosts = function () {
 
 var storeReferencedPosts = exports.storeReferencedPosts = function () {
   var _ref14 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(boardName, postNumber, referencedPosts) {
-    var _ref15 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref15 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref15.archived;
     var source;
@@ -297,7 +297,7 @@ var storeReferencedPosts = exports.storeReferencedPosts = function () {
 
 var storeReferringPosts = exports.storeReferringPosts = function () {
   var _ref17 = _asyncToGenerator(regeneratorRuntime.mark(function _callee11(boardName, postNumber, referringPosts) {
-    var _ref18 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref18 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var archived = _ref18.archived;
     var source;
@@ -343,7 +343,7 @@ var storeReferringPosts = exports.storeReferringPosts = function () {
 
 var removeReferencedPosts = exports.removeReferencedPosts = function () {
   var _ref20 = _asyncToGenerator(regeneratorRuntime.mark(function _callee12(boardName, postNumber) {
-    var _ref21 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref21 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref21.archived;
     var source;
@@ -370,7 +370,7 @@ var removeReferencedPosts = exports.removeReferencedPosts = function () {
 
 var removeReferringPosts = exports.removeReferringPosts = function () {
   var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee13(boardName, postNumber) {
-    var _ref23 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref23 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var archived = _ref23.archived;
     var source;
@@ -432,7 +432,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var ArchivedReferringPosts = new _hash2.default((0, _sqlClientFactory2.default)(), 'archivedReferringPosts');
 var ArchivedReferencedPosts = new _hash2.default((0, _sqlClientFactory2.default)(), 'archivedReferencedPosts');

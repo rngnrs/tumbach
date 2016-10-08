@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var testParameters = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(req, boardName, mode) {
-    var _ref2 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     var fields = _ref2.fields;
     var files = _ref2.files;
@@ -147,7 +147,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var router = _express2.default.Router();
 

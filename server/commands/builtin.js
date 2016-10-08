@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _board = require('../boards/board');
 
@@ -34,7 +34,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function formatDate(seconds) {
   var msecs = Math.floor(seconds * Tools.SECOND);
@@ -59,7 +59,7 @@ exports.default = [{
   command: 'respawn [exitCode]',
   handler: function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-      var _ref2 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var exitCode = _ref2.exitCode;
       return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -185,7 +185,7 @@ exports.default = [{
   command: 'rerender-posts [targets...]',
   handler: function () {
     var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-      var _ref9 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var targets = _ref9.targets;
       var result;
@@ -297,7 +297,7 @@ exports.default = [{
   command: 'rerender [what...]',
   handler: function () {
     var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
-      var _ref13 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var options = _ref13.options;
       var what = _ref13.what;
@@ -454,7 +454,7 @@ exports.default = [{
   command: 'rebuild-search-index [targets...]',
   handler: function () {
     var _ref17 = _asyncToGenerator(regeneratorRuntime.mark(function _callee10() {
-      var _ref18 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var _ref18 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var targets = _ref18.targets;
       var result;

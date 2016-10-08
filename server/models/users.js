@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.initializeUserBansMonitoring = exports.banUser = exports.updatePostBanInfo = exports.checkUserPermissions = exports.checkUserBan = exports.removeUserPostNumber = exports.addUserPostNumber = exports.getUserPostNumbers = exports.setSynchronizationData = exports.getSynchronizationData = exports.removeSuperuser = exports.addSuperuser = exports.unregisterUser = exports.updateRegisteredUser = exports.registerUser = exports.getRegisteredUsers = exports.getRegisteredUser = exports.getRegisteredUserLevelsByIp = exports.getRegisteredUserLevels = exports.getRegisteredUserLevelByIp = exports.getRegisteredUserLevel = exports.getBannedUsers = exports.getBannedUserBans = exports.getUserIP = exports.useCaptcha = exports.setUserCaptchaQuota = exports.getUserCaptchaQuota = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var getUserCaptchaQuota = exports.getUserCaptchaQuota = function () {
   var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName, userID) {
@@ -1199,7 +1199,7 @@ var removeUserPostNumber = exports.removeUserPostNumber = function () {
 
 var checkUserBan = exports.checkUserBan = function () {
   var _ref33 = _asyncToGenerator(regeneratorRuntime.mark(function _callee33(ip, boardNames) {
-    var _ref34 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var _ref34 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var write = _ref34.write;
     var geolocationInfo = _ref34.geolocationInfo;
@@ -1757,7 +1757,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var BanExpiredChannel = new _channel2.default((0, _redisClientFactory2.default)('BAN_EXPIRED'), '__keyevent@' + (0, _config2.default)('system.redis.db') + '__:expired', {
   parse: false,
