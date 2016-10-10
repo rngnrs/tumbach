@@ -3,7 +3,6 @@ import $ from 'jquery';
 import KO from 'knockout';
 
 import * as AJAX from '../helpers/ajax';
-import * as Constants from '../helpers/constants';
 import * as DOM from '../helpers/dom';
 import * as Settings from '../helpers/settings';
 import * as Storage from '../helpers/storage';
@@ -119,6 +118,7 @@ class TracksViewModel {
       let track = Tools.cloned(thisTracks[index]);
       track.isCurrent = current;
       this.tracks.splice(index, 1, track);
+      $('#player-preview')[0].style.background = `url(/${track.boardName}/thumb/${track.fileName.slice(0, -4)}s.png`;
       return track;
     }
   }

@@ -19,7 +19,7 @@
             {{~group.boards.filter(function(board) { return !board.hidden; }) :board}}
               <div class='navbar-item js-navbar-item-board'
                    data-bind='visible: (settings.hiddenBoards() || []).indexOf("{{!board.name}}") < 0'>
-                <a href='/{{!it.site.pathPrefix}}{{!board.name}}'
+                <a href='/{{!it.site.pathPrefix}}{{!board.name}}/'
                    data-board-name='{{!board.name}}'>{{!board.title}}</a>
               </div>
             {{~}}

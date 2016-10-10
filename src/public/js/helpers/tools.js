@@ -30,9 +30,7 @@ export let now = function() {
 let _requireModel = () => null;
 
 export function initialize(requireModel) {
-  let rm = _requireModel;
   _requireModel = requireModel;
-  console.log(rm, _requireModel);
   $.datepicker.setDefaults($.datepicker.regional[_requireModel('base').site.locale]);
   translate.setLocale(_requireModel('tr').tr);
 }
