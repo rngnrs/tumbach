@@ -106,25 +106,24 @@
                         dragover: function() { /*NOTE: Just prevent default.*/ },
                         drop: $root.trackDrop
                       }'>
-        <span class='player-track-info' data-bind='html: $root.trackInfo($data)'></span>
-        <span class='player-track-actions'>
-          <span data-bind='if: $data.duration'>
-            <span data-bind='text: $data.duration'></span>
-            <span data-bind='if: $data.bitrate'><span data-bind='text: " | " + $data.bitrate + "kbps"'></span></span>
-            <a class='icon icon-download-16 button-icon' draggable='false'
-               title='{{!it.translate('Download file', 'downloadPlaylistFileText')}}'
-               onclick='event.stopPropagation();' download='fileName'
-               data-bind='attr: { href: "/{{!it.site.pathPrefix}}" + $data.boardName + "/src/" + $data.fileName }'></a>
-            <span data-bind='if: $root.isAudioType($data.mimeType)'>
-              <span class='icon icon-tag-16 button-icon' draggable='false'
-                 title='{{!it.translate('Edit audio file tags', 'editAudioTagsText')}}'
-                 data-bind='click: $root.editAudioTags'></span>
-            </span>
-          </span>
-          <span class='icon icon-minus-16 button-icon' draggable='false'
-             title='{{!it.translate('Remove from playlist', 'removeFromPlaylistText')}}'
-             data-bind='click: $root.removeFromPlaylist'></span>
-        </span>
+        <div class='player-track-info' data-bind='html: $root.trackInfo($data)'></div>
+          <div data-bind='if: $data.duration'>
+            <span class='player-track-actions' data-bind='text: $data.duration'></span>
+            <div class='player-track-actions'>
+              <a class='icon icon-download-16 button-icon' draggable='false'
+                 title='{{!it.translate('Download file', 'downloadPlaylistFileText')}}'
+                 onclick='event.stopPropagation();' download='fileName'
+                 data-bind='attr: { href: "/{{!it.site.pathPrefix}}" + $data.boardName + "/src/" + $data.fileName }'></a>
+              <span data-bind='if: $root.isAudioType($data.mimeType)'>
+                <span class='icon icon-tag-16 button-icon' draggable='false'
+                   title='{{!it.translate('Edit audio file tags', 'editAudioTagsText')}}'
+                   data-bind='click: $root.editAudioTags'></span>
+              </span>
+              <span class='icon icon-minus-16 button-icon' draggable='false'
+                   title='{{!it.translate('Remove from playlist', 'removeFromPlaylistText')}}'
+                   data-bind='click: $root.removeFromPlaylist'></span>
+            </div>
+          </div>
       </div>
     </div>
     <div class='player-tracks-empty-hint'>

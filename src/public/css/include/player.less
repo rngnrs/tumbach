@@ -78,7 +78,7 @@
 }
 
 .player-current-track-tags {
-  width: 315px;
+  width: 190px;
   padding: 6px;
 }
 
@@ -175,7 +175,7 @@
   &.toggled {
     opacity: 1;
     width: 100%;
-    min-height: 400px
+    min-height: 280px
   }
 
   &:hover {
@@ -226,4 +226,26 @@
 .button-icon-mute {
   bottom: 4px;
   right: 4px;
+}
+
+.player-track-info {
+  width: 220px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.player-track-actions {
+  display: inline-block;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+}
+
+.player-track:hover div.player-track-actions {
+  opacity: 1;
+}
+
+div.player-track-actions, .player-track:hover span.player-track-actions {
+  opacity: 0;
 }

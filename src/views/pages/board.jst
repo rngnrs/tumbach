@@ -42,35 +42,34 @@
           {{~}}
           {{#def['board/draftsSection']}}
         {{?}}
+        <div id='pagination' class='pagination'>
+          {{? it.currentPage > 0}}
+          <span class='paginaton-page'>
+                [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}{{? it.currentPage > 1}}/{{!(it.currentPage - 1)}}.html{{?}}'>{{!it.translate('Previous page', 'toPreviousPageText')}}</a>]
+              </span>
+          {{?}}
+          {{~it._.range(it.pageCount) :pageNumber}}
+          {{? pageNumber !== it.currentPage}}
+          <span class='paginaton-page'>
+                  [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}{{? pageNumber > 0}}/{{!pageNumber.toString()}}.html{{?}}'>{{!pageNumber.toString()}}</a>]
+                </span>
+          {{??}}
+          <span class='paginaton-page'>
+                  [<b>{{!pageNumber.toString()}}</b>]
+                </span>
+          {{?}}
+          {{~}}
+          {{? it.currentPage < (it.pageCount - 1)}}
+          <span class='paginaton-page'>
+                [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/{{!(it.currentPage + 1)}}.html'>{{!it.translate('Next page', 'toNextPageText')}}</a>]
+              </span>
+          {{?}}
+        </div>
+        <hr />
         <div id='infinite-scroll-loading-message' class='loading-message' style='display: none;'>
           <span class='icon icon-spinner-24'></span>
           <h1 class='loading-message-text'>{{!it.translate('Loading threads…', 'loadingThreadsMessage')}}</h1>
         </div>
-        <hr />
-        <div id='pagination' class='pagination'>
-          {{? it.currentPage > 0}}
-            <span class='paginaton-page'>
-              [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}{{? it.currentPage > 1}}/{{!(it.currentPage - 1)}}.html{{?}}'>{{!it.translate('Previous page', 'toPreviousPageText')}}</a>]
-            </span>
-          {{?}}
-          {{~it._.range(it.pageCount) :pageNumber}}
-            {{? pageNumber !== it.currentPage}}
-              <span class='paginaton-page'>
-                [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}{{? pageNumber > 0}}/{{!pageNumber.toString()}}.html{{?}}'>{{!pageNumber.toString()}}</a>]
-              </span>
-            {{??}}
-              <span class='paginaton-page'>
-                [<b>{{!pageNumber.toString()}}</b>]
-              </span>
-            {{?}}
-          {{~}}
-          {{? it.currentPage < (it.pageCount - 1)}}
-            <span class='paginaton-page'>
-              [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/{{!(it.currentPage + 1)}}.html'>{{!it.translate('Next page', 'toNextPageText')}}</a>]
-            </span>
-          {{?}}
-        </div>
-        <hr />
         {{#def['board/postingSpeed']}}
         {{~['top', 'bottom'] :target}}
           {{#def['board/navigationButton']}}

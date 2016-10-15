@@ -141,7 +141,7 @@ async function renderPage(boardName, pageNumber, { allowPrerender } = {}) {
   } else {
     await Cache.writeFile(`${boardName}/${pageNumber}.json`, JSON.stringify(page));
   }
-  page.title = board.title;
+  page.title =`/${board.name}/ &mdash; ${board.title}`;
   page.board = MiscModel.board(board).board;
   await Cache.writeFile(`${boardName}/${pageID}.html`, Renderer.render('pages/board', page));
 }

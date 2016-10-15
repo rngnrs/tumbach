@@ -161,7 +161,7 @@ class TracksViewModel {
     if (!track || (!track.artist && !track.title && !track.year)) {
       return '';
     }
-    let s = '<br />';
+    let s = '';
     if (track.artist) {
       s += track.artist;
       if (track.title) {

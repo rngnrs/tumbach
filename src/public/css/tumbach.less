@@ -22,7 +22,7 @@
 @background-color-spoiler: #CCC;
 @background-color-posts: #FAFAFA;
 @font-weight-primary: normal;
-@font-family: Verdana,sans-serif;
+@font-family: 'PT Sans',Verdana,sans-serif;
 @border-color-primary: #CCC;
 @border-color-secondary: #AAA;
 @border-color-temporary: #000;
@@ -42,7 +42,7 @@
   -webkit-filter: invert(0)
 }
 
-body {
+* {
   font-family: @font-family;
   font-weight: @font-weight-primary;
   color: @color-primary
@@ -171,15 +171,12 @@ button, input:not([type='image']), select, .border-radius {
 }
 
 .sidebar-group {
-  border: @border-primary;
+  border: none;
   border-radius: @border-radius
 }
 
 .sidebar-group-title {
-  font-weight: bold;
-  background-color: @background-color-primary;
-  border-bottom: @border-primary;
-  border-radius: @border-radius
+  display: none;
 }
 
 .toolbar-group-title {
@@ -555,4 +552,27 @@ a {
 .ui-slider,
 .ui-slider-handle {
   border: 1px solid @border-color-temporary !important
+}
+
+.sidebar-group-body {
+  padding: 0;
+
+  .navbar-item {
+    padding: 10px;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba(0,0,0,.1)
+    }
+  }
+}
+
+.sidebar-content {
+  padding: 0;
+}
+
+.sidebar-group + .sidebar-group {
+  padding-top: 8px;
+  border-top: 1px solid @border-color-primary;
+  margin-top: 8px;
 }
