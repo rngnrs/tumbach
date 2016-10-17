@@ -1,10 +1,18 @@
 /*!Tumbach*/
 @font-face {
-    font-family: 'PT Sans';
+    font-family: 'Noto Sans';
     font-style: normal;
     font-weight: 400;
-    src: local('PT Sans'), local('PTSans-Regular'), url(../fonts/ptsans.woff) format('woff');
+    src: local('Noto Sans'), local('Noto Sans Regular'), url("../assets/notosans.ttf");
 }
+
+@font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Noto Sans'), local('Noto Sans Bold'), url("../assets/notosansb.ttf");
+}
+
 @color-primary: #000;
 @color-link: #007fff;
 @color-link-hover: #F60;
@@ -22,7 +30,7 @@
 @background-color-spoiler: #CCC;
 @background-color-posts: #FAFAFA;
 @font-weight-primary: normal;
-@font-family: 'PT Sans',Verdana,sans-serif;
+@font-family: 'Noto Sans', Verdana, sans-serif;
 @border-color-primary: #CCC;
 @border-color-secondary: #AAA;
 @border-color-temporary: #000;
@@ -42,7 +50,7 @@
   -webkit-filter: invert(0)
 }
 
-* {
+div {
   font-family: @font-family;
   font-weight: @font-weight-primary;
   color: @color-primary

@@ -294,6 +294,7 @@ exports.default = [{
   }(),
   options: { description: Tools.translate('Opens workers for connections if closed.') }
 }, {
+
   command: 'rerender [what...]',
   handler: function () {
     var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {

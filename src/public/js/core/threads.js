@@ -388,23 +388,24 @@ export async function showNewPosts() {
   try {
     let result = await AJAX.api('lastPostNumbers');
     let getNewPostCount = createGetNewPostCountFunction(result, newLastPostNumbers);
-    let selector = '.js-navbar .js-navbar-item-board a';
+    let selector = '.js-navbar .js-navbar-item-board';
     if (Tools.deviceType('mobile')) {
       selector += ', .board-select option';
     }
     DOM.queryAll(selector).forEach((a) => {
       let boardName = DOM.data('boardName', a);
-      if (!boardName) {
+      if (!boardName)
         return;
-      }
+      let newPostCount = getNewPostCount(boardName);
+      if (!newPostCount)
+        return;
       let isSelect = 'OPTION' === a.tagName;
       let span = isSelect ? $(a).find('.new-post-count') : $(a).parent().find('.new-post-count');
+      let newSpan = $(`<span class='new-post-count'> +${newPostCount}</span>`);
       span.remove();
-      let newPostCount = getNewPostCount(boardName);
-      if (!newPostCount) {
-        return;
-      }
-      $(`<span class='new-post-count'>+${newPostCount} </span>`).insertBefore(isSelect ? $(a).children().first() : a);
+      console.log($(a), span, $(a).children().first());
+      newSpan.insertAfter(isSelect ? $(a).children().first() : a);
+      //$(a).children().first().remove().append(span);
     });
     if (typeof window.lord.emit === 'function') {
       window.lord.emit('lastPostNumbersReceived', getNewPostCount);

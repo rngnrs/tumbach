@@ -306,7 +306,7 @@ var renderPage = function () {
             return Cache.writeFile(boardName + '/' + pageNumber + '.json', JSON.stringify(page));
 
           case 18:
-            page.title = board.title;
+            page.title = '/' + board.name + '/ &mdash; ' + board.title;
             page.board = MiscModel.board(board).board;
             _context6.next = 22;
             return Cache.writeFile(boardName + '/' + pageID + '.html', Renderer.render('pages/board', page));
