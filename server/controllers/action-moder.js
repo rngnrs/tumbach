@@ -20,6 +20,10 @@ var _board = require('../boards/board');
 
 var _board2 = _interopRequireDefault(_board);
 
+var _config = require('../helpers/config');
+
+var _config2 = _interopRequireDefault(_config);
+
 var _files = require('../core/files');
 
 var Files = _interopRequireWildcard(_files);
@@ -28,9 +32,9 @@ var _geolocation = require('../core/geolocation');
 
 var _geolocation2 = _interopRequireDefault(_geolocation);
 
-var _config = require('../helpers/config');
+var _postCreationTransaction = require('../helpers/post-creation-transaction');
 
-var _config2 = _interopRequireDefault(_config);
+var _postCreationTransaction2 = _interopRequireDefault(_postCreationTransaction);
 
 var _tools = require('../helpers/tools');
 
@@ -55,6 +59,10 @@ var router = _express2.default.Router();
 var MIN_TIME_OFFSET = -720;
 var MAX_TIME_OFFSET = 840;
 var BAN_EXPIRES_FORMAT = 'YYYY/MM/DD HH:mm ZZ';
+var MIN_SUBNET_IP_V4 = 22;
+var MAX_SUBNET_IP_V4 = 32;
+var MIN_SUBNET_IP_V6 = 64;
+var MAX_SUBNET_IP_V6 = 128;
 
 function getBans(fields) {
   var timeOffset = fields.timeOffset;
@@ -102,7 +110,7 @@ router.post('/action/banUser', function () {
           case 0:
             _context2.prev = 0;
             return _context2.delegateYield(regeneratorRuntime.mark(function _callee() {
-              var _ref2, fields, userIp, bans, banLevels, oldBans, date, modifiedBanBoards, newBans, levels;
+              var _ref2, fields, userIp, subnet, isIPv4, r4, r6, t, bans, banLevels, bannedUser, oldBans, date, modifiedBanBoards, newBans, levels;
 
               return regeneratorRuntime.wrap(function _callee$(_context) {
                 while (1) {
@@ -123,25 +131,46 @@ router.post('/action/banUser', function () {
                       _ref2 = _context.sent;
                       fields = _ref2.fields;
                       userIp = fields.userIp;
+                      subnet = fields.subnet;
 
                       userIp = Tools.correctAddress(userIp);
 
                       if (userIp) {
-                        _context.next = 10;
+                        _context.next = 11;
                         break;
                       }
 
                       throw new Error(Tools.translate('Invalid IP address'));
 
-                    case 10:
+                    case 11:
+                      subnet = Tools.subnet(userIp, subnet);
+
+                      if (!subnet) {
+                        _context.next = 19;
+                        break;
+                      }
+
+                      isIPv4 = /^\:\:[0-9a-f]{1,4}\:[0-9a-f]{1,4}$/.test(userIp);
+
+                      if (!(isIPv4 && subnet.subnet < MIN_SUBNET_IP_V4 || !isIPv4 && subnet.subnet < MIN_SUBNET_IP_V6)) {
+                        _context.next = 19;
+                        break;
+                      }
+
+                      r4 = MIN_SUBNET_IP_V4 + '-' + MAX_SUBNET_IP_V4;
+                      r6 = MIN_SUBNET_IP_V6 + '-' + MAX_SUBNET_IP_V6;
+                      t = Tools.translate('Subnet is too large. $[1] for IPv4 and $[2] for IPv6 are allowed', '', r4, r6);
+                      throw new Error(t);
+
+                    case 19:
                       if (!(userIp === req.ip)) {
-                        _context.next = 12;
+                        _context.next = 21;
                         break;
                       }
 
                       throw new Error(Tools.translate('Not enough rights'));
 
-                    case 12:
+                    case 21:
                       bans = getBans(fields);
                       banLevels = Tools.BAN_LEVELS.slice(1);
 
@@ -153,11 +182,12 @@ router.post('/action/banUser', function () {
                           throw new Error(Tools.translate('Invalid ban level: $[1]', '', ban.level));
                         }
                       });
-                      _context.next = 17;
-                      return UsersModel.getBannedUserBans(userIp);
+                      _context.next = 26;
+                      return UsersModel.getBannedUser(userIp);
 
-                    case 17:
-                      oldBans = _context.sent;
+                    case 26:
+                      bannedUser = _context.sent;
+                      oldBans = bannedUser ? bannedUser.bans : {};
                       date = Tools.now();
                       modifiedBanBoards = new Set();
                       newBans = _board2.default.boardNames().reduce(function (acc, boardName) {
@@ -175,7 +205,11 @@ router.post('/action/banUser', function () {
                         }
                         return acc;
                       }, {});
-                      levels = UsersModel.getRegisteredUserLevelsByIp(userIp);
+                      _context.next = 33;
+                      return UsersModel.getRegisteredUserLevelsByIp(userIp, subnet);
+
+                    case 33:
+                      levels = _context.sent;
 
                       modifiedBanBoards.forEach(function (boardName) {
                         var level = req.level(boardName);
@@ -183,13 +217,13 @@ router.post('/action/banUser', function () {
                           throw new Error(Tools.translate('Not enough rights'));
                         }
                       });
-                      _context.next = 25;
-                      return UsersModel.banUser(userIp, newBans);
+                      _context.next = 37;
+                      return UsersModel.banUser(userIp, newBans, subnet);
 
-                    case 25:
+                    case 37:
                       res.json({});
 
-                    case 26:
+                    case 38:
                     case 'end':
                       return _context.stop();
                   }
@@ -326,17 +360,18 @@ router.post('/action/delall', function () {
 
 router.post('/action/moveThread', function () {
   var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(req, res, next) {
-    var _ref6, fields, boardName, threadNumber, targetBoardName, password, geolocationInfo, result;
+    var transaction, _ref6, fields, boardName, threadNumber, targetBoardName, password, geolocationInfo, result;
 
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
+            transaction = void 0;
+            _context4.prev = 1;
+            _context4.next = 4;
             return Files.parseForm(req);
 
-          case 3:
+          case 4:
             _ref6 = _context4.sent;
             fields = _ref6.fields;
             boardName = fields.boardName;
@@ -345,77 +380,81 @@ router.post('/action/moveThread', function () {
             password = fields.password;
 
             if (!(!_board2.default.board(boardName) || !_board2.default.board(targetBoardName))) {
-              _context4.next = 11;
+              _context4.next = 12;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
+          case 12:
             if (!(boardName === targetBoardName)) {
-              _context4.next = 13;
+              _context4.next = 14;
               break;
             }
 
             throw new Error(Tools.translate('Source and target boards are the same'));
 
-          case 13:
+          case 14:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context4.next = 16;
+              _context4.next = 17;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread number'));
 
-          case 16:
+          case 17:
             if (!(!req.isModer(boardName) || !req.isModer(targetBoardName))) {
-              _context4.next = 18;
+              _context4.next = 19;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 18:
-            _context4.next = 20;
+          case 19:
+            _context4.next = 21;
             return (0, _geolocation2.default)(req.ip);
 
-          case 20:
+          case 21:
             geolocationInfo = _context4.sent;
-            _context4.next = 23;
+            _context4.next = 24;
             return UsersModel.checkUserBan(req.ip, [boardName, targetBoardName], {
               write: true,
               geolocationInfo: geolocationInfo
             });
 
-          case 23:
-            _context4.next = 25;
+          case 24:
+            _context4.next = 26;
             return UsersModel.checkUserPermissions(req, boardName, threadNumber, 'moveThread', Tools.sha1(password));
 
-          case 25:
-            _context4.next = 27;
-            return ThreadsModel.moveThread(boardName, threadNumber, targetBoardName);
+          case 26:
+            transaction = new _postCreationTransaction2.default(boardName);
+            _context4.next = 29;
+            return ThreadsModel.moveThread(boardName, threadNumber, targetBoardName, transaction);
 
-          case 27:
+          case 29:
             result = _context4.sent;
 
             res.json(result);
-            _context4.next = 34;
+            _context4.next = 37;
             break;
 
-          case 31:
-            _context4.prev = 31;
-            _context4.t0 = _context4['catch'](0);
+          case 33:
+            _context4.prev = 33;
+            _context4.t0 = _context4['catch'](1);
 
+            if (transaction) {
+              transaction.rollback();
+            }
             next(_context4.t0);
 
-          case 34:
+          case 37:
           case 'end':
             return _context4.stop();
         }
       }
-    }, _callee4, this, [[0, 31]]);
+    }, _callee4, this, [[1, 33]]);
   }));
 
   return function (_x7, _x8, _x9) {

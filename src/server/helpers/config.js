@@ -77,13 +77,15 @@ const DEFAULT_VALUES = new Map([
   ['system.detectRealIp', true],
   ['system.elasticsearch.host', 'localhost:9200'],
   ['system.httpRequestTimeout', 60 * 1000], //NOTE: 1 minute
-  ['system.log.backups', 100],
-  ['system.log.maxSize', 1048576], //NOTE: 1 MB
+  ['system.log.maxFiles', 100],
+  ['system.log.maxSize', 104857600], //NOTE: 100 MB
   ['system.log.middleware.before', 'all'],
   ['system.log.middleware.verbosity', 'ip'],
-  ['system.log.targets', ['console', 'file']],
-  ['system.mimeTypeRetrievingTimeout', 5 * 1000], //NOTE: 5 seconds
+  ['system.log.transports', ['console', 'file']],
   ['system.maxFormFieldsSize', 5 * 1024 * 1024], //NOTE: 5 MB
+  ['system.mimeTypeRetrievingTimeout', 5 * 1000], //NOTE: 5 seconds
+  ['system.mongodb.uri_decode_auth', false],
+  ['system.mongodb.url', 'mongodb://127.0.0.1:27017/ololordjs'],
   ['system.onlineCounter.interval', 60 * 1000], //NOTE: 1 minute
   ['system.onlineCounter.quota', 5 * 60 * 1000], //NOTE: 5 minutes
   ['system.phash.enabled', true],
@@ -98,6 +100,7 @@ const DEFAULT_VALUES = new Map([
   ['system.redis.retryDelayOnFailover', 100],
   ['system.redis.retryDelayOnClusterDown', 100],
   ['system.redis.retryDelayOnTryAgain', 100],
+  ['system.rendererWorkerCount', OS.cpus().length],
   ['system.rerenderCacheOnStartup', true],
   ['system.rerenderArchive', false],
   ['system.search.maxResultCount', 100],

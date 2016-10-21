@@ -3,9 +3,10 @@ import express from 'express';
 import moment from 'moment';
 
 import Board from '../boards/board';
+import config from '../helpers/config';
 import * as Files from '../core/files';
 import geolocation from '../core/geolocation';
-import config from '../helpers/config';
+import PostCreationTransaction from '../helpers/post-creation-transaction';
 import * as Tools from '../helpers/tools';
 import * as ThreadsModel from '../models/threads';
 import * as UsersModel from '../models/users';
@@ -15,6 +16,10 @@ let router = express.Router();
 const MIN_TIME_OFFSET = -720;
 const MAX_TIME_OFFSET = 840;
 const BAN_EXPIRES_FORMAT = 'YYYY/MM/DD HH:mm ZZ';
+const MIN_SUBNET_IP_V4 = 22;
+const MAX_SUBNET_IP_V4 = 32;
+const MIN_SUBNET_IP_V6 = 64;
+const MAX_SUBNET_IP_V6 = 128;
 
 function getBans(fields) {
   let { timeOffset } = fields;
@@ -54,10 +59,20 @@ router.post('/action/banUser', async function(req, res, next) {
       throw new Error(Tools.translate('Not enough rights'));
     }
     let { fields } = await Files.parseForm(req);
-    let { userIp } = fields;
+    let { userIp, subnet } = fields;
     userIp = Tools.correctAddress(userIp);
     if (!userIp) {
       throw new Error(Tools.translate('Invalid IP address'));
+    }
+    subnet = Tools.subnet(userIp, subnet);
+    if (subnet) {
+      let isIPv4 = /^\:\:[0-9a-f]{1,4}\:[0-9a-f]{1,4}$/.test(userIp);
+      if ((isIPv4 && (subnet.subnet < MIN_SUBNET_IP_V4)) || (!isIPv4 && (subnet.subnet < MIN_SUBNET_IP_V6))) {
+        let r4 = `${MIN_SUBNET_IP_V4}-${MAX_SUBNET_IP_V4}`;
+        let r6 = `${MIN_SUBNET_IP_V6}-${MAX_SUBNET_IP_V6}`;
+        let t = Tools.translate('Subnet is too large. $[1] for IPv4 and $[2] for IPv6 are allowed', '', r4, r6);
+        throw new Error(t);
+      }
     }
     if (userIp === req.ip) {
       throw new Error(Tools.translate('Not enough rights'));
@@ -72,7 +87,8 @@ router.post('/action/banUser', async function(req, res, next) {
         throw new Error(Tools.translate('Invalid ban level: $[1]', '', ban.level));
       }
     });
-    let oldBans = await UsersModel.getBannedUserBans(userIp);
+    let bannedUser = await UsersModel.getBannedUser(userIp);
+    let oldBans = bannedUser ? bannedUser.bans : {};
     let date = Tools.now();
     let modifiedBanBoards = new Set();
     let newBans = Board.boardNames().reduce((acc, boardName) => {
@@ -90,14 +106,14 @@ router.post('/action/banUser', async function(req, res, next) {
       }
       return acc;
     }, {});
-    let levels = UsersModel.getRegisteredUserLevelsByIp(userIp);
+    let levels = await UsersModel.getRegisteredUserLevelsByIp(userIp, subnet);
     modifiedBanBoards.forEach((boardName) => {
       let level = req.level(boardName);
       if (!req.isSuperuser(boardName) && Tools.compareRegisteredUserLevels(level, levels[boardName]) <= 0) {
         throw new Error(Tools.translate('Not enough rights'));
       }
     });
-    await UsersModel.banUser(userIp, newBans);
+    await UsersModel.banUser(userIp, newBans, subnet);
     res.json({});
   } catch (err) {
     next(err);
@@ -145,6 +161,7 @@ router.post('/action/delall', async function(req, res, next) {
 });
 
 router.post('/action/moveThread', async function(req, res, next) {
+  let transaction;
   try {
     let { fields } = await Files.parseForm(req);
     let { boardName, threadNumber, targetBoardName, password } = fields;
@@ -167,9 +184,13 @@ router.post('/action/moveThread', async function(req, res, next) {
       geolocationInfo: geolocationInfo
     });
     await UsersModel.checkUserPermissions(req, boardName, threadNumber, 'moveThread', Tools.sha1(password));
-    let result = await ThreadsModel.moveThread(boardName, threadNumber, targetBoardName);
+    transaction = new PostCreationTransaction(boardName);
+    let result = await ThreadsModel.moveThread(boardName, threadNumber, targetBoardName, transaction);
     res.json(result);
   } catch (err) {
+    if (transaction) {
+      transaction.rollback();
+    }
     next(err);
   }
 });

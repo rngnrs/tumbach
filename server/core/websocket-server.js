@@ -317,7 +317,7 @@ var WebSocketServer = function () {
     value: function _initSendChatMessage() {
       this.on('sendChatMessage', function () {
         var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(msg, conn) {
-          var data, _ref3, message, chatNumber, senderHash, receiverHash, receiver, ip;
+          var data, _ref3, message, chatNumber, receiver, ip;
 
           return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
@@ -337,26 +337,22 @@ var WebSocketServer = function () {
                   _ref3 = _context2.sent;
                   message = _ref3.message;
                   chatNumber = _ref3.chatNumber;
-                  senderHash = _ref3.senderHash;
-                  receiverHash = _ref3.receiverHash;
                   receiver = _ref3.receiver;
 
-                  if (senderHash !== receiverHash) {
-                    message.type = 'in';
-                    ip = receiver.hashpass ? null : receiver.ip;
+                  message.type = 'in';
+                  ip = receiver.hashpass ? null : receiver.ip;
 
-                    IPC.send('sendChatMessage', {
-                      type: 'newChatMessage',
-                      message: {
-                        message: message,
-                        boardName: data.boardName,
-                        postNumber: data.postNumber,
-                        chatNumber: chatNumber
-                      },
-                      ips: ip,
-                      hashpasses: receiver.hashpass
-                    });
-                  }
+                  IPC.send('sendChatMessage', {
+                    type: 'newChatMessage',
+                    message: {
+                      message: message,
+                      boardName: data.boardName,
+                      postNumber: data.postNumber,
+                      chatNumber: chatNumber
+                    },
+                    ips: ip,
+                    hashpasses: receiver.hashpass
+                  });
                   message.type = 'out';
                   return _context2.abrupt('return', {
                     message: message,

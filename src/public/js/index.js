@@ -456,7 +456,7 @@ export function initializeSidebar() {
 }
 
 export function initializeToolbar() {
-  var toolbar = $('#toolbar');
+  let toolbar = $('#toolbar');
   if ('toolbar' !== Settings.navbarMode()) {
     toolbar.hide();
     toolbar.next('.toolbar-placeholder').hide();

@@ -145,7 +145,6 @@ export function quickReply(postNumber, threadNumber) {
     post.after(postForm);
     resetTarget(threadNumber); //NOTE: Required after hidePostForm() call
   }
-
 }
 
 function hidePostForm() {
@@ -231,11 +230,11 @@ export async function submit() {
       if (Tools.isThreadPage()) {
         await Threads.updateThread(true);
         if (Settings.moveToPostOnReplyInThread()) {
-          DOM.hash(`post-${result.number}`);
+          DOM.hash(`post-${result.postNumber}`);
         }
       } else {
         if ('goto_thread' === Settings.quickReplyAction()) {
-          let hash = `#post-${result.number}`;
+          let hash = `#post-${result.postNumber}`;
           let href = `/${Tools.sitePathPrefix()}${result.boardName}/res/${result.threadNumber}.html${hash}`;
           await Navigation.setPage(href);
           return;

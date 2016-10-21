@@ -15,6 +15,7 @@ function formatDate(seconds) {
 }
 
 export default [{
+  basic: true,
   command: 'quit',
   handler: function() {
     process.exit(0);
@@ -25,6 +26,7 @@ export default [{
     alias: ['exit', 'q']
   }
 }, {
+  basic: true,
   command: 'respawn [exitCode]',
   handler: async function({ exitCode } = {}) {
     await IPC.send('exit', Tools.option(exitCode, 'number', 0), true);
@@ -55,24 +57,24 @@ export default [{
   },
   options: { description: Tools.translate('Unregisters a superuser.') }
 }, {
-  command: 'rerender-posts [targets...]',
+  command: 'markup-posts [targets...]',
   handler: async function({ targets } = {}) {
     let result = await this.prompt({
       type: 'confirm',
-      name: 'rerender',
+      name: 'markup',
       default: true,
       message: Tools.translate('Are you sure? ')
     });
-    if (!result.rerender) {
+    if (!result.markup) {
       return;
     }
-    await PostsModel.rerenderPosts(Renderer.targetsFromString((targets || []).join(' ')));
+    await PostsModel.markupPosts(Renderer.targetsFromString((targets || []).join(' ')));
     //TODO: Rerender corresponding pages?
     return 'OK';
   },
   options: {
-    description: Tools.translate('Rerenders posts specified as $[1].\n'
-      + 'If $[1] is omitted, rerenders all posts on all boards.\n'
+    description: Tools.translate('Rerenders text of posts specified as $[1].\n'
+      + 'If $[1] is omitted, rerenders text of all posts on all boards.\n'
       + 'Each target is a string in the following form:\n'
       + '$[2]', '', '[targets...]', '<board name>[:<post number>[:...]]')
   }
@@ -93,6 +95,7 @@ export default [{
 }, {
   command: 'rerender [what...]',
   handler: async function({ options, what } = {}) {
+    let timeStart = new Date();
     let { list, archive } = options || {};
     if (list) {
       let paths = await Renderer.getRouterPaths(true);
@@ -107,7 +110,7 @@ export default [{
       } else {
         await Renderer.rerender(['**', '!/*/arch/*']);
       }
-      return 'OK';
+      return `OK (${new Date() - timeStart}ms)`;
     }
   },
   options: {
@@ -121,6 +124,7 @@ export default [{
     }]
   }
 }, {
+  basic: true,
   command: 'reload-boards',
   handler: async function() {
     Board.initialize();
@@ -129,6 +133,7 @@ export default [{
   },
   options: { description: Tools.translate('Reloads the boards.') }
 }, {
+  basic: true,
   command: 'reload-templates',
   handler: async function(args) {
     await Renderer.compileTemplates();
@@ -138,27 +143,7 @@ export default [{
   },
   options: { description: Tools.translate('Reloads the templates and the partials (including public ones).') }
 }, {
-  command: 'rebuild-search-index [targets...]',
-  handler: async function({ targets } = {}) {
-    let result = await this.prompt({
-      type: 'confirm',
-      name: 'rebuild',
-      default: true,
-      message: Tools.translate('Are you sure? ')
-    });
-    if (!result.rebuild) {
-      return;
-    }
-    await PostsModel.rebuildSearchIndex(Renderer.targetsFromString((targets || []).join(' ')));
-    return 'OK';
-  },
-  options: {
-    description: Tools.translate('Rebuilds post search index of posts specified as $[1].\n'
-      + 'If $[1] is omitted, rebuilds post search index of all posts on all boards.\n'
-      + 'Each target is a string in the following form:\n'
-      + '$[2]', '', '[targets...]', '<board name>[:<post number>[:...]]')
-  }
-}, {
+  basic: true,
   command: 'uptime',
   handler: function() {
     return formatDate(process.uptime());

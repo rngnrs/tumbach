@@ -2,7 +2,7 @@
      data-bind='click: browseFile,
                 event: {
                   dragover: dragOver,
-                  dragLeave: dragLeave,
+                  dragleave: dragLeave,
                   drop: fileDrop
                 }'>
   <div class='file-input-row'>
@@ -32,6 +32,6 @@
     <div style='float:right'>
       {{#def['postForm/ratingSelect']}}
     </div>
-    <div style='clear: both'></div>
+    <div class='clr'></div>
   </div>
 </div>

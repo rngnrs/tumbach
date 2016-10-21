@@ -24,10 +24,6 @@ var _geolocation = require('../core/geolocation');
 
 var _geolocation2 = _interopRequireDefault(_geolocation);
 
-var _search = require('../core/search');
-
-var Search = _interopRequireWildcard(_search);
-
 var _config = require('../helpers/config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -39,6 +35,10 @@ var Tools = _interopRequireWildcard(_tools);
 var _chats = require('../models/chats');
 
 var ChatsModel = _interopRequireWildcard(_chats);
+
+var _posts = require('../models/posts');
+
+var PostsModel = _interopRequireWildcard(_posts);
 
 var _users = require('../models/users');
 
@@ -52,73 +52,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 var router = _express2.default.Router();
 
-function splitCommand(cmd) {
-  var args = [];
-  var arg = '';
-  var quot = 0;
-  for (var i = 0; i < cmd.length; ++i) {
-    var c = cmd[i];
-    if (/\s/.test(c)) {
-      if (quot) {
-        arg += c;
-      } else if (arg.length > 0) {
-        args.push(arg);
-        arg = '';
-      }
-    } else {
-      if ('"' === c && (i < 1 || '\\' !== cmd[i - 1])) {
-        switch (quot) {
-          case 1:
-            quot = 0;
-            break;
-          case -1:
-            arg += c;
-            break;
-          case 0:
-          default:
-            quot = 1;
-            break;
-        }
-      } else if ("'" === c && (i < 1 || '\\' !== cmd[i - 1])) {
-        switch (quot) {
-          case 1:
-            arg += c;
-            break;
-          case -1:
-            quot = 0;
-            break;
-          case 0:
-          default:
-            quot = -1;
-            break;
-        }
-      } else {
-        if (('"' === c || "'" === c) && (i > 0 || '\\' == cmd[i - 1]) && arg.length > 0) {
-          arg = arg.substring(0, arg.length - 1);
-        }
-        arg += c;
-      }
-    }
-  }
-  if (arg.length > 0) {
-    if (quot) {
-      return null;
-    }
-    args.push(arg);
-  }
-  var command = null;
-  if (args.length > 0) {
-    command = args.shift();
-  }
-  return {
-    command: command,
-    arguments: args
-  };
-}
-
 router.post('/action/sendChatMessage', function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(req, res, next) {
-    var _ref2, _ref2$fields, _boardName, postNumber, chatNumber, text, result, message, senderHash, receiverHash, receiver, ip;
+    var _ref2, _ref2$fields, _boardName, postNumber, chatNumber, text, result, message, receiver, ip;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -186,26 +122,22 @@ router.post('/action/sendChatMessage', function () {
           case 23:
             result = _context.sent;
             message = result.message;
-            senderHash = result.senderHash;
-            receiverHash = result.receiverHash;
             receiver = result.receiver;
 
-            if (senderHash !== receiverHash) {
-              message.type = 'in';
-              ip = receiver.hashpass ? null : receiver.ip;
+            message.type = 'in';
+            ip = receiver.hashpass ? null : receiver.ip;
 
-              IPC.send('sendChatMessage', {
-                type: 'newChatMessage',
-                message: {
-                  message: message,
-                  boardName: _boardName,
-                  postNumber: postNumber,
-                  chatNumber: result.chatNumber
-                },
-                ips: ip,
-                hashpasses: receiver.hashpass
-              });
-            }
+            IPC.send('sendChatMessage', {
+              type: 'newChatMessage',
+              message: {
+                message: message,
+                boardName: _boardName,
+                postNumber: postNumber,
+                chatNumber: result.chatNumber
+              },
+              ips: ip,
+              hashpasses: receiver.hashpass
+            });
             res.json({});
             _context.next = 35;
             break;
@@ -267,7 +199,7 @@ router.post('/action/deleteChatMessages', function () {
 
           case 13:
             chatNumber = Tools.option(chatNumber, 'number', 0, { test: function test(n) {
-                n > 0;
+                return n > 0;
               } });
 
             if (chatNumber) {
@@ -456,56 +388,30 @@ router.post('/action/search', function () {
                       page = Tools.option(page, 'number', 0, { test: function test(p) {
                           return p >= 0;
                         } });
-                      phrases = splitCommand(query);
-
-                      if (!(!phrases || !phrases.command)) {
-                        _context4.next = 18;
-                        break;
-                      }
-
-                      throw new Error(Tools.translate('Invalid search query'));
-
-                    case 18:
-                      _context4.next = 20;
+                      _context4.next = 17;
                       return (0, _geolocation2.default)(req.ip);
 
-                    case 20:
+                    case 17:
                       req.geolocationInfo = _context4.sent;
-                      _context4.next = 23;
+                      _context4.next = 20;
                       return UsersModel.checkUserBan(req.ip, boardName, {
                         write: true,
                         geolocationInfo: req.geolocationInfo
                       });
 
-                    case 23:
+                    case 20:
+                      phrases = query.match(/\w+|"[^"]+"/g) || [];
                       model = {
                         searchQuery: query,
+                        phrases: phrases.map(function (phrase) {
+                          return phrase.replace(/(^\-|^"|"$)/g, '');
+                        }),
                         searchBoard: boardName
                       };
+                      _context4.next = 24;
+                      return PostsModel.findPosts(query, boardName, page);
 
-                      query = {
-                        requiredPhrases: [],
-                        excludedPhrases: [],
-                        possiblePhrases: []
-                      };
-                      [phrases.command].concat(phrases.arguments).forEach(function (phrase) {
-                        if (phrase.substr(0, 1) === '+') {
-                          query.requiredPhrases.push(phrase.substr(1).toLowerCase());
-                        } else if (phrase.substr(0, 1) === '-') {
-                          query.excludedPhrases.push(phrase.substr(1).toLowerCase());
-                        } else {
-                          query.possiblePhrases.push(phrase.toLowerCase());
-                        }
-                      });
-                      model.phrases = query.requiredPhrases.concat(query.excludedPhrases).concat(query.possiblePhrases);
-                      model.phrases = (0, _underscore2.default)(model.phrases).uniq();
-                      _context4.next = 30;
-                      return Search.findPosts(query, {
-                        boardName: boardName,
-                        page: page
-                      });
-
-                    case 30:
+                    case 24:
                       result = _context4.sent;
                       maxSubjectLength = (0, _config2.default)('system.search.maxResultPostSubjectLengh');
                       maxTextLength = (0, _config2.default)('system.search.maxResultPostTextLengh');
@@ -532,7 +438,7 @@ router.post('/action/search', function () {
                       model.max = result.max;
                       res.json(model);
 
-                    case 37:
+                    case 31:
                     case 'end':
                       return _context4.stop();
                   }

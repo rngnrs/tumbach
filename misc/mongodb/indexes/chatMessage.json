@@ -1,0 +1,30 @@
+{
+  "collectionName": "chatMessage",
+  "indexes": {
+    "key": {
+      "index": {
+        "key": 1
+      }
+    },
+    "date": {
+      "index": {
+        "date": 1
+      }
+    },
+    "sender_ip__receiver_ip": {
+      "index": {
+        "sender.ip": 1,
+        "receiver.ip": 1
+      }
+    },
+    "sender_ip__receiver_ip__sender_hashpass__receiver_hashpass": {
+      "index": {
+        "sender.ip": 1,
+        "receiver.ip": 1,
+        "sender.hashpass": 1,
+        "receiver.hashpass": 1
+      }
+    }
+    
+  }
+}

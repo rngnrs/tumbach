@@ -135,7 +135,6 @@ var generateStatistics = exports.generateStatistics = function () {
             return _context5.abrupt('return');
 
           case 3:
-            //console.log(Tools.translate('Generating statistics…'));
             statistics = {
               boards: [],
               total: {
@@ -147,37 +146,27 @@ var generateStatistics = exports.generateStatistics = function () {
             launchDate = _underscore2.default.now();
             _context5.prev = 5;
             return _context5.delegateYield(regeneratorRuntime.mark(function _callee4() {
-              var keys, uniqueUsers, data;
+              var Post, ips, data;
               return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
                   switch (_context4.prev = _context4.next) {
                     case 0:
                       _context4.next = 2;
-                      return UsersModel.getUserPostNumbers();
+                      return client.collection('post');
 
                     case 2:
-                      keys = _context4.sent;
-                      uniqueUsers = _board2.default.boardNames().reduce(function (acc, boardName) {
-                        acc[boardName] = 0;
-                        return acc;
-                      }, {});
+                      Post = _context4.sent;
+                      _context4.next = 5;
+                      return Post.distinct('user.ip');
 
-                      statistics.total.uniqueIPCount = keys.map(function (key) {
-                        return {
-                          ip: key.split(':').slice(1, -1).join(':'),
-                          boardName: key.split(':').pop()
-                        };
-                      }).filter(function (userPostInfo) {
-                        return uniqueUsers.hasOwnProperty(userPostInfo.boardName);
-                      }).reduce(function (acc, userPostInfo) {
-                        ++uniqueUsers[userPostInfo.boardName];
-                        acc.add(userPostInfo.ip);
-                        return acc;
-                      }, new Set()).size;
-                      _context4.next = 7;
+                    case 5:
+                      ips = _context4.sent;
+
+                      statistics.total.uniqueIPCount = ips.length;
+                      _context4.next = 9;
                       return Tools.series(_board2.default.boardNames(), function () {
                         var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName) {
-                          var board, boardLaunchDate, boardStatistics;
+                          var board, boardLaunchDate, boardStatistics, ips;
                           return regeneratorRuntime.wrap(function _callee3$(_context3) {
                             while (1) {
                               switch (_context3.prev = _context3.next) {
@@ -206,13 +195,19 @@ var generateStatistics = exports.generateStatistics = function () {
                                   boardStatistics.name = board.name;
                                   boardStatistics.title = board.title;
                                   boardStatistics.hidden = board.hidden;
-                                  boardStatistics.uniqueIPCount = uniqueUsers[board.name];
+                                  _context3.next = 13;
+                                  return Post.distinct('user.ip', { boardName: boardName });
+
+                                case 13:
+                                  ips = _context3.sent;
+
+                                  boardStatistics.uniqueIPCount = ips.length;
                                   statistics.total.postCount += boardStatistics.postCount;
                                   statistics.total.fileCount += boardStatistics.fileCount;
                                   statistics.total.diskUsage += boardStatistics.diskUsage;
                                   statistics.boards.push(boardStatistics);
 
-                                case 16:
+                                case 19:
                                 case 'end':
                                   return _context3.stop();
                               }
@@ -225,12 +220,12 @@ var generateStatistics = exports.generateStatistics = function () {
                         };
                       }());
 
-                    case 7:
+                    case 9:
                       statistics.total.postingSpeed = Renderer.postingSpeedString(launchDate, statistics.total.postCount);
-                      _context4.next = 10;
+                      _context4.next = 12;
                       return IPC.send('getConnectionIPs');
 
-                    case 10:
+                    case 12:
                       data = _context4.sent;
 
                       statistics.online = data.reduce(function (acc, ips) {
@@ -240,10 +235,10 @@ var generateStatistics = exports.generateStatistics = function () {
                         return acc;
                       }, new Set()).size;
                       statistics.uptime = process.uptime();
-                      _context4.next = 15;
+                      _context4.next = 17;
                       return Cache.writeFile('misc/statistics.json', JSON.stringify(statistics));
 
-                    case 15:
+                    case 17:
                     case 'end':
                       return _context4.stop();
                   }
@@ -290,10 +285,6 @@ var _boards = require('./boards');
 
 var BoardsModel = _interopRequireWildcard(_boards);
 
-var _users = require('./users');
-
-var UsersModel = _interopRequireWildcard(_users);
-
 var _board = require('../boards/board');
 
 var _board2 = _interopRequireDefault(_board);
@@ -322,9 +313,15 @@ var _tools = require('../helpers/tools');
 
 var Tools = _interopRequireWildcard(_tools);
 
+var _mongodbClientFactory = require('../storage/mongodb-client-factory');
+
+var _mongodbClientFactory2 = _interopRequireDefault(_mongodbClientFactory);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+var client = (0, _mongodbClientFactory2.default)();
 //# sourceMappingURL=statistics.js.map

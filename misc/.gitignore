@@ -1,5 +1,6 @@
 *
 !lua
+!mongodb
 !rules
 !thumbs
 !geo-bans.json.example

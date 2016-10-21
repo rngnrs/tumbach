@@ -98,15 +98,15 @@ var Key = function (_CommonKey) {
       return set;
     }()
   }, {
-    key: 'incrementBy',
+    key: 'setex',
     value: function () {
-      var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(n, subkey) {
+      var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(data, seconds, subkey) {
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 _context3.next = 2;
-                return this.client.incrby(this.fullKey(subkey), n);
+                return this.client.setex(this.fullKey(subkey), this.stringify(data), seconds);
 
               case 2:
                 return _context3.abrupt('return', _context3.sent);
@@ -119,8 +119,36 @@ var Key = function (_CommonKey) {
         }, _callee3, this);
       }));
 
-      function incrementBy(_x4, _x5) {
+      function setex(_x4, _x5, _x6) {
         return _ref4.apply(this, arguments);
+      }
+
+      return setex;
+    }()
+  }, {
+    key: 'incrementBy',
+    value: function () {
+      var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(n, subkey) {
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return this.client.incrby(this.fullKey(subkey), n);
+
+              case 2:
+                return _context4.abrupt('return', _context4.sent);
+
+              case 3:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function incrementBy(_x7, _x8) {
+        return _ref5.apply(this, arguments);
       }
 
       return incrementBy;

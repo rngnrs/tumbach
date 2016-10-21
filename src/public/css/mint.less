@@ -34,8 +34,8 @@
 }
 
 .no-invert {
-  filter: invert(0);
-  -webkit-filter: invert(0);
+  filter: invert(0) no-invert;
+  -webkit-filter: invert(0) no-invert;
 }
 
 body {
@@ -334,7 +334,7 @@ textarea:hover {
 .file-input {
   border: 1px dashed @border-color-secondary;
 
-  .drag {
+  &.drag {
     border: 1px dashed @border-color-temporary;
     background-color: @background-color-secondary;
   }
@@ -633,4 +633,8 @@ a {
 .ui-slider,
 .ui-slider-handle {
   border: 1px solid @border-color-temporary !important;
+}
+
+#player-paranja {
+  background: @background-color-primary
 }

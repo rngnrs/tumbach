@@ -18,6 +18,10 @@ var _tools = require('./tools');
 
 var Tools = _interopRequireWildcard(_tools);
 
+var _mongodbClientFactory = require('../storage/mongodb-client-factory');
+
+var _mongodbClientFactory2 = _interopRequireDefault(_mongodbClientFactory);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -26,12 +30,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var client = (0, _mongodbClientFactory2.default)();
+
 var PostCreationTransaction = function () {
   function PostCreationTransaction(boardName) {
     _classCallCheck(this, PostCreationTransaction);
 
     this.boardName = boardName;
     this.files = [];
+    this.postNumbers = [];
   }
 
   _createClass(PostCreationTransaction, [{
@@ -45,9 +52,14 @@ var PostCreationTransaction = function () {
       this.threadNumber = threadNumber;
     }
   }, {
-    key: 'setPostNumber',
-    value: function setPostNumber(postNumber) {
-      this.postNumber = postNumber;
+    key: 'addPostNumber',
+    value: function addPostNumber(postNumber) {
+      this.postNumbers.push(postNumber);
+    }
+  }, {
+    key: 'commit',
+    value: function commit() {
+      this.committed = true;
     }
   }, {
     key: 'rollback',
@@ -57,44 +69,52 @@ var PostCreationTransaction = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
-                _context.next = 3;
+                if (!this.committed) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt('return');
+
+              case 2:
+                _context.prev = 2;
+                _context.next = 5;
                 return this._rollbackFiles();
 
-              case 3:
+              case 5:
                 if (!(this.threadNumber > 0)) {
-                  _context.next = 6;
+                  _context.next = 8;
                   break;
                 }
 
-                _context.next = 6;
+                _context.next = 8;
                 return this._rollbackThread();
 
-              case 6:
-                if (!(this.postNumber > 0)) {
-                  _context.next = 9;
+              case 8:
+                if (!(this.postNumbers.length > 0)) {
+                  _context.next = 11;
                   break;
                 }
 
-                _context.next = 9;
-                return this._rollbackPost();
-
-              case 9:
-                _context.next = 14;
-                break;
+                _context.next = 11;
+                return this._rollbackPosts();
 
               case 11:
-                _context.prev = 11;
-                _context.t0 = _context['catch'](0);
+                _context.next = 16;
+                break;
+
+              case 13:
+                _context.prev = 13;
+                _context.t0 = _context['catch'](2);
 
                 _logger2.default.error(_context.t0.stack || _context.t0);
 
-              case 14:
+              case 16:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this, [[0, 11]]);
+        }, _callee, this, [[2, 13]]);
       }));
 
       function rollback() {
@@ -175,26 +195,39 @@ var PostCreationTransaction = function () {
     key: '_rollbackThread',
     value: function () {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
+        var Thread;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                try {
-                  /*
-                  return removeThread(_this.board.name, _this.threadNumber).catch(function(err) {
-                      Logger.error(err.stack || err);
-                  });
-                  */
-                } catch (err) {
-                  _logger2.default.error(err.stack || err);
-                }
+                _context4.prev = 0;
+                _context4.next = 3;
+                return client.collection('thread');
 
-              case 1:
+              case 3:
+                Thread = _context4.sent;
+                _context4.next = 6;
+                return Thread.deleteOne({
+                  boardName: this.boardName,
+                  number: this.threadNumber
+                });
+
+              case 6:
+                _context4.next = 11;
+                break;
+
+              case 8:
+                _context4.prev = 8;
+                _context4.t0 = _context4['catch'](0);
+
+                _logger2.default.error(_context4.t0.stack || _context4.t0);
+
+              case 11:
               case 'end':
                 return _context4.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee4, this, [[0, 8]]);
       }));
 
       function _rollbackThread() {
@@ -204,36 +237,49 @@ var PostCreationTransaction = function () {
       return _rollbackThread;
     }()
   }, {
-    key: '_rollbackPost',
+    key: '_rollbackPosts',
     value: function () {
       var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
+        var Post;
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                try {
-                  /*
-                  return removePost(_this.board.name, _this.postNumber).catch(function(err) {
-                      Logger.error(err.stack || err);
-                  });
-                  */
-                } catch (err) {
-                  _logger2.default.error(err.stack || err);
-                }
+                _context5.prev = 0;
+                _context5.next = 3;
+                return client.collection('post');
 
-              case 1:
+              case 3:
+                Post = _context5.sent;
+                _context5.next = 6;
+                return Post.deleteMany({
+                  boardName: this.boardName,
+                  number: { $in: this.postNumbers }
+                });
+
+              case 6:
+                _context5.next = 11;
+                break;
+
+              case 8:
+                _context5.prev = 8;
+                _context5.t0 = _context5['catch'](0);
+
+                _logger2.default.error(_context5.t0.stack || _context5.t0);
+
+              case 11:
               case 'end':
                 return _context5.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee5, this, [[0, 8]]);
       }));
 
-      function _rollbackPost() {
+      function _rollbackPosts() {
         return _ref5.apply(this, arguments);
       }
 
-      return _rollbackPost;
+      return _rollbackPosts;
     }()
   }]);
 

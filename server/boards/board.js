@@ -72,7 +72,7 @@ function getRules(boardName) {
 function getBoards(includeHidden) {
   includeHidden = includeHidden || typeof includeHidden === 'undefined';
   return (0, _underscore2.default)(boards).toArray().sort(function (b1, b2) {
-    return b1.name.localeCompare(b2);
+    return b1.name.localeCompare(b2.name);
   }).filter(function (board) {
     return board.enabled && (includeHidden || board.hidden);
   });
@@ -372,7 +372,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Name is too long'))));
+                throw new Error(Tools.translate('Name is too long'));
 
               case 10:
                 if (!(subject.length > this.maxSubjectLength)) {
@@ -380,7 +380,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Subject is too long'))));
+                throw new Error(Tools.translate('Subject is too long'));
 
               case 12:
                 if (!(text.length > this.maxTextFieldLength)) {
@@ -388,7 +388,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Comment is too long'))));
+                throw new Error(Tools.translate('Comment is too long'));
 
               case 14:
                 if (!(password.length > this.maxPasswordLength)) {
@@ -396,7 +396,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Password is too long'))));
+                throw new Error(Tools.translate('Password is too long'));
 
               case 16:
                 if (!('markupText' === mode || 'editPost' === mode)) {
@@ -412,7 +412,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Attempt to create a thread without attaching a file'))));
+                throw new Error(Tools.translate('Attempt to create a thread without attaching a file'));
 
               case 20:
                 if ('deleteFile' === mode && existingFileCount > 0) {
@@ -424,7 +424,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Both file and comment are missing'))));
+                throw new Error(Tools.translate('Both file and comment are missing'));
 
               case 23:
                 if (!(files.length + existingFileCount > this.maxFileCount)) {
@@ -432,7 +432,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(new Error(Tools.translate('Too many files'))));
+                throw new Error(Tools.translate('Too many files'));
 
               case 25:
                 err = files.reduce(function (err, file) {
@@ -452,7 +452,7 @@ var Board = function () {
                   break;
                 }
 
-                return _context.abrupt('return', Promise.reject(err));
+                throw err;
 
               case 28:
               case 'end':
@@ -469,14 +469,14 @@ var Board = function () {
       return testParameters;
     }()
   }, {
-    key: 'postExtraData',
+    key: 'getPostExtraData',
     value: function () {
-      var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, fields, files, oldPost) {
+      var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, fields, files) {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                return _context2.abrupt('return', oldPost ? oldPost.extraData : null);
+                return _context2.abrupt('return', null);
 
               case 1:
               case 'end':
@@ -486,20 +486,23 @@ var Board = function () {
         }, _callee2, this);
       }));
 
-      function postExtraData(_x3, _x4, _x5, _x6) {
+      function getPostExtraData(_x3, _x4, _x5) {
         return _ref4.apply(this, arguments);
       }
 
-      return postExtraData;
+      return getPostExtraData;
     }()
   }, {
-    key: 'storeExtraData',
+    key: 'editPostExtraData',
     value: function () {
-      var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(postNumber, extraData, archived) {
+      var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(req, fields, extraData) {
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                return _context3.abrupt('return', extraData || null);
+
+              case 1:
               case 'end':
                 return _context3.stop();
             }
@@ -507,20 +510,23 @@ var Board = function () {
         }, _callee3, this);
       }));
 
-      function storeExtraData(_x7, _x8, _x9) {
+      function editPostExtraData(_x6, _x7, _x8) {
         return _ref5.apply(this, arguments);
       }
 
-      return storeExtraData;
+      return editPostExtraData;
     }()
   }, {
-    key: 'loadExtraData',
+    key: 'transformPostExtraData',
     value: function () {
-      var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(postNumber, archived) {
+      var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(extraData, sourceBoard) {
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                return _context4.abrupt('return', null);
+
+              case 1:
               case 'end':
                 return _context4.stop();
             }
@@ -528,40 +534,19 @@ var Board = function () {
         }, _callee4, this);
       }));
 
-      function loadExtraData(_x10, _x11) {
+      function transformPostExtraData(_x9, _x10) {
         return _ref6.apply(this, arguments);
       }
 
-      return loadExtraData;
-    }()
-  }, {
-    key: 'removeExtraData',
-    value: function () {
-      var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(postNumber, archived) {
-        return regeneratorRuntime.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-              case 'end':
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function removeExtraData(_x12, _x13) {
-        return _ref7.apply(this, arguments);
-      }
-
-      return removeExtraData;
+      return transformPostExtraData;
     }()
   }, {
     key: 'renderPost',
     value: function () {
-      var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(post) {
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(post) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 post.rawSubject = post.subject;
                 post.isOp = post.number === post.threadNumber;
@@ -580,18 +565,18 @@ var Board = function () {
                     delete post.geolocation;
                   }
                 }
-                return _context6.abrupt('return', post);
+                return _context5.abrupt('return', post);
 
               case 8:
               case 'end':
-                return _context6.stop();
+                return _context5.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee5, this);
       }));
 
-      function renderPost(_x14) {
-        return _ref8.apply(this, arguments);
+      function renderPost(_x11) {
+        return _ref7.apply(this, arguments);
       }
 
       return renderPost;

@@ -1,23 +1,109 @@
-import Log4JS from 'log4js';
+import _ from 'underscore';
+import Cluster from 'cluster';
+import Winston from 'winston';
+import WinstonDailyRotateFileTransport from 'winston-daily-rotate-file';
 
 import config from './config';
+import * as IPC from './ipc';
 
-let appenders = [];
-let logTargets = config('system.log.targets');
+const CODE = /\u001b\[(\d+(;\d+)*)?m/g;
 
-if (logTargets.indexOf('console') >= 0) {
-  appenders.push({ type: 'console' });
+class WinstonClusterTransport extends Winston.Transport {
+  constructor(options = {}) {
+    super(options);
+    this.name = 'cluster';
+  }
+
+  async log(level, msg, meta, callback) {
+    if (this.silent) {
+      return callback(null, true);
+    }
+    if (this.stripColors) {
+      msg = ('' + msg).replace(code, '');
+    }
+    let message = {
+      cmd: 'log',
+      worker: Cluster.worker.id || null,
+      pid: process.pid,
+      level: level,
+      msg: msg,
+      meta: meta
+    };
+    try {
+      await IPC.send('log', message);
+    } catch (err) {
+      console.error(err.stack || err);
+      return callback(err);
+    }
+    this.emit('logged');
+    callback(null, true);
+    return message;
+  }
+
+  _write(data, callback) { }
+
+  query(options, callback) { }
+
+  stream(options) { }
+
+  open(callback) {
+    callback();
+  }
+
+  close() { }
+
+  flush() { }
 }
 
-if (logTargets.indexOf('console') >= 0) {
-  appenders.push({
-    type: 'file',
-    filename: `${__dirname}/../../logs/ololord.log`,
-    maxLogSize: config('system.log.maxSize'),
-    backups: config('system.log.backups')
-  });
+Winston.transports.Cluster = WinstonClusterTransport;
+
+const TRANSPORT_MAP = {
+  'console': {
+    ctor: Winston.transports.Console,
+    opts: {
+      timestamp: true,
+      colorize: true
+    }
+  },
+  'file': {
+    ctor: WinstonDailyRotateFileTransport,
+    opts: {
+      filename: `${__dirname}/../../logs/ololord.log`,
+      maxsize: config('system.log.maxSize'),
+      maxFiles: config('system.log.maxFiles')
+    }
+  }
+};
+
+let transports = config('system.log.transports').map((name) => {
+  return TRANSPORT_MAP[name];
+}).filter(transport => !!transport);
+
+if (transports.length <= 0) {
+  transports = _(TRANSPORT_MAP).toArray();
 }
 
-Log4JS.configure({ appenders: appenders });
+let Logger;
 
-export default Log4JS.getLogger();
+if (Cluster.isMaster) {
+  Logger = new Winston.Logger({ transports: transports.map(({ ctor, opts }) => new ctor(opts)) });
+} else {
+  Logger = new Winston.Logger({ transports: [new WinstonClusterTransport()] });
+}
+
+function handleMessage(msg) {
+
+}
+
+Logger.initialize = (serverType) => {
+  if (Cluster.isMaster) {
+    IPC.on('log', (msg) => {
+      msg.meta.server = serverType;
+      msg.meta.pid = msg.pid;
+      msg.meta.worker = msg.worker;
+      Logger.log(msg.level, msg.msg, msg.meta);
+    });
+  }
+}
+
+export default Logger;

@@ -111,10 +111,16 @@ router.post('/action/createPost', async function(req, res, next) {
       fields: fields,
       files: files
     });
+    let thread = await ThreadsModel.getThread(boardName, threadNumber, {
+      closed: 1,
+      unbumpable: 1
+    });
+    if (thread.closed) {
+      throw new Error(Tools.translate('Posting is disabled in this thread'));
+    }
     transaction = new PostCreationTransaction(boardName);
     files = await Files.processFiles(boardName, files, transaction);
-    let post = await PostsModel.createPost(req, fields, files, transaction);
-    await IPC.render(post.boardName, post.threadNumber, post.number, 'create');
+    let post = await PostsModel.createPost(req, fields, files, transaction, { unbumpable: thread.unbumpable });
     IPC.send('notifyAboutNewPosts', `${boardName}/${threadNumber}`);
     if ('node-captcha-noscript' !== captchaEngine) {
       res.json({
@@ -160,7 +166,6 @@ router.post('/action/createThread', async function(req, res, next) {
       postNumber: thread.number,
       date: new Date(thread.createdAt)
     });
-    await IPC.render(post.boardName, post.threadNumber, post.number, 'create');
     if ('node-captcha-noscript' !== captchaEngine) {
       res.json({
         boardName: thread.boardName,
@@ -196,7 +201,6 @@ router.post('/action/editPost', async function(req, res, next) {
       postNumber: postNumber
     });
     let post = await PostsModel.editPost(req, fields);
-    IPC.render(boardName, post.threadNumber, postNumber, 'edit');
     res.json({
       boardName: post.boardName,
       postNumber: post.number
@@ -226,7 +230,7 @@ router.post('/action/addFiles', async function(req, res, next) {
     await UsersModel.checkUserPermissions(req, boardName, postNumber, 'addFilesToPost');
     let post = await PostsModel.getPost(boardName, postNumber);
     if (!post) {
-      return Promise.reject(Tools.translate('No such post'));
+      throw new Error(Tools.translate('No such post'));
     }
     files = await Files.getFiles(fields, files);
     if (files.length <= 0) {
@@ -240,7 +244,6 @@ router.post('/action/addFiles', async function(req, res, next) {
     transaction = new PostCreationTransaction(boardName);
     files = await Files.processFiles(boardName, files, transaction);
     await FilesModel.addFilesToPost(boardName, postNumber, files, { archived: post.archived });
-    IPC.render(boardName, post.threadNumber, postNumber, 'edit');
     res.json({});
   } catch (err) {
     if (transaction) {
@@ -267,7 +270,12 @@ router.post('/action/deletePost', async function(req, res, next) {
       geolocationInfo: req.geolocationInfo
     });
     await UsersModel.checkUserPermissions(req, boardName, postNumber, 'deletePost', Tools.sha1(password));
-    await PostsModel.deletePost(req, fields);
+    let isThread = await ThreadsModel.threadExists(boardName, postNumber);
+    if (isThread) {
+      await ThreadsModel.deleteThread(boardName, postNumber);
+    } else {
+      await PostsModel.deletePost(boardName, postNumber);
+    }
     res.json({});
   } catch (err) {
     next(err);
@@ -294,7 +302,6 @@ router.post('/action/deleteFile', async function(req, res, next) {
     await UsersModel.checkUserPermissions(req, boardName, postNumber, 'deleteFile', Tools.sha1(password));
     let post = await testParameters(req, boardName, 'deleteFile', { postNumber: postNumber });
     await FilesModel.deleteFile(fileName);
-    IPC.render(boardName, post.threadNumber, postNumber, 'edit');
     res.json({});
   } catch (err) {
     next(err);
@@ -320,7 +327,6 @@ router.post('/action/editFileRating', async function(req, res, next) {
     });
     await UsersModel.checkUserPermissions(req, boardName, postNumber, 'editFileRating', Tools.sha1(password));
     await FilesModel.editFileRating(fileName, rating);
-    IPC.render(boardName, post.threadNumber, postNumber, 'edit');
     res.json({});
   } catch (err) {
     next(err);
@@ -349,7 +355,6 @@ router.post('/action/editAudioTags', async function(req, res, next) {
     });
     await UsersModel.checkUserPermissions(req, boardName, postNumber, 'editAudioTags', Tools.sha1(password));
     await FilesModel.editAudioTags(fileName, fields);
-    IPC.render(boardName, post.threadNumber, postNumber, 'edit');
     res.json({});
   } catch (err) {
     next(err);
