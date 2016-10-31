@@ -153,7 +153,7 @@ var fileInfoExistsByHash = exports.fileInfoExistsByHash = function () {
 
 var getFileInfosByHashes = exports.getFileInfosByHashes = function () {
   var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(hashes) {
-    var Post, posts, fileInfosAll, fileInfos;
+    var Post, posts, fileInfosAll;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -194,7 +194,6 @@ var getFileInfosByHashes = exports.getFileInfosByHashes = function () {
               var fileInfos = _ref6.fileInfos;
               return fileInfos[0];
             }));
-            fileInfos = [];
             return _context5.abrupt('return', hashes.map(function (hash) {
               var fileInfo = fileInfosAll.find(function (fileInfo) {
                 return hash === fileInfo.hash;
@@ -205,7 +204,7 @@ var getFileInfosByHashes = exports.getFileInfosByHashes = function () {
               return fileInfo;
             }));
 
-          case 14:
+          case 13:
           case 'end':
             return _context5.stop();
         }

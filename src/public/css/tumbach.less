@@ -565,12 +565,28 @@ a {
 .sidebar-group-body {
   padding: 0;
 
-  .navbar-item {
-    padding: 10px;
-    text-decoration: none;
+  .new-post-count {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 12px;
 
     &:hover {
-      background: rgba(0,0,0,.1)
+      background: rgba(255,0,0,.1)
+    }
+  }
+
+  .navbar-item {
+    position: relative;
+
+    a {
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+
+      &:hover {
+        background: rgba(0,0,0,.1)
+      }
     }
   }
 }

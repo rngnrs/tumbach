@@ -36,6 +36,14 @@
     </div>
   </div>
   <div id='maximized-player' class='maximized-player'>
+    <div class='player-actions'>
+        <span class='player-button-add-stream icon icon-broadcast-32 button-icon'
+              title='{{!it.translate('Add radio stream')}}'
+      data-bind='click: addRadioStream'></span>
+      <span class='player-button-minimize icon icon-eye-blocked-32 button-icon'
+            title='{{!it.translate('Minimize player', 'minimizePlayerText')}}'
+      data-bind='click: togglePlayerVisibility'></span>
+    </div>
     <div id='player-preview-container' data-bind='css: {
         "toggled": currentTrack()
     }'>
@@ -82,14 +90,6 @@
         <div id='player-slider-container'>
             <div id='player-slider-duration' class='player-slider-duration'></div>
             <div id='player-slider-volume' class='desktop-only player-slider-volume'></div>
-        </div>
-        <div class='player-actions hoverhide'>
-            <span class='player-button-add-stream icon icon-broadcast-32 button-icon'
-                  title='{{!it.translate('Add radio stream')}}'
-            data-bind='click: addRadioStream'></span>
-            <span class='player-button-minimize icon icon-eye-blocked-32 button-icon'
-                  title='{{!it.translate('Minimize player', 'minimizePlayerText')}}'
-            data-bind='click: togglePlayerVisibility'></span>
         </div>
     </div>
     <div class='player-tracks' data-bind='foreach: tracks'>

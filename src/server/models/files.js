@@ -57,7 +57,6 @@ export async function getFileInfosByHashes(hashes) {
     'fileInfos.hash': { $in: hashes }
   }, { 'fileInfos.$': 1 }).toArray();
   let fileInfosAll = _(posts.map(({ fileInfos }) => fileInfos[0]));
-  let fileInfos = [];
   return hashes.map((hash) => {
     let fileInfo = fileInfosAll.find((fileInfo) => {
       return hash === fileInfo.hash;

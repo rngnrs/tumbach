@@ -218,8 +218,9 @@ function getPostSequenceNumber(sources, boardName, threadNumber, postNumber) {
 }
 
 function migratePost(sources, key) {
-  console.log(`Processing post: ${key}${sources.archived ? ' [arch]' : ''}`);
-  let cc = {};
+  //console.log(`Processing post: ${key}${sources.archived ? ' [arch]' : ''}`);
+  let cc = {},
+      dupbn = [];
   return sources.Posts.getOne(key).then((post) => {
     cc.post = post;
     cc.post.archived = !!sources.archived;
@@ -254,6 +255,15 @@ function migratePost(sources, key) {
   }).then((fileInfoNames) => {
     return sources.FileInfos.getSome(fileInfoNames);
   }).then((fileInfos) => {
+    for (let i = 0; i < fileInfos.length; i++) {
+      dupbn[i] = {};
+      dupbn[i].boardName = fileInfos[i].boardName;
+      dupbn[i].postNumber = fileInfos[i].postNumber;
+      if (`${dupbn[i].boardName}:${dupbn[i].postNumber}` != key) {
+        console.log(`${key} =====> ${dupbn[i].boardName}:${dupbn[i].postNumber}`);
+        return Posts.deleteOne(key);
+      }
+    }
     cc.post.referencedPosts = _(cc.referenced).toArray();
     cc.post.referringPosts = _(cc.referring).toArray();
     cc.post.fileInfos = _(fileInfos).toArray();
@@ -286,6 +296,10 @@ function migrateThread(sources, boardName, threadNumber) {
     cc.thread.fixed = !!fixed;
     if (cc.thread.hasOwnProperty('options')) {
       delete cc.thread.options;
+    }
+    if(cc.thread.boardName != boardName) {
+      console.log(`[warn] Changing ${cc.thread.boardName}:${threadNumber} to ${boardName}:${threadNumber}`);
+      cc.thread.boardName = boardName;
     }
     return c.c.thread.insertOne(cc.thread);
   });
