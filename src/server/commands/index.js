@@ -33,15 +33,15 @@ function setupMethods(command) {
     if (!password) {
       throw new Error(Tools.translate('Invalid password'));
     }
-    if (!Tools.mayBeHashpass(password)) {
-      return;
+    if (Tools.mayBeHashpass(password)) {
+      //return;
+      result = await command.prompt({
+        type: 'confirm',
+        name: 'hashpass',
+        default: true,
+        message: Tools.translate("That is a hashpass, isn't it? ")
+      });
     }
-    result = await command.prompt({
-      type: 'confirm',
-      name: 'hashpass',
-      default: true,
-      message: Tools.translate("That is a hashpass, isn't it? ")
-    });
     return {
       password: password,
       notHashpass: !result || !result.hashpass

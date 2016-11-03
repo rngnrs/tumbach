@@ -3,6 +3,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import FS from 'q-io/fs';
 import FSSync from 'fs';
 import promisify from 'promisify-node';
+import Logger from '../helpers/logger';
 
 import * as Files from '../core/files';
 import * as Tools from '../helpers/tools';

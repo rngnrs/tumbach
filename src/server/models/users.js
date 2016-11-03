@@ -311,6 +311,7 @@ export async function addSuperuser(hashpass, ips) {
     throw new Error(Tools.translate('Invalid hashpass'));
   }
   let User = await client.collection('user');
+  let count = User.findOne({ 'hashpass': hashpass });
   if (count > 0) {
     throw new Error(Tools.translate('A user with this hashpass is already registered'));
   }

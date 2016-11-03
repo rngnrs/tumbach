@@ -10,14 +10,14 @@ let prevent = false;
 
 export const DEFAULT_SETTINGS = {
   deviceType: 'auto',
-  time: 'server',
+  time: 'local',
   timeZoneOffset: -(new Date()).getTimezoneOffset(),
   shrinkPosts: true,
   useWebSockets: true,
   markupMode: 'EXTENDED_WAKABA_MARK,BB_CODE',
   navbarMode: 'sidebar',
   stickyToolbar: true,
-  maxAllowedRating: 'R-18G',
+  maxAllowedRating: 'SFW',
   hidePostFormMarkup: false,
   hidePostFormRules: false,
   hiddenBoards: [],
@@ -65,7 +65,7 @@ export const DEFAULT_SETTINGS = {
   infiniteScroll: () => { return Tools.deviceType('mobile'); },
   bannerMode: 'random',
   captchaEngine: 'node-captcha',
-  style: 'photon',
+  style: 'tumbach',
   codeStyle: 'default',
   mumWatching: false,
   ajaxNavigation: false

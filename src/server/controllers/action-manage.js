@@ -198,16 +198,16 @@ router.post('/action/superuserReload', async function(req, res, next) {
     if (!req.isSuperuser()) {
       throw new Error(Tools.translate('Not enough rights'));
     }
-    let { fields: { boards, templates } } = await Files.parseForm(req);
-    if (typeof targets !== 'string') {
+    let { fields: { boards, config, templates } } = await Files.parseForm(req);
+    /*if (typeof targets !== 'string') {
       throw new Error(Tools.translate('Invalid targets'));
-    }
-    if ('true' === boards) {
+    }*/
+    if ('true' === boards)
       await IPC.send('reloadBoards');
-    }
-    if ('true' === templates) {
+    if ('true' === config)
+      await IPC.send("reloadConfig");
+    if ('true' === templates)
       await IPC.send('reloadTemplates');
-    }
     res.json({});
   } catch (err) {
     next(Tools.processError(err));
