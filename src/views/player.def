@@ -129,7 +129,7 @@
     <div class='player-tracks-empty-hint'>
       <div>
         {{!it.translate('Add tracks by clicking the "Add to playlist" button')}}
-        [<span class='icon icon-music-16'></span>]
+        <span class='icon icon-music-16'></span>
       </div>
       <div>
         <img src='/{{!it.site.pathPrefix}}img/add_to_playlist.png' />

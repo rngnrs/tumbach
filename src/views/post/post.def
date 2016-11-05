@@ -93,10 +93,10 @@
         {{#def['custom/postHeaderPart/170'] || ''}}
         {{? post.isOp && !it.isThreadPage}}
           <span class='desktop-only js-reply-to-thread-button-container'>
-            [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/res/{{!post.number}}.html'
+            <a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/res/{{!post.number}}.html'
                 data-bind='attr: {
                              title: shortcutSuffix("goToThread", true)
-                           }'>{{!it.translate('Reply', 'toThread')}}</a>]
+                           }'>{{!it.translate('Reply', 'toThread')}}</a>
           </span>
         {{?}}
         {{#def['custom/postHeaderPart/180'] || ''}}

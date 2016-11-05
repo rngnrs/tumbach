@@ -87,15 +87,12 @@ function setupMethods(command) {
             throw new Error(Tools.translate('Invalid password'));
 
           case 6:
-            if (Tools.mayBeHashpass(password)) {
-              _context2.next = 8;
+            if (!Tools.mayBeHashpass(password)) {
+              _context2.next = 10;
               break;
             }
 
-            return _context2.abrupt('return');
-
-          case 8:
-            _context2.next = 10;
+            _context2.next = 9;
             return command.prompt({
               type: 'confirm',
               name: 'hashpass',
@@ -103,14 +100,16 @@ function setupMethods(command) {
               message: Tools.translate("That is a hashpass, isn't it? ")
             });
 
-          case 10:
+          case 9:
             result = _context2.sent;
+
+          case 10:
             return _context2.abrupt('return', {
               password: password,
               notHashpass: !result || !result.hashpass
             });
 
-          case 12:
+          case 11:
           case 'end':
             return _context2.stop();
         }

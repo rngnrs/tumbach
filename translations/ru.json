@@ -3260,7 +3260,7 @@
             "value": "Отрендерить заново текст постов"
         }
     },
-    "Search: icluded -excluded": {
+    "Search: included -excluded": {
         "searchInputPlaceholder": {
             "value": "Поиск: включительно -исключается"
         }

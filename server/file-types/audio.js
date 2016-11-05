@@ -43,7 +43,7 @@ var createThumbnail = exports.createThumbnail = function () {
             _context.prev = 12;
             _context.t0 = _context['catch'](6);
 
-            Logger.error(_context.t0.stack || _context.t0);
+            _logger2.default.error(_context.t0.stack || _context.t0);
             metadata = {};
 
           case 16:
@@ -189,6 +189,10 @@ var _fs4 = _interopRequireDefault(_fs3);
 var _promisifyNode = require('promisify-node');
 
 var _promisifyNode2 = _interopRequireDefault(_promisifyNode);
+
+var _logger = require('../helpers/logger');
+
+var _logger2 = _interopRequireDefault(_logger);
 
 var _files = require('../core/files');
 

@@ -1,18 +1,14 @@
 import _ from 'underscore';
 import $ from 'jquery';
-import merge from 'merge';
-import moment from 'moment/min/moment-with-locales';
 
 import * as AJAX from './ajax';
 import * as Constants from './constants';
 import * as Settings from './settings';
-import * as Storage from './storage';
 import * as Tools from './tools';
 import PopupMessage from '../widgets/popup-message';
 
 const NOTIFICATION_QUEUE_CHECK_INTERVAL = 10 * Constants.SECOND;
 
-let dialogs = [];
 let sounds = {};
 let unloading = false;
 let errorPopups = new Map();
@@ -265,7 +261,7 @@ export function createScript(src, { prefix, id, replace, onload }) {
   return script;
 }
 
-export let showNotification = function(title, body, icon) {
+export let showNotification = (title, body, icon) => {
   if (!('Notification' in window)) {
     return;
   }
@@ -280,19 +276,19 @@ export let showNotification = function(title, body, icon) {
   });
 };
 
-export let scrollHandler = function() {
-  var content = id('content');
-  var k = 1300;
-  var top = ((window.innerHeight + window.scrollY + k) >= content.scrollHeight);
-  var bottom = (window.scrollY <= k);
+export let scrollHandler = () => {
   var nbTop = queryOne('.navigation-button-top');
-  if (nbTop) {
-    nbTop.style.display = bottom ? 'none' : '';
-  }
+  if (!nbTop)
+    return;
   var nbBottom = queryOne('.navigation-button-bottom');
-  if (nbBottom) {
-    nbBottom.style.display = top ? 'none' : '';
-  }
+  if (!nbBottom)
+    return;
+  var content = id('content'),
+      k = window.innerHeight,
+      top = ((window.scrollY + window.innerHeight + k) >= content.scrollHeight),
+      bottom = (window.scrollY <= k);
+  nbTop.style.display = bottom ? 'none' : '';
+  nbBottom.style.display = top ? 'none' : '';
 };
 
 export function detectSwipe(el, callback) {
@@ -573,3 +569,27 @@ export function proportionalSize(size) {
   let fontSize = parseFloat(style);
   return (size / 14.4) * fontSize;
 }
+
+export let throttle = (func, ms) => {
+  let isThrottled = false,
+      savedArgs,
+      savedThis;
+
+  function wrapper() {
+    if (isThrottled) {
+      savedArgs = arguments;
+      savedThis = this;
+      return;
+    }
+    func.apply(this, arguments);
+    isThrottled = true;
+    setTimeout(function() {
+      isThrottled = false;
+      if (savedArgs) {
+        wrapper.apply(savedThis, savedArgs);
+        savedArgs = savedThis = null;
+      }
+    }, ms);
+  }
+  return wrapper;
+};

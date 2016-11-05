@@ -30,8 +30,6 @@ let handlers = {};
 
 export let registerHandler = Tools.createRegisterFunction(handlers, 'handler');
 
-const TOOLTIP_COUNT_BOARD_SELECT = 5;
-
 function initializeInfiniteScroll() {
   let w = $(window);
   let loading = false;
@@ -186,7 +184,7 @@ registerHandler('resize', () => {
   };
 });
 
-registerHandler('scroll', DOM.scrollHandler);
+registerHandler('scroll', DOM.throttle(DOM.scrollHandler, 100));
 
 registerHandler('click', Posts.globalClickHandler, { priority: 0 });
 

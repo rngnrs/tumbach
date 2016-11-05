@@ -1,9 +1,8 @@
-<div class='js-only drafts-visibility-switch-container'>
-  [<a id='drafts-visibility-switch'
+<a class='js-only drafts-visibility-switch-container float-r' id='drafts-visibility-switch'
       href='javascript:void(0);'
       data-bind='text: (draftsVisible() ? "{{!it.translate('Hide drafts')}}" : "{{!it.translate('Show drafts')}}"),
-                 click: toggleDraftsVisibility'></a>]
-</div>
+                 click: toggleDraftsVisibility'></a>
+<div class='clr'></div>
 <div id='drafts' style='display: none;'
      data-bind='visible: draftsVisible'>
   <hr />
