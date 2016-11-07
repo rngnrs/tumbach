@@ -354,6 +354,9 @@
     "Reply to thread": {
         "_default": {
             "value": "Ответ в тред"
+        },
+        "createAction": {
+            "value": "Ответить"
         }
     },
     "Edit audio file tags": {
@@ -1497,9 +1500,9 @@
             "value": "Залогиниться"
         }
     },
-    "Show post form": {
+    "Create a thread": {
         "_default": {
-            "value": "Показать форму постинга"
+            "value": "Создать тред"
         }
     },
     "Comment. Max length:": {

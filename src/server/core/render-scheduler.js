@@ -82,6 +82,7 @@ async function addTask(type, key, data) {
 
 async function renderThread(boardName, threadNumber, postNumber, action) {
   let isDeleted = await ThreadsModel.isThreadDeleted(boardName, threadNumber);
+  console.log('render thread', isDeleted);
   if (isDeleted) {
     return;
   }
@@ -133,7 +134,7 @@ export async function scheduleRender(data) {
         await renderThread(boardName, threadNumber, postNumber, action);
         await renderPages(boardName, threadNumber);
         renderCatalog(boardName);
-      });
+      })();
       break;
     }
   } catch (err) {

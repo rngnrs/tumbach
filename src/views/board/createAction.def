@@ -3,8 +3,14 @@
     <a id='toggle-post-form-visibility-button-{{!position}}' href='javascript:void(0);'
       class='js-toggle-post-form-visibility-button js-only'
       data-bind='text: (("{{!position}}" === visiblePostFormContainerPosition())
-                   ? "{{!it.translate('Hide post form')}}" : "{{!it.translate('Show post form')}}"),
-                 click: togglePostFormVisibility.bind($data, "{{!position}}")'>{{!it.translate('Show post form')}}</a>
+                   ? "{{!it.translate('Hide post form')}}" : "{{? it.thread}}{{!it.translate('Reply to thread', 'createAction')}}{{??}}{{!it.translate('Create a thread')}}{{?}}"),
+                 click: togglePostFormVisibility.bind($data, "{{!position}}")'>
+        {{? it.thread}}
+            {{!it.translate('Reply to thread', 'createAction')}}
+        {{??}}
+            {{!it.translate('Create a thread')}}
+        {{?}}
+    </a>
   <div id='post-form-container-{{!position}}'
        class='post-form-container {{? 'top' === position}}no-js-only{{?}} js-post-form-container'>{{? 'top' === position}}{{#def['postForm/postForm']}}{{?}}</div>
 </div>
