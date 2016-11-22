@@ -82,7 +82,6 @@ async function addTask(type, key, data) {
 
 async function renderThread(boardName, threadNumber, postNumber, action) {
   let isDeleted = await ThreadsModel.isThreadDeleted(boardName, threadNumber);
-  console.log('render thread', isDeleted);
   if (isDeleted) {
     return;
   }
