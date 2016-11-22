@@ -190,28 +190,30 @@ var renderThread = function () {
           case 2:
             isDeleted = _context4.sent;
 
+            console.log('render thread', isDeleted);
+
             if (!isDeleted) {
-              _context4.next = 5;
+              _context4.next = 6;
               break;
             }
 
             return _context4.abrupt('return');
 
-          case 5:
+          case 6:
             if (threadNumber !== postNumber) {
               action = 'edit';
             }
-            _context4.next = 8;
+            _context4.next = 9;
             return addTask('renderThread', boardName + ':' + threadNumber, {
               boardName: boardName,
               threadNumber: threadNumber,
               action: action
             });
 
-          case 8:
+          case 9:
             return _context4.abrupt('return', _context4.sent);
 
-          case 9:
+          case 10:
           case 'end':
             return _context4.stop();
         }
@@ -390,7 +392,7 @@ var scheduleRender = exports.scheduleRender = function () {
                             }
                           }
                         }, _callee9, this);
-                      }));
+                      }))();
                       return _context10.abrupt('break', 23);
 
                     case 23:

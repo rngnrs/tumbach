@@ -75,7 +75,7 @@
         {{#def['custom/postHeaderPart/140'] || ''}}
         <span class='hiding-reason js-hiding-reason'></span>
         {{#def['custom/postHeaderPart/150'] || ''}}
-        {{? thread.postingEnabled && !thread.archived && !thread.postLimitReached}}
+        {{? thread.postingEnabled && !thread.postLimitReached}}
           <span class='js-only js-quick-reply-container'>
             <span class='icon icon-undo-16 button-icon'
                   data-bind='attr: { title: "{{!it.translate('Quick reply', 'quickReplyText')}}"
@@ -93,10 +93,10 @@
         {{#def['custom/postHeaderPart/170'] || ''}}
         {{? post.isOp && !it.isThreadPage}}
           <span class='desktop-only js-reply-to-thread-button-container'>
-            <a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/res/{{!post.number}}.html'
+            [<a href='/{{!it.site.pathPrefix}}{{!it.board.name}}/res/{{!post.number}}.html'
                 data-bind='attr: {
                              title: shortcutSuffix("goToThread", true)
-                           }'>{{!it.translate('Reply', 'toThread')}}</a>
+                           }'>{{!it.translate('Reply', 'toThread')}}</a>]
           </span>
         {{?}}
         {{#def['custom/postHeaderPart/180'] || ''}}

@@ -44,7 +44,7 @@ class AutoUpdateViewModel {
   }
 
   toggleAutoUpdate() {
-    setAutoUpdateEnabled(!Storage.autoUpdateEnabled(Tools.boardName(), Tools.threadNumber()));
+    setAutoUpdateEnabled(Storage.autoUpdateEnabled(Tools.boardName(), Tools.threadNumber()) ? 0 : 1);
   }
 
   updateThread() {
@@ -190,19 +190,18 @@ export let updateThread = async function(silent) {
   }
 };
 
-export async function downloadThreadFiles(boardName, threadNumber, archived) {
+export async function downloadThreadFiles(boardName, threadNumber) {
   boardName = Tools.option(boardName, 'string', '');
   threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
   if (!boardName || !threadNumber) {
     return;
   }
-  let suffix = archived ? 'arch' : 'res';
   try {
     if (Tools.isThreadPage()) {
       var fileNames = DOM.queryAll('.js-post-file[data-file-name]').map(div => DOM.data('fileName', div));
       var title = window.document.title;
     } else {
-      let thread = await AJAX.api(threadNumber, {}, { prefix: `${boardName}/${suffix}` });
+      let thread = await AJAX.api(threadNumber, {}, { prefix: `${boardName}/res` });
       thread = thread.thread;
       var fileNames = [thread.opPost].concat(thread.lastPosts).reduce((acc, post) => {
         return acc.concat(post.fileInfos.map(fileInfo => fileInfo.name));
@@ -597,7 +596,7 @@ export function addToOrRemoveFromFavorites(boardName, threadNumber) {
 }
 
 export async function setAutoUpdateEnabled(enabled) {
-  Storage.autoUpdateEnabled(Tools.boardName(), Tools.threadNumber(), enabled);
+  Storage.autoUpdateEnabled(Tools.boardName(), Tools.threadNumber(), enabled ? 1 : 0);
   if (Settings.useWebSockets()) {
     try {
       await WebSocket.sendMessage((enabled ? 'subscribeToThreadUpdates' : 'unsubscribeFromThreadUpdates'), {
@@ -695,7 +694,7 @@ export function initialize() {
     if (!autoUpdateTimer) {
       return;
     }
-    await setAutoUpdateEnabled(false);
-    await setAutoUpdateEnabled(true);
+    await setAutoUpdateEnabled(0);
+    await setAutoUpdateEnabled(1);
   });
 }

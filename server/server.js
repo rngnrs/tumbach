@@ -255,40 +255,27 @@ function initializeMaster() {
 
                     case 12:
                       if (!(_program2.default.rerender || (0, _config2.default)('system.rerenderCacheOnStartup'))) {
-                        _context6.next = 20;
+                        _context6.next = 15;
                         break;
                       }
 
-                      if (!(_program2.default.archive || (0, _config2.default)('system.rerenderArchive'))) {
-                        _context6.next = 18;
-                        break;
-                      }
-
-                      _context6.next = 16;
+                      _context6.next = 15;
                       return Renderer.rerender();
 
-                    case 16:
-                      _context6.next = 20;
-                      break;
+                    case 15:
+                      console.log(Tools.translate('Generating statistics…'));
+                      _context6.next = 18;
+                      return StatisticsModel.generateStatistics();
 
                     case 18:
                       _context6.next = 20;
-                      return Renderer.rerender(['**', '!/*/arch/*']);
-
-                    case 20:
-                      console.log(Tools.translate('Generating statistics…'));
-                      _context6.next = 23;
-                      return StatisticsModel.generateStatistics();
-
-                    case 23:
-                      _context6.next = 25;
                       return Renderer.generateCustomJavaScriptFile();
 
-                    case 25:
-                      _context6.next = 27;
+                    case 20:
+                      _context6.next = 22;
                       return Renderer.generateCustomCSSFiles();
 
-                    case 27:
+                    case 22:
                       console.log(Tools.translate('Spawning workers, please, wait…'));
                       _cluster2.default.on('exit', function (worker) {
                         _logger2.default.error(Tools.translate('[$[1]] Died, respawning…', '', worker.process.pid));
@@ -375,7 +362,7 @@ function initializeMaster() {
                         hasNewPosts[key] = 1;
                       });
 
-                    case 41:
+                    case 36:
                     case 'end':
                       return _context6.stop();
                   }

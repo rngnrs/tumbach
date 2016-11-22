@@ -57,6 +57,7 @@ export async function getFileInfosByHashes(hashes) {
     'fileInfos.hash': { $in: hashes }
   }, { 'fileInfos.$': 1 }).toArray();
   let fileInfosAll = _(posts.map(({ fileInfos }) => fileInfos[0]));
+  let fileInfos = [];
   return hashes.map((hash) => {
     let fileInfo = fileInfosAll.find((fileInfo) => {
       return hash === fileInfo.hash;
@@ -114,32 +115,6 @@ async function removeFile({ boardName, name, thumb }) {
 
 export async function removeFiles(fileInfos) {
   await Tools.series(fileInfos, removeFile);
-}
-
-export async function moveThreadFilesToArchive(boardName, threadNumber) {
-  let archivePath = `${__dirname}/../../public/${boardName}/arch`;
-  await mkpath(archivePath);
-  let sourceId = `${boardName}/res/${threadNumber}.json`;
-  let data = await Cache.readFile(sourceId);
-  let model = JSON.parse(data);
-  model.thread.archived = true;
-  await FS.write(`${archivePath}/${threadNumber}.json`, JSON.stringify(model));
-  await BoardController.renderThreadHTML(model.thread, {
-    targetPath: `${archivePath}/${threadNumber}.html`,
-    archived: true
-  });
-  await Cache.removeFile(sourceId);
-  await Cache.removeFile(`${boardName}/res/${threadNumber}.html`);
-}
-
-export async function removeArchivedThreadFiles(boardName, threadNumber) {
-  await Tools.series(['json', 'html'], async function(suffix) {
-    try {
-      await FS.remove(`${__dirname}/../../public/${boardName}/arch/${threadNumber}.${suffix}`);
-    } catch (err) {
-      Logger.error(err.stack || err);
-    }
-  });
 }
 
 export async function deleteFile(fileName) {
@@ -217,7 +192,7 @@ export async function editAudioTags(fileName, fields) {
   await IPC.render(post.boardName, post.threadNumber, post.number, 'edit');
 }
 
-export async function getPostFileCount(boardName, postNumber, { archived } = {}) {
+export async function getPostFileCount(boardName, postNumber) {
   let Post = await client.collection('post');
   let post = await Post.findOne({
     boardName: boardName,
