@@ -903,7 +903,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
 
     var limit = _ref22.limit;
     var offset = _ref22.offset;
-    var sort = _ref22.sort;
+    var sort = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
     var board, Post, cursor, posts;
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
       while (1) {
@@ -981,7 +981,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
     }, _callee15, this);
   }));
 
-  return function getThreadPosts(_x30, _x31, _x32) {
+  return function getThreadPosts(_x30, _x31, _x32, _x33) {
     return _ref21.apply(this, arguments);
   };
 }();
@@ -1043,7 +1043,7 @@ var findPosts = exports.findPosts = function () {
     }, _callee16, this);
   }));
 
-  return function findPosts(_x34, _x35, _x36) {
+  return function findPosts(_x36, _x37, _x38) {
     return _ref23.apply(this, arguments);
   };
 }();

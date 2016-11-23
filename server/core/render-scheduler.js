@@ -190,30 +190,28 @@ var renderThread = function () {
           case 2:
             isDeleted = _context4.sent;
 
-            console.log('render thread', isDeleted);
-
             if (!isDeleted) {
-              _context4.next = 6;
+              _context4.next = 5;
               break;
             }
 
             return _context4.abrupt('return');
 
-          case 6:
+          case 5:
             if (threadNumber !== postNumber) {
               action = 'edit';
             }
-            _context4.next = 9;
+            _context4.next = 8;
             return addTask('renderThread', boardName + ':' + threadNumber, {
               boardName: boardName,
               threadNumber: threadNumber,
               action: action
             });
 
-          case 9:
+          case 8:
             return _context4.abrupt('return', _context4.sent);
 
-          case 10:
+          case 9:
           case 'end':
             return _context4.stop();
         }

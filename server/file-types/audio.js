@@ -238,7 +238,7 @@ function durationToString(duration) {
   duration %= 3600;
   var minutes = Tools.pad(Math.floor(duration / 60), 2, '0');
   var seconds = Tools.pad(duration % 60, 2, '0');
-  return hours + ':' + minutes + ':' + seconds;
+  return (hours != '00' ? hours + ':' : '') + (minutes + ':' + seconds);
 }
 
 function match(mimeType) {

@@ -36,7 +36,7 @@ function durationToString(duration) {
   duration %= 3600;
   let minutes = Tools.pad(Math.floor(duration / 60), 2, '0');
   let seconds = Tools.pad(duration % 60, 2, '0');
-  return `${hours}:${minutes}:${seconds}`;
+  return ((hours != '00')? `${hours}:`: '') + `${minutes}:${seconds}`;
 }
 
 export function match(mimeType) {

@@ -683,7 +683,7 @@ router.post('/action/superuserMarkupPosts', function () {
 
 router.post('/action/superuserReload', function () {
   var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee11(req, res, next) {
-    var _ref23, _ref23$fields, boards, config, templates;
+    var _ref23, _ref23$fields, boards, templates;
 
     return regeneratorRuntime.wrap(function _callee11$(_context11) {
       while (1) {
@@ -706,55 +706,42 @@ router.post('/action/superuserReload', function () {
             _ref23 = _context11.sent;
             _ref23$fields = _ref23.fields;
             boards = _ref23$fields.boards;
-            config = _ref23$fields.config;
             templates = _ref23$fields.templates;
-            /*if (typeof targets !== 'string') {
-              throw new Error(Tools.translate('Invalid targets'));
-            }*/
 
             if (!('true' === boards)) {
-              _context11.next = 13;
+              _context11.next = 12;
               break;
             }
 
-            _context11.next = 13;
+            _context11.next = 12;
             return IPC.send('reloadBoards');
 
-          case 13:
-            if (!('true' === config)) {
-              _context11.next = 16;
-              break;
-            }
-
-            _context11.next = 16;
-            return IPC.send("reloadConfig");
-
-          case 16:
+          case 12:
             if (!('true' === templates)) {
-              _context11.next = 19;
+              _context11.next = 15;
               break;
             }
 
-            _context11.next = 19;
+            _context11.next = 15;
             return IPC.send('reloadTemplates');
 
-          case 19:
+          case 15:
             res.json({});
-            _context11.next = 25;
+            _context11.next = 21;
             break;
 
-          case 22:
-            _context11.prev = 22;
+          case 18:
+            _context11.prev = 18;
             _context11.t0 = _context11['catch'](0);
 
             next(Tools.processError(_context11.t0));
 
-          case 25:
+          case 21:
           case 'end':
             return _context11.stop();
         }
       }
-    }, _callee11, this, [[0, 22]]);
+    }, _callee11, this, [[0, 18]]);
   }));
 
   return function (_x29, _x30, _x31) {

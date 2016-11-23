@@ -436,7 +436,10 @@ var getRegisteredUser = exports.getRegisteredUser = function () {
         switch (_context12.prev = _context12.next) {
           case 0:
             _context12.next = 2;
-            return getRegisteredUserInternal({ hashpass: hashpass }, { full: true });
+            return getRegisteredUserInternal({
+              hashpass: hashpass,
+              superuser: { $exists: false }
+            }, { full: true });
 
           case 2:
             user = _context12.sent;
@@ -477,7 +480,9 @@ var getRegisteredUsers = exports.getRegisteredUsers = function () {
           case 2:
             User = _context13.sent;
             _context13.next = 5;
-            return User.find({}, { _id: 0 }).toArray();
+            return User.find({
+              superuser: { $exists: false }
+            }, { _id: 0 }).toArray();
 
           case 5:
             users = _context13.sent;
@@ -1057,9 +1062,7 @@ var updatePostBanInfo = exports.updatePostBanInfo = function () {
               boardName: boardName,
               number: postNumber
             }, {
-              $set: {
-                options: { bannedFor: !!bannedFor }
-              }
+              $set: { 'options.bannedFor': !!bannedFor }
             }, {
               projection: { threadNumber: 1 },
               returnOriginal: false
@@ -1171,7 +1174,7 @@ var banUser = exports.banUser = function () {
           case 19:
             _context26.next = 21;
             return Tools.series((0, _underscore2.default)(newBans).pick(function (ban) {
-              return ban.expiresAt && ban.postNumber;
+              return ban.expiresAt;
             }), function () {
               var _ref31 = _asyncToGenerator(regeneratorRuntime.mark(function _callee25(ban) {
                 var delay;
@@ -1232,7 +1235,8 @@ var banUser = exports.banUser = function () {
 
 var updateBanOnMessage = function () {
   var _ref34 = _asyncToGenerator(regeneratorRuntime.mark(function _callee27(message) {
-    var ip, boardName, postNumber, BannedUser;
+    var ip, boardName, BannedUser, _ref35, bannedUser, postNumber;
+
     return regeneratorRuntime.wrap(function _callee27$(_context27) {
       while (1) {
         switch (_context27.prev = _context27.next) {
@@ -1258,55 +1262,70 @@ var updateBanOnMessage = function () {
             throw new Error(Tools.translate('Invalid board'));
 
           case 7:
-            postNumber = Tools.option(ban.postNumber, 'number', 0, { test: Tools.testPostNumber });
-
-            if (postNumber) {
-              _context27.next = 10;
-              break;
-            }
-
-            throw new Error(Tools.translate('Invalid post number'));
-
-          case 10:
-            _context27.next = 12;
+            _context27.next = 9;
             return client.collection('bannedUser');
 
-          case 12:
+          case 9:
             BannedUser = _context27.sent;
-            _context27.next = 15;
-            return BannedUser.updateOne({ ip: ip }, {
+            _context27.next = 12;
+            return BannedUser.findOneAndUpdate({ ip: ip }, {
               $pull: {
                 bans: { boardName: boardName }
               }
+            }, {
+              projection: {
+                bans: {
+                  $elemMatch: { boardName: boardName }
+                }
+              },
+              returnOriginal: true
             });
 
-          case 15:
-            _context27.next = 17;
+          case 12:
+            _ref35 = _context27.sent;
+            bannedUser = _ref35.value;
+
+            if (!(!bannedUser || bannedUser.bans.length !== 1)) {
+              _context27.next = 16;
+              break;
+            }
+
+            throw new Error(Tools.translate('Internal error: no user ban found'));
+
+          case 16:
+            _context27.next = 18;
             return BannedUser.deleteOne({
               ip: ip,
               bans: { $size: 0 }
             });
 
-          case 17:
-            _context27.next = 19;
+          case 18:
+            postNumber = Tools.option(bannedUser.bans[0].postNumber, 'number', 0, { test: Tools.testPostNumber });
+
+            if (!postNumber) {
+              _context27.next = 22;
+              break;
+            }
+
+            _context27.next = 22;
             return updatePostBanInfo(boardName, postNumber, false);
 
-          case 19:
-            _context27.next = 24;
+          case 22:
+            _context27.next = 27;
             break;
 
-          case 21:
-            _context27.prev = 21;
+          case 24:
+            _context27.prev = 24;
             _context27.t0 = _context27['catch'](0);
 
-            Logger.error(_context27.t0.stack || _context27.t0);
+            _logger2.default.error(_context27.t0.stack || _context27.t0);
 
-          case 24:
+          case 27:
           case 'end':
             return _context27.stop();
         }
       }
-    }, _callee27, this, [[0, 21]]);
+    }, _callee27, this, [[0, 24]]);
   }));
 
   return function updateBanOnMessage(_x53) {
@@ -1315,7 +1334,7 @@ var updateBanOnMessage = function () {
 }();
 
 var initializeUserBansMonitoring = exports.initializeUserBansMonitoring = function () {
-  var _ref35 = _asyncToGenerator(regeneratorRuntime.mark(function _callee28() {
+  var _ref36 = _asyncToGenerator(regeneratorRuntime.mark(function _callee28() {
     return regeneratorRuntime.wrap(function _callee28$(_context28) {
       while (1) {
         switch (_context28.prev = _context28.next) {
@@ -1336,7 +1355,7 @@ var initializeUserBansMonitoring = exports.initializeUserBansMonitoring = functi
   }));
 
   return function initializeUserBansMonitoring() {
-    return _ref35.apply(this, arguments);
+    return _ref36.apply(this, arguments);
   };
 }();
 
@@ -1371,6 +1390,10 @@ var _fsWatcher2 = _interopRequireDefault(_fsWatcher);
 var _ipc = require('../helpers/ipc');
 
 var IPC = _interopRequireWildcard(_ipc);
+
+var _logger = require('../helpers/logger');
+
+var _logger2 = _interopRequireDefault(_logger);
 
 var _permissions = require('../helpers/permissions');
 

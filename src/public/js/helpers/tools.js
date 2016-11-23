@@ -594,7 +594,7 @@ export function formatTime(duration) {
   duration %= 3600;
   let minutes = pad(Math.floor(duration / 60)),
       seconds = pad(duration % 60);
-  return ((hours != '0')? `${hours}:`: '') + `${minutes}:${seconds}`;
+  return ((hours != '00')? `${hours}:`: '') + `${minutes}:${seconds}`;
 }
 
 export function captchaEngine(id) {
