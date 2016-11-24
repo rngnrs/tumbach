@@ -174,9 +174,7 @@ var renderPostFileInfo = exports.renderPostFileInfo = function () {
             if (fileInfo.dimensions) {
               fileInfo.sizeText += ', ' + fileInfo.dimensions.width + 'x' + fileInfo.dimensions.height;
             }
-            _ref3 = fileInfo.extraData || {};
-            duration = _ref3.duration;
-            bitrate = _ref3.bitrate;
+            _ref3 = fileInfo.extraData || {}, duration = _ref3.duration, bitrate = _ref3.bitrate;
 
             if (duration) {
               fileInfo.sizeText += ', ' + duration;
@@ -185,7 +183,7 @@ var renderPostFileInfo = exports.renderPostFileInfo = function () {
               fileInfo.sizeTooltip = bitrate + ' ' + Tools.translate('kbps');
             }
 
-          case 6:
+          case 4:
           case 'end':
             return _context3.stop();
         }

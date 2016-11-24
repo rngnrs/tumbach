@@ -303,11 +303,10 @@ function ipList(s) {
 }
 
 function option(source, acceptable, def) {
-  var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-  var strict = _ref2.strict;
-  var invert = _ref2.invert;
-  var test = _ref2.test;
+  var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+      strict = _ref2.strict,
+      invert = _ref2.invert,
+      test = _ref2.test;
 
   if (typeof source === 'undefined') {
     return def;

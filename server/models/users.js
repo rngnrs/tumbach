@@ -300,9 +300,9 @@ var getBannedUsers = exports.getBannedUsers = function () {
 
 var getRegisteredUserInternal = function () {
   var _ref9 = _asyncToGenerator(regeneratorRuntime.mark(function _callee9(query) {
-    var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref10 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        full = _ref10.full;
 
-    var full = _ref10.full;
     var User, projection, user;
     return regeneratorRuntime.wrap(function _callee9$(_context9) {
       while (1) {
@@ -654,24 +654,28 @@ var addSuperuser = exports.addSuperuser = function () {
 
           case 4:
             User = _context17.sent;
-            count = User.findOne({ 'hashpass': hashpass });
+            _context17.next = 7;
+            return User.count({ hashpass: hashpass });
+
+          case 7:
+            count = _context17.sent;
 
             if (!(count > 0)) {
-              _context17.next = 8;
+              _context17.next = 10;
               break;
             }
 
             throw new Error(Tools.translate('A user with this hashpass is already registered'));
 
-          case 8:
-            _context17.next = 10;
+          case 10:
+            _context17.next = 12;
             return User.insertOne({
               hashpass: hashpass,
               superuser: true,
               ips: processUserIPs(ips)
             });
 
-          case 10:
+          case 12:
           case 'end':
             return _context17.stop();
         }
@@ -805,10 +809,10 @@ var setSynchronizationData = exports.setSynchronizationData = function () {
 
 var checkUserBan = exports.checkUserBan = function () {
   var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(ip, boardNames) {
-    var _ref26 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var _ref26 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        write = _ref26.write,
+        geolocationInfo = _ref26.geolocationInfo;
 
-    var write = _ref26.write;
-    var geolocationInfo = _ref26.geolocationInfo;
     var ban, bannedUser;
     return regeneratorRuntime.wrap(function _callee21$(_context21) {
       while (1) {
@@ -910,111 +914,110 @@ var checkUserPermissions = exports.checkUserPermissions = function () {
             throw new Error(Tools.translate('Not such post: $[1]', '', '/' + boardName + '/' + postNumber));
 
           case 11:
-            user = post.user;
-            threadNumber = post.threadNumber;
+            user = post.user, threadNumber = post.threadNumber;
 
             if (!req.isSuperuser()) {
-              _context22.next = 15;
+              _context22.next = 14;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 15:
+          case 14:
             if (!(Tools.compareRegisteredUserLevels(req.level(boardName), Permissions[permission]()) >= 0)) {
-              _context22.next = 22;
+              _context22.next = 21;
               break;
             }
 
             if (!(Tools.compareRegisteredUserLevels(req.level(boardName), 'USER') > 0 && Tools.compareRegisteredUserLevels(req.level(boardName), user.level) > 0)) {
-              _context22.next = 18;
+              _context22.next = 17;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 18:
+          case 17:
             if (!(req.hashpass && req.hashpass === user.hashpass)) {
-              _context22.next = 20;
+              _context22.next = 19;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 20:
+          case 19:
             if (!(password && password === user.password)) {
-              _context22.next = 22;
+              _context22.next = 21;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 22:
+          case 21:
             if (board.opModeration) {
-              _context22.next = 24;
+              _context22.next = 23;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 24:
-            _context22.next = 26;
+          case 23:
+            _context22.next = 25;
             return client.collection('thread');
 
-          case 26:
+          case 25:
             Thread = _context22.sent;
-            _context22.next = 29;
+            _context22.next = 28;
             return Thread.fineOne({
               boardName: boardName,
               number: threadNumber
             });
 
-          case 29:
+          case 28:
             thread = _context22.sent;
 
             if (thread) {
-              _context22.next = 32;
+              _context22.next = 31;
               break;
             }
 
             throw new Error(Tools.translate('Not such thread: $[1]', '', '/' + boardName + '/' + threadNumber));
 
-          case 32:
+          case 31:
             if (!(thread.user.ip !== req.ip && (!req.hashpass || req.hashpass !== thread.user.hashpass))) {
-              _context22.next = 34;
+              _context22.next = 33;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 34:
+          case 33:
             if (!(Tools.compareRegisteredUserLevels(req.level(boardName), user.level) >= 0)) {
-              _context22.next = 36;
+              _context22.next = 35;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 36:
+          case 35:
             if (!(req.hashpass && req.hashpass === user.hashpass)) {
-              _context22.next = 38;
+              _context22.next = 37;
               break;
             }
 
             return _context22.abrupt('return');
 
-          case 38:
+          case 37:
             if (!(password && password === user.password)) {
-              _context22.next = 40;
+              _context22.next = 39;
               break;
             }
 
             return _context22.abrupt('return');
+
+          case 39:
+            throw new Error(Tools.translate('Not enough rights'));
 
           case 40:
-            throw new Error(Tools.translate('Not enough rights'));
-
-          case 41:
           case 'end':
             return _context22.stop();
         }
@@ -1200,27 +1203,25 @@ var banUser = exports.banUser = function () {
             }());
 
           case 21:
-            _getPostsToUpdate = getPostsToUpdate(oldBans, newBans);
-            postsBannedFor = _getPostsToUpdate.postsBannedFor;
-            postsNotBannedFor = _getPostsToUpdate.postsNotBannedFor;
-            _context26.next = 26;
+            _getPostsToUpdate = getPostsToUpdate(oldBans, newBans), postsBannedFor = _getPostsToUpdate.postsBannedFor, postsNotBannedFor = _getPostsToUpdate.postsNotBannedFor;
+            _context26.next = 24;
             return Tools.series(postsBannedFor, function (_ref32) {
-              var postNumber = _ref32.postNumber;
-              var boardName = _ref32.boardName;
+              var postNumber = _ref32.postNumber,
+                  boardName = _ref32.boardName;
 
               return updatePostBanInfo(boardName, postNumber, true);
             });
 
-          case 26:
-            _context26.next = 28;
+          case 24:
+            _context26.next = 26;
             return Tools.series(postsNotBannedFor, function (_ref33) {
-              var postNumber = _ref33.postNumber;
-              var boardName = _ref33.boardName;
+              var postNumber = _ref33.postNumber,
+                  boardName = _ref33.boardName;
 
               return updatePostBanInfo(boardName, postNumber, false);
             });
 
-          case 28:
+          case 26:
           case 'end':
             return _context26.stop();
         }

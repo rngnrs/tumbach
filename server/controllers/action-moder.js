@@ -130,30 +130,29 @@ router.post('/action/banUser', function () {
                     case 4:
                       _ref2 = _context.sent;
                       fields = _ref2.fields;
-                      userIp = fields.userIp;
-                      subnet = fields.subnet;
+                      userIp = fields.userIp, subnet = fields.subnet;
 
                       userIp = Tools.correctAddress(userIp);
 
                       if (userIp) {
-                        _context.next = 11;
+                        _context.next = 10;
                         break;
                       }
 
                       throw new Error(Tools.translate('Invalid IP address'));
 
-                    case 11:
+                    case 10:
                       subnet = Tools.subnet(userIp, subnet);
 
                       if (!subnet) {
-                        _context.next = 19;
+                        _context.next = 18;
                         break;
                       }
 
                       isIPv4 = /^\:\:[0-9a-f]{1,4}\:[0-9a-f]{1,4}$/.test(userIp);
 
                       if (!(isIPv4 && subnet.subnet < MIN_SUBNET_IP_V4 || !isIPv4 && subnet.subnet < MIN_SUBNET_IP_V6)) {
-                        _context.next = 19;
+                        _context.next = 18;
                         break;
                       }
 
@@ -162,15 +161,15 @@ router.post('/action/banUser', function () {
                       t = Tools.translate('Subnet is too large. $[1] for IPv4 and $[2] for IPv6 are allowed', '', r4, r6);
                       throw new Error(t);
 
-                    case 19:
+                    case 18:
                       if (!(userIp === req.ip)) {
-                        _context.next = 21;
+                        _context.next = 20;
                         break;
                       }
 
                       throw new Error(Tools.translate('Not enough rights'));
 
-                    case 21:
+                    case 20:
                       bans = getBans(fields);
                       banLevels = Tools.BAN_LEVELS.slice(1);
 
@@ -182,10 +181,10 @@ router.post('/action/banUser', function () {
                           throw new Error(Tools.translate('Invalid ban level: $[1]', '', ban.level));
                         }
                       });
-                      _context.next = 26;
+                      _context.next = 25;
                       return UsersModel.getBannedUser(userIp);
 
-                    case 26:
+                    case 25:
                       bannedUser = _context.sent;
                       oldBans = bannedUser ? bannedUser.bans : {};
                       date = Tools.now();
@@ -205,10 +204,10 @@ router.post('/action/banUser', function () {
                         }
                         return acc;
                       }, {});
-                      _context.next = 33;
+                      _context.next = 32;
                       return UsersModel.getRegisteredUserLevelsByIp(userIp, subnet);
 
-                    case 33:
+                    case 32:
                       levels = _context.sent;
 
                       modifiedBanBoards.forEach(function (boardName) {
@@ -217,13 +216,13 @@ router.post('/action/banUser', function () {
                           throw new Error(Tools.translate('Not enough rights'));
                         }
                       });
-                      _context.next = 37;
+                      _context.next = 36;
                       return UsersModel.banUser(userIp, newBans, subnet);
 
-                    case 37:
+                    case 36:
                       res.json({});
 
-                    case 38:
+                    case 37:
                     case 'end':
                       return _context.stop();
                   }
@@ -374,74 +373,71 @@ router.post('/action/moveThread', function () {
           case 4:
             _ref6 = _context4.sent;
             fields = _ref6.fields;
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            targetBoardName = fields.targetBoardName;
-            password = fields.password;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, targetBoardName = fields.targetBoardName, password = fields.password;
 
             if (!(!_board2.default.board(boardName) || !_board2.default.board(targetBoardName))) {
-              _context4.next = 12;
+              _context4.next = 9;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 12:
+          case 9:
             if (!(boardName === targetBoardName)) {
-              _context4.next = 14;
+              _context4.next = 11;
               break;
             }
 
             throw new Error(Tools.translate('Source and target boards are the same'));
 
-          case 14:
+          case 11:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context4.next = 17;
+              _context4.next = 14;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread number'));
 
-          case 17:
+          case 14:
             if (!(!req.isModer(boardName) || !req.isModer(targetBoardName))) {
-              _context4.next = 19;
+              _context4.next = 16;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 19:
-            _context4.next = 21;
+          case 16:
+            _context4.next = 18;
             return (0, _geolocation2.default)(req.ip);
 
-          case 21:
+          case 18:
             geolocationInfo = _context4.sent;
-            _context4.next = 24;
+            _context4.next = 21;
             return UsersModel.checkUserBan(req.ip, [boardName, targetBoardName], {
               write: true,
               geolocationInfo: geolocationInfo
             });
 
-          case 24:
-            _context4.next = 26;
+          case 21:
+            _context4.next = 23;
             return UsersModel.checkUserPermissions(req, boardName, threadNumber, 'moveThread', Tools.sha1(password));
 
-          case 26:
+          case 23:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context4.next = 29;
+            _context4.next = 26;
             return ThreadsModel.moveThread(boardName, threadNumber, targetBoardName, transaction);
 
-          case 29:
+          case 26:
             result = _context4.sent;
 
             res.json(result);
-            _context4.next = 37;
+            _context4.next = 34;
             break;
 
-          case 33:
-            _context4.prev = 33;
+          case 30:
+            _context4.prev = 30;
             _context4.t0 = _context4['catch'](1);
 
             if (transaction) {
@@ -449,12 +445,12 @@ router.post('/action/moveThread', function () {
             }
             next(_context4.t0);
 
-          case 37:
+          case 34:
           case 'end':
             return _context4.stop();
         }
       }
-    }, _callee4, this, [[1, 33]]);
+    }, _callee4, this, [[1, 30]]);
   }));
 
   return function (_x7, _x8, _x9) {
@@ -477,73 +473,70 @@ router.post('/action/setThreadFixed', function () {
           case 3:
             _ref8 = _context5.sent;
             fields = _ref8.fields;
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            fixed = fields.fixed;
-            password = fields.password;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, fixed = fields.fixed, password = fields.password;
 
             if (_board2.default.board(boardName)) {
-              _context5.next = 11;
+              _context5.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
+          case 8:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context5.next = 14;
+              _context5.next = 11;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread number'));
 
-          case 14:
+          case 11:
             if (req.isModer(boardName)) {
-              _context5.next = 16;
+              _context5.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 16:
-            _context5.next = 18;
+          case 13:
+            _context5.next = 15;
             return (0, _geolocation2.default)(req.ip);
 
-          case 18:
+          case 15:
             geolocationInfo = _context5.sent;
-            _context5.next = 21;
+            _context5.next = 18;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: geolocationInfo
             });
 
-          case 21:
-            _context5.next = 23;
+          case 18:
+            _context5.next = 20;
             return UsersModel.checkUserPermissions(req, boardName, threadNumber, 'setThreadFixed', Tools.sha1(password));
 
-          case 23:
-            _context5.next = 25;
+          case 20:
+            _context5.next = 22;
             return ThreadsModel.setThreadFixed(boardName, threadNumber, 'true' === fixed);
 
-          case 25:
+          case 22:
             res.json({});
-            _context5.next = 31;
+            _context5.next = 28;
             break;
 
-          case 28:
-            _context5.prev = 28;
+          case 25:
+            _context5.prev = 25;
             _context5.t0 = _context5['catch'](0);
 
             next(_context5.t0);
 
-          case 31:
+          case 28:
           case 'end':
             return _context5.stop();
         }
       }
-    }, _callee5, this, [[0, 28]]);
+    }, _callee5, this, [[0, 25]]);
   }));
 
   return function (_x10, _x11, _x12) {
@@ -566,73 +559,70 @@ router.post('/action/setThreadClosed', function () {
           case 3:
             _ref10 = _context6.sent;
             fields = _ref10.fields;
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            closed = fields.closed;
-            password = fields.password;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, closed = fields.closed, password = fields.password;
 
             if (_board2.default.board(boardName)) {
-              _context6.next = 11;
+              _context6.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
+          case 8:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context6.next = 14;
+              _context6.next = 11;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread number'));
 
-          case 14:
+          case 11:
             if (req.isModer(boardName)) {
-              _context6.next = 16;
+              _context6.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 16:
-            _context6.next = 18;
+          case 13:
+            _context6.next = 15;
             return (0, _geolocation2.default)(req.ip);
 
-          case 18:
+          case 15:
             geolocationInfo = _context6.sent;
-            _context6.next = 21;
+            _context6.next = 18;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: geolocationInfo
             });
 
-          case 21:
-            _context6.next = 23;
+          case 18:
+            _context6.next = 20;
             return UsersModel.checkUserPermissions(req, boardName, threadNumber, 'setThreadClosed', Tools.sha1(password));
 
-          case 23:
-            _context6.next = 25;
+          case 20:
+            _context6.next = 22;
             return ThreadsModel.setThreadClosed(boardName, threadNumber, 'true' === closed);
 
-          case 25:
+          case 22:
             res.json({});
-            _context6.next = 31;
+            _context6.next = 28;
             break;
 
-          case 28:
-            _context6.prev = 28;
+          case 25:
+            _context6.prev = 25;
             _context6.t0 = _context6['catch'](0);
 
             next(_context6.t0);
 
-          case 31:
+          case 28:
           case 'end':
             return _context6.stop();
         }
       }
-    }, _callee6, this, [[0, 28]]);
+    }, _callee6, this, [[0, 25]]);
   }));
 
   return function (_x13, _x14, _x15) {
@@ -655,73 +645,70 @@ router.post('/action/setThreadUnbumpable', function () {
           case 3:
             _ref12 = _context7.sent;
             fields = _ref12.fields;
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            unbumpable = fields.unbumpable;
-            password = fields.password;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, unbumpable = fields.unbumpable, password = fields.password;
 
             if (_board2.default.board(boardName)) {
-              _context7.next = 11;
+              _context7.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
+          case 8:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context7.next = 14;
+              _context7.next = 11;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread number'));
 
-          case 14:
+          case 11:
             if (req.isModer(boardName)) {
-              _context7.next = 16;
+              _context7.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('Not enough rights'));
 
-          case 16:
-            _context7.next = 18;
+          case 13:
+            _context7.next = 15;
             return (0, _geolocation2.default)(req.ip);
 
-          case 18:
+          case 15:
             geolocationInfo = _context7.sent;
-            _context7.next = 21;
+            _context7.next = 18;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: geolocationInfo
             });
 
-          case 21:
-            _context7.next = 23;
+          case 18:
+            _context7.next = 20;
             return UsersModel.checkUserPermissions(req, boardName, threadNumber, 'setThreadUnbumpable', Tools.sha1(password));
 
-          case 23:
-            _context7.next = 25;
+          case 20:
+            _context7.next = 22;
             return ThreadsModel.setThreadUnbumpable(boardName, threadNumber, 'true' === unbumpable);
 
-          case 25:
+          case 22:
             res.json({});
-            _context7.next = 31;
+            _context7.next = 28;
             break;
 
-          case 28:
-            _context7.prev = 28;
+          case 25:
+            _context7.prev = 25;
             _context7.t0 = _context7['catch'](0);
 
             next(_context7.t0);
 
-          case 31:
+          case 28:
           case 'end':
             return _context7.stop();
         }
       }
-    }, _callee7, this, [[0, 28]]);
+    }, _callee7, this, [[0, 25]]);
   }));
 
   return function (_x16, _x17, _x18) {

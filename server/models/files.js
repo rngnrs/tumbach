@@ -273,9 +273,9 @@ var addFilesToPost = exports.addFilesToPost = function () {
 
 var removeFile = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(_ref9) {
-    var boardName = _ref9.boardName;
-    var name = _ref9.name;
-    var thumb = _ref9.thumb;
+    var boardName = _ref9.boardName,
+        name = _ref9.name,
+        thumb = _ref9.thumb;
     var path;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
@@ -482,8 +482,8 @@ var editAudioTags = exports.editAudioTags = function () {
 
               return value && typeof value === 'string';
             }).reduce(function (acc, _ref15) {
-              var tagName = _ref15.tagName;
-              var value = _ref15.value;
+              var tagName = _ref15.tagName,
+                  value = _ref15.value;
 
               acc[tagName] = value;
               return acc;

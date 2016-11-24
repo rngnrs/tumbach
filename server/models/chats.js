@@ -170,8 +170,8 @@ var getChatMessages = exports.getChatMessages = function () {
                 var messageUser = _ref4.messageUser;
                 return usersEqual(user, messageUser);
               }).forEach(function (_ref5) {
-                var messageUser = _ref5.messageUser;
-                var type = _ref5.type;
+                var messageUser = _ref5.messageUser,
+                    type = _ref5.type;
 
                 var msg = _underscore2.default.clone(message);
                 msg.type = type;
@@ -199,13 +199,13 @@ var getChatMessages = exports.getChatMessages = function () {
 
 var addChatMessage = exports.addChatMessage = function () {
   var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-    var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        user = _ref7.user,
+        boardName = _ref7.boardName,
+        postNumber = _ref7.postNumber,
+        chatNumber = _ref7.chatNumber,
+        text = _ref7.text;
 
-    var user = _ref7.user;
-    var boardName = _ref7.boardName;
-    var postNumber = _ref7.postNumber;
-    var chatNumber = _ref7.chatNumber;
-    var text = _ref7.text;
     var Post, post, key, receiver, ChatMessage, date;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
@@ -316,12 +316,12 @@ var addChatMessage = exports.addChatMessage = function () {
 
 var deleteChatMessages = exports.deleteChatMessages = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
-    var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        user = _ref9.user,
+        boardName = _ref9.boardName,
+        postNumber = _ref9.postNumber,
+        chatNumber = _ref9.chatNumber;
 
-    var user = _ref9.user;
-    var boardName = _ref9.boardName;
-    var postNumber = _ref9.postNumber;
-    var chatNumber = _ref9.chatNumber;
     var ChatMessage;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {

@@ -449,8 +449,8 @@ var getLastPostNumbers = exports.getLastPostNumbers = function () {
           case 9:
             result = _context9.sent;
             return _context9.abrupt('return', result.reduce(function (acc, _ref10) {
-              var _id = _ref10._id;
-              var lastPostNumber = _ref10.lastPostNumber;
+              var _id = _ref10._id,
+                  lastPostNumber = _ref10.lastPostNumber;
 
               acc[_id] = lastPostNumber;
               return acc;

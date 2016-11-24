@@ -87,12 +87,18 @@ function setupMethods(command) {
             throw new Error(Tools.translate('Invalid password'));
 
           case 6:
-            if (!Tools.mayBeHashpass(password)) {
-              _context2.next = 10;
+            if (Tools.mayBeHashpass(password)) {
+              _context2.next = 8;
               break;
             }
 
-            _context2.next = 9;
+            return _context2.abrupt('return', {
+              password: password,
+              notHashpass: true
+            });
+
+          case 8:
+            _context2.next = 10;
             return command.prompt({
               type: 'confirm',
               name: 'hashpass',
@@ -100,16 +106,14 @@ function setupMethods(command) {
               message: Tools.translate("That is a hashpass, isn't it? ")
             });
 
-          case 9:
-            result = _context2.sent;
-
           case 10:
+            result = _context2.sent;
             return _context2.abrupt('return', {
               password: password,
               notHashpass: !result || !result.hashpass
             });
 
-          case 11:
+          case 12:
           case 'end':
             return _context2.stop();
         }
@@ -119,11 +123,10 @@ function setupMethods(command) {
 }
 
 vorpal.installHandler = function (command, handler) {
-  var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-  var description = _ref3.description;
-  var alias = _ref3.alias;
-  var options = _ref3.options;
+  var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      description = _ref3.description,
+      alias = _ref3.alias,
+      options = _ref3.options;
 
   command = vorpal.command(command, description || undefined).action(function () {
     var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(args, callback) {

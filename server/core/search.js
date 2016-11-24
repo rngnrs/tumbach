@@ -9,11 +9,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var indexPost = exports.indexPost = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2) {
-    var boardName = _ref2.boardName;
-    var postNumber = _ref2.postNumber;
-    var threadNumber = _ref2.threadNumber;
-    var plainText = _ref2.plainText;
-    var subject = _ref2.subject;
+    var boardName = _ref2.boardName,
+        postNumber = _ref2.postNumber,
+        threadNumber = _ref2.threadNumber,
+        plainText = _ref2.plainText,
+        subject = _ref2.subject;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -190,11 +190,11 @@ var removePostIndex = exports.removePostIndex = function () {
 
 var findPosts = exports.findPosts = function () {
   var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(_ref7, _ref8) {
-    var requiredPhrases = _ref7.requiredPhrases;
-    var excludedPhrases = _ref7.excludedPhrases;
-    var possiblePhrases = _ref7.possiblePhrases;
-    var boardName = _ref8.boardName;
-    var page = _ref8.page;
+    var requiredPhrases = _ref7.requiredPhrases,
+        excludedPhrases = _ref7.excludedPhrases,
+        possiblePhrases = _ref7.possiblePhrases;
+    var boardName = _ref8.boardName,
+        page = _ref8.page;
     var limit, startFrom, query, result;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -236,17 +236,16 @@ var findPosts = exports.findPosts = function () {
             result = _context5.sent;
             return _context5.abrupt('return', {
               posts: result.hits.hits.map(function (hit) {
-                var _hit$_id$split = hit._id.split(':');
+                var _hit$_id$split = hit._id.split(':'),
+                    _hit$_id$split2 = _slicedToArray(_hit$_id$split, 2),
+                    boardName = _hit$_id$split2[0],
+                    postNumber = _hit$_id$split2[1];
 
-                var _hit$_id$split2 = _slicedToArray(_hit$_id$split, 2);
-
-                var boardName = _hit$_id$split2[0];
-                var postNumber = _hit$_id$split2[1];
-                var _hit$_source = hit._source;
-                var threadNumber = _hit$_source.threadNumber;
-                var plainText = _hit$_source.plainText;
-                var subject = _hit$_source.subject;
-                var archived = _hit$_source.archived;
+                var _hit$_source = hit._source,
+                    threadNumber = _hit$_source.threadNumber,
+                    plainText = _hit$_source.plainText,
+                    subject = _hit$_source.subject,
+                    archived = _hit$_source.archived;
 
                 return {
                   boardName: boardName,

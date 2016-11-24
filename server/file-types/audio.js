@@ -128,13 +128,7 @@ var renderPostFileInfo = exports.renderPostFileInfo = function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _ref3 = fileInfo.extraData || {};
-            duration = _ref3.duration;
-            bitrate = _ref3.bitrate;
-            album = _ref3.album;
-            artist = _ref3.artist;
-            title = _ref3.title;
-            year = _ref3.year;
+            _ref3 = fileInfo.extraData || {}, duration = _ref3.duration, bitrate = _ref3.bitrate, album = _ref3.album, artist = _ref3.artist, title = _ref3.title, year = _ref3.year;
 
             if (duration) {
               fileInfo.sizeText += ', ' + duration;
@@ -152,7 +146,7 @@ var renderPostFileInfo = exports.renderPostFileInfo = function () {
               fileInfo.sizeTooltip += ' (' + year + ')';
             }
 
-          case 16:
+          case 10:
           case 'end':
             return _context2.stop();
         }

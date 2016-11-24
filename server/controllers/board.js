@@ -8,9 +8,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var renderThreadHTML = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(thread) {
-    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        prerendered = _ref2.prerendered;
 
-    var prerendered = _ref2.prerendered;
     var board, model, data;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -91,9 +91,8 @@ var renderPage = function () {
   var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(boardName, pageNumber) {
     var _this = this;
 
-    var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var allowPrerender = _ref5.allowPrerender;
+    var _ref5 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        allowPrerender = _ref5.allowPrerender;
 
     var board, page, pageID, _ret;
 
@@ -270,9 +269,9 @@ var renderPage = function () {
 
 var renderPages = function () {
   var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(boardName) {
-    var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref8 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        allowPrerender = _ref8.allowPrerender;
 
-    var allowPrerender = _ref8.allowPrerender;
     var pageCount;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
@@ -958,7 +957,7 @@ router.renderRSS = function () {
               text: 1,
               fileInfos: 1,
               createdAt: 1
-            }).sort({ createdAt: -1 }).limit(rssPostCount).sort({ createdAt: 1 }).toArray();
+            }).sort({ createdAt: -1 }).limit(rssPostCount).toArray();
 
           case 13:
             posts = _context18.sent;
@@ -971,7 +970,13 @@ router.renderRSS = function () {
             return _context18.abrupt('return');
 
           case 16:
+            posts.sort(function (p1, p2) {
+              return +p1.createdAt < +p2.createdAt;
+            });
             posts.forEach(function (post) {
+              if (post.text) {
+                post.text = post.text.split('&nbsp', ' '); //NOTE: Required for the RSS to be valid
+              }
               post.subject = BoardsModel.postSubject(post, 150) || post.number; //TODO: Magic number
             });
             rss = {
@@ -980,16 +985,16 @@ router.renderRSS = function () {
               board: MiscModel.board(board).board,
               posts: posts,
               formattedDate: function formattedDate(date) {
-                return (0, _moment2.default)().utc().locale('en').format(RSS_DATE_TIME_FORMAT);
+                return (0, _moment2.default)(date).utc().locale('en').format(RSS_DATE_TIME_FORMAT);
               }
             };
-            _context18.next = 20;
+            _context18.next = 21;
             return Cache.writeFile(boardName + '/rss.xml', Renderer.render('pages/rss', rss));
 
-          case 20:
+          case 21:
             return _context18.abrupt('return', _context18.sent);
 
-          case 21:
+          case 22:
           case 'end':
             return _context18.stop();
         }

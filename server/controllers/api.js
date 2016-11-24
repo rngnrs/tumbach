@@ -227,18 +227,14 @@ router.get('/api/threadInfos.json', function () {
                   while (1) {
                     switch (_context3.prev = _context3.next) {
                       case 0:
-                        _thread$split = thread.split(':');
-                        _thread$split2 = _slicedToArray(_thread$split, 3);
-                        boardName = _thread$split2[0];
-                        threadNumber = _thread$split2[1];
-                        lastPostNumber = _thread$split2[2];
-                        _context3.next = 7;
+                        _thread$split = thread.split(':'), _thread$split2 = _slicedToArray(_thread$split, 3), boardName = _thread$split2[0], threadNumber = _thread$split2[1], lastPostNumber = _thread$split2[2];
+                        _context3.next = 3;
                         return ThreadsModel.getThreadInfo(boardName, +threadNumber, { lastPostNumber: +lastPostNumber });
 
-                      case 7:
+                      case 3:
                         return _context3.abrupt('return', _context3.sent);
 
-                      case 8:
+                      case 4:
                       case 'end':
                         return _context3.stop();
                     }
@@ -357,17 +353,14 @@ router.get('/api/threadLastPostNumbers.json', function () {
                   while (1) {
                     switch (_context6.prev = _context6.next) {
                       case 0:
-                        _thread$split3 = thread.split(':');
-                        _thread$split4 = _slicedToArray(_thread$split3, 2);
-                        boardName = _thread$split4[0];
-                        threadNumber = _thread$split4[1];
-                        _context6.next = 6;
+                        _thread$split3 = thread.split(':'), _thread$split4 = _slicedToArray(_thread$split3, 2), boardName = _thread$split4[0], threadNumber = _thread$split4[1];
+                        _context6.next = 3;
                         return ThreadsModel.getThreadLastPostNumber(boardName, +threadNumber);
 
-                      case 6:
+                      case 3:
                         return _context6.abrupt('return', _context6.sent);
 
-                      case 7:
+                      case 4:
                       case 'end':
                         return _context6.stop();
                     }

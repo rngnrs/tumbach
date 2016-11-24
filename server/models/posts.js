@@ -180,27 +180,18 @@ var setThreadUpdateTime = function () {
 
 var createPost = exports.createPost = function () {
   var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(req, fields, files, transaction) {
-    var _ref8 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+    var _ref8 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
+        postNumber = _ref8.postNumber,
+        date = _ref8.date,
+        unbumpable = _ref8.unbumpable,
+        archived = _ref8.archived;
 
-    var postNumber = _ref8.postNumber;
-    var date = _ref8.date;
-    var unbumpable = _ref8.unbumpable;
-    var archived = _ref8.archived;
     var boardName, threadNumber, text, markupMode, name, subject, sage, signAsOp, tripcode, password, board, Post, postCount, rawText, markupModes, referencedPosts, accessLevel, extraData, fileInfos, post, postCountNew;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            text = fields.text;
-            markupMode = fields.markupMode;
-            name = fields.name;
-            subject = fields.subject;
-            sage = fields.sage;
-            signAsOp = fields.signAsOp;
-            tripcode = fields.tripcode;
-            password = fields.password;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, text = fields.text, markupMode = fields.markupMode, name = fields.name, subject = fields.subject, sage = fields.sage, signAsOp = fields.signAsOp, tripcode = fields.tripcode, password = fields.password;
 
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
             postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
@@ -211,58 +202,58 @@ var createPost = exports.createPost = function () {
             if (postNumber) {
               threadNumber = postNumber;
             }
-            _context6.next = 18;
+            _context6.next = 9;
             return client.collection('post');
 
-          case 18:
+          case 9:
             Post = _context6.sent;
-            _context6.next = 21;
+            _context6.next = 12;
             return getPostCount(boardName, threadNumber);
 
-          case 21:
+          case 12:
             postCount = _context6.sent;
 
             if (!(postCount >= board.postLimit)) {
-              _context6.next = 24;
+              _context6.next = 15;
               break;
             }
 
             throw new Error(Tools.translate('Post limit reached'));
 
-          case 24:
+          case 15:
             rawText = text || null;
             markupModes = _markup2.default.markupModes(markupMode);
             referencedPosts = {};
 
             sage = 'true' === sage;
             accessLevel = req.level(boardName) || null;
-            _context6.next = 31;
+            _context6.next = 22;
             return (0, _markup2.default)(boardName, rawText, {
               markupModes: markupModes,
               accessLevel: accessLevel,
               referencedPosts: referencedPosts
             });
 
-          case 31:
+          case 22:
             text = _context6.sent;
-            _context6.next = 34;
+            _context6.next = 25;
             return board.getPostExtraData(req, fields, files);
 
-          case 34:
+          case 25:
             extraData = _context6.sent;
 
             if (postNumber) {
-              _context6.next = 39;
+              _context6.next = 30;
               break;
             }
 
-            _context6.next = 38;
+            _context6.next = 29;
             return BoardsModel.nextPostNumber(boardName);
 
-          case 38:
+          case 29:
             postNumber = _context6.sent;
 
-          case 39:
+          case 30:
             fileInfos = FilesModel.createFileInfos(files, boardName, postNumber);
             post = {
               boardName: boardName,
@@ -289,42 +280,42 @@ var createPost = exports.createPost = function () {
             };
 
             transaction.addPostNumber(postNumber);
-            _context6.next = 44;
+            _context6.next = 35;
             return Post.insertOne(post);
 
-          case 44:
-            _context6.next = 46;
+          case 35:
+            _context6.next = 37;
             return getPostCount(boardName, threadNumber, postNumber);
 
-          case 46:
+          case 37:
             postCountNew = _context6.sent;
 
             if (!(postCountNew !== postCount)) {
-              _context6.next = 50;
+              _context6.next = 41;
               break;
             }
 
-            _context6.next = 50;
+            _context6.next = 41;
             return adjustPostSequenceNumber(boardName, postNumber, postCount, postCountNew);
 
-          case 50:
+          case 41:
             if (!(!sage && postCount < board.bumpLimit && !unbumpable)) {
-              _context6.next = 53;
+              _context6.next = 44;
               break;
             }
 
-            _context6.next = 53;
+            _context6.next = 44;
             return setThreadUpdateTime(boardName, threadNumber, date);
 
-          case 53:
-            _context6.next = 55;
+          case 44:
+            _context6.next = 46;
             return PostReferencesModel.addReferringPosts(referencedPosts, boardName, postNumber, threadNumber);
 
-          case 55:
-            _context6.next = 57;
+          case 46:
+            _context6.next = 48;
             return IPC.render(boardName, threadNumber, postNumber, 'create');
 
-          case 57:
+          case 48:
             _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
               return regeneratorRuntime.wrap(function _callee5$(_context5) {
                 while (1) {
@@ -342,7 +333,7 @@ var createPost = exports.createPost = function () {
             }))();
             return _context6.abrupt('return', post);
 
-          case 59:
+          case 50:
           case 'end':
             return _context6.stop();
         }
@@ -362,60 +353,54 @@ var editPost = exports.editPost = function () {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
-            boardName = fields.boardName;
-            postNumber = fields.postNumber;
-            text = fields.text;
-            name = fields.name;
-            subject = fields.subject;
-            sage = fields.sage;
-            markupMode = fields.markupMode;
+            boardName = fields.boardName, postNumber = fields.postNumber, text = fields.text, name = fields.name, subject = fields.subject, sage = fields.sage, markupMode = fields.markupMode;
             board = _board2.default.board(boardName);
 
             if (board) {
-              _context8.next = 10;
+              _context8.next = 4;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 10:
+          case 4:
             postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (postNumber) {
-              _context8.next = 13;
+              _context8.next = 7;
               break;
             }
 
             throw new Error(Tools.translate('Invalid post number'));
 
-          case 13:
-            _context8.next = 15;
+          case 7:
+            _context8.next = 9;
             return client.collection('post');
 
-          case 15:
+          case 9:
             Post = _context8.sent;
             query = {
               boardName: boardName,
               number: postNumber
             };
-            _context8.next = 19;
+            _context8.next = 13;
             return Post.findOne(query, {
               threadNumber: 1,
               referencedPosts: 1,
               extraData: 1
             });
 
-          case 19:
+          case 13:
             post = _context8.sent;
 
             if (post) {
-              _context8.next = 22;
+              _context8.next = 16;
               break;
             }
 
             throw new Error(Tools.translate('No such post'));
 
-          case 22:
+          case 16:
             threadNumber = post.threadNumber;
             oldReferencedPosts = post.referencedPosts;
             date = Tools.now();
@@ -424,21 +409,21 @@ var editPost = exports.editPost = function () {
             referencedPosts = {};
 
             sage = 'true' === sage;
-            _context8.next = 31;
+            _context8.next = 25;
             return (0, _markup2.default)(boardName, rawText, {
               markupModes: markupModes,
               accessLevel: req.level(boardName),
               referencedPosts: referencedPosts
             });
 
-          case 31:
+          case 25:
             text = _context8.sent;
-            _context8.next = 34;
+            _context8.next = 28;
             return board.editPostExtraData(req, fields, post.extraData);
 
-          case 34:
+          case 28:
             extraData = _context8.sent;
-            _context8.next = 37;
+            _context8.next = 31;
             return Post.findOneAndUpdate(query, {
               $set: {
                 markup: markupModes,
@@ -459,27 +444,27 @@ var editPost = exports.editPost = function () {
               returnOriginal: false
             });
 
-          case 37:
+          case 31:
             result = _context8.sent;
 
             post = result.value;
 
             if (post) {
-              _context8.next = 41;
+              _context8.next = 35;
               break;
             }
 
             throw new Error(Tools.translate('No such post'));
 
-          case 41:
-            _context8.next = 43;
+          case 35:
+            _context8.next = 37;
             return PostReferencesModel.removeReferringPosts(boardName, postNumber);
 
-          case 43:
-            _context8.next = 45;
+          case 37:
+            _context8.next = 39;
             return PostReferencesModel.addReferringPosts(referencedPosts, boardName, postNumber, threadNumber);
 
-          case 45:
+          case 39:
             _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
               return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
@@ -501,7 +486,7 @@ var editPost = exports.editPost = function () {
             }))();
             return _context8.abrupt('return', post);
 
-          case 47:
+          case 41:
           case 'end':
             return _context8.stop();
         }
@@ -697,8 +682,8 @@ var markupPosts = exports.markupPosts = function () {
                         posts = _context11.sent;
 
                         posts = posts.map(function (_ref16) {
-                          var number = _ref16.number;
-                          var threadNumber = _ref16.threadNumber;
+                          var number = _ref16.number,
+                              threadNumber = _ref16.threadNumber;
 
                           return {
                             boardName: boardName,
@@ -752,11 +737,11 @@ var markupPosts = exports.markupPosts = function () {
 
 var copyPosts = exports.copyPosts = function () {
   var _ref18 = _asyncToGenerator(regeneratorRuntime.mark(function _callee14(_ref19) {
-    var sourceBoardName = _ref19.sourceBoardName;
-    var sourceThreadNumber = _ref19.sourceThreadNumber;
-    var targetBoardName = _ref19.targetBoardName;
-    var initialPostNumber = _ref19.initialPostNumber;
-    var transaction = _ref19.transaction;
+    var sourceBoardName = _ref19.sourceBoardName,
+        sourceThreadNumber = _ref19.sourceThreadNumber,
+        targetBoardName = _ref19.targetBoardName,
+        initialPostNumber = _ref19.initialPostNumber,
+        transaction = _ref19.transaction;
     var sourceBoard, targetBoard, Post, posts, postNumberMap;
     return regeneratorRuntime.wrap(function _callee14$(_context14) {
       while (1) {
@@ -899,10 +884,10 @@ var copyPosts = exports.copyPosts = function () {
 
 var getThreadPosts = exports.getThreadPosts = function () {
   var _ref21 = _asyncToGenerator(regeneratorRuntime.mark(function _callee15(boardName, threadNumber) {
-    var _ref22 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var _ref22 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        limit = _ref22.limit,
+        offset = _ref22.offset;
 
-    var limit = _ref22.limit;
-    var offset = _ref22.offset;
     var sort = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
     var board, Post, cursor, posts;
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
@@ -1123,11 +1108,10 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var client = (0, _mongodbClientFactory2.default)();
 
 function createPostProjection() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-  var withExtraData = _ref.withExtraData;
-  var withFileInfos = _ref.withFileInfos;
-  var withReferences = _ref.withReferences;
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      withExtraData = _ref.withExtraData,
+      withFileInfos = _ref.withFileInfos,
+      withReferences = _ref.withReferences;
 
   var projection = { _id: 0 };
   if (!withExtraData) {

@@ -61,9 +61,9 @@ exports.default = [{
   command: 'respawn [exitCode]',
   handler: function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          exitCode = _ref2.exitCode;
 
-      var exitCode = _ref2.exitCode;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -187,9 +187,9 @@ exports.default = [{
   command: 'markup-posts [targets...]',
   handler: function () {
     var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-      var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var _ref9 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          targets = _ref9.targets;
 
-      var targets = _ref9.targets;
       var result;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
@@ -299,10 +299,9 @@ exports.default = [{
   command: 'rerender [what...]',
   handler: function () {
     var _ref12 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
-      var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      var options = _ref13.options;
-      var what = _ref13.what;
+      var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          options = _ref13.options,
+          what = _ref13.what;
 
       var timeStart, _ref14, list, paths;
 
@@ -311,44 +310,43 @@ exports.default = [{
           switch (_context7.prev = _context7.next) {
             case 0:
               timeStart = new Date();
-              _ref14 = options || {};
-              list = _ref14.list;
+              _ref14 = options || {}, list = _ref14.list;
 
               if (!list) {
-                _context7.next = 10;
+                _context7.next = 9;
                 break;
               }
 
-              _context7.next = 6;
+              _context7.next = 5;
               return Renderer.getRouterPaths(true);
 
-            case 6:
+            case 5:
               paths = _context7.sent;
               return _context7.abrupt('return', paths.map(function (path) {
                 return (typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object' ? path.path + ' ' + path.description : path;
               }).join('\n'));
 
-            case 10:
+            case 9:
               if (!what) {
-                _context7.next = 15;
+                _context7.next = 14;
                 break;
               }
 
-              _context7.next = 13;
+              _context7.next = 12;
               return Renderer.rerender(what);
 
-            case 13:
-              _context7.next = 17;
+            case 12:
+              _context7.next = 16;
               break;
 
-            case 15:
-              _context7.next = 17;
+            case 14:
+              _context7.next = 16;
               return Renderer.rerender();
 
-            case 17:
+            case 16:
               return _context7.abrupt('return', 'OK (' + (new Date() - timeStart) + 'ms)');
 
-            case 18:
+            case 17:
             case 'end':
               return _context7.stop();
           }

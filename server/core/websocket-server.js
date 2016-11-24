@@ -379,10 +379,9 @@ var WebSocketServer = function () {
 
       this._subscriptions = new Map();
       this.on('subscribeToThreadUpdates', function (msg, conn) {
-        var _ref4 = msg.data || {};
-
-        var boardName = _ref4.boardName;
-        var threadNumber = _ref4.threadNumber;
+        var _ref4 = msg.data || {},
+            boardName = _ref4.boardName,
+            threadNumber = _ref4.threadNumber;
 
         var key = boardName + '/' + threadNumber;
         if (_this2._subscriptions.has(key)) {
@@ -394,10 +393,9 @@ var WebSocketServer = function () {
         }
       });
       this.on('unsubscribeFromThreadUpdates', function (msg, conn) {
-        var _ref5 = msg.data || {};
-
-        var boardName = _ref5.boardName;
-        var threadNumber = _ref5.threadNumber;
+        var _ref5 = msg.data || {},
+            boardName = _ref5.boardName,
+            threadNumber = _ref5.threadNumber;
 
         var key = boardName + '/' + threadNumber;
         var s = _this2._subscriptions.get(key);

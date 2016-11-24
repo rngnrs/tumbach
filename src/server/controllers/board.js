@@ -318,11 +318,17 @@ router.renderRSS = async function(boardName) {
     text: 1,
     fileInfos: 1,
     createdAt: 1
-  }).sort({ createdAt: -1 }).limit(rssPostCount).sort({ createdAt: 1 }).toArray();
+  }).sort({ createdAt: -1 }).limit(rssPostCount).toArray();
   if (posts.length <= 0) {
     return;
   }
+  posts.sort((p1, p2) => {
+    return +p1.createdAt < +p2.createdAt;
+  });
   posts.forEach((post) => {
+    if (post.text) {
+      post.text = post.text.split('&nbsp', ' '); //NOTE: Required for the RSS to be valid
+    }
     post.subject = BoardsModel.postSubject(post, 150) || post.number; //TODO: Magic number
   });
   let rss = {
@@ -331,7 +337,7 @@ router.renderRSS = async function(boardName) {
     board: MiscModel.board(board).board,
     posts: posts,
     formattedDate: (date) => {
-      return moment().utc().locale('en').format(RSS_DATE_TIME_FORMAT);
+      return moment(date).utc().locale('en').format(RSS_DATE_TIME_FORMAT);
     }
   };
   return await Cache.writeFile(`${boardName}/rss.xml`, Renderer.render('pages/rss', rss));

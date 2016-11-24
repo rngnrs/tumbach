@@ -118,12 +118,12 @@ var process = function () {
       };
     }();
 
-    var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    var _ref3 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        nestable = _ref3.nestable,
+        escapable = _ref3.escapable,
+        pre = _ref3.pre,
+        check = _ref3.check;
 
-    var nestable = _ref3.nestable;
-    var escapable = _ref3.escapable;
-    var pre = _ref3.pre;
-    var check = _ref3.check;
     var rxOp, rxCl, nested, matchs, matche, rerun;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
@@ -185,12 +185,12 @@ var process = function () {
 
 var markup = function () {
   var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(boardName, text) {
-    var _ref6 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var _ref6 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        deletedPost = _ref6.deletedPost,
+        markupModes = _ref6.markupModes,
+        accessLevel = _ref6.accessLevel,
+        referencedPosts = _ref6.referencedPosts;
 
-    var deletedPost = _ref6.deletedPost;
-    var markupModes = _ref6.markupModes;
-    var accessLevel = _ref6.accessLevel;
-    var referencedPosts = _ref6.referencedPosts;
     var info;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
@@ -378,14 +378,14 @@ function reloadElements() {
 reloadElements();
 
 function getIndE(_ref) {
-  var info = _ref.info;
-  var rxOp = _ref.rxOp;
-  var matchs = _ref.matchs;
-  var rxCl = _ref.rxCl;
-  var inds = _ref.inds;
-  var nestable = _ref.nestable;
-  var escapable = _ref.escapable;
-  var nested = _ref.nested;
+  var info = _ref.info,
+      rxOp = _ref.rxOp,
+      matchs = _ref.matchs,
+      rxCl = _ref.rxCl,
+      inds = _ref.inds,
+      nestable = _ref.nestable,
+      escapable = _ref.escapable,
+      nested = _ref.nested;
 
   nested.nested = false;
   if (!nestable) {

@@ -289,19 +289,16 @@ var scheduleRender = exports.scheduleRender = function () {
                 while (1) {
                   switch (_context10.prev = _context10.next) {
                     case 0:
-                      boardName = data.boardName;
-                      threadNumber = data.threadNumber;
-                      postNumber = data.postNumber;
-                      action = data.action;
+                      boardName = data.boardName, threadNumber = data.threadNumber, postNumber = data.postNumber, action = data.action;
                       _context10.t0 = action;
-                      _context10.next = _context10.t0 === 'create' ? 7 : _context10.t0 === 'edit' ? 11 : _context10.t0 === 'delete' ? 11 : 21;
+                      _context10.next = _context10.t0 === 'create' ? 4 : _context10.t0 === 'edit' ? 8 : _context10.t0 === 'delete' ? 8 : 18;
                       break;
 
-                    case 7:
-                      _context10.next = 9;
+                    case 4:
+                      _context10.next = 6;
                       return renderThread(boardName, threadNumber, postNumber, action);
 
-                    case 9:
+                    case 6:
                       _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
                         return regeneratorRuntime.wrap(function _callee7$(_context7) {
                           while (1) {
@@ -321,27 +318,27 @@ var scheduleRender = exports.scheduleRender = function () {
                           }
                         }, _callee7, this);
                       }))();
-                      return _context10.abrupt('break', 23);
+                      return _context10.abrupt('break', 20);
 
-                    case 11:
+                    case 8:
                       if (!(threadNumber === postNumber)) {
-                        _context10.next = 19;
+                        _context10.next = 16;
                         break;
                       }
 
-                      _context10.next = 14;
+                      _context10.next = 11;
                       return renderThread(boardName, threadNumber, postNumber, action);
 
-                    case 14:
-                      _context10.next = 16;
+                    case 11:
+                      _context10.next = 13;
                       return renderPages(boardName, threadNumber);
 
-                    case 16:
+                    case 13:
                       renderCatalog(boardName);
-                      _context10.next = 20;
+                      _context10.next = 17;
                       break;
 
-                    case 19:
+                    case 16:
                       _asyncToGenerator(regeneratorRuntime.mark(function _callee8() {
                         return regeneratorRuntime.wrap(function _callee8$(_context8) {
                           while (1) {
@@ -365,10 +362,10 @@ var scheduleRender = exports.scheduleRender = function () {
                         }, _callee8, this);
                       }))();
 
-                    case 20:
-                      return _context10.abrupt('break', 23);
+                    case 17:
+                      return _context10.abrupt('break', 20);
 
-                    case 21:
+                    case 18:
                       _asyncToGenerator(regeneratorRuntime.mark(function _callee9() {
                         return regeneratorRuntime.wrap(function _callee9$(_context9) {
                           while (1) {
@@ -391,9 +388,9 @@ var scheduleRender = exports.scheduleRender = function () {
                           }
                         }, _callee9, this);
                       }))();
-                      return _context10.abrupt('break', 23);
+                      return _context10.abrupt('break', 20);
 
-                    case 23:
+                    case 20:
                     case 'end':
                       return _context10.stop();
                   }

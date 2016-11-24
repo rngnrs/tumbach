@@ -191,11 +191,10 @@ var Board = function () {
   }]);
 
   function Board(name, title) {
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var defaultPriority = _ref.defaultPriority;
-    var defaultUserName = _ref.defaultUserName;
-    var defaultGroupName = _ref.defaultGroupName;
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        defaultPriority = _ref.defaultPriority,
+        defaultUserName = _ref.defaultUserName,
+        defaultGroupName = _ref.defaultGroupName;
 
     _classCallCheck(this, Board);
 
@@ -349,20 +348,17 @@ var Board = function () {
       var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref3) {
         var _this3 = this;
 
-        var req = _ref3.req;
-        var mode = _ref3.mode;
-        var fields = _ref3.fields;
-        var files = _ref3.files;
-        var existingFileCount = _ref3.existingFileCount;
+        var req = _ref3.req,
+            mode = _ref3.mode,
+            fields = _ref3.fields,
+            files = _ref3.files,
+            existingFileCount = _ref3.existingFileCount;
         var name, subject, text, password, err;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                name = fields.name;
-                subject = fields.subject;
-                text = fields.text;
-                password = fields.password;
+                name = fields.name, subject = fields.subject, text = fields.text, password = fields.password;
 
                 name = name || '';
                 subject = subject || '';
@@ -370,73 +366,73 @@ var Board = function () {
                 password = password || '';
 
                 if (!(name.length > this.maxNameLength)) {
-                  _context.next = 10;
+                  _context.next = 7;
                   break;
                 }
 
                 throw new Error(Tools.translate('Name is too long'));
 
-              case 10:
+              case 7:
                 if (!(subject.length > this.maxSubjectLength)) {
-                  _context.next = 12;
+                  _context.next = 9;
                   break;
                 }
 
                 throw new Error(Tools.translate('Subject is too long'));
 
-              case 12:
+              case 9:
                 if (!(text.length > this.maxTextFieldLength)) {
-                  _context.next = 14;
+                  _context.next = 11;
                   break;
                 }
 
                 throw new Error(Tools.translate('Comment is too long'));
 
-              case 14:
+              case 11:
                 if (!(password.length > this.maxPasswordLength)) {
-                  _context.next = 16;
+                  _context.next = 13;
                   break;
                 }
 
                 throw new Error(Tools.translate('Password is too long'));
 
-              case 16:
+              case 13:
                 if (!('markupText' === mode || 'editPost' === mode)) {
-                  _context.next = 18;
+                  _context.next = 15;
                   break;
                 }
 
                 return _context.abrupt('return');
 
-              case 18:
+              case 15:
                 if (!('createThread' === mode && this.maxFileCount && files.length <= 0)) {
-                  _context.next = 20;
+                  _context.next = 17;
                   break;
                 }
 
                 throw new Error(Tools.translate('Attempt to create a thread without attaching a file'));
 
-              case 20:
+              case 17:
                 if ('deleteFile' === mode && existingFileCount > 0) {
                   --existingFileCount;
                 }
 
                 if (!(text.length <= 0 && files.length + existingFileCount <= 0)) {
-                  _context.next = 23;
+                  _context.next = 20;
                   break;
                 }
 
                 throw new Error(Tools.translate('Both file and comment are missing'));
 
-              case 23:
+              case 20:
                 if (!(files.length + existingFileCount > this.maxFileCount)) {
-                  _context.next = 25;
+                  _context.next = 22;
                   break;
                 }
 
                 throw new Error(Tools.translate('Too many files'));
 
-              case 25:
+              case 22:
                 err = files.reduce(function (err, file) {
                   if (err) {
                     return err;
@@ -450,13 +446,13 @@ var Board = function () {
                 }, '');
 
                 if (!err) {
-                  _context.next = 28;
+                  _context.next = 25;
                   break;
                 }
 
                 throw err;
 
-              case 28:
+              case 25:
               case 'end':
                 return _context.stop();
             }

@@ -121,8 +121,7 @@ router.post('/action/sendChatMessage', function () {
 
           case 23:
             result = _context.sent;
-            message = result.message;
-            receiver = result.receiver;
+            message = result.message, receiver = result.receiver;
 
             message.type = 'in';
             ip = receiver.hashpass ? null : receiver.ip;
@@ -139,21 +138,21 @@ router.post('/action/sendChatMessage', function () {
               hashpasses: receiver.hashpass
             });
             res.json({});
-            _context.next = 35;
+            _context.next = 34;
             break;
 
-          case 32:
-            _context.prev = 32;
+          case 31:
+            _context.prev = 31;
             _context.t0 = _context['catch'](0);
 
             next(_context.t0);
 
-          case 35:
+          case 34:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, this, [[0, 32]]);
+    }, _callee, this, [[0, 31]]);
   }));
 
   return function (_x, _x2, _x3) {

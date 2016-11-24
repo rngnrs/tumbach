@@ -124,12 +124,10 @@ var NodeCaptcha = function (_Captcha) {
                 fileNames = _context3.sent;
                 _context3.next = 6;
                 return Tools.series(fileNames.filter(function (fileName) {
-                  var _fileName$split = fileName.split('.');
-
-                  var _fileName$split2 = _slicedToArray(_fileName$split, 2);
-
-                  var name = _fileName$split2[0];
-                  var suffix = _fileName$split2[1];
+                  var _fileName$split = fileName.split('.'),
+                      _fileName$split2 = _slicedToArray(_fileName$split, 2),
+                      name = _fileName$split2[0],
+                      suffix = _fileName$split2[1];
 
                   return 'png' === suffix && /^[0-9]+$/.test(name);
                 }), function () {
@@ -216,8 +214,8 @@ var NodeCaptcha = function (_Captcha) {
     key: 'checkCaptcha',
     value: function () {
       var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(_1, _ref5) {
-        var nodeCaptchaChallenge = _ref5.nodeCaptchaChallenge;
-        var nodeCaptchaResponse = _ref5.nodeCaptchaResponse;
+        var nodeCaptchaChallenge = _ref5.nodeCaptchaChallenge,
+            nodeCaptchaResponse = _ref5.nodeCaptchaResponse;
         var challengeID, response, challenge;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {

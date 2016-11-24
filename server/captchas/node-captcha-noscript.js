@@ -179,12 +179,10 @@ var NodeCaptchaNoscript = function (_Captcha) {
                 fileNames = _context5.sent;
                 _context5.next = 6;
                 return Tools.series(fileNames.filter(function (fileName) {
-                  var _fileName$split = fileName.split('.');
-
-                  var _fileName$split2 = _slicedToArray(_fileName$split, 2);
-
-                  var name = _fileName$split2[0];
-                  var suffix = _fileName$split2[1];
+                  var _fileName$split = fileName.split('.'),
+                      _fileName$split2 = _slicedToArray(_fileName$split, 2),
+                      name = _fileName$split2[0],
+                      suffix = _fileName$split2[1];
 
                   return 'png' === suffix && /^[0-9]+$/.test(name);
                 }), function () {

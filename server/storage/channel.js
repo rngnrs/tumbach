@@ -28,10 +28,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Channel = function () {
   function Channel(client, name) {
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var parse = _ref.parse;
-    var stringify = _ref.stringify;
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        parse = _ref.parse,
+        stringify = _ref.stringify;
 
     _classCallCheck(this, Channel);
 

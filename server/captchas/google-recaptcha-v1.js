@@ -51,8 +51,8 @@ var GoogleRecaptchaV1 = function (_Captcha) {
     value: function () {
       var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(_ref2, _ref3) {
         var ip = _ref2.ip;
-        var recaptcha_challenge_field = _ref3.recaptcha_challenge_field;
-        var recaptcha_response_field = _ref3.recaptcha_response_field;
+        var recaptcha_challenge_field = _ref3.recaptcha_challenge_field,
+            recaptcha_response_field = _ref3.recaptcha_response_field;
         var challenge, response, query, reply, data, result;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {

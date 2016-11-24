@@ -11,9 +11,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var getThreadPostCount = exports.getThreadPostCount = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(boardName, threadNumber) {
-    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        lastPostNumber = _ref2.lastPostNumber;
 
-    var lastPostNumber = _ref2.lastPostNumber;
     var Post, query;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -54,9 +54,9 @@ var getThreadPostCount = exports.getThreadPostCount = function () {
 
 var getThreadNumbers = exports.getThreadNumbers = function () {
   var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(boardName) {
-    var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        archived = _ref4.archived;
 
-    var archived = _ref4.archived;
     var Thread, threads;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
@@ -218,12 +218,12 @@ var threadExists = exports.threadExists = function () {
 
 var getThreads = exports.getThreads = function () {
   var _ref8 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(boardName) {
-    var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref9 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        archived = _ref9.archived,
+        limit = _ref9.limit,
+        offset = _ref9.offset,
+        sort = _ref9.sort;
 
-    var archived = _ref9.archived;
-    var limit = _ref9.limit;
-    var offset = _ref9.offset;
-    var sort = _ref9.sort;
     var board, Thread, cursor, threads;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -283,9 +283,9 @@ var getThreads = exports.getThreads = function () {
 
 var getThreadCount = exports.getThreadCount = function () {
   var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(boardName) {
-    var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref11 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        archived = _ref11.archived;
 
-    var archived = _ref11.archived;
     var board, Thread;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
@@ -680,46 +680,45 @@ var createThread = exports.createThread = function () {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
-            boardName = fields.boardName;
-            password = fields.password;
+            boardName = fields.boardName, password = fields.password;
             board = _board2.default.board(boardName);
 
             if (board) {
-              _context13.next = 5;
+              _context13.next = 4;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 5:
+          case 4:
             if (board.postingEnabled) {
-              _context13.next = 7;
+              _context13.next = 6;
               break;
             }
 
             throw new Error(Tools.translate('Posting is disabled at this board'));
 
-          case 7:
-            _context13.prev = 7;
-            _context13.next = 10;
+          case 6:
+            _context13.prev = 6;
+            _context13.next = 9;
             return pushOutOldThread(boardName);
 
-          case 10:
-            _context13.next = 15;
+          case 9:
+            _context13.next = 14;
             break;
 
-          case 12:
-            _context13.prev = 12;
-            _context13.t0 = _context13['catch'](7);
+          case 11:
+            _context13.prev = 11;
+            _context13.t0 = _context13['catch'](6);
 
             _logger2.default.error(_context13.t0.stack || _context13.t0);
 
-          case 15:
+          case 14:
             date = Tools.now();
-            _context13.next = 18;
+            _context13.next = 17;
             return BoardsModel.nextPostNumber(boardName);
 
-          case 18:
+          case 17:
             threadNumber = _context13.sent;
             thread = {
               boardName: boardName,
@@ -733,23 +732,23 @@ var createThread = exports.createThread = function () {
             };
 
             transaction.setThreadNumber(threadNumber);
-            _context13.next = 23;
+            _context13.next = 22;
             return client.collection('thread');
 
-          case 23:
+          case 22:
             Thread = _context13.sent;
-            _context13.next = 26;
+            _context13.next = 25;
             return Thread.insertOne(thread);
 
-          case 26:
+          case 25:
             return _context13.abrupt('return', thread);
 
-          case 27:
+          case 26:
           case 'end':
             return _context13.stop();
         }
       }
-    }, _callee13, this, [[7, 12]]);
+    }, _callee13, this, [[6, 11]]);
   }));
 
   return function createThread(_x29, _x30, _x31) {

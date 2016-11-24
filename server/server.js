@@ -450,12 +450,11 @@ function initializeWorker() {
                           });
                         });
                         IPC.on('sendChatMessage', function () {
-                          var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-                          var type = _ref8.type;
-                          var message = _ref8.message;
-                          var ips = _ref8.ips;
-                          var hashpasses = _ref8.hashpasses;
+                          var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                              type = _ref8.type,
+                              message = _ref8.message,
+                              ips = _ref8.ips,
+                              hashpasses = _ref8.hashpasses;
 
                           ws.sendMessage(type, message, ips, hashpasses);
                         });

@@ -875,13 +875,10 @@ function targetsFromString(string) {
     return {};
   }
   return string.split(/\s+/).reduce(function (acc, part) {
-    var _part$split = part.split(':');
-
-    var _part$split2 = _toArray(_part$split);
-
-    var boardName = _part$split2[0];
-
-    var postNumbers = _part$split2.slice(1);
+    var _part$split = part.split(':'),
+        _part$split2 = _toArray(_part$split),
+        boardName = _part$split2[0],
+        postNumbers = _part$split2.slice(1);
 
     if (boardName) {
       if (postNumbers.length > 0) {
@@ -951,9 +948,8 @@ function postingSpeedString(launchDate, lastPostNumber) {
 }
 
 function plainText(text) {
-  var _ref20 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-  var brToNewline = _ref20.brToNewline;
+  var _ref20 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      brToNewline = _ref20.brToNewline;
 
   if (!text) {
     return '';

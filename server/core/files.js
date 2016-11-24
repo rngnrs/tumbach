@@ -723,10 +723,10 @@ var writeFile = exports.writeFile = function () {
 
 var createFile = exports.createFile = function () {
   var _ref15 = _asyncToGenerator(regeneratorRuntime.mark(function _callee15(dir, fileName) {
-    var _ref16 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var _ref16 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        file = _ref16.file,
+        isDir = _ref16.isDir;
 
-    var file = _ref16.file;
-    var isDir = _ref16.isDir;
     var path;
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
       while (1) {
@@ -1119,8 +1119,8 @@ function selectThumbnailingPlugin(mimeType) {
 
 function parseForm() {
   var req = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var formFields = req.formFields;
-  var formFiles = req.formFiles;
+  var formFields = req.formFields,
+      formFiles = req.formFiles;
 
   if (formFields) {
     return {

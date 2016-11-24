@@ -66,54 +66,53 @@ var Captcha = function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                boardName = fields.boardName;
-                captchaEngine = fields.captchaEngine;
+                boardName = fields.boardName, captchaEngine = fields.captchaEngine;
                 board = _board2.default.board(boardName);
 
                 if (board) {
-                  _context.next = 5;
+                  _context.next = 4;
                   break;
                 }
 
                 throw new Error(Tools.translate('Invalid board'));
 
-              case 5:
+              case 4:
                 if (board.captchaEnabled) {
-                  _context.next = 7;
+                  _context.next = 6;
                   break;
                 }
 
                 return _context.abrupt('return');
 
-              case 7:
-                _context.next = 9;
+              case 6:
+                _context.next = 8;
                 return UsersModel.getUserCaptchaQuota(boardName, req.hashpass || req.ip);
 
-              case 9:
+              case 8:
                 quota = _context.sent;
 
                 if (!(board.captchaQuota > 0 && +quota > 0)) {
-                  _context.next = 14;
+                  _context.next = 13;
                   break;
                 }
 
-                _context.next = 13;
+                _context.next = 12;
                 return UsersModel.useCaptcha(boardName, req.hashpass || req.ip);
 
-              case 13:
+              case 12:
                 return _context.abrupt('return', _context.sent);
 
-              case 14:
+              case 13:
                 supportedCaptchaEngines = board.supportedCaptchaEngines;
 
                 if (!(supportedCaptchaEngines.length < 1)) {
-                  _context.next = 17;
+                  _context.next = 16;
                   break;
                 }
 
                 throw new Error(Tools.translate('Internal error: no captcha engine'));
 
-              case 17:
+              case 16:
                 ceid = captchaEngine || null;
 
                 if (!ceid || !(0, _underscore2.default)(supportedCaptchaEngines).contains(ceid)) {
@@ -126,24 +125,24 @@ var Captcha = function () {
                 captcha = Captcha.captcha(ceid);
 
                 if (captcha) {
-                  _context.next = 22;
+                  _context.next = 21;
                   break;
                 }
 
                 throw new Error(Tools.translate('Invalid captcha engine'));
 
-              case 22:
-                _context.next = 24;
+              case 21:
+                _context.next = 23;
                 return captcha.checkCaptcha(req.hashpass || req.ip, fields);
 
-              case 24:
-                _context.next = 26;
+              case 23:
+                _context.next = 25;
                 return UsersModel.setUserCaptchaQuota(boardName, req.hashpass || req.ip, board.captchaQuota);
 
-              case 26:
+              case 25:
                 return _context.abrupt('return', _context.sent);
 
-              case 27:
+              case 26:
               case 'end':
                 return _context.stop();
             }

@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var testParameters = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(req, boardName, mode) {
-    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        fields = _ref2.fields,
+        files = _ref2.files,
+        postNumber = _ref2.postNumber;
 
-    var fields = _ref2.fields;
-    var files = _ref2.files;
-    var postNumber = _ref2.postNumber;
     var board, fileCount, post;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -166,47 +166,43 @@ router.post('/action/markupText', function () {
           case 3:
             _ref4 = _context2.sent;
             fields = _ref4.fields;
-            boardName = fields.boardName;
-            text = fields.text;
-            markupMode = fields.markupMode;
-            signAsOp = fields.signAsOp;
-            tripcode = fields.tripcode;
+            boardName = fields.boardName, text = fields.text, markupMode = fields.markupMode, signAsOp = fields.signAsOp, tripcode = fields.tripcode;
             board = _board2.default.board(boardName);
 
             if (board) {
-              _context2.next = 13;
+              _context2.next = 9;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 13:
-            _context2.next = 15;
+          case 9:
+            _context2.next = 11;
             return (0, _geolocation2.default)(req.ip);
 
-          case 15:
+          case 11:
             req.geolocationInfo = _context2.sent;
-            _context2.next = 18;
+            _context2.next = 14;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 18:
+          case 14:
             rawText = text || '';
-            _context2.next = 21;
+            _context2.next = 17;
             return testParameters(req, boardName, 'markupText', { fields: fields });
 
-          case 21:
+          case 17:
             markupMode = markupMode || '';
             markupModes = _markup2.default.markupModes(markupMode);
-            _context2.next = 25;
+            _context2.next = 21;
             return (0, _markup2.default)(boardName, text, {
               markupModes: markupModes,
               accessLevel: req.level(boardName)
             });
 
-          case 25:
+          case 21:
             text = _context2.sent;
             data = {
               boardName: boardName,
@@ -223,21 +219,21 @@ router.post('/action/markupText', function () {
               data.tripcode = board.generateTripcode(req.hashpass);
             }
             res.json(data);
-            _context2.next = 34;
+            _context2.next = 30;
             break;
 
-          case 31:
-            _context2.prev = 31;
+          case 27:
+            _context2.prev = 27;
             _context2.t0 = _context2['catch'](0);
 
             next(_context2.t0);
 
-          case 34:
+          case 30:
           case 'end':
             return _context2.stop();
         }
       }
-    }, _callee2, this, [[0, 31]]);
+    }, _callee2, this, [[0, 27]]);
   }));
 
   return function (_x6, _x7, _x8) {
@@ -262,86 +258,84 @@ router.post('/action/createPost', function () {
             _ref6 = _context3.sent;
             fields = _ref6.fields;
             files = _ref6.files;
-            boardName = fields.boardName;
-            threadNumber = fields.threadNumber;
-            captchaEngine = fields.captchaEngine;
+            boardName = fields.boardName, threadNumber = fields.threadNumber, captchaEngine = fields.captchaEngine;
 
             if (_board2.default.board(boardName)) {
-              _context3.next = 12;
+              _context3.next = 10;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 12:
+          case 10:
             threadNumber = Tools.option(threadNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (threadNumber) {
-              _context3.next = 15;
+              _context3.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('Invalid thread'));
 
-          case 15:
-            _context3.next = 17;
+          case 13:
+            _context3.next = 15;
             return (0, _geolocation2.default)(req.ip);
 
-          case 17:
+          case 15:
             req.geolocationInfo = _context3.sent;
-            _context3.next = 20;
+            _context3.next = 18;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 20:
-            _context3.next = 22;
+          case 18:
+            _context3.next = 20;
             return _captcha2.default.checkCaptcha(req, fields);
 
-          case 22:
-            _context3.next = 24;
+          case 20:
+            _context3.next = 22;
             return Files.getFiles(fields, files);
 
-          case 24:
+          case 22:
             files = _context3.sent;
-            _context3.next = 27;
+            _context3.next = 25;
             return testParameters(req, boardName, 'createPost', {
               fields: fields,
               files: files
             });
 
-          case 27:
-            _context3.next = 29;
+          case 25:
+            _context3.next = 27;
             return ThreadsModel.getThread(boardName, threadNumber, {
               closed: 1,
               unbumpable: 1
             });
 
-          case 29:
+          case 27:
             thread = _context3.sent;
 
             if (!thread.closed) {
-              _context3.next = 32;
+              _context3.next = 30;
               break;
             }
 
             throw new Error(Tools.translate('Posting is disabled in this thread'));
 
-          case 32:
+          case 30:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context3.next = 35;
+            _context3.next = 33;
             return Files.processFiles(boardName, files, transaction);
 
-          case 35:
+          case 33:
             files = _context3.sent;
-            _context3.next = 38;
+            _context3.next = 36;
             return PostsModel.createPost(req, fields, files, transaction, {
               unbumpable: thread.unbumpable,
               archived: thread.archived
             });
 
-          case 38:
+          case 36:
             post = _context3.sent;
 
             IPC.send('notifyAboutNewPosts', boardName + '/' + threadNumber);
@@ -356,11 +350,11 @@ router.post('/action/createPost', function () {
 
               res.redirect(303, path);
             }
-            _context3.next = 47;
+            _context3.next = 45;
             break;
 
-          case 43:
-            _context3.prev = 43;
+          case 41:
+            _context3.prev = 41;
             _context3.t0 = _context3['catch'](1);
 
             if (transaction) {
@@ -368,12 +362,12 @@ router.post('/action/createPost', function () {
             }
             next(_context3.t0);
 
-          case 47:
+          case 45:
           case 'end':
             return _context3.stop();
         }
       }
-    }, _callee3, this, [[1, 43]]);
+    }, _callee3, this, [[1, 41]]);
   }));
 
   return function (_x9, _x10, _x11) {
@@ -398,63 +392,62 @@ router.post('/action/createThread', function () {
             _ref8 = _context4.sent;
             fields = _ref8.fields;
             files = _ref8.files;
-            boardName = fields.boardName;
-            captchaEngine = fields.captchaEngine;
+            boardName = fields.boardName, captchaEngine = fields.captchaEngine;
 
             if (_board2.default.board(boardName)) {
-              _context4.next = 11;
+              _context4.next = 10;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
-            _context4.next = 13;
+          case 10:
+            _context4.next = 12;
             return (0, _geolocation2.default)(req.ip);
 
-          case 13:
+          case 12:
             req.geolocationInfo = _context4.sent;
-            _context4.next = 16;
+            _context4.next = 15;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 16:
-            _context4.next = 18;
+          case 15:
+            _context4.next = 17;
             return _captcha2.default.checkCaptcha(req, fields);
 
-          case 18:
-            _context4.next = 20;
+          case 17:
+            _context4.next = 19;
             return Files.getFiles(fields, files);
 
-          case 20:
+          case 19:
             files = _context4.sent;
-            _context4.next = 23;
+            _context4.next = 22;
             return testParameters(req, boardName, 'createThread', {
               fields: fields,
               files: files
             });
 
-          case 23:
+          case 22:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context4.next = 26;
+            _context4.next = 25;
             return ThreadsModel.createThread(req, fields, transaction);
 
-          case 26:
+          case 25:
             thread = _context4.sent;
-            _context4.next = 29;
+            _context4.next = 28;
             return Files.processFiles(boardName, files, transaction);
 
-          case 29:
+          case 28:
             files = _context4.sent;
-            _context4.next = 32;
+            _context4.next = 31;
             return PostsModel.createPost(req, fields, files, transaction, {
               postNumber: thread.number,
               date: new Date(thread.createdAt)
             });
 
-          case 32:
+          case 31:
             post = _context4.sent;
 
             if ('node-captcha-noscript' !== captchaEngine) {
@@ -465,11 +458,11 @@ router.post('/action/createThread', function () {
             } else {
               res.redirect(303, '/' + (0, _config2.default)('site.pathPrefix') + thread.boardName + '/res/' + thread.number + '.html');
             }
-            _context4.next = 40;
+            _context4.next = 39;
             break;
 
-          case 36:
-            _context4.prev = 36;
+          case 35:
+            _context4.prev = 35;
             _context4.t0 = _context4['catch'](1);
 
             if (transaction) {
@@ -477,12 +470,12 @@ router.post('/action/createThread', function () {
             }
             next(_context4.t0);
 
-          case 40:
+          case 39:
           case 'end':
             return _context4.stop();
         }
       }
-    }, _callee4, this, [[1, 36]]);
+    }, _callee4, this, [[1, 35]]);
   }));
 
   return function (_x12, _x13, _x14) {
@@ -505,67 +498,66 @@ router.post('/action/editPost', function () {
           case 3:
             _ref10 = _context5.sent;
             fields = _ref10.fields;
-            boardName = fields.boardName;
-            postNumber = fields.postNumber;
+            boardName = fields.boardName, postNumber = fields.postNumber;
 
             postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (postNumber) {
-              _context5.next = 10;
+              _context5.next = 9;
               break;
             }
 
             throw new Error(Tools.translate('Invalid post number'));
 
-          case 10:
-            _context5.next = 12;
+          case 9:
+            _context5.next = 11;
             return (0, _geolocation2.default)(req.ip);
 
-          case 12:
+          case 11:
             req.geolocationInfo = _context5.sent;
-            _context5.next = 15;
+            _context5.next = 14;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 15:
-            _context5.next = 17;
+          case 14:
+            _context5.next = 16;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'editPost');
 
-          case 17:
-            _context5.next = 19;
+          case 16:
+            _context5.next = 18;
             return testParameters(req, boardName, 'editPost', {
               fields: fields,
               postNumber: postNumber
             });
 
-          case 19:
-            _context5.next = 21;
+          case 18:
+            _context5.next = 20;
             return PostsModel.editPost(req, fields);
 
-          case 21:
+          case 20:
             post = _context5.sent;
 
             res.json({
               boardName: post.boardName,
               postNumber: post.number
             });
-            _context5.next = 28;
+            _context5.next = 27;
             break;
 
-          case 25:
-            _context5.prev = 25;
+          case 24:
+            _context5.prev = 24;
             _context5.t0 = _context5['catch'](0);
 
             next(_context5.t0);
 
-          case 28:
+          case 27:
           case 'end':
             return _context5.stop();
         }
       }
-    }, _callee5, this, [[0, 25]]);
+    }, _callee5, this, [[0, 24]]);
   }));
 
   return function (_x15, _x16, _x17) {
@@ -590,95 +582,94 @@ router.post('/action/addFiles', function () {
             _ref12 = _context6.sent;
             fields = _ref12.fields;
             files = _ref12.files;
-            boardName = fields.boardName;
-            postNumber = fields.postNumber;
+            boardName = fields.boardName, postNumber = fields.postNumber;
 
             if (_board2.default.board(boardName)) {
-              _context6.next = 11;
+              _context6.next = 10;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 11:
+          case 10:
             postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (postNumber) {
-              _context6.next = 14;
+              _context6.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('Invalid post number'));
 
-          case 14:
-            _context6.next = 16;
+          case 13:
+            _context6.next = 15;
             return (0, _geolocation2.default)(req.ip);
 
-          case 16:
+          case 15:
             req.geolocationInfo = _context6.sent;
-            _context6.next = 19;
+            _context6.next = 18;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 19:
-            _context6.next = 21;
+          case 18:
+            _context6.next = 20;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'addFilesToPost');
 
-          case 21:
-            _context6.next = 23;
+          case 20:
+            _context6.next = 22;
             return PostsModel.getPost(boardName, postNumber);
 
-          case 23:
+          case 22:
             post = _context6.sent;
 
             if (post) {
-              _context6.next = 26;
+              _context6.next = 25;
               break;
             }
 
             throw new Error(Tools.translate('No such post'));
 
-          case 26:
-            _context6.next = 28;
+          case 25:
+            _context6.next = 27;
             return Files.getFiles(fields, files);
 
-          case 28:
+          case 27:
             files = _context6.sent;
 
             if (!(files.length <= 0)) {
-              _context6.next = 31;
+              _context6.next = 30;
               break;
             }
 
             throw new Error(Tools.translate('No file specified'));
 
-          case 31:
-            _context6.next = 33;
+          case 30:
+            _context6.next = 32;
             return testParameters(req, boardName, 'addFiles', {
               fields: fields,
               files: files,
               postNumber: postNumber
             });
 
-          case 33:
+          case 32:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context6.next = 36;
+            _context6.next = 35;
             return Files.processFiles(boardName, files, transaction);
 
-          case 36:
+          case 35:
             files = _context6.sent;
-            _context6.next = 39;
+            _context6.next = 38;
             return FilesModel.addFilesToPost(boardName, postNumber, files);
 
-          case 39:
+          case 38:
             res.json({});
-            _context6.next = 46;
+            _context6.next = 45;
             break;
 
-          case 42:
-            _context6.prev = 42;
+          case 41:
+            _context6.prev = 41;
             _context6.t0 = _context6['catch'](1);
 
             if (transaction) {
@@ -686,12 +677,12 @@ router.post('/action/addFiles', function () {
             }
             next(_context6.t0);
 
-          case 46:
+          case 45:
           case 'end':
             return _context6.stop();
         }
       }
-    }, _callee6, this, [[1, 42]]);
+    }, _callee6, this, [[1, 41]]);
   }));
 
   return function (_x18, _x19, _x20) {
@@ -714,83 +705,81 @@ router.post('/action/deletePost', function () {
           case 3:
             _ref14 = _context7.sent;
             fields = _ref14.fields;
-            boardName = fields.boardName;
-            postNumber = fields.postNumber;
-            password = fields.password;
+            boardName = fields.boardName, postNumber = fields.postNumber, password = fields.password;
 
             if (_board2.default.board(boardName)) {
-              _context7.next = 10;
+              _context7.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 10:
+          case 8:
             postNumber = Tools.option(postNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (postNumber) {
-              _context7.next = 13;
+              _context7.next = 11;
               break;
             }
 
             throw new Error(Tools.translate('Invalid post number'));
 
-          case 13:
-            _context7.next = 15;
+          case 11:
+            _context7.next = 13;
             return (0, _geolocation2.default)(req.ip);
 
-          case 15:
+          case 13:
             req.geolocationInfo = _context7.sent;
-            _context7.next = 18;
+            _context7.next = 16;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 18:
-            _context7.next = 20;
+          case 16:
+            _context7.next = 18;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'deletePost', Tools.sha1(password));
 
-          case 20:
-            _context7.next = 22;
+          case 18:
+            _context7.next = 20;
             return ThreadsModel.threadExists(boardName, postNumber);
 
-          case 22:
+          case 20:
             isThread = _context7.sent;
 
             if (!isThread) {
-              _context7.next = 28;
+              _context7.next = 26;
               break;
             }
 
-            _context7.next = 26;
+            _context7.next = 24;
             return ThreadsModel.deleteThread(boardName, postNumber);
 
-          case 26:
-            _context7.next = 30;
+          case 24:
+            _context7.next = 28;
             break;
 
-          case 28:
-            _context7.next = 30;
+          case 26:
+            _context7.next = 28;
             return PostsModel.deletePost(boardName, postNumber);
 
-          case 30:
+          case 28:
             res.json({});
-            _context7.next = 36;
+            _context7.next = 34;
             break;
 
-          case 33:
-            _context7.prev = 33;
+          case 31:
+            _context7.prev = 31;
             _context7.t0 = _context7['catch'](0);
 
             next(_context7.t0);
 
-          case 36:
+          case 34:
           case 'end':
             return _context7.stop();
         }
       }
-    }, _callee7, this, [[0, 33]]);
+    }, _callee7, this, [[0, 31]]);
   }));
 
   return function (_x21, _x22, _x23) {
@@ -813,74 +802,72 @@ router.post('/action/deleteFile', function () {
           case 3:
             _ref16 = _context8.sent;
             fields = _ref16.fields;
-            fileName = fields.fileName;
-            password = fields.password;
+            fileName = fields.fileName, password = fields.password;
 
             if (!(!fileName || typeof fileName !== 'string')) {
-              _context8.next = 9;
+              _context8.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid file name'));
 
-          case 9:
-            _context8.next = 11;
+          case 8:
+            _context8.next = 10;
             return FilesModel.getFileInfoByName(fileName);
 
-          case 11:
+          case 10:
             fileInfo = _context8.sent;
 
             if (fileInfo) {
-              _context8.next = 14;
+              _context8.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('No such file'));
 
-          case 14:
-            boardName = fileInfo.boardName;
-            postNumber = fileInfo.postNumber;
-            _context8.next = 18;
+          case 13:
+            boardName = fileInfo.boardName, postNumber = fileInfo.postNumber;
+            _context8.next = 16;
             return (0, _geolocation2.default)(req.ip);
 
-          case 18:
+          case 16:
             req.geolocationInfo = _context8.sent;
-            _context8.next = 21;
+            _context8.next = 19;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 21:
-            _context8.next = 23;
+          case 19:
+            _context8.next = 21;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'deleteFile', Tools.sha1(password));
 
-          case 23:
-            _context8.next = 25;
+          case 21:
+            _context8.next = 23;
             return testParameters(req, boardName, 'deleteFile', { postNumber: postNumber });
 
-          case 25:
+          case 23:
             post = _context8.sent;
-            _context8.next = 28;
+            _context8.next = 26;
             return FilesModel.deleteFile(fileName);
 
-          case 28:
+          case 26:
             res.json({});
-            _context8.next = 34;
+            _context8.next = 32;
             break;
 
-          case 31:
-            _context8.prev = 31;
+          case 29:
+            _context8.prev = 29;
             _context8.t0 = _context8['catch'](0);
 
             next(_context8.t0);
 
-          case 34:
+          case 32:
           case 'end':
             return _context8.stop();
         }
       }
-    }, _callee8, this, [[0, 31]]);
+    }, _callee8, this, [[0, 29]]);
   }));
 
   return function (_x24, _x25, _x26) {
@@ -903,70 +890,67 @@ router.post('/action/editFileRating', function () {
           case 3:
             _ref18 = _context9.sent;
             fields = _ref18.fields;
-            fileName = fields.fileName;
-            rating = fields.rating;
-            password = fields.password;
+            fileName = fields.fileName, rating = fields.rating, password = fields.password;
 
             if (!(!fileName || typeof fileName !== 'string')) {
-              _context9.next = 10;
+              _context9.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid file name'));
 
-          case 10:
-            _context9.next = 12;
+          case 8:
+            _context9.next = 10;
             return FilesModel.getFileInfoByName(fileName);
 
-          case 12:
+          case 10:
             fileInfo = _context9.sent;
 
             if (fileInfo) {
-              _context9.next = 15;
+              _context9.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('No such file'));
 
-          case 15:
-            boardName = fileInfo.boardName;
-            postNumber = fileInfo.postNumber;
-            _context9.next = 19;
+          case 13:
+            boardName = fileInfo.boardName, postNumber = fileInfo.postNumber;
+            _context9.next = 16;
             return (0, _geolocation2.default)(req.ip);
 
-          case 19:
+          case 16:
             req.geolocationInfo = _context9.sent;
-            _context9.next = 22;
+            _context9.next = 19;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 22:
-            _context9.next = 24;
+          case 19:
+            _context9.next = 21;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'editFileRating', Tools.sha1(password));
 
-          case 24:
-            _context9.next = 26;
+          case 21:
+            _context9.next = 23;
             return FilesModel.editFileRating(fileName, rating);
 
-          case 26:
+          case 23:
             res.json({});
-            _context9.next = 32;
+            _context9.next = 29;
             break;
 
-          case 29:
-            _context9.prev = 29;
+          case 26:
+            _context9.prev = 26;
             _context9.t0 = _context9['catch'](0);
 
             next(_context9.t0);
 
-          case 32:
+          case 29:
           case 'end':
             return _context9.stop();
         }
       }
-    }, _callee9, this, [[0, 29]]);
+    }, _callee9, this, [[0, 26]]);
   }));
 
   return function (_x27, _x28, _x29) {
@@ -989,77 +973,75 @@ router.post('/action/editAudioTags', function () {
           case 3:
             _ref20 = _context10.sent;
             fields = _ref20.fields;
-            fileName = fields.fileName;
-            password = fields.password;
+            fileName = fields.fileName, password = fields.password;
 
             if (!(!fileName || typeof fileName !== 'string')) {
-              _context10.next = 9;
+              _context10.next = 8;
               break;
             }
 
             throw new Error(Tools.translate('Invalid file name'));
 
-          case 9:
-            _context10.next = 11;
+          case 8:
+            _context10.next = 10;
             return FilesModel.getFileInfoByName(fileName);
 
-          case 11:
+          case 10:
             fileInfo = _context10.sent;
 
             if (fileInfo) {
-              _context10.next = 14;
+              _context10.next = 13;
               break;
             }
 
             throw new Error(Tools.translate('No such file'));
 
-          case 14:
+          case 13:
             if (Files.isAudioType(fileInfo.mimeType)) {
-              _context10.next = 16;
+              _context10.next = 15;
               break;
             }
 
             throw new Error(Tools.translate('Not an audio file'));
 
-          case 16:
-            boardName = fileInfo.boardName;
-            postNumber = fileInfo.postNumber;
-            _context10.next = 20;
+          case 15:
+            boardName = fileInfo.boardName, postNumber = fileInfo.postNumber;
+            _context10.next = 18;
             return (0, _geolocation2.default)(req.ip);
 
-          case 20:
+          case 18:
             req.geolocationInfo = _context10.sent;
-            _context10.next = 23;
+            _context10.next = 21;
             return UsersModel.checkUserBan(req.ip, boardName, {
               write: true,
               geolocationInfo: req.geolocationInfo
             });
 
-          case 23:
-            _context10.next = 25;
+          case 21:
+            _context10.next = 23;
             return UsersModel.checkUserPermissions(req, boardName, postNumber, 'editAudioTags', Tools.sha1(password));
 
-          case 25:
-            _context10.next = 27;
+          case 23:
+            _context10.next = 25;
             return FilesModel.editAudioTags(fileName, fields);
 
-          case 27:
+          case 25:
             res.json({});
-            _context10.next = 33;
+            _context10.next = 31;
             break;
 
-          case 30:
-            _context10.prev = 30;
+          case 28:
+            _context10.prev = 28;
             _context10.t0 = _context10['catch'](0);
 
             next(_context10.t0);
 
-          case 33:
+          case 31:
           case 'end':
             return _context10.stop();
         }
       }
-    }, _callee10, this, [[0, 30]]);
+    }, _callee10, this, [[0, 28]]);
   }));
 
   return function (_x30, _x31, _x32) {

@@ -61,10 +61,9 @@ var CommonKey = function () {
   }]);
 
   function CommonKey(client, key) {
-    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var parse = _ref.parse;
-    var stringify = _ref.stringify;
+    var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        parse = _ref.parse,
+        stringify = _ref.stringify;
 
     _classCallCheck(this, CommonKey);
 

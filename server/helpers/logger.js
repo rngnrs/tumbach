@@ -179,8 +179,8 @@ var Logger = void 0;
 
 if (_cluster2.default.isMaster) {
   Logger = new _winston2.default.Logger({ transports: transports.map(function (_ref2) {
-      var ctor = _ref2.ctor;
-      var opts = _ref2.opts;
+      var ctor = _ref2.ctor,
+          opts = _ref2.opts;
       return new ctor(opts);
     }) });
 } else {

@@ -895,10 +895,10 @@ var MongoDBClient = function () {
     key: 'createIndexes',
     value: function () {
       var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee24() {
-        var _ref23 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var _ref23 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            dropExisting = _ref23.dropExisting,
+            dropAll = _ref23.dropAll;
 
-        var dropExisting = _ref23.dropExisting;
-        var dropAll = _ref23.dropAll;
         var db;
         return regeneratorRuntime.wrap(function _callee24$(_context24) {
           while (1) {
@@ -930,9 +930,9 @@ var MongoDBClient = function () {
                           case 4:
                             return _context23.abrupt('return', Tools.series(indexes, function () {
                               var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee22(_ref26, name) {
-                                var index = _ref26.index;
-                                var _ref26$options = _ref26.options;
-                                var options = _ref26$options === undefined ? {} : _ref26$options;
+                                var index = _ref26.index,
+                                    _ref26$options = _ref26.options,
+                                    options = _ref26$options === undefined ? {} : _ref26$options;
                                 return regeneratorRuntime.wrap(function _callee22$(_context22) {
                                   while (1) {
                                     switch (_context22.prev = _context22.next) {
