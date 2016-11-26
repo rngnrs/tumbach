@@ -384,7 +384,7 @@ var getThreadLastPostNumber = exports.getThreadLastPostNumber = function () {
 var getThreadInfo = exports.getThreadInfo = function () {
   var _ref13 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(boardName, threadNumber, _ref14) {
     var lastPostNumber = _ref14.lastPostNumber;
-    var board, Thread, thread, postCount, newPostCount;
+    var board, thread, postCount, newPostCount;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
@@ -410,38 +410,33 @@ var getThreadInfo = exports.getThreadInfo = function () {
 
           case 6:
             _context8.next = 8;
-            return client.collection('thread');
-
-          case 8:
-            Thread = _context8.sent;
-            _context8.next = 11;
             return getThread(boardName, threadNumber);
 
-          case 11:
+          case 8:
             thread = _context8.sent;
 
             if (thread) {
-              _context8.next = 14;
+              _context8.next = 11;
               break;
             }
 
             return _context8.abrupt('return', thread);
 
-          case 14:
-            _context8.next = 16;
+          case 11:
+            _context8.next = 13;
             return getThreadPostCount(boardName, threadNumber);
 
-          case 16:
+          case 13:
             postCount = _context8.sent;
-            _context8.next = 19;
+            _context8.next = 16;
             return getThreadPostCount(boardName, threadNumber, { lastPostNumber: lastPostNumber });
 
-          case 19:
+          case 16:
             newPostCount = _context8.sent;
-            _context8.next = 22;
+            _context8.next = 19;
             return getThreadLastPostNumber(boardName, threadNumber);
 
-          case 22:
+          case 19:
             lastPostNumber = _context8.sent;
             return _context8.abrupt('return', {
               number: thread.number,
@@ -458,7 +453,7 @@ var getThreadInfo = exports.getThreadInfo = function () {
               newPostCount: newPostCount
             });
 
-          case 24:
+          case 21:
           case 'end':
             return _context8.stop();
         }
@@ -728,7 +723,8 @@ var createThread = exports.createThread = function () {
               closed: false,
               unbumpable: false,
               user: PostsModel.createPostUser(req, req.level(boardName), password),
-              createdAt: date.toISOString()
+              createdAt: date.toISOString(),
+              updatedAt: date.toISOString()
             };
 
             transaction.setThreadNumber(threadNumber);
@@ -1006,7 +1002,7 @@ var deleteThread = exports.deleteThread = function () {
               boardName: boardName,
               number: threadNumber
             }, {
-              projection: { lastPostNumber: 1 }
+              projection: { archived: 1 }
             });
 
           case 5:
