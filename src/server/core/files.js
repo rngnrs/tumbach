@@ -54,7 +54,7 @@ async function downloadFile(url, formFieldName, fields) {
       path: url,
     });
   } else {
-    optons.url = url;
+    options.url = url;
   }
   let response = await HTTP.request(options);
   if (200 !== response.status) {

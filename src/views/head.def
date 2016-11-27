@@ -8,12 +8,13 @@
   <link rel='manifest' href='/{{!it.site.pathPrefix}}manifest.json'>
   <link rel='mask-icon' href='/{{!it.site.pathPrefix}}safari-pinned-tab.svg' color='#111111'>
   <meta name='theme-color' content='#99d9ea'>
-  <link id='stylesheet-theme' rel='stylesheet' type='text/css' href='/{{!it.site.pathPrefix}}css/tumbach.css'
-        data-bind='stopBindings: true,
-                   attr: { href: "/{{!it.site.pathPrefix}}css/" + settings.style() + ".css" }'>
+
   <link id='stylesheet-base' rel='stylesheet' type='text/css' href='/{{!it.site.pathPrefix}}css/base-combined.css'>
   <link id='stylesheet-custom-base' rel='stylesheet' type='text/css'
         href='/{{!it.site.pathPrefix}}css/custom-base-combined.css'>
+  <link id='stylesheet-theme' rel='stylesheet' type='text/css' href='/{{!it.site.pathPrefix}}css/tumbach.css'
+        data-bind='stopBindings: true,
+        attr: { href: "/{{!it.site.pathPrefix}}css/" + settings.style() + ".css" }'>
   <link id='stylesheet-code-theme' rel='stylesheet' type='text/css'
         href='/{{!it.site.pathPrefix}}css/3rdparty/highlight.js/default.css'
         data-bind='stopBindings: true,
