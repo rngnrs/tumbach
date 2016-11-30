@@ -15,7 +15,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var spritesmith = require('gulp.spritesmith');
 var Stream = require('stream');
 var uglify = require('gulp-uglify');
-var webworkify = require('webworkify');
 
 const CODEMIRROR_ADDONS = ['mode/simple'];
 const CODEMIRROR_MODES = ['javascript', 'css', 'xml', 'htmlmixed'];
@@ -45,7 +44,7 @@ function stringStream(string) {
 }
 
 function buildServer(custom/*, debug*/) {
-  return gulp.src(custom ? './src/server/**/custom/**.js' : './src/server/**/!(custom)**.js')
+  return gulp.src(custom ? './src/server/**/custom/**.js' : './src/server/**/!(custom)/**.js')
   .pipe(sourcemaps.init())
   .pipe(babel({ presets: ['es2015', 'stage-2'] }))
   .pipe(sourcemaps.write('./'))

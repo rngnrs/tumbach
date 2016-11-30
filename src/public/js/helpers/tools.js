@@ -659,12 +659,12 @@ export function regexp(string, rep) {
     return null;
   }
   if (rep) {
-    return new RegExp(match[1], match[3]);
-  } else {
     return {
       regexp: new RegExp(match[1], match[3]),
       rep: _(match).last()
     };
+  } else {
+    return new RegExp(match[1], match[3]);
   }
 }
 
@@ -753,4 +753,9 @@ export function lcToFile(lc, fileName) {
     file.name = fileName;
   }
   return file;
+}
+
+export function getFunctionArgs(func) {
+  let args = func.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+  return args.split(',').map(arg => arg.replace(/\/\*.*\*\//, '').trim()).filter(arg => !!arg);
 }

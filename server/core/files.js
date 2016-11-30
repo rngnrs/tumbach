@@ -27,7 +27,7 @@ var downloadFile = function () {
           case 6:
             result = _context.sent;
 
-            options.url = result.response[0].url;
+            options.url = result[0].url;
             _context.next = 11;
             break;
 
@@ -40,7 +40,7 @@ var downloadFile = function () {
                 path: url
               });
             } else {
-              optons.url = url;
+              options.url = url;
             }
 
           case 11:

@@ -1,8 +1,8 @@
 import _ from 'underscore';
 import HTTP from 'q-io/http';
 
-import config from '../helpers/tools';
-import * as Tools from '../helpers/tools';
+import config from './config';
+import * as Tools from './tools';
 
 
 const VK_API_CALL_TIMEOUT = Tools.MINUTE;
@@ -28,5 +28,9 @@ export default async function(method, params) {
     throw new Error(Tools.translate('Failed to call VK API method'));
   }
   let data = await response.body.read();
-  return JSON.parse(data.toString());
+  let result = JSON.parse(data.toString());
+  if (result.error) {
+    throw new Error(result.error.error_msg);
+  }
+  return result.response;
 }

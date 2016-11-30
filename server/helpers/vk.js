@@ -12,7 +12,11 @@ var _http = require('q-io/http');
 
 var _http2 = _interopRequireDefault(_http);
 
-var _tools = require('../helpers/tools');
+var _config = require('./config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _tools = require('./tools');
 
 var Tools = _interopRequireWildcard(_tools);
 
@@ -26,7 +30,7 @@ var VK_API_CALL_TIMEOUT = Tools.MINUTE;
 
 exports.default = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(method, params) {
-    var response, data;
+    var response, data, result;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -40,7 +44,7 @@ exports.default = function () {
 
           case 2:
             params = params || {};
-            params.access_token = (0, Tools.default)('site.vkontakte.accessToken');
+            params.access_token = (0, _config2.default)('site.vkontakte.accessToken');
             params = (0, _underscore2.default)(params).map(function (value, key) {
               if (!(0, _underscore2.default)(value).isArray()) {
                 value = [value];
@@ -72,9 +76,19 @@ exports.default = function () {
 
           case 12:
             data = _context.sent;
-            return _context.abrupt('return', JSON.parse(data.toString()));
+            result = JSON.parse(data.toString());
 
-          case 14:
+            if (!result.error) {
+              _context.next = 16;
+              break;
+            }
+
+            throw new Error(result.error.error_msg);
+
+          case 16:
+            return _context.abrupt('return', result.response);
+
+          case 17:
           case 'end':
             return _context.stop();
         }

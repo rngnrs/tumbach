@@ -1020,7 +1020,7 @@ var checkUserPermissions = exports.checkUserPermissions = function () {
           case 25:
             Thread = _context23.sent;
             _context23.next = 28;
-            return Thread.fineOne({
+            return Thread.findOne({
               boardName: boardName,
               number: threadNumber
             });
@@ -1641,11 +1641,9 @@ function processRegisteredUserData(levels, ips) {
   if (levels.length <= 0) {
     throw new Error(Tools.translate('Access level is not specified for any board'));
   }
-  if (levels.some(function (level) {
-    return !_board2.default.board(level.boardName);
-  })) {
-    throw new Error(Tools.translate('Invalid board'));
-  }
+  levels = levels.filter(function (level) {
+    return !!_board2.default.board(level.boardName);
+  });
   var invalidLevel = (0, _underscore2.default)(levels).some(function (level) {
     return Tools.compareRegisteredUserLevels(level.level, 'USER') < 0 || Tools.compareRegisteredUserLevels(level.level, 'SUPERUSER') >= 0;
   });

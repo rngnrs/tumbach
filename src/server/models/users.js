@@ -446,7 +446,7 @@ export async function checkUserPermissions(req, boardName, postNumber, permissio
     throw new Error(Tools.translate('Not enough rights'));
   }
   let Thread = await client.collection('thread');
-  let thread = await Thread.fineOne({
+  let thread = await Thread.findOne({
     boardName: boardName,
     number: threadNumber
   });
