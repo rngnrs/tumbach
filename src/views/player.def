@@ -107,8 +107,10 @@
                         drop: $root.trackDrop
                       }'>
         <div class='player-track-info' data-bind='html: $root.trackInfo($data)'></div>
-          <div data-bind='if: $data.duration'>
-            <span class='player-track-actions' data-bind='text: $data.duration'></span>
+          <div>
+            <span class='player-track-actions' data-bind='text: $data.duration'>
+                <span data-bind='if: $data.duration'></span>
+            </span>
             <div class='player-track-actions'>
               <a class='icon icon-download-16 button-icon' draggable='false'
                  title='{{!it.translate('Download file', 'downloadPlaylistFileText')}}'
