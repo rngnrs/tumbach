@@ -330,6 +330,11 @@ router.renderRSS = async function(boardName) {
       post.text = post.text.split('&nbsp', ' '); //NOTE: Required for the RSS to be valid
     }
     post.subject = BoardsModel.postSubject(post, 150) || post.number; //TODO: Magic number
+    let t = (post.name && (post.name.indexOf('span') === -1)) ? post.name.indexOf('#') : -1;
+    if (t > 0) {
+        post.name = post.name.slice(0, t);
+    } else if (t == 0)
+        delete post.name;
   });
   let rss = {
     date: Tools.now(),

@@ -52,10 +52,6 @@
       {{? post.opIp && post.options.signAsOp}}
         <span class='op-sign'></span>
       {{?}}
-      {{#def['custom/postHeaderPart/90'] || ''}}
-      {{? post.options.showTripcode && post.tripcode}}
-        <span class='tripcode js-tripcode'>{{!post.tripcode}}</span>
-      {{?}}
       {{#def['custom/postHeaderPart/100'] || ''}}
       {{? it.board.showWhois}}
         <span class='flag {{? post.geolocation.countryCode}}flag-{{!post.geolocation.countryCode.toLowerCase()}}{{?}} js-with-tooltip'
@@ -77,10 +73,10 @@
         {{#def['custom/postHeaderPart/150'] || ''}}
         {{? thread.postingEnabled && !thread.postLimitReached}}
           <span class='js-only js-quick-reply-container'>
-            <span class='icon icon-undo-16 button-icon'
+            <a href='javascript:void(0)' class='icon icon-undo-16 button-icon'
                   data-bind='attr: { title: "{{!it.translate('Quick reply', 'quickReplyText')}}"
                                + shortcutSuffix("quickReply") },
-                             click: quickReply.bind($data, {{!post.number}}, {{!post.threadNumber}})'></span>
+            click: quickReply.bind($data, {{!post.number}}, {{!post.threadNumber}})'></a>
           </span>
         {{?}}
         {{#def['custom/postHeaderPart/160'] || ''}}

@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import FSSync from 'fs';
+import tripcode from 'tripcode';
 
 import config from '../helpers/config';
 import Logger from '../helpers/logger';
@@ -226,6 +227,7 @@ class Board {
       maxTextLength: this.maxTextLength,
       maxPasswordLength: this.maxPasswordLength,
       maxFileCount: this.maxFileCount,
+      minFileCount: this.minFileCount,
       maxFileSize: this.maxFileSize,
       maxLastPosts: this.maxLastPosts,
       markupElements: this.markupElements,
@@ -286,7 +288,7 @@ class Board {
     if ('markupText' === mode || 'editPost' === mode) {
       return;
     }
-    if ('createThread' === mode && this.maxFileCount && files.length <= 0) {
+    if ('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount != 0) {
       throw new Error(Tools.translate('Attempt to create a thread without attaching a file'));
     }
     if ('deleteFile' === mode && (existingFileCount > 0)) {
@@ -329,9 +331,20 @@ class Board {
   async renderPost(post) {
     post.rawSubject = post.subject;
     post.isOp = (post.number === post.threadNumber);
-    if (post.options.showTripcode) {
+    let t = (post.name && (post.name.indexOf('span') === -1)) ? post.name.indexOf('#') : -1;
+    if (post.user.hashpass && post.options.showTripcode) {
       post.tripcode = this.generateTripcode(post.user.hashpass);
+    } else if (t >= 0) {
+      let tt = post.name.indexOf('##');
+      post.tripcode = this.stripcode((tt >= 0)? post.name.slice(t+1,tt): post.name.slice(t+1));
+      if (tt >= 0)
+        post.tripcode += '!' + this.stripcode(post.name.slice(tt+2));
+      post.options.showTripcode = !0;
     }
+    if (t > 0) {
+      post.name = post.name.slice(0, t);
+    } else if (t == 0)
+      delete post.name;
     delete post.user.ip;
     delete post.user.hashpass;
     delete post.user.password;
@@ -349,6 +362,12 @@ class Board {
 
   generateTripcode(source) {
     return '!' + Tools.crypto('md5', source + config('site.tripcodeSalt'), 'base64').substr(0, 10);
+  }
+
+  stripcode(t) {
+    if(!t.length || typeof t != "string")
+      return "";
+    return "!" + tripcode(t);
   }
 }
 

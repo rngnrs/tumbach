@@ -79,9 +79,20 @@ router.post('/action/markupText', async function(req, res, next) {
       },
       createdAt: Tools.now().toISOString()
     };
+    let t = fields.name.indexOf('#');
     if (req.hashpass && tripcode) {
       data.tripcode = board.generateTripcode(req.hashpass);
+    } else if (t >= 0) {
+        let tt = data.name.indexOf('##');
+        data.tripcode = board.stripcode(fields.name.slice(t+1, tt));
+        if (tt >= 0)
+            data.tripcode += '!' + this.stripcode(data.name.slice(tt+2));
+        data.options.showTripcode = !0;
     }
+    if (t > 0) {
+        data.name = data.name.slice(0, t);
+    } else if (t == 0)
+        delete data.name;
     res.json(data);
   } catch (err) {
     next(err);

@@ -153,7 +153,7 @@ var router = _express2.default.Router();
 
 router.post('/action/markupText', function () {
   var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, res, next) {
-    var _ref4, fields, boardName, text, markupMode, signAsOp, tripcode, board, rawText, markupModes, data;
+    var _ref4, fields, boardName, text, markupMode, signAsOp, tripcode, board, rawText, markupModes, data, t, tt;
 
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
@@ -214,26 +214,36 @@ router.post('/action/markupText', function () {
               },
               createdAt: Tools.now().toISOString()
             };
+            t = fields.name.indexOf('#');
 
             if (req.hashpass && tripcode) {
               data.tripcode = board.generateTripcode(req.hashpass);
+            } else if (t >= 0) {
+              tt = data.name.indexOf('##');
+
+              data.tripcode = board.stripcode(fields.name.slice(t + 1, tt));
+              if (tt >= 0) data.tripcode += '!' + this.stripcode(data.name.slice(tt + 2));
+              data.options.showTripcode = !0;
             }
+            if (t > 0) {
+              data.name = data.name.slice(0, t);
+            } else if (t == 0) delete data.name;
             res.json(data);
-            _context2.next = 30;
+            _context2.next = 32;
             break;
 
-          case 27:
-            _context2.prev = 27;
+          case 29:
+            _context2.prev = 29;
             _context2.t0 = _context2['catch'](0);
 
             next(_context2.t0);
 
-          case 30:
+          case 32:
           case 'end':
             return _context2.stop();
         }
       }
-    }, _callee2, this, [[0, 27]]);
+    }, _callee2, this, [[0, 29]]);
   }));
 
   return function (_x6, _x7, _x8) {

@@ -620,6 +620,11 @@ export function maxFileCount(boardName) {
   return model ? (model.maxFileCount || 0) : 0;
 }
 
+export function minFileCount(boardName) {
+  let model = selectBoard(boardName);
+  return model ? (model.minFileCount || 0) : 0;
+}
+
 export function maxFileSize(boardName) {
   let model = selectBoard(boardName);
   return model ? (model.maxFileSize || 0) : 0;

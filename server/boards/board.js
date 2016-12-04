@@ -16,6 +16,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _tripcode = require('tripcode');
+
+var _tripcode2 = _interopRequireDefault(_tripcode);
+
 var _config = require('../helpers/config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -299,6 +303,7 @@ var Board = function () {
         maxTextLength: this.maxTextLength,
         maxPasswordLength: this.maxPasswordLength,
         maxFileCount: this.maxFileCount,
+        minFileCount: this.minFileCount,
         maxFileSize: this.maxFileSize,
         maxLastPosts: this.maxLastPosts,
         markupElements: this.markupElements,
@@ -405,7 +410,7 @@ var Board = function () {
                 return _context.abrupt('return');
 
               case 15:
-                if (!('createThread' === mode && this.maxFileCount && files.length <= 0)) {
+                if (!('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount != 0)) {
                   _context.next = 17;
                   break;
                 }
@@ -542,15 +547,27 @@ var Board = function () {
     key: 'renderPost',
     value: function () {
       var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(post) {
+        var t, tt;
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 post.rawSubject = post.subject;
                 post.isOp = post.number === post.threadNumber;
-                if (post.options.showTripcode) {
+                t = post.name && post.name.indexOf('span') === -1 ? post.name.indexOf('#') : -1;
+
+                if (post.user.hashpass && post.options.showTripcode) {
                   post.tripcode = this.generateTripcode(post.user.hashpass);
+                } else if (t >= 0) {
+                  tt = post.name.indexOf('##');
+
+                  post.tripcode = this.stripcode(tt >= 0 ? post.name.slice(t + 1, tt) : post.name.slice(t + 1));
+                  if (tt >= 0) post.tripcode += '!' + this.stripcode(post.name.slice(tt + 2));
+                  post.options.showTripcode = !0;
                 }
+                if (t > 0) {
+                  post.name = post.name.slice(0, t);
+                } else if (t == 0) delete post.name;
                 delete post.user.ip;
                 delete post.user.hashpass;
                 delete post.user.password;
@@ -565,7 +582,7 @@ var Board = function () {
                 }
                 return _context5.abrupt('return', post);
 
-              case 8:
+              case 10:
               case 'end':
                 return _context5.stop();
             }
@@ -583,6 +600,12 @@ var Board = function () {
     key: 'generateTripcode',
     value: function generateTripcode(source) {
       return '!' + Tools.crypto('md5', source + (0, _config2.default)('site.tripcodeSalt'), 'base64').substr(0, 10);
+    }
+  }, {
+    key: 'stripcode',
+    value: function stripcode(t) {
+      if (!t.length || typeof t != "string") return "";
+      return "!" + (0, _tripcode2.default)(t);
     }
   }]);
 
