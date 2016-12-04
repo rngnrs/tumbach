@@ -43,7 +43,7 @@
       {{#def['post/subject']}}
       {{#def['custom/postHeaderPart/60'] || ''}}
       {{? post.options.showTripcode && (it.compareRegisteredUserLevels(post.user.level, 'USER') >= 0)}}
-        <span class='icon icon-checkmark-16'
+        <span class='icon icon-checkmark-16 sign-icon'
               title='{{!it.translate('This user is registered', 'registeredText')}}'></span>
       {{?}}
       {{#def['custom/postHeaderPart/70'] || ''}}
