@@ -26,7 +26,7 @@ let DeletedThreads = new UnorderedSet(redisClient(), 'deletedThreads', {
 
 export function sortThreadsByDate(t1, t2) {
   if (!!t1.fixed === !!t2.fixed) {
-    return t2.updatedAt.localeCompare(t1.updatedAt);
+    return (t2.updatedAt)? t2.updatedAt.localeCompare(t1.updatedAt): 1;
   } else {
     return t1.fixed ? -1 : 1;
   }
