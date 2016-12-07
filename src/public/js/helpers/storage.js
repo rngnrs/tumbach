@@ -252,6 +252,7 @@ export let sageEnabled = createDataFunction('sageEnabled', false, { convertSet: 
 export let showTripcode = createDataFunction('showTripcode', false, { convertSet: convertBoolean });
 export let postFormFloating = createDataFunction('postFormFloating', false, { convertSet: convertBoolean });
 export let postFormFixed = createDataFunction('postFormFixed', true, { convertSet: convertBoolean });
+export let name = createObservable('name', '');
 
 export let lastChatCheckDate = createDataFunction('lastChatCheckDate', null, { convertSet: convertDate });
 

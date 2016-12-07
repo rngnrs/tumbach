@@ -20,9 +20,6 @@ import * as Captcha from '../captcha';
 import * as PostProcessors from '../handlers/post-processors';
 import * as Widgets from '../widgets';
 import OverlayProgressBar from '../widgets/overlay-progress-bar';
-import PopupMessage from '../widgets/popup-message';
-
-const MARKUP_DELTA_WIDTH = 8;
 
 let floatingPostForm = false;
 let visiblePostFormContainerPosition = KO.observable('');
@@ -179,8 +176,10 @@ export let insertPostNumber = function(postNumber) {
 
 function resetPostForm() {
   let postForm = $('#post-form');
-  postForm.find('[name="name"], [name="subject"], [name="text"]').val('');
-  postForm.find('[name="signAsOp"]').prop('checked', false);
+  postForm.find('[name="subject"], [name="text"]').val('');
+  postForm.find('[name="sage"]').prop('checked', false);
+  Storage.name(postForm.find('[name="name"]').val());
+  Storage.sageEnabled(false);
   DOM.queryAll('.file-input', postForm[0]).reverse().forEach(FileInputs.removeFile);
   if (typeof window.lord.emit === 'function') {
     window.lord.emit('postFormReset');
@@ -235,9 +234,8 @@ export async function submit() {
       } else {
         if ('goto_thread' === Settings.quickReplyAction()) {
           let hash = `#post-${result.postNumber}`;
-          let href = `/${Tools.sitePathPrefix()}${result.boardName}/res/${result.threadNumber}.html${hash}`;
+          let href = `/${Tools.sitePathPrefix()}${result.boardName}/res/${threadNumber}.html${hash}`;
           await Navigation.setPage(href);
-          return;
         } else if (threadNumber) {
           let threadPosts = $(`#thread-${threadNumber} .js-thread-posts`);
           let post = await AJAX.api('post', {
@@ -290,10 +288,14 @@ export function initialize() {
       sageEnabled(enabled);
       return true;
     },
-    toggleNokoEnabled: () => { // TODO: Noko
-      let enabled = !Storage.nokoEnabled();
-      Storage.nokoEnabled(enabled);
-      nokoEnabled(enabled);
+    toggleNokoEnabled: () => {
+      let mode,
+          noko = Settings.quickReplyAction();
+      if (noko == 'append_post')
+        mode = 'goto_thread';
+      else
+        mode = 'append_post';
+      Settings.quickReplyAction(mode);
       return true;
     },
     toggleShowTripcode: () => {
@@ -314,6 +316,7 @@ export function initialize() {
     },
     settings: Settings,
     password: Storage.password,
+    name: Storage.name,
     sageEnabled: sageEnabled,
     showTripcode: showTripcode,
     shortcutSuffix: Hotkeys.shortcutSuffix,

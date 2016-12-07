@@ -25,7 +25,7 @@
       <span class='post-form-option'>{{#def['custom/postFormOption/0'] || ''}}</span>
       <span class='post-form-option'>
           <input id='post-form-option-sage' name='sage' type='checkbox' value='true'
-                 data-bind='checked: settings.moveToPostOnReplyInThread,
+                 data-bind='checked: sageEnabled,
                             click: toggleSageEnabled' />
           <label for='post-form-option-sage'>{{!it.translate('SAGE', 'postFormLabelSAGE')}}</label>
         </span>
@@ -36,7 +36,9 @@
         </span>
       <span class='post-form-option'>{{#def['custom/postFormOption/20'] || ''}}</span>
       <span class='post-form-option'>
-          <input disabled id='post-form-option-noko' name='noko' type='checkbox' value='true' />
+          <input id='post-form-option-noko' name='noko' type='checkbox' value='true'
+                 data-bind='checked: (settings.quickReplyAction() == "goto_thread"),
+                            click: toggleNokoEnabled' />
           <label for='post-form-option-noko'>noko</label>
         </span>
       <span class='post-form-option'>{{#def['custom/postFormOption/30'] || ''}}</span>
@@ -44,7 +46,8 @@
     </div>
     <div class='post-form-row post-form-row-3'>
       <input name='name' type='text' class='post-form-input' maxlength='{{!it.board.maxNameLength}}'
-             placeholder='{{!it.translate('Name', 'postFormPlaceholderName')}}' />
+             placeholder='{{!it.translate('Name', 'postFormPlaceholderName')}}'
+             data-bind='textInput: name' />
       {{#def['custom/postFormField/10'] || ''}}
       <input name='subject' type='text' class='post-form-input' maxlength='{{!it.board.maxSubjectLength}}'
              placeholder='{{!it.translate('Subject', 'postFormPlaceholderSubject')}}' />
