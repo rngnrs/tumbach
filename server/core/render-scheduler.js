@@ -387,7 +387,7 @@ var scheduleRender = exports.scheduleRender = function () {
                             }
                           }
                         }, _callee9, this);
-                      }))();
+                      }));
                       return _context10.abrupt('break', 20);
 
                     case 20:

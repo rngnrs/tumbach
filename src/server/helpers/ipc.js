@@ -6,7 +6,7 @@ import Logger from './logger';
 import Queue from './queue';
 import * as Tools from './tools';
 
-const DEFAULT_TASK_TIMEOUT = 30 * Tools.SECOND;
+const DEFAULT_TASK_TIMEOUT = 20 * Tools.SECOND;
 
 let handlers = new Map();
 let tasks = new Map();
