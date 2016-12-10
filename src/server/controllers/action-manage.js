@@ -37,12 +37,12 @@ router.post('/action/registerUser', async function(req, res, next) {
       throw new Error(Tools.translate('Not enough rights'));
     }
     let { fields } = await Files.parseForm(req);
-    let { password } = fields;
-    if (!password) {
+    let { hashpass } = fields;
+    if (!hashpass) {
       throw new Error(Tools.translate('Invalid password'));
     }
     let { levels, ips } = await getRegisteredUserData(fields);
-    let hashpass = Tools.mayBeHashpass(password) ? password : Tools.toHashpass(password);
+    hashpass = Tools.mayBeHashpass(hashpass) ? hashpass : Tools.toHashpass(hashpass);
     await UsersModel.registerUser(hashpass, levels, ips);
     res.json({ hashpass: hashpass });
   } catch (err) {

@@ -165,7 +165,7 @@ export async function getThreadInfo(boardName, threadNumber, { lastPostNumber })
   if (!threadNumber) {
     throw new Error(Tools.translate('Invalid thread number'));
   }
-  //let Thread = await client.collection('thread');
+  let Thread = await client.collection('thread');
   let thread = await getThread(boardName, threadNumber);
   if (!thread) {
     return thread;

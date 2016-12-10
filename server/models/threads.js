@@ -384,7 +384,7 @@ var getThreadLastPostNumber = exports.getThreadLastPostNumber = function () {
 var getThreadInfo = exports.getThreadInfo = function () {
   var _ref13 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(boardName, threadNumber, _ref14) {
     var lastPostNumber = _ref14.lastPostNumber;
-    var board, thread, postCount, newPostCount;
+    var board, Thread, thread, postCount, newPostCount;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
@@ -410,33 +410,38 @@ var getThreadInfo = exports.getThreadInfo = function () {
 
           case 6:
             _context8.next = 8;
-            return getThread(boardName, threadNumber);
+            return client.collection('thread');
 
           case 8:
+            Thread = _context8.sent;
+            _context8.next = 11;
+            return getThread(boardName, threadNumber);
+
+          case 11:
             thread = _context8.sent;
 
             if (thread) {
-              _context8.next = 11;
+              _context8.next = 14;
               break;
             }
 
             return _context8.abrupt('return', thread);
 
-          case 11:
-            _context8.next = 13;
+          case 14:
+            _context8.next = 16;
             return getThreadPostCount(boardName, threadNumber);
 
-          case 13:
+          case 16:
             postCount = _context8.sent;
-            _context8.next = 16;
+            _context8.next = 19;
             return getThreadPostCount(boardName, threadNumber, { lastPostNumber: lastPostNumber });
 
-          case 16:
+          case 19:
             newPostCount = _context8.sent;
-            _context8.next = 19;
+            _context8.next = 22;
             return getThreadLastPostNumber(boardName, threadNumber);
 
-          case 19:
+          case 22:
             lastPostNumber = _context8.sent;
             return _context8.abrupt('return', {
               number: thread.number,
@@ -453,7 +458,7 @@ var getThreadInfo = exports.getThreadInfo = function () {
               newPostCount: newPostCount
             });
 
-          case 21:
+          case 24:
           case 'end':
             return _context8.stop();
         }

@@ -93,7 +93,7 @@ var router = _express2.default.Router();
 
 router.post('/action/registerUser', function () {
   var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, res, next) {
-    var _ref3, fields, password, _ref4, levels, ips, hashpass;
+    var _ref3, fields, hashpass, _ref4, levels, ips;
 
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
@@ -115,9 +115,9 @@ router.post('/action/registerUser', function () {
           case 5:
             _ref3 = _context2.sent;
             fields = _ref3.fields;
-            password = fields.password;
+            hashpass = fields.hashpass;
 
-            if (password) {
+            if (hashpass) {
               _context2.next = 10;
               break;
             }
@@ -132,7 +132,8 @@ router.post('/action/registerUser', function () {
             _ref4 = _context2.sent;
             levels = _ref4.levels;
             ips = _ref4.ips;
-            hashpass = Tools.mayBeHashpass(password) ? password : Tools.toHashpass(password);
+
+            hashpass = Tools.mayBeHashpass(hashpass) ? hashpass : Tools.toHashpass(hashpass);
             _context2.next = 18;
             return UsersModel.registerUser(hashpass, levels, ips);
 
