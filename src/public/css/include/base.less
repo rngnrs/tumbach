@@ -178,20 +178,22 @@ header:empty, footer:empty {
 }
 
 .overlay-progress-bar {
-  position: fixed;
+  /*position: fixed;
   left: 0;
   top: 0;
   width: 100%;
-  height: 100%;
+  height: 100%;*/
   z-index: 200;
-  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0;
+  width: 420px;
+  max-width: 100%;
 }
 
 .progress-bar {
   position: relative;
   top: ~'calc(50% - 1em)';
   margin: 0 auto;
-  width: ~'calc(100% - 60px)';
+  width: 100%; //~'calc(100% - 60px)';
   max-width: 420px
 }
 
@@ -202,22 +204,7 @@ header:empty, footer:empty {
   z-index: 1;
   text-align: center;
   font-weight: bold;
-  text-shadow: 1px 1px 0 #fff;
-}
-
-.ajax-overlay-mask {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 300;
-  background-color: rgba(0, 0, 0, .3);
-  transition: visibility, .2s opacity;
+  text-shadow: 1px 1px 0 #fff
 }
 
 .ajax-overlay-spinner-container {

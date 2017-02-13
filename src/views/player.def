@@ -14,7 +14,7 @@
                        css: {
                          "icon-play-16": !playing(),
                          "icon-pause-16": playing(),
-                         "button-icon-disabled": !currentTrack()
+                         "button-icon-disabled": !currentTrack() && !sessionStorage["playerPlaying"]
                        },
                        click: playPause'></span>
       <span class='desktop-only icon icon-backward-16 button-icon'
@@ -45,7 +45,7 @@
       data-bind='click: togglePlayerVisibility'></span>
     </div>
     <div id='player-preview-container' data-bind='css: {
-        "toggled": currentTrack()
+        "toggled": currentTrack() || sessionStorage["playerPlaying"]
     }'>
         <div id='player-preview'></div>
         <div id='player-paranja'></div>
@@ -68,7 +68,7 @@
             css: {
             "icon-play-32": !playing(),
             "icon-pause-32": playing(),
-            "button-icon-disabled": !currentTrack()
+            "button-icon-disabled": !currentTrack() && !sessionStorage["playerPlaying"]
             },
             click: playPause'>
             </span><span class='icon icon-forward-32 button-icon' title='{{!it.translate('Next track', 'playerNextTrackText')}}'

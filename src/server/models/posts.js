@@ -393,7 +393,7 @@ export async function copyPosts({ sourceBoardName, sourceThreadNumber, targetBoa
   }, true);
 }
 
-export async function getThreadPosts(boardName, threadNumber, { limit, offset } = {}, sort = true) {
+export async function getThreadPosts(boardName, threadNumber, { limit, offset, sort } = {}) { //TODO: Fix it
   let board = Board.board(boardName);
   if (!board) {
     throw new Error(Tools.translate('Invalid board'));

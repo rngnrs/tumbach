@@ -35,7 +35,7 @@ export default class OverlayProgressBar extends EventEmitter {
     }
     this.visible = false;
     this.finished = false;
-    this.node = $('<div class="overlay-progress-bar"></div>');
+    this.node = $('<div class="popup overlay-progress-bar"></div>');
     this.progressBar = $('<div class="progress-bar"></div>');
     this.label = $('<div class="progress-bar-label"></div>');
     this.text = $(`<span name='text'></span>`).text(this.labelText(undefined, undefined, true));

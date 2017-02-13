@@ -3,7 +3,6 @@ import $ from 'jquery';
 import KO from 'knockout';
 
 import * as AJAX from '../helpers/ajax';
-import * as Constants from '../helpers/constants';
 import * as DOM from '../helpers/dom';
 import * as Settings from '../helpers/settings';
 import * as Storage from '../helpers/storage';
@@ -256,9 +255,8 @@ class TracksViewModel {
 
   playPause(_, e) {
     e.stopPropagation();
-    if (!this.currentTrack()) {
+    if (!this.currentTrack() && !Storage.playerPlaying())
       return;
-    }
     playPause();
   }
 }

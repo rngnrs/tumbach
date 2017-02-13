@@ -1,6 +1,6 @@
-<div id='ajax-loading-overlay' class='ajax-overlay-mask' style='display: none;'>
-  <div class='section-body ajax-overlay-spinner-container'>
-    <span class="icon icon-spinner-24"></span>
-    <h2 class='ajax-overlay-spinner-text'>{{!it.translate('Loading page…')}}</h2>
+<div id='ajax-loading-overlay' style='display: none;'>
+  <div class='popup ajax-overlay-spinner-container'>
+    <span class="icon sign-icon icon-spinner-16"></span>
+    <div class='ajax-overlay-spinner-text'>{{!it.translate('Loading page…')}}</div>
   </div>
 </div>

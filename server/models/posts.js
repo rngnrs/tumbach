@@ -886,14 +886,15 @@ var getThreadPosts = exports.getThreadPosts = function () {
   var _ref21 = _asyncToGenerator(regeneratorRuntime.mark(function _callee15(boardName, threadNumber) {
     var _ref22 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         limit = _ref22.limit,
-        offset = _ref22.offset;
+        offset = _ref22.offset,
+        sort = _ref22.sort;
 
-    var sort = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
     var board, Post, cursor, posts;
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
+            //TODO: Fix it
             board = _board2.default.board(boardName);
 
             if (board) {
@@ -966,7 +967,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
     }, _callee15, this);
   }));
 
-  return function getThreadPosts(_x30, _x31, _x32, _x33) {
+  return function getThreadPosts(_x30, _x31, _x32) {
     return _ref21.apply(this, arguments);
   };
 }();
@@ -1028,7 +1029,7 @@ var findPosts = exports.findPosts = function () {
     }, _callee16, this);
   }));
 
-  return function findPosts(_x36, _x37, _x38) {
+  return function findPosts(_x34, _x35, _x36) {
     return _ref23.apply(this, arguments);
   };
 }();
