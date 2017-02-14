@@ -44,12 +44,15 @@ export async function getThread(boardName, threadNumber) {
     throw new Error(Tools.translate('Invalid board'));
   }
   let thread = await ThreadsModel.getThread(boardName, threadNumber);
-  let posts = await PostsModel.getThreadPosts(boardName, threadNumber);
+  let posts = await PostsModel.getThreadPosts(boardName, threadNumber, {sort: true});
   thread.postCount = posts.length;
   if (thread.postCount <= 0) {
     throw new Error(Tools.translate('No such thread'));
   }
   thread.opPost = posts.splice(0, 1)[0];
+  if (thread.opPost.sequenceNumber != 1) {
+    console.log(posts);
+  }
   thread.lastPosts = posts;
   thread.title = postSubject(thread.opPost, 50) || null;
   addDataToThread(thread, board);
@@ -71,7 +74,7 @@ export async function getPage(boardName, pageNumber) {
     limit: board.threadsPerPage,
     offset: pageNumber * board.threadsPerPage
   });
-  let Post = await client.collection('post');
+  //let Post = await client.collection('post');
   await Tools.series(threads, async function(thread) {
     thread.opPost = await PostsModel.getPost(boardName, thread.number, {
       withExtraData: true,
@@ -108,7 +111,7 @@ export async function getCatalog(boardName, sortMode) {
     throw new Error(Tools.translate('Invalid board'));
   }
   let threads = await ThreadsModel.getThreads(boardName);
-  let Post = await client.collection('post');
+  //let Post = await client.collection('post');
   await Tools.series(threads, async function(thread) {
     thread.opPost = await PostsModel.getPost(boardName, thread.number, {
       withFileInfos: true,
@@ -143,7 +146,7 @@ export async function getArchive(boardName) {
   }
   let threads = await ThreadsModel.getThreads(boardName, { archived: true });
   threads.sort(ThreadsModel.sortThreadsByDate);
-  let Post = await client.collection('post');
+  //let Post = await client.collection('post');
   await Tools.series(threads, async function(thread) {
     thread.opPost = await PostsModel.getPost(boardName, thread.number);
     thread.title = postSubject(thread.opPost, 50) || null;
@@ -188,7 +191,7 @@ export async function getPageCount(boardName) {
   if (!board) {
     throw new Error(Tools.translate('Invalid board'));
   }
-  let Thread = await client.collection('thread');
+  //let Thread = await client.collection('thread');
   let threadCount = await ThreadsModel.getThreadCount(boardName);
   let pageCount = Math.ceil(threadCount / board.threadsPerPage) || 1;
   pageCounts.set(boardName, pageCount);
