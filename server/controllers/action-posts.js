@@ -210,11 +210,11 @@ router.post('/action/markupText', function () {
               rawText: rawText || null,
               options: {
                 signAsOp: 'true' === signAsOp,
-                showTripcode: !!(req.hashpass && 'true' === tripcode)
+                showTripcode: req.hashpass && 'true' === tripcode
               },
               createdAt: Tools.now().toISOString()
             };
-            t = fields.name.indexOf('#');
+            t = fields.name ? fields.name.indexOf('#') : -1;
 
             if (req.hashpass && tripcode) {
               data.tripcode = board.generateTripcode(req.hashpass);

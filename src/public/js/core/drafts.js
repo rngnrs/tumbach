@@ -132,7 +132,7 @@ export async function addToDrafts() {
   } catch (err) {
     DOM.handleError(err);
   }
-};
+}
 
 export function initializeDrafts() {
   let draftsNode = $('#drafts')[0];

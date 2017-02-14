@@ -75,11 +75,11 @@ router.post('/action/markupText', async function(req, res, next) {
       rawText: rawText || null,
       options: {
         signAsOp: ('true' === signAsOp),
-        showTripcode: !!(req.hashpass && ('true' === tripcode))
+        showTripcode: (req.hashpass && ('true' === tripcode))
       },
       createdAt: Tools.now().toISOString()
     };
-    let t = fields.name.indexOf('#');
+    let t = fields.name? fields.name.indexOf('#') : -1;
     if (req.hashpass && tripcode) {
       data.tripcode = board.generateTripcode(req.hashpass);
     } else if (t >= 0) {
