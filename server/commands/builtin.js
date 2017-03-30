@@ -82,7 +82,7 @@ exports.default = [{
       }, _callee, this);
     }));
 
-    function handler(_x) {
+    function handler() {
       return _ref.apply(this, arguments);
     }
 
@@ -228,7 +228,7 @@ exports.default = [{
       }, _callee4, this);
     }));
 
-    function handler(_x3) {
+    function handler() {
       return _ref8.apply(this, arguments);
     }
 
@@ -354,7 +354,7 @@ exports.default = [{
       }, _callee7, this);
     }));
 
-    function handler(_x5) {
+    function handler() {
       return _ref12.apply(this, arguments);
     }
 
@@ -429,7 +429,7 @@ exports.default = [{
       }, _callee9, this);
     }));
 
-    function handler(_x7) {
+    function handler(_x4) {
       return _ref16.apply(this, arguments);
     }
 

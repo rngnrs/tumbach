@@ -331,136 +331,119 @@ router.post('/action/synchronize', function () {
 }());
 
 router.post('/action/search', function () {
-  var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(req, res, next) {
-    var _this = this;
+  var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(req, res, next) {
+    var _ref8, _ref8$fields, query, _boardName3, page, phrases, model, result, maxSubjectLength, maxTextLength;
 
-    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            _context5.prev = 0;
-            return _context5.delegateYield(regeneratorRuntime.mark(function _callee4() {
-              var _ref8, _ref8$fields, query, boardName, page, phrases, model, result, maxSubjectLength, maxTextLength;
+            _context4.prev = 0;
+            _context4.next = 3;
+            return Files.parseForm(req);
 
-              return regeneratorRuntime.wrap(function _callee4$(_context4) {
-                while (1) {
-                  switch (_context4.prev = _context4.next) {
-                    case 0:
-                      _context4.next = 2;
-                      return Files.parseForm(req);
+          case 3:
+            _ref8 = _context4.sent;
+            _ref8$fields = _ref8.fields;
+            query = _ref8$fields.query;
+            _boardName3 = _ref8$fields.boardName;
+            page = _ref8$fields.page;
 
-                    case 2:
-                      _ref8 = _context4.sent;
-                      _ref8$fields = _ref8.fields;
-                      query = _ref8$fields.query;
-                      boardName = _ref8$fields.boardName;
-                      page = _ref8$fields.page;
+            if (!(!query || typeof query !== 'string')) {
+              _context4.next = 10;
+              break;
+            }
 
-                      if (!(!query || typeof query !== 'string')) {
-                        _context4.next = 9;
-                        break;
-                      }
+            throw new Error(Tools.translate('Search query is empty'));
 
-                      throw new Error(Tools.translate('Search query is empty'));
+          case 10:
+            if (!(query.length > (0, _config2.default)('site.maxSearchQueryLength'))) {
+              _context4.next = 12;
+              break;
+            }
 
-                    case 9:
-                      if (!(query.length > (0, _config2.default)('site.maxSearchQueryLength'))) {
-                        _context4.next = 11;
-                        break;
-                      }
+            throw new Error(Tools.translate('Search query is too long'));
 
-                      throw new Error(Tools.translate('Search query is too long'));
+          case 12:
+            if ('*' === _boardName3) {
+              _boardName3 = '';
+            }
 
-                    case 11:
-                      if ('*' === boardName) {
-                        boardName = '';
-                      }
+            if (!(_boardName3 && !_board2.default.board(_boardName3))) {
+              _context4.next = 15;
+              break;
+            }
 
-                      if (!(boardName && !_board2.default.board(boardName))) {
-                        _context4.next = 14;
-                        break;
-                      }
+            throw new Error(Tools.translate('Invalid board'));
 
-                      throw new Error(Tools.translate('Invalid board'));
+          case 15:
+            page = Tools.option(page, 'number', 0, { test: function test(p) {
+                return p >= 0;
+              } });
+            _context4.next = 18;
+            return (0, _geolocation2.default)(req.ip);
 
-                    case 14:
-                      page = Tools.option(page, 'number', 0, { test: function test(p) {
-                          return p >= 0;
-                        } });
-                      _context4.next = 17;
-                      return (0, _geolocation2.default)(req.ip);
+          case 18:
+            req.geolocationInfo = _context4.sent;
+            _context4.next = 21;
+            return UsersModel.checkUserBan(req.ip, _boardName3, {
+              write: true,
+              geolocationInfo: req.geolocationInfo
+            });
 
-                    case 17:
-                      req.geolocationInfo = _context4.sent;
-                      _context4.next = 20;
-                      return UsersModel.checkUserBan(req.ip, boardName, {
-                        write: true,
-                        geolocationInfo: req.geolocationInfo
-                      });
+          case 21:
+            phrases = query.match(/\w+|"[^"]+"/g) || [];
+            model = {
+              searchQuery: query,
+              phrases: phrases.map(function (phrase) {
+                return phrase.replace(/(^\-|^"|"$)/g, '');
+              }),
+              searchBoard: _boardName3
+            };
+            _context4.next = 25;
+            return PostsModel.findPosts(query, _boardName3, page);
 
-                    case 20:
-                      phrases = query.match(/\w+|"[^"]+"/g) || [];
-                      model = {
-                        searchQuery: query,
-                        phrases: phrases.map(function (phrase) {
-                          return phrase.replace(/(^\-|^"|"$)/g, '');
-                        }),
-                        searchBoard: boardName
-                      };
-                      _context4.next = 24;
-                      return PostsModel.findPosts(query, boardName, page);
+          case 25:
+            result = _context4.sent;
+            maxSubjectLength = (0, _config2.default)('system.search.maxResultPostSubjectLengh');
+            maxTextLength = (0, _config2.default)('system.search.maxResultPostTextLengh');
 
-                    case 24:
-                      result = _context4.sent;
-                      maxSubjectLength = (0, _config2.default)('system.search.maxResultPostSubjectLengh');
-                      maxTextLength = (0, _config2.default)('system.search.maxResultPostTextLengh');
-
-                      model.searchResults = result.posts.map(function (post) {
-                        var text = (post.plainText || '').replace(/\r*\n+/g, ' ');
-                        if (text.length > maxTextLength) {
-                          text = text.substr(0, maxTextLength - 1) + '…';
-                        }
-                        var subject = post.subject || text;
-                        if (subject.length > maxSubjectLength) {
-                          subject = subject.substr(0, maxSubjectLength - 1) + '…';
-                        }
-                        return {
-                          boardName: post.boardName,
-                          postNumber: post.number,
-                          threadNumber: post.threadNumber,
-                          archived: post.archived,
-                          subject: subject,
-                          text: text
-                        };
-                      });
-                      model.total = result.total;
-                      model.max = result.max;
-                      res.json(model);
-
-                    case 31:
-                    case 'end':
-                      return _context4.stop();
-                  }
-                }
-              }, _callee4, _this);
-            })(), 't0', 2);
-
-          case 2:
-            _context5.next = 7;
+            model.searchResults = result.posts.map(function (post) {
+              var text = (post.plainText || '').replace(/\r*\n+/g, ' ');
+              if (text.length > maxTextLength) {
+                text = text.substr(0, maxTextLength - 1) + '…';
+              }
+              var subject = post.subject || text;
+              if (subject.length > maxSubjectLength) {
+                subject = subject.substr(0, maxSubjectLength - 1) + '…';
+              }
+              return {
+                boardName: post.boardName,
+                postNumber: post.number,
+                threadNumber: post.threadNumber,
+                archived: post.archived,
+                subject: subject,
+                text: text
+              };
+            });
+            model.total = result.total;
+            model.max = result.max;
+            res.json(model);
+            _context4.next = 37;
             break;
 
-          case 4:
-            _context5.prev = 4;
-            _context5.t1 = _context5['catch'](0);
+          case 34:
+            _context4.prev = 34;
+            _context4.t0 = _context4['catch'](0);
 
-            next(_context5.t1);
+            next(_context4.t0);
 
-          case 7:
+          case 37:
           case 'end':
-            return _context5.stop();
+            return _context4.stop();
         }
       }
-    }, _callee5, this, [[0, 4]]);
+    }, _callee4, this, [[0, 34]]);
   }));
 
   return function (_x10, _x11, _x12) {

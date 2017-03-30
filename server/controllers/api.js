@@ -1040,9 +1040,108 @@ router.get('/api/registeredUsers.json', function () {
 }());
 
 router.get('/api/fileTree.json', function () {
-  var _ref21 = _asyncToGenerator(regeneratorRuntime.mark(function _callee23(req, res, next) {
-    var _this = this;
+  var _ref21 = _asyncToGenerator(regeneratorRuntime.mark(function _callee22(req, res, next) {
+    var dir, path, list;
+    return regeneratorRuntime.wrap(function _callee22$(_context22) {
+      while (1) {
+        switch (_context22.prev = _context22.next) {
+          case 0:
+            if (req.isSuperuser()) {
+              _context22.next = 2;
+              break;
+            }
 
+            return _context22.abrupt('return', next(Tools.translate('Not enough rights')));
+
+          case 2:
+            _context22.prev = 2;
+            dir = req.query.dir;
+
+            if (!dir || '#' === dir) {
+              dir = './';
+            }
+            if ('/' !== dir.slice(-1)[0]) {
+              dir += '/';
+            }
+            path = __dirname + '/../../' + dir;
+            _context22.next = 9;
+            return _fs2.default.list(path);
+
+          case 9:
+            list = _context22.sent;
+            _context22.next = 12;
+            return Tools.series(list, function () {
+              var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(file) {
+                var stat, node;
+                return regeneratorRuntime.wrap(function _callee21$(_context21) {
+                  while (1) {
+                    switch (_context21.prev = _context21.next) {
+                      case 0:
+                        _context21.next = 2;
+                        return _fs2.default.stat(path + '/' + file);
+
+                      case 2:
+                        stat = _context21.sent;
+                        node = {
+                          id: dir + file,
+                          text: file
+                        };
+
+                        if (stat.isDirectory()) {
+                          node.type = 'folder';
+                          node.children = true;
+                        } else if (stat.isFile()) {
+                          node.type = 'file';
+                        }
+                        return _context21.abrupt('return', node);
+
+                      case 6:
+                      case 'end':
+                        return _context21.stop();
+                    }
+                  }
+                }, _callee21, this);
+              }));
+
+              return function (_x60) {
+                return _ref22.apply(this, arguments);
+              };
+            }(), true);
+
+          case 12:
+            list = _context22.sent;
+
+            res.json(list);
+            _context22.next = 20;
+            break;
+
+          case 16:
+            _context22.prev = 16;
+            _context22.t0 = _context22['catch'](2);
+
+            if ('ENOENT' === _context22.t0.code) {
+              _context22.t0.status = 404;
+            } else if ('ENOTDIR' === _context22.t0.code) {
+              _context22.t0 = Tools.translate('Not a directory');
+            }
+            next(_context22.t0);
+
+          case 20:
+          case 'end':
+            return _context22.stop();
+        }
+      }
+    }, _callee22, this, [[2, 16]]);
+  }));
+
+  return function (_x57, _x58, _x59) {
+    return _ref21.apply(this, arguments);
+  };
+}());
+
+router.get('/api/fileContent.json', function () {
+  var _ref23 = _asyncToGenerator(regeneratorRuntime.mark(function _callee23(req, res, next) {
+    var encoding, content;
     return regeneratorRuntime.wrap(function _callee23$(_context23) {
       while (1) {
         switch (_context23.prev = _context23.next) {
@@ -1056,150 +1155,34 @@ router.get('/api/fileTree.json', function () {
 
           case 2:
             _context23.prev = 2;
-            return _context23.delegateYield(regeneratorRuntime.mark(function _callee22() {
-              var dir, path, list;
-              return regeneratorRuntime.wrap(function _callee22$(_context22) {
-                while (1) {
-                  switch (_context22.prev = _context22.next) {
-                    case 0:
-                      dir = req.query.dir;
-
-                      if (!dir || '#' === dir) {
-                        dir = './';
-                      }
-                      if ('/' !== dir.slice(-1)[0]) {
-                        dir += '/';
-                      }
-                      path = __dirname + '/../../' + dir;
-                      _context22.next = 6;
-                      return _fs2.default.list(path);
-
-                    case 6:
-                      list = _context22.sent;
-                      _context22.next = 9;
-                      return Tools.series(list, function () {
-                        var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(file) {
-                          var stat, node;
-                          return regeneratorRuntime.wrap(function _callee21$(_context21) {
-                            while (1) {
-                              switch (_context21.prev = _context21.next) {
-                                case 0:
-                                  _context21.next = 2;
-                                  return _fs2.default.stat(path + '/' + file);
-
-                                case 2:
-                                  stat = _context21.sent;
-                                  node = {
-                                    id: dir + file,
-                                    text: file
-                                  };
-
-                                  if (stat.isDirectory()) {
-                                    node.type = 'folder';
-                                    node.children = true;
-                                  } else if (stat.isFile()) {
-                                    node.type = 'file';
-                                  }
-                                  return _context21.abrupt('return', node);
-
-                                case 6:
-                                case 'end':
-                                  return _context21.stop();
-                              }
-                            }
-                          }, _callee21, this);
-                        }));
-
-                        return function (_x60) {
-                          return _ref22.apply(this, arguments);
-                        };
-                      }(), true);
-
-                    case 9:
-                      list = _context22.sent;
-
-                      res.json(list);
-
-                    case 11:
-                    case 'end':
-                      return _context22.stop();
-                  }
-                }
-              }, _callee22, _this);
-            })(), 't0', 4);
-
-          case 4:
-            _context23.next = 10;
-            break;
+            encoding = !TEXT_FORMATS.has((req.query.fileName || '').split('.').pop()) ? 'b' : undefined;
+            _context23.next = 6;
+            return _fs2.default.read(__dirname + '/../../' + req.query.fileName, encoding);
 
           case 6:
-            _context23.prev = 6;
-            _context23.t1 = _context23['catch'](2);
+            content = _context23.sent;
 
-            if ('ENOENT' === _context23.t1.code) {
-              _context23.t1.status = 404;
-            } else if ('ENOTDIR' === _context23.t1.code) {
-              _context23.t1 = Tools.translate('Not a directory');
-            }
-            next(_context23.t1);
+            res.json({ content: content });
+            _context23.next = 14;
+            break;
 
           case 10:
+            _context23.prev = 10;
+            _context23.t0 = _context23['catch'](2);
+
+            if ('ENOENT' === _context23.t0.code) {
+              _context23.t0.status = 404;
+            } else if ('EISDIR' === _context23.t0.code) {
+              _context23.t0 = Tools.translate('Not a file');
+            }
+            next(_context23.t0);
+
+          case 14:
           case 'end':
             return _context23.stop();
         }
       }
-    }, _callee23, this, [[2, 6]]);
-  }));
-
-  return function (_x57, _x58, _x59) {
-    return _ref21.apply(this, arguments);
-  };
-}());
-
-router.get('/api/fileContent.json', function () {
-  var _ref23 = _asyncToGenerator(regeneratorRuntime.mark(function _callee24(req, res, next) {
-    var encoding, content;
-    return regeneratorRuntime.wrap(function _callee24$(_context24) {
-      while (1) {
-        switch (_context24.prev = _context24.next) {
-          case 0:
-            if (req.isSuperuser()) {
-              _context24.next = 2;
-              break;
-            }
-
-            return _context24.abrupt('return', next(Tools.translate('Not enough rights')));
-
-          case 2:
-            _context24.prev = 2;
-            encoding = !TEXT_FORMATS.has((req.query.fileName || '').split('.').pop()) ? 'b' : undefined;
-            _context24.next = 6;
-            return _fs2.default.read(__dirname + '/../../' + req.query.fileName, encoding);
-
-          case 6:
-            content = _context24.sent;
-
-            res.json({ content: content });
-            _context24.next = 14;
-            break;
-
-          case 10:
-            _context24.prev = 10;
-            _context24.t0 = _context24['catch'](2);
-
-            if ('ENOENT' === _context24.t0.code) {
-              _context24.t0.status = 404;
-            } else if ('EISDIR' === _context24.t0.code) {
-              _context24.t0 = Tools.translate('Not a file');
-            }
-            next(_context24.t0);
-
-          case 14:
-          case 'end':
-            return _context24.stop();
-        }
-      }
-    }, _callee24, this, [[2, 10]]);
+    }, _callee23, this, [[2, 10]]);
   }));
 
   return function (_x61, _x62, _x63) {
@@ -1208,21 +1191,21 @@ router.get('/api/fileContent.json', function () {
 }());
 
 router.get('/api/fileHeaders.json', function () {
-  var _ref24 = _asyncToGenerator(regeneratorRuntime.mark(function _callee25(req, res, next) {
+  var _ref24 = _asyncToGenerator(regeneratorRuntime.mark(function _callee24(req, res, next) {
     var options, proxy, response;
-    return regeneratorRuntime.wrap(function _callee25$(_context25) {
+    return regeneratorRuntime.wrap(function _callee24$(_context24) {
       while (1) {
-        switch (_context25.prev = _context25.next) {
+        switch (_context24.prev = _context24.next) {
           case 0:
             if (req.query.url) {
-              _context25.next = 2;
+              _context24.next = 2;
               break;
             }
 
-            return _context25.abrupt('return', next(Tools.translate('Invalid URL')));
+            return _context24.abrupt('return', next(Tools.translate('Invalid URL')));
 
           case 2:
-            _context25.prev = 2;
+            _context24.prev = 2;
             options = {
               method: 'HEAD',
               timeout: GET_FILE_HEADERS_TIMEOUT
@@ -1239,36 +1222,36 @@ router.get('/api/fileHeaders.json', function () {
             } else {
               options.url = req.query.url;
             }
-            _context25.next = 8;
+            _context24.next = 8;
             return _http2.default.request(options);
 
           case 8:
-            response = _context25.sent;
+            response = _context24.sent;
 
             if (!(200 !== +response.status)) {
-              _context25.next = 11;
+              _context24.next = 11;
               break;
             }
 
-            return _context25.abrupt('return', next(Tools.translate('Failed to get file headers')));
+            return _context24.abrupt('return', next(Tools.translate('Failed to get file headers')));
 
           case 11:
             res.json(response.headers);
-            _context25.next = 17;
+            _context24.next = 17;
             break;
 
           case 14:
-            _context25.prev = 14;
-            _context25.t0 = _context25['catch'](2);
+            _context24.prev = 14;
+            _context24.t0 = _context24['catch'](2);
 
-            next(_context25.t0);
+            next(_context24.t0);
 
           case 17:
           case 'end':
-            return _context25.stop();
+            return _context24.stop();
         }
       }
-    }, _callee25, this, [[2, 14]]);
+    }, _callee24, this, [[2, 14]]);
   }));
 
   return function (_x64, _x65, _x66) {

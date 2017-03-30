@@ -44,15 +44,12 @@ var getThread = exports.getThread = function () {
 
           case 12:
             thread.opPost = posts.splice(0, 1)[0];
-            if (thread.opPost.sequenceNumber != 1) {
-              console.log(posts);
-            }
             thread.lastPosts = posts;
             thread.title = postSubject(thread.opPost, 50) || null;
             addDataToThread(thread, board);
             return _context.abrupt('return', thread);
 
-          case 18:
+          case 17:
           case 'end':
             return _context.stop();
         }
@@ -67,7 +64,7 @@ var getThread = exports.getThread = function () {
 
 var getPage = exports.getPage = function () {
   var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName, pageNumber) {
-    var board, pageCount, threads, lastPostNumber;
+    var board, pageCount, threads, Post, lastPostNumber;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -105,6 +102,11 @@ var getPage = exports.getPage = function () {
           case 9:
             threads = _context3.sent;
             _context3.next = 12;
+            return client.collection('post');
+
+          case 12:
+            Post = _context3.sent;
+            _context3.next = 15;
             return Tools.series(threads, function () {
               var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(thread) {
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -155,14 +157,14 @@ var getPage = exports.getPage = function () {
               };
             }());
 
-          case 12:
+          case 15:
             threads = threads.filter(function (thread) {
               return thread.opPost && thread.postCount > 0;
             });
-            _context3.next = 15;
+            _context3.next = 18;
             return getLastPostNumber(boardName);
 
-          case 15:
+          case 18:
             lastPostNumber = _context3.sent;
             return _context3.abrupt('return', {
               threads: threads,
@@ -172,7 +174,7 @@ var getPage = exports.getPage = function () {
               postingSpeed: Renderer.postingSpeedString(board.launchDate, lastPostNumber)
             });
 
-          case 17:
+          case 20:
           case 'end':
             return _context3.stop();
         }
@@ -187,7 +189,7 @@ var getPage = exports.getPage = function () {
 
 var getCatalog = exports.getCatalog = function () {
   var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(boardName, sortMode) {
-    var board, threads, sortFunction, lastPostNumber;
+    var board, threads, Post, sortFunction, lastPostNumber;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -208,6 +210,11 @@ var getCatalog = exports.getCatalog = function () {
           case 5:
             threads = _context5.sent;
             _context5.next = 8;
+            return client.collection('post');
+
+          case 8:
+            Post = _context5.sent;
+            _context5.next = 11;
             return Tools.series(threads, function () {
               var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(thread) {
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
@@ -243,28 +250,28 @@ var getCatalog = exports.getCatalog = function () {
               };
             }());
 
-          case 8:
+          case 11:
             sortFunction = ThreadsModel.sortThreadsByCreationDate;
             _context5.t0 = (sortMode || 'date').toLowerCase();
-            _context5.next = _context5.t0 === 'recent' ? 12 : _context5.t0 === 'bumps' ? 14 : 16;
+            _context5.next = _context5.t0 === 'recent' ? 15 : _context5.t0 === 'bumps' ? 17 : 19;
             break;
 
-          case 12:
+          case 15:
             sortFunction = ThreadsModel.sortThreadsByDate;
-            return _context5.abrupt('break', 17);
-
-          case 14:
-            sortFunction = ThreadsModel.sortThreadsByPostCount;
-            return _context5.abrupt('break', 17);
-
-          case 16:
-            return _context5.abrupt('break', 17);
+            return _context5.abrupt('break', 20);
 
           case 17:
-            _context5.next = 19;
-            return getLastPostNumber(boardName);
+            sortFunction = ThreadsModel.sortThreadsByPostCount;
+            return _context5.abrupt('break', 20);
 
           case 19:
+            return _context5.abrupt('break', 20);
+
+          case 20:
+            _context5.next = 22;
+            return getLastPostNumber(boardName);
+
+          case 22:
             lastPostNumber = _context5.sent;
             return _context5.abrupt('return', {
               threads: threads.sort(sortFunction),
@@ -272,7 +279,7 @@ var getCatalog = exports.getCatalog = function () {
               postingSpeed: Renderer.postingSpeedString(board.launchDate, lastPostNumber)
             });
 
-          case 21:
+          case 24:
           case 'end':
             return _context5.stop();
         }
@@ -287,7 +294,7 @@ var getCatalog = exports.getCatalog = function () {
 
 var getArchive = exports.getArchive = function () {
   var _ref6 = _asyncToGenerator(regeneratorRuntime.mark(function _callee7(boardName) {
-    var board, threads, lastPostNumber;
+    var board, threads, Post, lastPostNumber;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
@@ -309,8 +316,12 @@ var getArchive = exports.getArchive = function () {
             threads = _context7.sent;
 
             threads.sort(ThreadsModel.sortThreadsByDate);
-            //let Post = await client.collection('post');
             _context7.next = 9;
+            return client.collection('post');
+
+          case 9:
+            Post = _context7.sent;
+            _context7.next = 12;
             return Tools.series(threads, function () {
               var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee6(thread) {
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
@@ -338,11 +349,11 @@ var getArchive = exports.getArchive = function () {
               };
             }());
 
-          case 9:
-            _context7.next = 11;
+          case 12:
+            _context7.next = 14;
             return getLastPostNumber(boardName);
 
-          case 11:
+          case 14:
             lastPostNumber = _context7.sent;
             return _context7.abrupt('return', {
               threads: threads,
@@ -350,7 +361,7 @@ var getArchive = exports.getArchive = function () {
               postingSpeed: Renderer.postingSpeedString(board.launchDate, lastPostNumber)
             });
 
-          case 13:
+          case 16:
           case 'end':
             return _context7.stop();
         }
@@ -460,7 +471,7 @@ var getLastPostNumbers = exports.getLastPostNumbers = function () {
 
 var getPageCount = exports.getPageCount = function () {
   var _ref11 = _asyncToGenerator(regeneratorRuntime.mark(function _callee10(boardName) {
-    var board, threadCount, pageCount;
+    var board, Thread, threadCount, pageCount;
     return regeneratorRuntime.wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
@@ -476,16 +487,21 @@ var getPageCount = exports.getPageCount = function () {
 
           case 3:
             _context10.next = 5;
-            return ThreadsModel.getThreadCount(boardName);
+            return client.collection('thread');
 
           case 5:
+            Thread = _context10.sent;
+            _context10.next = 8;
+            return ThreadsModel.getThreadCount(boardName);
+
+          case 8:
             threadCount = _context10.sent;
             pageCount = Math.ceil(threadCount / board.threadsPerPage) || 1;
 
             pageCounts.set(boardName, pageCount);
             return _context10.abrupt('return', pageCount);
 
-          case 9:
+          case 12:
           case 'end':
             return _context10.stop();
         }

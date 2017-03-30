@@ -125,7 +125,7 @@ var MongoDBClient = function () {
         }, _callee, this);
       }));
 
-      function addUser(_x) {
+      function addUser() {
         return _ref.apply(this, arguments);
       }
 
@@ -163,7 +163,7 @@ var MongoDBClient = function () {
         }, _callee2, this);
       }));
 
-      function admin(_x2) {
+      function admin() {
         return _ref2.apply(this, arguments);
       }
 
@@ -201,7 +201,7 @@ var MongoDBClient = function () {
         }, _callee3, this);
       }));
 
-      function authenticate(_x3) {
+      function authenticate() {
         return _ref3.apply(this, arguments);
       }
 
@@ -239,7 +239,7 @@ var MongoDBClient = function () {
         }, _callee4, this);
       }));
 
-      function close(_x4) {
+      function close() {
         return _ref4.apply(this, arguments);
       }
 
@@ -277,7 +277,7 @@ var MongoDBClient = function () {
         }, _callee5, this);
       }));
 
-      function collection(_x5) {
+      function collection() {
         return _ref5.apply(this, arguments);
       }
 
@@ -315,7 +315,7 @@ var MongoDBClient = function () {
         }, _callee6, this);
       }));
 
-      function collections(_x6) {
+      function collections() {
         return _ref6.apply(this, arguments);
       }
 
@@ -353,7 +353,7 @@ var MongoDBClient = function () {
         }, _callee7, this);
       }));
 
-      function command(_x7) {
+      function command() {
         return _ref7.apply(this, arguments);
       }
 
@@ -391,7 +391,7 @@ var MongoDBClient = function () {
         }, _callee8, this);
       }));
 
-      function createCollection(_x8) {
+      function createCollection() {
         return _ref8.apply(this, arguments);
       }
 
@@ -429,7 +429,7 @@ var MongoDBClient = function () {
         }, _callee9, this);
       }));
 
-      function createIndex(_x9) {
+      function createIndex() {
         return _ref9.apply(this, arguments);
       }
 
@@ -467,7 +467,7 @@ var MongoDBClient = function () {
         }, _callee10, this);
       }));
 
-      function db(_x10) {
+      function db() {
         return _ref10.apply(this, arguments);
       }
 
@@ -505,7 +505,7 @@ var MongoDBClient = function () {
         }, _callee11, this);
       }));
 
-      function dropCollection(_x11) {
+      function dropCollection() {
         return _ref11.apply(this, arguments);
       }
 
@@ -543,7 +543,7 @@ var MongoDBClient = function () {
         }, _callee12, this);
       }));
 
-      function dropDatabase(_x12) {
+      function dropDatabase() {
         return _ref12.apply(this, arguments);
       }
 
@@ -581,7 +581,7 @@ var MongoDBClient = function () {
         }, _callee13, this);
       }));
 
-      function executeDbAdminCommand(_x13) {
+      function executeDbAdminCommand() {
         return _ref13.apply(this, arguments);
       }
 
@@ -619,7 +619,7 @@ var MongoDBClient = function () {
         }, _callee14, this);
       }));
 
-      function indexInformation(_x14) {
+      function indexInformation() {
         return _ref14.apply(this, arguments);
       }
 
@@ -657,7 +657,7 @@ var MongoDBClient = function () {
         }, _callee15, this);
       }));
 
-      function listCollections(_x15) {
+      function listCollections() {
         return _ref15.apply(this, arguments);
       }
 
@@ -695,7 +695,7 @@ var MongoDBClient = function () {
         }, _callee16, this);
       }));
 
-      function logout(_x16) {
+      function logout() {
         return _ref16.apply(this, arguments);
       }
 
@@ -733,7 +733,7 @@ var MongoDBClient = function () {
         }, _callee17, this);
       }));
 
-      function open(_x17) {
+      function open() {
         return _ref17.apply(this, arguments);
       }
 
@@ -771,7 +771,7 @@ var MongoDBClient = function () {
         }, _callee18, this);
       }));
 
-      function removeUser(_x18) {
+      function removeUser() {
         return _ref18.apply(this, arguments);
       }
 
@@ -809,7 +809,7 @@ var MongoDBClient = function () {
         }, _callee19, this);
       }));
 
-      function renameCollection(_x19) {
+      function renameCollection() {
         return _ref19.apply(this, arguments);
       }
 
@@ -847,7 +847,7 @@ var MongoDBClient = function () {
         }, _callee20, this);
       }));
 
-      function stats(_x20) {
+      function stats() {
         return _ref20.apply(this, arguments);
       }
 
@@ -885,7 +885,7 @@ var MongoDBClient = function () {
         }, _callee21, this);
       }));
 
-      function unref(_x21) {
+      function unref() {
         return _ref21.apply(this, arguments);
       }
 
@@ -961,7 +961,7 @@ var MongoDBClient = function () {
                                 }, _callee22, this);
                               }));
 
-                              return function (_x26, _x27) {
+                              return function (_x4, _x5) {
                                 return _ref25.apply(this, arguments);
                               };
                             }()));
@@ -974,7 +974,7 @@ var MongoDBClient = function () {
                     }, _callee23, this);
                   }));
 
-                  return function (_x24, _x25) {
+                  return function (_x2, _x3) {
                     return _ref24.apply(this, arguments);
                   };
                 }());
@@ -987,7 +987,7 @@ var MongoDBClient = function () {
         }, _callee24, this);
       }));
 
-      function createIndexes(_x22) {
+      function createIndexes() {
         return _ref22.apply(this, arguments);
       }
 

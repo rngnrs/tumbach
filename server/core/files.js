@@ -770,7 +770,7 @@ var createFile = exports.createFile = function () {
     }, _callee15, this);
   }));
 
-  return function createFile(_x27, _x28, _x29) {
+  return function createFile(_x27, _x28) {
     return _ref15.apply(this, arguments);
   };
 }();
@@ -792,7 +792,7 @@ var editFile = exports.editFile = function () {
     }, _callee16, this);
   }));
 
-  return function editFile(_x31, _x32) {
+  return function editFile(_x30, _x31) {
     return _ref17.apply(this, arguments);
   };
 }();
@@ -816,7 +816,7 @@ var renameFile = exports.renameFile = function () {
     }, _callee17, this);
   }));
 
-  return function renameFile(_x33, _x34) {
+  return function renameFile(_x32, _x33) {
     return _ref18.apply(this, arguments);
   };
 }();
@@ -838,7 +838,7 @@ var deleteFile = exports.deleteFile = function () {
     }, _callee18, this);
   }));
 
-  return function deleteFile(_x35) {
+  return function deleteFile(_x34) {
     return _ref19.apply(this, arguments);
   };
 }();
@@ -879,7 +879,7 @@ var generateRandomImage = exports.generateRandomImage = function () {
     }, _callee19, this);
   }));
 
-  return function generateRandomImage(_x36, _x37, _x38) {
+  return function generateRandomImage(_x35, _x36, _x37) {
     return _ref20.apply(this, arguments);
   };
 }();
@@ -931,7 +931,7 @@ var getMimeType = exports.getMimeType = function () {
     }, _callee20, this, [[2, 8]]);
   }));
 
-  return function getMimeType(_x39) {
+  return function getMimeType(_x38) {
     return _ref21.apply(this, arguments);
   };
 }();
@@ -959,7 +959,7 @@ var getImageSize = exports.getImageSize = function () {
     }, _callee21, this);
   }));
 
-  return function getImageSize(_x40) {
+  return function getImageSize(_x39) {
     return _ref22.apply(this, arguments);
   };
 }();
@@ -987,7 +987,7 @@ var resizeImage = exports.resizeImage = function () {
     }, _callee22, this);
   }));
 
-  return function resizeImage(_x41, _x42, _x43, _x44) {
+  return function resizeImage(_x40, _x41, _x42, _x43) {
     return _ref23.apply(this, arguments);
   };
 }();

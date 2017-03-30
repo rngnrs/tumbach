@@ -150,7 +150,7 @@ var Captcha = function () {
         }, _callee, this);
       }));
 
-      function checkCaptcha(_x, _x2) {
+      function checkCaptcha(_x) {
         return _ref.apply(this, arguments);
       }
 

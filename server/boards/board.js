@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _underscore = require('underscore');
@@ -144,18 +142,12 @@ var Board = function () {
           if ('#include all' === rule) {
             return common;
           } else if (RX_EXCEPT.test(rule)) {
-            var _ret = function () {
-              var excluded = rule.match(RX_EXCEPT)[2].split(',').map(function (n) {
-                return +n;
-              });
-              return {
-                v: common.filter(function (_, i) {
-                  return excluded.indexOf(i) < 0;
-                })
-              };
-            }();
-
-            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+            var excluded = rule.match(RX_EXCEPT)[2].split(',').map(function (n) {
+              return +n;
+            });
+            return common.filter(function (_, i) {
+              return excluded.indexOf(i) < 0;
+            });
           } else if (RX_SEVERAL.test(rule)) {
             return rule.match(RX_SEVERAL)[1].split(',').map(function (n) {
               return +n;

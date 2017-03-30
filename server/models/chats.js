@@ -309,7 +309,7 @@ var addChatMessage = exports.addChatMessage = function () {
     }, _callee4, this);
   }));
 
-  return function addChatMessage(_x9) {
+  return function addChatMessage() {
     return _ref6.apply(this, arguments);
   };
 }();
@@ -345,7 +345,7 @@ var deleteChatMessages = exports.deleteChatMessages = function () {
     }, _callee5, this);
   }));
 
-  return function deleteChatMessages(_x11) {
+  return function deleteChatMessages() {
     return _ref8.apply(this, arguments);
   };
 }();

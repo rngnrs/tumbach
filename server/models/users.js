@@ -398,7 +398,7 @@ var getRegisteredUserInternal = function () {
     }, _callee10, this);
   }));
 
-  return function getRegisteredUserInternal(_x18, _x19) {
+  return function getRegisteredUserInternal(_x18) {
     return _ref10.apply(this, arguments);
   };
 }();
@@ -425,7 +425,7 @@ var getRegisteredUserLevels = exports.getRegisteredUserLevels = function () {
     }, _callee11, this);
   }));
 
-  return function getRegisteredUserLevels(_x21) {
+  return function getRegisteredUserLevels(_x20) {
     return _ref12.apply(this, arguments);
   };
 }();
@@ -476,7 +476,7 @@ var getRegisteredUserLevelsByIp = exports.getRegisteredUserLevelsByIp = function
     }, _callee12, this);
   }));
 
-  return function getRegisteredUserLevelsByIp(_x22, _x23) {
+  return function getRegisteredUserLevelsByIp(_x21, _x22) {
     return _ref13.apply(this, arguments);
   };
 }();
@@ -515,7 +515,7 @@ var getRegisteredUser = exports.getRegisteredUser = function () {
     }, _callee13, this);
   }));
 
-  return function getRegisteredUser(_x24) {
+  return function getRegisteredUser(_x23) {
     return _ref14.apply(this, arguments);
   };
 }();
@@ -595,7 +595,7 @@ var registerUser = exports.registerUser = function () {
     }, _callee15, this);
   }));
 
-  return function registerUser(_x25, _x26, _x27) {
+  return function registerUser(_x24, _x25, _x26) {
     return _ref16.apply(this, arguments);
   };
 }();
@@ -642,7 +642,7 @@ var updateRegisteredUser = exports.updateRegisteredUser = function () {
     }, _callee16, this);
   }));
 
-  return function updateRegisteredUser(_x28, _x29, _x30) {
+  return function updateRegisteredUser(_x27, _x28, _x29) {
     return _ref17.apply(this, arguments);
   };
 }();
@@ -682,7 +682,7 @@ var unregisterUser = exports.unregisterUser = function () {
     }, _callee17, this);
   }));
 
-  return function unregisterUser(_x31) {
+  return function unregisterUser(_x30) {
     return _ref19.apply(this, arguments);
   };
 }();
@@ -736,7 +736,7 @@ var addSuperuser = exports.addSuperuser = function () {
     }, _callee18, this);
   }));
 
-  return function addSuperuser(_x32, _x33) {
+  return function addSuperuser(_x31, _x32) {
     return _ref21.apply(this, arguments);
   };
 }();
@@ -784,7 +784,7 @@ var removeSuperuser = exports.removeSuperuser = function () {
     }, _callee19, this);
   }));
 
-  return function removeSuperuser(_x34) {
+  return function removeSuperuser(_x33) {
     return _ref22.apply(this, arguments);
   };
 }();
@@ -815,7 +815,7 @@ var getSynchronizationData = exports.getSynchronizationData = function () {
     }, _callee20, this);
   }));
 
-  return function getSynchronizationData(_x35) {
+  return function getSynchronizationData(_x34) {
     return _ref24.apply(this, arguments);
   };
 }();
@@ -855,7 +855,7 @@ var setSynchronizationData = exports.setSynchronizationData = function () {
     }, _callee21, this);
   }));
 
-  return function setSynchronizationData(_x36, _x37) {
+  return function setSynchronizationData(_x35, _x36) {
     return _ref25.apply(this, arguments);
   };
 }();
@@ -920,7 +920,7 @@ var checkUserBan = exports.checkUserBan = function () {
     }, _callee22, this);
   }));
 
-  return function checkUserBan(_x38, _x39, _x40) {
+  return function checkUserBan(_x37, _x38) {
     return _ref26.apply(this, arguments);
   };
 }();
@@ -1078,7 +1078,7 @@ var checkUserPermissions = exports.checkUserPermissions = function () {
     }, _callee23, this);
   }));
 
-  return function checkUserPermissions(_x42, _x43, _x44, _x45, _x46) {
+  return function checkUserPermissions(_x40, _x41, _x42, _x43, _x44) {
     return _ref28.apply(this, arguments);
   };
 }();
@@ -1147,7 +1147,7 @@ var updatePostBanInfo = exports.updatePostBanInfo = function () {
     }, _callee24, this);
   }));
 
-  return function updatePostBanInfo(_x47, _x48, _x49) {
+  return function updatePostBanInfo(_x45, _x46, _x47) {
     return _ref29.apply(this, arguments);
   };
 }();
@@ -1194,7 +1194,7 @@ var banUser = exports.banUser = function () {
                 }, _callee25, this);
               }));
 
-              return function (_x53, _x54) {
+              return function (_x51, _x52) {
                 return _ref31.apply(this, arguments);
               };
             }());
@@ -1250,7 +1250,7 @@ var banUser = exports.banUser = function () {
                 }, _callee26, this);
               }));
 
-              return function (_x55) {
+              return function (_x53) {
                 return _ref32.apply(this, arguments);
               };
             }());
@@ -1282,7 +1282,7 @@ var banUser = exports.banUser = function () {
     }, _callee27, this);
   }));
 
-  return function banUser(_x50, _x51, _x52) {
+  return function banUser(_x48, _x49, _x50) {
     return _ref30.apply(this, arguments);
   };
 }();
@@ -1382,7 +1382,7 @@ var updateBanOnMessage = function () {
     }, _callee28, this, [[0, 24]]);
   }));
 
-  return function updateBanOnMessage(_x56) {
+  return function updateBanOnMessage(_x54) {
     return _ref35.apply(this, arguments);
   };
 }();

@@ -120,7 +120,7 @@ var SQLiteDatabaseWrapper = function () {
         }, _callee2, this);
       }));
 
-      function _runRaw(_x, _x2) {
+      function _runRaw(_x) {
         return _ref2.apply(this, arguments);
       }
 
@@ -153,7 +153,7 @@ var SQLiteDatabaseWrapper = function () {
         }, _callee3, this);
       }));
 
-      function run(_x3) {
+      function run() {
         return _ref3.apply(this, arguments);
       }
 
@@ -195,7 +195,7 @@ var SQLiteDatabaseWrapper = function () {
         }, _callee4, this);
       }));
 
-      function get(_x4, _x5) {
+      function get(_x2) {
         return _ref4.apply(this, arguments);
       }
 
@@ -237,7 +237,7 @@ var SQLiteDatabaseWrapper = function () {
         }, _callee5, this);
       }));
 
-      function all(_x6, _x7) {
+      function all(_x3) {
         return _ref5.apply(this, arguments);
       }
 
@@ -458,7 +458,7 @@ var SQLiteDatabaseWrapper = function () {
         }, _callee8, this, [[1, 19], [22, 27]]);
       }));
 
-      function transaction(_x8) {
+      function transaction(_x4) {
         return _ref8.apply(this, arguments);
       }
 

@@ -47,7 +47,7 @@ var getThreadPostCount = exports.getThreadPostCount = function () {
     }, _callee, this);
   }));
 
-  return function getThreadPostCount(_x, _x2, _x3) {
+  return function getThreadPostCount(_x, _x2) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -88,7 +88,7 @@ var getThreadNumbers = exports.getThreadNumbers = function () {
     }, _callee2, this);
   }));
 
-  return function getThreadNumbers(_x5, _x6) {
+  return function getThreadNumbers(_x4) {
     return _ref3.apply(this, arguments);
   };
 }();
@@ -156,7 +156,7 @@ var getThread = exports.getThread = function () {
     }, _callee3, this);
   }));
 
-  return function getThread(_x8, _x9, _x10) {
+  return function getThread(_x6, _x7, _x8) {
     return _ref6.apply(this, arguments);
   };
 }();
@@ -211,7 +211,7 @@ var threadExists = exports.threadExists = function () {
     }, _callee4, this);
   }));
 
-  return function threadExists(_x11, _x12) {
+  return function threadExists(_x9, _x10) {
     return _ref7.apply(this, arguments);
   };
 }();
@@ -276,7 +276,7 @@ var getThreads = exports.getThreads = function () {
     }, _callee5, this);
   }));
 
-  return function getThreads(_x13, _x14) {
+  return function getThreads(_x11) {
     return _ref8.apply(this, arguments);
   };
 }();
@@ -323,7 +323,7 @@ var getThreadCount = exports.getThreadCount = function () {
     }, _callee6, this);
   }));
 
-  return function getThreadCount(_x16, _x17) {
+  return function getThreadCount(_x13) {
     return _ref10.apply(this, arguments);
   };
 }();
@@ -376,7 +376,7 @@ var getThreadLastPostNumber = exports.getThreadLastPostNumber = function () {
     }, _callee7, this);
   }));
 
-  return function getThreadLastPostNumber(_x19, _x20) {
+  return function getThreadLastPostNumber(_x15, _x16) {
     return _ref12.apply(this, arguments);
   };
 }();
@@ -466,7 +466,7 @@ var getThreadInfo = exports.getThreadInfo = function () {
     }, _callee8, this);
   }));
 
-  return function getThreadInfo(_x21, _x22, _x23) {
+  return function getThreadInfo(_x17, _x18, _x19) {
     return _ref13.apply(this, arguments);
   };
 }();
@@ -487,7 +487,7 @@ var isThreadDeleted = exports.isThreadDeleted = function () {
     }, _callee9, this);
   }));
 
-  return function isThreadDeleted(_x24, _x25) {
+  return function isThreadDeleted(_x20, _x21) {
     return _ref15.apply(this, arguments);
   };
 }();
@@ -508,7 +508,7 @@ var setThreadDeleted = exports.setThreadDeleted = function () {
     }, _callee10, this);
   }));
 
-  return function setThreadDeleted(_x26, _x27) {
+  return function setThreadDeleted(_x22, _x23) {
     return _ref16.apply(this, arguments);
   };
 }();
@@ -668,7 +668,7 @@ var pushOutOldThread = function () {
     }, _callee12, this);
   }));
 
-  return function pushOutOldThread(_x28) {
+  return function pushOutOldThread(_x24) {
     return _ref18.apply(this, arguments);
   };
 }();
@@ -752,7 +752,7 @@ var createThread = exports.createThread = function () {
     }, _callee13, this, [[6, 11]]);
   }));
 
-  return function createThread(_x29, _x30, _x31) {
+  return function createThread(_x25, _x26, _x27) {
     return _ref23.apply(this, arguments);
   };
 }();
@@ -807,7 +807,7 @@ var setThreadFlag = function () {
     }, _callee14, this);
   }));
 
-  return function setThreadFlag(_x32, _x33, _x34, _x35) {
+  return function setThreadFlag(_x28, _x29, _x30, _x31) {
     return _ref24.apply(this, arguments);
   };
 }();
@@ -832,7 +832,7 @@ var setThreadFixed = exports.setThreadFixed = function () {
     }, _callee15, this);
   }));
 
-  return function setThreadFixed(_x36, _x37, _x38) {
+  return function setThreadFixed(_x32, _x33, _x34) {
     return _ref26.apply(this, arguments);
   };
 }();
@@ -857,7 +857,7 @@ var setThreadClosed = exports.setThreadClosed = function () {
     }, _callee16, this);
   }));
 
-  return function setThreadClosed(_x39, _x40, _x41) {
+  return function setThreadClosed(_x35, _x36, _x37) {
     return _ref27.apply(this, arguments);
   };
 }();
@@ -882,7 +882,7 @@ var setThreadUnbumpable = exports.setThreadUnbumpable = function () {
     }, _callee17, this);
   }));
 
-  return function setThreadUnbumpable(_x42, _x43, _x44) {
+  return function setThreadUnbumpable(_x38, _x39, _x40) {
     return _ref28.apply(this, arguments);
   };
 }();
@@ -987,7 +987,7 @@ var moveThread = exports.moveThread = function () {
     }, _callee18, this);
   }));
 
-  return function moveThread(_x45, _x46, _x47, _x48) {
+  return function moveThread(_x41, _x42, _x43, _x44) {
     return _ref29.apply(this, arguments);
   };
 }();
@@ -1065,7 +1065,7 @@ var deleteThread = exports.deleteThread = function () {
                 }, _callee19, this);
               }));
 
-              return function (_x51) {
+              return function (_x47) {
                 return _ref31.apply(this, arguments);
               };
             }(), true);
@@ -1116,7 +1116,7 @@ var deleteThread = exports.deleteThread = function () {
     }, _callee20, this);
   }));
 
-  return function deleteThread(_x49, _x50) {
+  return function deleteThread(_x45, _x46) {
     return _ref30.apply(this, arguments);
   };
 }();
@@ -1167,7 +1167,7 @@ var getThreadRedirect = exports.getThreadRedirect = function () {
     }, _callee21, this);
   }));
 
-  return function getThreadRedirect(_x52, _x53) {
+  return function getThreadRedirect(_x48, _x49) {
     return _ref34.apply(this, arguments);
   };
 }();

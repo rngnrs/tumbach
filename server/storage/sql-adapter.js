@@ -682,7 +682,7 @@ var SQLAdapter = function () {
                     }, _callee16, this);
                   }));
 
-                  return function (_x28, _x29) {
+                  return function (_x27, _x28) {
                     return _ref17.apply(this, arguments);
                   };
                 }());
@@ -698,7 +698,7 @@ var SQLAdapter = function () {
         }, _callee17, this);
       }));
 
-      function hmget(_x26, _x27) {
+      function hmget(_x26) {
         return _ref16.apply(this, arguments);
       }
 
@@ -753,7 +753,7 @@ var SQLAdapter = function () {
                     }, _callee18, this);
                   }));
 
-                  return function (_x31, _x32) {
+                  return function (_x30, _x31) {
                     return _ref19.apply(this, arguments);
                   };
                 }());
@@ -769,7 +769,7 @@ var SQLAdapter = function () {
         }, _callee19, this);
       }));
 
-      function hgetall(_x30) {
+      function hgetall(_x29) {
         return _ref18.apply(this, arguments);
       }
 
@@ -822,7 +822,7 @@ var SQLAdapter = function () {
                     }, _callee20, this);
                   }));
 
-                  return function (_x35, _x36) {
+                  return function (_x34, _x35) {
                     return _ref21.apply(this, arguments);
                   };
                 }());
@@ -838,7 +838,7 @@ var SQLAdapter = function () {
         }, _callee21, this);
       }));
 
-      function hexists(_x33, _x34) {
+      function hexists(_x32, _x33) {
         return _ref20.apply(this, arguments);
       }
 
@@ -888,7 +888,7 @@ var SQLAdapter = function () {
                     }, _callee22, this);
                   }));
 
-                  return function (_x40, _x41) {
+                  return function (_x39, _x40) {
                     return _ref23.apply(this, arguments);
                   };
                 }());
@@ -904,7 +904,7 @@ var SQLAdapter = function () {
         }, _callee23, this);
       }));
 
-      function hset(_x37, _x38, _x39) {
+      function hset(_x36, _x37, _x38) {
         return _ref22.apply(this, arguments);
       }
 
@@ -957,7 +957,7 @@ var SQLAdapter = function () {
                                 }, _callee24, this);
                               }));
 
-                              return function (_x46) {
+                              return function (_x44) {
                                 return _ref26.apply(this, arguments);
                               };
                             }());
@@ -973,7 +973,7 @@ var SQLAdapter = function () {
                     }, _callee25, this);
                   }));
 
-                  return function (_x44, _x45) {
+                  return function (_x42, _x43) {
                     return _ref25.apply(this, arguments);
                   };
                 }());
@@ -989,7 +989,7 @@ var SQLAdapter = function () {
         }, _callee26, this);
       }));
 
-      function hmset(_x42, _x43) {
+      function hmset(_x41) {
         return _ref24.apply(this, arguments);
       }
 
@@ -1054,7 +1054,7 @@ var SQLAdapter = function () {
                     }, _callee27, this);
                   }));
 
-                  return function (_x50, _x51) {
+                  return function (_x48, _x49) {
                     return _ref28.apply(this, arguments);
                   };
                 }());
@@ -1070,7 +1070,7 @@ var SQLAdapter = function () {
         }, _callee28, this);
       }));
 
-      function hincrby(_x47, _x48, _x49) {
+      function hincrby(_x45, _x46, _x47) {
         return _ref27.apply(this, arguments);
       }
 
@@ -1142,7 +1142,7 @@ var SQLAdapter = function () {
                                 }, _callee29, this);
                               }));
 
-                              return function (_x56) {
+                              return function (_x53) {
                                 return _ref31.apply(this, arguments);
                               };
                             }());
@@ -1181,7 +1181,7 @@ var SQLAdapter = function () {
                     }, _callee30, this);
                   }));
 
-                  return function (_x54, _x55) {
+                  return function (_x51, _x52) {
                     return _ref30.apply(this, arguments);
                   };
                 }());
@@ -1197,7 +1197,7 @@ var SQLAdapter = function () {
         }, _callee31, this);
       }));
 
-      function hdel(_x52, _x53) {
+      function hdel(_x50) {
         return _ref29.apply(this, arguments);
       }
 
@@ -1251,7 +1251,7 @@ var SQLAdapter = function () {
                     }, _callee32, this);
                   }));
 
-                  return function (_x58, _x59) {
+                  return function (_x55, _x56) {
                     return _ref33.apply(this, arguments);
                   };
                 }());
@@ -1267,7 +1267,7 @@ var SQLAdapter = function () {
         }, _callee33, this);
       }));
 
-      function hkeys(_x57) {
+      function hkeys(_x54) {
         return _ref32.apply(this, arguments);
       }
 
@@ -1322,7 +1322,7 @@ var SQLAdapter = function () {
                     }, _callee34, this);
                   }));
 
-                  return function (_x61, _x62) {
+                  return function (_x58, _x59) {
                     return _ref35.apply(this, arguments);
                   };
                 }());
@@ -1338,7 +1338,7 @@ var SQLAdapter = function () {
         }, _callee35, this);
       }));
 
-      function hlen(_x60) {
+      function hlen(_x57) {
         return _ref34.apply(this, arguments);
       }
 
@@ -1391,7 +1391,7 @@ var SQLAdapter = function () {
                     }, _callee36, this);
                   }));
 
-                  return function (_x64, _x65) {
+                  return function (_x61, _x62) {
                     return _ref37.apply(this, arguments);
                   };
                 }());
@@ -1407,7 +1407,7 @@ var SQLAdapter = function () {
         }, _callee37, this);
       }));
 
-      function srandmember(_x63) {
+      function srandmember(_x60) {
         return _ref36.apply(this, arguments);
       }
 
@@ -1461,7 +1461,7 @@ var SQLAdapter = function () {
                     }, _callee38, this);
                   }));
 
-                  return function (_x67, _x68) {
+                  return function (_x64, _x65) {
                     return _ref39.apply(this, arguments);
                   };
                 }());
@@ -1477,7 +1477,7 @@ var SQLAdapter = function () {
         }, _callee39, this);
       }));
 
-      function smembers(_x66) {
+      function smembers(_x63) {
         return _ref38.apply(this, arguments);
       }
 
@@ -1531,7 +1531,7 @@ var SQLAdapter = function () {
                     }, _callee40, this);
                   }));
 
-                  return function (_x71, _x72) {
+                  return function (_x68, _x69) {
                     return _ref41.apply(this, arguments);
                   };
                 }());
@@ -1547,7 +1547,7 @@ var SQLAdapter = function () {
         }, _callee41, this);
       }));
 
-      function sismember(_x69, _x70) {
+      function sismember(_x66, _x67) {
         return _ref40.apply(this, arguments);
       }
 
@@ -1616,7 +1616,7 @@ var SQLAdapter = function () {
                                 }, _callee42, this);
                               }));
 
-                              return function (_x77) {
+                              return function (_x73) {
                                 return _ref44.apply(this, arguments);
                               };
                             }());
@@ -1632,7 +1632,7 @@ var SQLAdapter = function () {
                     }, _callee43, this);
                   }));
 
-                  return function (_x75, _x76) {
+                  return function (_x71, _x72) {
                     return _ref43.apply(this, arguments);
                   };
                 }());
@@ -1648,7 +1648,7 @@ var SQLAdapter = function () {
         }, _callee44, this);
       }));
 
-      function sadd(_x73, _x74) {
+      function sadd(_x70) {
         return _ref42.apply(this, arguments);
       }
 
@@ -1718,7 +1718,7 @@ var SQLAdapter = function () {
                                 }, _callee45, this);
                               }));
 
-                              return function (_x82) {
+                              return function (_x77) {
                                 return _ref47.apply(this, arguments);
                               };
                             }());
@@ -1757,7 +1757,7 @@ var SQLAdapter = function () {
                     }, _callee46, this);
                   }));
 
-                  return function (_x80, _x81) {
+                  return function (_x75, _x76) {
                     return _ref46.apply(this, arguments);
                   };
                 }());
@@ -1773,7 +1773,7 @@ var SQLAdapter = function () {
         }, _callee47, this);
       }));
 
-      function srem(_x78, _x79) {
+      function srem(_x74) {
         return _ref45.apply(this, arguments);
       }
 
@@ -1828,7 +1828,7 @@ var SQLAdapter = function () {
                     }, _callee48, this);
                   }));
 
-                  return function (_x84, _x85) {
+                  return function (_x79, _x80) {
                     return _ref49.apply(this, arguments);
                   };
                 }());
@@ -1844,7 +1844,7 @@ var SQLAdapter = function () {
         }, _callee49, this);
       }));
 
-      function scard(_x83) {
+      function scard(_x78) {
         return _ref48.apply(this, arguments);
       }
 
@@ -1868,7 +1868,7 @@ var SQLAdapter = function () {
         }, _callee50, this);
       }));
 
-      function zrange(_x86, _x87, _x88) {
+      function zrange(_x81, _x82, _x83) {
         return _ref50.apply(this, arguments);
       }
 
@@ -1892,7 +1892,7 @@ var SQLAdapter = function () {
         }, _callee51, this);
       }));
 
-      function zrangebyscroe(_x89, _x90, _x91) {
+      function zrangebyscroe(_x84, _x85, _x86) {
         return _ref51.apply(this, arguments);
       }
 
@@ -1916,7 +1916,7 @@ var SQLAdapter = function () {
         }, _callee52, this);
       }));
 
-      function zadd(_x92, _x93) {
+      function zadd(_x87) {
         return _ref52.apply(this, arguments);
       }
 
@@ -1940,7 +1940,7 @@ var SQLAdapter = function () {
         }, _callee53, this);
       }));
 
-      function zrem(_x94, _x95) {
+      function zrem(_x88) {
         return _ref53.apply(this, arguments);
       }
 
@@ -1964,7 +1964,7 @@ var SQLAdapter = function () {
         }, _callee54, this);
       }));
 
-      function zcard(_x96) {
+      function zcard(_x89) {
         return _ref54.apply(this, arguments);
       }
 

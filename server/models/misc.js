@@ -187,15 +187,13 @@ function boards() {
     return group;
   });
   if (addDefault || boardGroups.length < 1) {
-    (function () {
-      var noGroups = boardGroups.length < 1;
-      boardGroups.push({
-        name: '',
-        boards: boards.filter(function (board) {
-          return noGroups || !board.hidden && !board.groupName;
-        })
-      });
-    })();
+    var noGroups = boardGroups.length < 1;
+    boardGroups.push({
+      name: '',
+      boards: boards.filter(function (board) {
+        return noGroups || !board.hidden && !board.groupName;
+      })
+    });
   }
   boardGroups = boardGroups.filter(function (group) {
     return group.boards.length > 0;

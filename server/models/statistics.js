@@ -118,21 +118,19 @@ var gatherBoardStatistics = function () {
 
 
 var generateStatistics = exports.generateStatistics = function () {
-  var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
-    var _this = this;
-
-    var statistics, launchDate;
-    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+  var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
+    var statistics, launchDate, Post, ips, data;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
             if (_cluster2.default.isMaster) {
-              _context5.next = 3;
+              _context4.next = 3;
               break;
             }
 
             _logger2.default.error(Tools.translate('Error: generateStatistics() called from worker process.'));
-            return _context5.abrupt('return');
+            return _context4.abrupt('return');
 
           case 3:
             statistics = {
@@ -144,124 +142,110 @@ var generateStatistics = exports.generateStatistics = function () {
               }
             };
             launchDate = _underscore2.default.now();
-            _context5.prev = 5;
-            return _context5.delegateYield(regeneratorRuntime.mark(function _callee4() {
-              var Post, ips, data;
-              return regeneratorRuntime.wrap(function _callee4$(_context4) {
-                while (1) {
-                  switch (_context4.prev = _context4.next) {
-                    case 0:
-                      _context4.next = 2;
-                      return client.collection('post');
+            _context4.prev = 5;
+            _context4.next = 8;
+            return client.collection('post');
 
-                    case 2:
-                      Post = _context4.sent;
-                      _context4.next = 5;
-                      return Post.distinct('user.ip');
+          case 8:
+            Post = _context4.sent;
+            _context4.next = 11;
+            return Post.distinct('user.ip');
 
-                    case 5:
-                      ips = _context4.sent;
+          case 11:
+            ips = _context4.sent;
 
-                      statistics.total.uniqueIPCount = ips.length;
-                      _context4.next = 9;
-                      return Tools.series(_board2.default.boardNames(), function () {
-                        var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName) {
-                          var board, boardLaunchDate, boardStatistics, ips;
-                          return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                            while (1) {
-                              switch (_context3.prev = _context3.next) {
-                                case 0:
-                                  board = _board2.default.board(boardName);
+            statistics.total.uniqueIPCount = ips.length;
+            _context4.next = 15;
+            return Tools.series(_board2.default.boardNames(), function () {
+              var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(boardName) {
+                var board, boardLaunchDate, boardStatistics, ips;
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        board = _board2.default.board(boardName);
 
-                                  if (board) {
-                                    _context3.next = 3;
-                                    break;
-                                  }
+                        if (board) {
+                          _context3.next = 3;
+                          break;
+                        }
 
-                                  return _context3.abrupt('return');
+                        return _context3.abrupt('return');
 
-                                case 3:
-                                  boardLaunchDate = board.launchDate.valueOf();
+                      case 3:
+                        boardLaunchDate = board.launchDate.valueOf();
 
-                                  if (boardLaunchDate < launchDate) {
-                                    launchDate = boardLaunchDate;
-                                  }
-                                  _context3.next = 7;
-                                  return gatherBoardStatistics(board);
+                        if (boardLaunchDate < launchDate) {
+                          launchDate = boardLaunchDate;
+                        }
+                        _context3.next = 7;
+                        return gatherBoardStatistics(board);
 
-                                case 7:
-                                  boardStatistics = _context3.sent;
+                      case 7:
+                        boardStatistics = _context3.sent;
 
-                                  boardStatistics.name = board.name;
-                                  boardStatistics.title = board.title;
-                                  boardStatistics.hidden = board.hidden;
-                                  _context3.next = 13;
-                                  return Post.distinct('user.ip', { boardName: boardName });
+                        boardStatistics.name = board.name;
+                        boardStatistics.title = board.title;
+                        boardStatistics.hidden = board.hidden;
+                        _context3.next = 13;
+                        return Post.distinct('user.ip', { boardName: boardName });
 
-                                case 13:
-                                  ips = _context3.sent;
+                      case 13:
+                        ips = _context3.sent;
 
-                                  boardStatistics.uniqueIPCount = ips.length;
-                                  statistics.total.postCount += boardStatistics.postCount;
-                                  statistics.total.fileCount += boardStatistics.fileCount;
-                                  statistics.total.diskUsage += boardStatistics.diskUsage;
-                                  statistics.boards.push(boardStatistics);
+                        boardStatistics.uniqueIPCount = ips.length;
+                        statistics.total.postCount += boardStatistics.postCount;
+                        statistics.total.fileCount += boardStatistics.fileCount;
+                        statistics.total.diskUsage += boardStatistics.diskUsage;
+                        statistics.boards.push(boardStatistics);
 
-                                case 19:
-                                case 'end':
-                                  return _context3.stop();
-                              }
-                            }
-                          }, _callee3, this);
-                        }));
-
-                        return function (_x3) {
-                          return _ref4.apply(this, arguments);
-                        };
-                      }());
-
-                    case 9:
-                      statistics.total.postingSpeed = Renderer.postingSpeedString(launchDate, statistics.total.postCount);
-                      _context4.next = 12;
-                      return IPC.send('getConnectionIPs');
-
-                    case 12:
-                      data = _context4.sent;
-
-                      statistics.online = data.reduce(function (acc, ips) {
-                        (0, _underscore2.default)(ips).each(function (_1, ip) {
-                          acc.add(ip);
-                        });
-                        return acc;
-                      }, new Set()).size;
-                      statistics.uptime = process.uptime();
-                      _context4.next = 17;
-                      return Cache.writeFile('misc/statistics.json', JSON.stringify(statistics));
-
-                    case 17:
-                    case 'end':
-                      return _context4.stop();
+                      case 19:
+                      case 'end':
+                        return _context3.stop();
+                    }
                   }
-                }
-              }, _callee4, _this);
-            })(), 't0', 7);
+                }, _callee3, this);
+              }));
 
-          case 7:
-            _context5.next = 12;
+              return function (_x3) {
+                return _ref4.apply(this, arguments);
+              };
+            }());
+
+          case 15:
+            statistics.total.postingSpeed = Renderer.postingSpeedString(launchDate, statistics.total.postCount);
+            _context4.next = 18;
+            return IPC.send('getConnectionIPs');
+
+          case 18:
+            data = _context4.sent;
+
+            statistics.online = data.reduce(function (acc, ips) {
+              (0, _underscore2.default)(ips).each(function (_1, ip) {
+                acc.add(ip);
+              });
+              return acc;
+            }, new Set()).size;
+            statistics.uptime = process.uptime();
+            _context4.next = 23;
+            return Cache.writeFile('misc/statistics.json', JSON.stringify(statistics));
+
+          case 23:
+            _context4.next = 28;
             break;
 
-          case 9:
-            _context5.prev = 9;
-            _context5.t1 = _context5['catch'](5);
+          case 25:
+            _context4.prev = 25;
+            _context4.t0 = _context4['catch'](5);
 
-            _logger2.default.error(_context5.t1.stack || _context5.t1);
+            _logger2.default.error(_context4.t0.stack || _context4.t0);
 
-          case 12:
+          case 28:
           case 'end':
-            return _context5.stop();
+            return _context4.stop();
         }
       }
-    }, _callee5, this, [[5, 9]]);
+    }, _callee4, this, [[5, 25]]);
   }));
 
   return function generateStatistics() {

@@ -78,7 +78,7 @@ var testParameters = function () {
     }, _callee, this);
   }));
 
-  return function testParameters(_x, _x2, _x3, _x4) {
+  return function testParameters(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
   };
 }();
@@ -246,7 +246,7 @@ router.post('/action/markupText', function () {
     }, _callee2, this, [[0, 29]]);
   }));
 
-  return function (_x6, _x7, _x8) {
+  return function (_x5, _x6, _x7) {
     return _ref3.apply(this, arguments);
   };
 }());
@@ -380,7 +380,7 @@ router.post('/action/createPost', function () {
     }, _callee3, this, [[1, 41]]);
   }));
 
-  return function (_x9, _x10, _x11) {
+  return function (_x8, _x9, _x10) {
     return _ref5.apply(this, arguments);
   };
 }());
@@ -488,7 +488,7 @@ router.post('/action/createThread', function () {
     }, _callee4, this, [[1, 35]]);
   }));
 
-  return function (_x12, _x13, _x14) {
+  return function (_x11, _x12, _x13) {
     return _ref7.apply(this, arguments);
   };
 }());
@@ -570,7 +570,7 @@ router.post('/action/editPost', function () {
     }, _callee5, this, [[0, 24]]);
   }));
 
-  return function (_x15, _x16, _x17) {
+  return function (_x14, _x15, _x16) {
     return _ref9.apply(this, arguments);
   };
 }());
@@ -695,7 +695,7 @@ router.post('/action/addFiles', function () {
     }, _callee6, this, [[1, 41]]);
   }));
 
-  return function (_x18, _x19, _x20) {
+  return function (_x17, _x18, _x19) {
     return _ref11.apply(this, arguments);
   };
 }());
@@ -792,7 +792,7 @@ router.post('/action/deletePost', function () {
     }, _callee7, this, [[0, 31]]);
   }));
 
-  return function (_x21, _x22, _x23) {
+  return function (_x20, _x21, _x22) {
     return _ref13.apply(this, arguments);
   };
 }());
@@ -880,7 +880,7 @@ router.post('/action/deleteFile', function () {
     }, _callee8, this, [[0, 29]]);
   }));
 
-  return function (_x24, _x25, _x26) {
+  return function (_x23, _x24, _x25) {
     return _ref15.apply(this, arguments);
   };
 }());
@@ -963,7 +963,7 @@ router.post('/action/editFileRating', function () {
     }, _callee9, this, [[0, 26]]);
   }));
 
-  return function (_x27, _x28, _x29) {
+  return function (_x26, _x27, _x28) {
     return _ref17.apply(this, arguments);
   };
 }());
@@ -1054,7 +1054,7 @@ router.post('/action/editAudioTags', function () {
     }, _callee10, this, [[0, 28]]);
   }));
 
-  return function (_x30, _x31, _x32) {
+  return function (_x29, _x30, _x31) {
     return _ref19.apply(this, arguments);
   };
 }());

@@ -341,7 +341,7 @@ var createPost = exports.createPost = function () {
     }, _callee6, this);
   }));
 
-  return function createPost(_x15, _x16, _x17, _x18, _x19) {
+  return function createPost(_x15, _x16, _x17, _x18) {
     return _ref7.apply(this, arguments);
   };
 }();
@@ -494,7 +494,7 @@ var editPost = exports.editPost = function () {
     }, _callee8, this);
   }));
 
-  return function editPost(_x21, _x22) {
+  return function editPost(_x20, _x21) {
     return _ref10.apply(this, arguments);
   };
 }();
@@ -613,7 +613,7 @@ var deletePost = exports.deletePost = function () {
     }, _callee10, this);
   }));
 
-  return function deletePost(_x23, _x24) {
+  return function deletePost(_x22, _x23) {
     return _ref12.apply(this, arguments);
   };
 }();
@@ -707,7 +707,7 @@ var markupPosts = exports.markupPosts = function () {
                 }, _callee11, this);
               }));
 
-              return function (_x26, _x27) {
+              return function (_x25, _x26) {
                 return _ref15.apply(this, arguments);
               };
             }(), true);
@@ -730,7 +730,7 @@ var markupPosts = exports.markupPosts = function () {
     }, _callee12, this);
   }));
 
-  return function markupPosts(_x25) {
+  return function markupPosts(_x24) {
     return _ref14.apply(this, arguments);
   };
 }();
@@ -861,7 +861,7 @@ var copyPosts = exports.copyPosts = function () {
                 }, _callee13, this);
               }));
 
-              return function (_x29) {
+              return function (_x28) {
                 return _ref20.apply(this, arguments);
               };
             }(), true);
@@ -877,7 +877,7 @@ var copyPosts = exports.copyPosts = function () {
     }, _callee14, this);
   }));
 
-  return function copyPosts(_x28) {
+  return function copyPosts(_x27) {
     return _ref18.apply(this, arguments);
   };
 }();
@@ -967,7 +967,7 @@ var getThreadPosts = exports.getThreadPosts = function () {
     }, _callee15, this);
   }));
 
-  return function getThreadPosts(_x30, _x31, _x32) {
+  return function getThreadPosts(_x29, _x30) {
     return _ref21.apply(this, arguments);
   };
 }();
@@ -1029,7 +1029,7 @@ var findPosts = exports.findPosts = function () {
     }, _callee16, this);
   }));
 
-  return function findPosts(_x34, _x35, _x36) {
+  return function findPosts(_x32, _x33, _x34) {
     return _ref23.apply(this, arguments);
   };
 }();

@@ -178,7 +178,7 @@ var process = function () {
     }, _callee2, this);
   }));
 
-  return function process(_x, _x2, _x3, _x4) {
+  return function process(_x, _x2, _x3) {
     return _ref2.apply(this, arguments);
   };
 }();
@@ -287,7 +287,7 @@ var markup = function () {
                 }, _callee3, this);
               }));
 
-              return function (_x10) {
+              return function (_x8) {
                 return _ref7.apply(this, arguments);
               };
             }());
@@ -303,7 +303,7 @@ var markup = function () {
     }, _callee4, this);
   }));
 
-  return function markup(_x6, _x7, _x8) {
+  return function markup(_x5, _x6) {
     return _ref5.apply(this, arguments);
   };
 }();

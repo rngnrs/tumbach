@@ -6,16 +6,14 @@ Object.defineProperty(exports, "__esModule", {
 exports.renderPostFileInfo = exports.createThumbnail = undefined;
 
 var createThumbnail = exports.createThumbnail = function () {
-  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(file, thumbPath, path) {
-    var _this = this;
+  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(file, thumbPath, path) {
+    var metadata, width, height, i, result, duration, bitrate, pngThumbPath, thumbInfo, _thumbInfo;
 
-    var metadata, width, height, i, result, duration, bitrate, thumbInfo, _thumbInfo;
-
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context.prev = _context.next) {
           case 0:
-            _context2.next = 2;
+            _context.next = 2;
             return new Promise(function (resolve, reject) {
               _fluentFfmpeg2.default.ffprobe(path, function (err, metadata) {
                 if (err) {
@@ -26,18 +24,18 @@ var createThumbnail = exports.createThumbnail = function () {
             });
 
           case 2:
-            metadata = _context2.sent;
+            metadata = _context.sent;
             width = void 0, height = void 0;
             i = 0;
 
           case 5:
             if (!(i < metadata.streams.length)) {
-              _context2.next = 13;
+              _context.next = 13;
               break;
             }
 
             if (!(!isNaN(+metadata.streams[i].width) && !isNaN(+metadata.streams[i].height))) {
-              _context2.next = 10;
+              _context.next = 10;
               break;
             }
 
@@ -47,11 +45,11 @@ var createThumbnail = exports.createThumbnail = function () {
             height = Tools.option(metadata.streams[i].height, 'number', 0, { test: function test(h) {
                 return h > 0;
               } });
-            return _context2.abrupt('break', 13);
+            return _context.abrupt('break', 13);
 
           case 10:
             i++;
-            _context2.next = 5;
+            _context.next = 5;
             break;
 
           case 13:
@@ -70,114 +68,98 @@ var createThumbnail = exports.createThumbnail = function () {
               duration: +duration ? durationToString(duration) : duration,
               bitrate: bitrate ? Math.floor(bitrate / 1024) : 0
             };
-            _context2.prev = 18;
-            return _context2.delegateYield(regeneratorRuntime.mark(function _callee() {
-              var pngThumbPath;
-              return regeneratorRuntime.wrap(function _callee$(_context) {
-                while (1) {
-                  switch (_context.prev = _context.next) {
-                    case 0:
-                      pngThumbPath = thumbPath + '.png';
-                      _context.next = 3;
-                      return new Promise(function (resolve, reject) {
-                        (0, _fluentFfmpeg2.default)(path).frames(1).on('error', reject).on('end', resolve).save(pngThumbPath);
-                      });
-
-                    case 3:
-                      file.thumbPath = pngThumbPath;
-
-                    case 4:
-                    case 'end':
-                      return _context.stop();
-                  }
-                }
-              }, _callee, _this);
-            })(), 't0', 20);
-
-          case 20:
-            _context2.next = 25;
-            break;
+            _context.prev = 18;
+            pngThumbPath = thumbPath + '.png';
+            _context.next = 22;
+            return new Promise(function (resolve, reject) {
+              (0, _fluentFfmpeg2.default)(path).frames(1).on('error', reject).on('end', resolve).save(pngThumbPath);
+            });
 
           case 22:
-            _context2.prev = 22;
-            _context2.t1 = _context2['catch'](18);
-
-            _logger2.default.error(_context2.t1.stack || _context2.t1);
+            file.thumbPath = pngThumbPath;
+            _context.next = 28;
+            break;
 
           case 25:
+            _context.prev = 25;
+            _context.t0 = _context['catch'](18);
+
+            _logger2.default.error(_context.t0.stack || _context.t0);
+
+          case 28:
             if (!(thumbPath === file.thumbPath)) {
-              _context2.next = 31;
+              _context.next = 34;
               break;
             }
 
-            _context2.next = 28;
+            _context.next = 31;
             return Files.generateRandomImage(file.hash, file.mimeType, thumbPath);
 
-          case 28:
+          case 31:
             result.thumbDimensions = {
               width: 200,
               height: 200
             };
-            _context2.next = 46;
+            _context.next = 49;
             break;
 
-          case 31:
-            _context2.next = 33;
+          case 34:
+            _context.next = 36;
             return Files.getImageSize(file.thumbPath);
 
-          case 33:
-            thumbInfo = _context2.sent;
+          case 36:
+            thumbInfo = _context.sent;
 
             if (thumbInfo) {
-              _context2.next = 36;
+              _context.next = 39;
               break;
             }
 
             throw new Error(Tools.translate('Failed to identify image file: $[1]', '', file.thumbPath));
 
-          case 36:
+          case 39:
             result.thumbDimensions = {
               width: thumbInfo.width,
               height: thumbInfo.height
             };
 
             if (!(result.thumbDimensions.width > 200 || result.thumbDimensions.height > 200)) {
-              _context2.next = 46;
+              _context.next = 49;
               break;
             }
 
-            _context2.next = 40;
+            _context.next = 43;
             return Files.resizeImage(file.thumbPath, 200, 200);
 
-          case 40:
-            _context2.next = 42;
+          case 43:
+            _context.next = 45;
             return Files.getImageSize(file.thumbPath);
 
-          case 42:
-            _thumbInfo = _context2.sent;
+          case 45:
+            _thumbInfo = _context.sent;
 
             if (_thumbInfo) {
-              _context2.next = 45;
+              _context.next = 48;
               break;
             }
 
             throw new Error(Tools.translate('Failed to identify image file: $[1]', '', file.thumbPath));
 
-          case 45:
+          case 48:
             result.thumbDimensions = {
               width: _thumbInfo.width,
               height: _thumbInfo.height
             };
 
-          case 46:
-            return _context2.abrupt('return', result);
+          case 49:
+            return _context.abrupt('return', result);
 
-          case 47:
+          case 50:
           case 'end':
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2, this, [[18, 22]]);
+    }, _callee, this, [[18, 25]]);
   }));
 
   return function createThumbnail(_x, _x2, _x3) {
@@ -186,12 +168,12 @@ var createThumbnail = exports.createThumbnail = function () {
 }();
 
 var renderPostFileInfo = exports.renderPostFileInfo = function () {
-  var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(fileInfo) {
+  var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(fileInfo) {
     var _ref3, duration, bitrate;
 
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
             if (fileInfo.dimensions) {
               fileInfo.sizeText += ', ' + fileInfo.dimensions.width + 'x' + fileInfo.dimensions.height;
@@ -207,10 +189,10 @@ var renderPostFileInfo = exports.renderPostFileInfo = function () {
 
           case 4:
           case 'end':
-            return _context3.stop();
+            return _context2.stop();
         }
       }
-    }, _callee3, this);
+    }, _callee2, this);
   }));
 
   return function renderPostFileInfo(_x4) {
