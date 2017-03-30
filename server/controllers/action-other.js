@@ -1,9 +1,5 @@
 'use strict';
 
-var _underscore = require('underscore');
-
-var _underscore2 = _interopRequireDefault(_underscore);
-
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -43,6 +39,10 @@ var PostsModel = _interopRequireWildcard(_posts);
 var _users = require('../models/users');
 
 var UsersModel = _interopRequireWildcard(_users);
+
+var _ipc = require('../helpers/ipc');
+
+var IPC = _interopRequireWildcard(_ipc);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 

@@ -299,10 +299,6 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _fs = require('q-io/fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
 var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
@@ -331,10 +327,6 @@ var _config = require('../helpers/config');
 
 var _config2 = _interopRequireDefault(_config);
 
-var _logger = require('../helpers/logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
 var _tools = require('../helpers/tools');
 
 var Tools = _interopRequireWildcard(_tools);
@@ -346,10 +338,6 @@ var BoardsModel = _interopRequireWildcard(_boards);
 var _misc = require('../models/misc');
 
 var MiscModel = _interopRequireWildcard(_misc);
-
-var _posts = require('../models/posts');
-
-var PostsModel = _interopRequireWildcard(_posts);
 
 var _threads = require('../models/threads');
 
@@ -423,8 +411,6 @@ function getPrerenderedPost(html, postNumber) {
   }
   return html.substring(startIndex, endIndex + endPattern.length);
 }
-
-;
 
 router.paths = function () {
   var _ref10 = _asyncToGenerator(regeneratorRuntime.mark(function _callee8(description) {

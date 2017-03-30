@@ -1059,10 +1059,6 @@ var _uuid = require('uuid');
 
 var _uuid2 = _interopRequireDefault(_uuid);
 
-var _board = require('../boards/board');
-
-var _board2 = _interopRequireDefault(_board);
-
 var _files = require('../models/files');
 
 var FilesModel = _interopRequireWildcard(_files);

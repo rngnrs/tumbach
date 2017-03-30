@@ -1180,10 +1180,6 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _fs = require('q-io/fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
 var _promisifyNode = require('promisify-node');
 
 var _promisifyNode2 = _interopRequireDefault(_promisifyNode);
@@ -1207,14 +1203,6 @@ var PostsModel = _interopRequireWildcard(_posts);
 var _board = require('../boards/board');
 
 var _board2 = _interopRequireDefault(_board);
-
-var _board3 = require('../controllers/board');
-
-var _board4 = _interopRequireDefault(_board3);
-
-var _cache = require('../helpers/cache');
-
-var Cache = _interopRequireWildcard(_cache);
 
 var _ipc = require('../helpers/ipc');
 

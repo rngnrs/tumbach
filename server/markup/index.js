@@ -320,10 +320,6 @@ var _processingContext = require('./processing-context');
 
 var _processingContext2 = _interopRequireDefault(_processingContext);
 
-var _config = require('../helpers/config');
-
-var _config2 = _interopRequireDefault(_config);
-
 var _permissions = require('../helpers/permissions');
 
 var Permissions = _interopRequireWildcard(_permissions);

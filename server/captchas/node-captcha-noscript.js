@@ -262,7 +262,7 @@ var NodeCaptchaNoscript = function (_Captcha) {
                   break;
                 }
 
-                throw new Error(Tools.translate('No captcha for this IP'));
+                return _context5.abrupt('return', Tools.translate('No captcha for this IP'));
 
               case 4:
                 if (response) {

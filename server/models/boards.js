@@ -730,10 +730,6 @@ var delall = exports.delall = function () {
                         });
 
                       case 2:
-                        _context15.next = 4;
-                        return PostsModel.removePostData(post.boardName, post.number, post.threadNumber);
-
-                      case 4:
                       case 'end':
                         return _context15.stop();
                     }
@@ -755,7 +751,7 @@ var delall = exports.delall = function () {
                     switch (_context16.prev = _context16.next) {
                       case 0:
                         _context16.next = 2;
-                        return ThreadsModel.removeThread(thread.boardName, thread.number);
+                        return ThreadsModel.deleteThread(thread.boardName, thread.number);
 
                       case 2:
                       case 'end':
@@ -837,18 +833,6 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _cluster = require('cluster');
-
-var _cluster2 = _interopRequireDefault(_cluster);
-
-var _fs = require('q-io/fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
-var _misc = require('./misc');
-
-var MiscModel = _interopRequireWildcard(_misc);
-
 var _posts = require('./posts');
 
 var PostsModel = _interopRequireWildcard(_posts);
@@ -868,10 +852,6 @@ var Renderer = _interopRequireWildcard(_renderer);
 var _ipc = require('../helpers/ipc');
 
 var IPC = _interopRequireWildcard(_ipc);
-
-var _logger = require('../helpers/logger');
-
-var _logger2 = _interopRequireDefault(_logger);
 
 var _tools = require('../helpers/tools');
 

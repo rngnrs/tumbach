@@ -74,7 +74,7 @@ function createOptions() {
     password: (0, _config2.default)('system.redis.password'),
     db: (0, _config2.default)('system.redis.db')
   };
-};
+}
 
 function createClient() {
   var redisNodes = (0, _config2.default)('system.redis.nodes');

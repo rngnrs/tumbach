@@ -407,23 +407,23 @@ var editPost = exports.editPost = function () {
             rawText = text || null;
             markupModes = _markup2.default.markupModes(markupMode);
             referencedPosts = {};
+            //sage = ('true' === sage);
 
-            sage = 'true' === sage;
-            _context8.next = 25;
+            _context8.next = 24;
             return (0, _markup2.default)(boardName, rawText, {
               markupModes: markupModes,
               accessLevel: req.level(boardName),
               referencedPosts: referencedPosts
             });
 
-          case 25:
+          case 24:
             text = _context8.sent;
-            _context8.next = 28;
+            _context8.next = 27;
             return board.editPostExtraData(req, fields, post.extraData);
 
-          case 28:
+          case 27:
             extraData = _context8.sent;
-            _context8.next = 31;
+            _context8.next = 30;
             return Post.findOneAndUpdate(query, {
               $set: {
                 markup: markupModes,
@@ -444,27 +444,27 @@ var editPost = exports.editPost = function () {
               returnOriginal: false
             });
 
-          case 31:
+          case 30:
             result = _context8.sent;
 
             post = result.value;
 
             if (post) {
-              _context8.next = 35;
+              _context8.next = 34;
               break;
             }
 
             throw new Error(Tools.translate('No such post'));
 
-          case 35:
-            _context8.next = 37;
+          case 34:
+            _context8.next = 36;
             return PostReferencesModel.removeReferringPosts(boardName, postNumber);
 
-          case 37:
-            _context8.next = 39;
+          case 36:
+            _context8.next = 38;
             return PostReferencesModel.addReferringPosts(referencedPosts, boardName, postNumber, threadNumber);
 
-          case 39:
+          case 38:
             _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
               return regeneratorRuntime.wrap(function _callee7$(_context7) {
                 while (1) {
@@ -486,7 +486,7 @@ var editPost = exports.editPost = function () {
             }))();
             return _context8.abrupt('return', post);
 
-          case 41:
+          case 40:
           case 'end':
             return _context8.stop();
         }
@@ -1040,14 +1040,6 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _fs = require('q-io/fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
-var _promisifyNode = require('promisify-node');
-
-var _promisifyNode2 = _interopRequireDefault(_promisifyNode);
-
 var _boards = require('./boards');
 
 var BoardsModel = _interopRequireWildcard(_boards);
@@ -1059,14 +1051,6 @@ var FilesModel = _interopRequireWildcard(_files);
 var _postReferences = require('./post-references');
 
 var PostReferencesModel = _interopRequireWildcard(_postReferences);
-
-var _threads = require('./threads');
-
-var ThreadsModel = _interopRequireWildcard(_threads);
-
-var _users = require('./users');
-
-var UsersModel = _interopRequireWildcard(_users);
 
 var _board = require('../boards/board');
 

@@ -252,7 +252,7 @@ var WebSocketServer = function () {
                   conn.write(JSON.stringify({
                     id: message.id,
                     type: message.type,
-                    error: error
+                    error: _context.t0
                   }));
                 } catch (err) {
                   //Do nothing

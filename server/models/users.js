@@ -1421,14 +1421,6 @@ var _fs = require('q-io/fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _posts = require('./posts');
-
-var PostsModel = _interopRequireWildcard(_posts);
-
-var _threads = require('./threads');
-
-var ThreadsModel = _interopRequireWildcard(_threads);
-
 var _board = require('../boards/board');
 
 var _board2 = _interopRequireDefault(_board);

@@ -378,7 +378,7 @@ var Board = function () {
                 throw new Error(Tools.translate('Subject is too long'));
 
               case 9:
-                if (!(text.length > this.maxTextFieldLength)) {
+                if (!(text.length > this.maxTextLength)) {
                   _context.next = 11;
                   break;
                 }

@@ -213,10 +213,6 @@ var _fluentFfmpeg = require('fluent-ffmpeg');
 
 var _fluentFfmpeg2 = _interopRequireDefault(_fluentFfmpeg);
 
-var _promisifyNode = require('promisify-node');
-
-var _promisifyNode2 = _interopRequireDefault(_promisifyNode);
-
 var _files = require('../core/files');
 
 var Files = _interopRequireWildcard(_files);

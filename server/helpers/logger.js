@@ -80,7 +80,7 @@ var WinstonClusterTransport = function (_Winston$Transport) {
 
               case 2:
                 if (this.stripColors) {
-                  msg = ('' + msg).replace(code, '');
+                  msg = ('' + msg).replace(CODE, '');
                 }
                 message = {
                   cmd: 'log',

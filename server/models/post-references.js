@@ -316,10 +316,6 @@ var _tools = require('../helpers/tools');
 
 var Tools = _interopRequireWildcard(_tools);
 
-var _posts = require('./posts');
-
-var PostsModel = _interopRequireWildcard(_posts);
-
 var _markup = require('../markup');
 
 var _markup2 = _interopRequireDefault(_markup);

@@ -1,8 +1,6 @@
 import _ from 'underscore';
 import FS from 'q-io/fs';
 
-import * as PostsModel from './posts';
-import * as ThreadsModel from './threads';
 import Board from '../boards/board';
 import config from '../helpers/config';
 import FSWatcher from '../helpers/fs-watcher';

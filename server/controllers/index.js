@@ -16,10 +16,6 @@ var _fs = require('q-io/fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _fs3 = require('fs');
-
-var _fs4 = _interopRequireDefault(_fs3);
-
 var _config = require('../helpers/config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -128,9 +124,7 @@ function initialize() {
       default:
         {
           _logger2.default.error(Tools.preferIPv4(req.ip), req.path, err.stack || err);
-          if (err.hasOwnProperty('ban')) {
-            var model = { ban: err.ban };
-          } else {
+          if (err.hasOwnProperty('ban')) {} else {
             if ((0, _underscore2.default)(err).isError()) {
               var message = err.message;
             } else {
@@ -142,7 +136,7 @@ function initialize() {
         }
     }
   });
-};
+}
 
 app.initialize = initialize;
 
