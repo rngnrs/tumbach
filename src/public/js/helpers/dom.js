@@ -7,7 +7,7 @@ import * as Settings from './settings';
 import * as Tools from './tools';
 import PopupMessage from '../widgets/popup-message';
 
-const NOTIFICATION_QUEUE_CHECK_INTERVAL = 10 * Constants.SECOND;
+const NOTIFICATION_QUEUE_CHECK_INTERVAL = 5 * Constants.SECOND;
 
 let sounds = {};
 let unloading = false;
@@ -22,7 +22,7 @@ export let handleError = function(error) {
   if (unloading) {
     return;
   }
-  var text;
+  let text;
   if (error) {
     if (error.hasOwnProperty('message')) {
       text = `${Tools.translate('Error')}: ${error.message}`;
@@ -120,8 +120,6 @@ export let node = function(type, text) {
 export let id = function(id) {
   return (typeof id === 'string' || typeof id === 'number') ? document.getElementById(id) : null;
 };
-
-let xxx = 1;
 
 export let queryAll = function(query, parent) {
   if (typeof query !== 'string') {

@@ -345,7 +345,7 @@ function resetSource(track) {
   }
   playerElement.addEventListener('play', () => {
     tracksViewModel.playing(true);
-    Storage.playerPlaying(true);
+    Storage.setSessionObject('playerPlaying', true);
   });
   playerElement.addEventListener('pause', () => {
     tracksViewModel.playing(false);
