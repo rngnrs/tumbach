@@ -127,6 +127,10 @@ var _markup = require('../markup');
 
 var _markup2 = _interopRequireDefault(_markup);
 
+var _boards = require('../models/boards');
+
+var BoardsModel = _interopRequireWildcard(_boards);
+
 var _files2 = require('../models/files');
 
 var FilesModel = _interopRequireWildcard(_files2);
@@ -387,7 +391,7 @@ router.post('/action/createPost', function () {
 
 router.post('/action/createThread', function () {
   var _ref7 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(req, res, next) {
-    var transaction, _ref8, fields, files, boardName, captchaEngine, thread, post;
+    var transaction, _ref8, fields, files, boardName, captchaEngine, quota, thread, post;
 
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
@@ -440,24 +444,38 @@ router.post('/action/createThread', function () {
             });
 
           case 22:
+            _context4.next = 24;
+            return BoardsModel.checkQuota(boardName);
+
+          case 24:
+            quota = _context4.sent;
+
+            if (quota) {
+              _context4.next = 27;
+              break;
+            }
+
+            throw new Error(Tools.translate('E-00: Too many threads per time.'));
+
+          case 27:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context4.next = 25;
+            _context4.next = 30;
             return ThreadsModel.createThread(req, fields, transaction);
 
-          case 25:
+          case 30:
             thread = _context4.sent;
-            _context4.next = 28;
+            _context4.next = 33;
             return Files.processFiles(boardName, files, transaction);
 
-          case 28:
+          case 33:
             files = _context4.sent;
-            _context4.next = 31;
+            _context4.next = 36;
             return PostsModel.createPost(req, fields, files, transaction, {
               postNumber: thread.number,
               date: new Date(thread.createdAt)
             });
 
-          case 31:
+          case 36:
             post = _context4.sent;
 
             if ('node-captcha-noscript' !== captchaEngine) {
@@ -468,11 +486,11 @@ router.post('/action/createThread', function () {
             } else {
               res.redirect(303, '/' + (0, _config2.default)('site.pathPrefix') + thread.boardName + '/res/' + thread.number + '.html');
             }
-            _context4.next = 39;
+            _context4.next = 44;
             break;
 
-          case 35:
-            _context4.prev = 35;
+          case 40:
+            _context4.prev = 40;
             _context4.t0 = _context4['catch'](1);
 
             if (transaction) {
@@ -480,12 +498,12 @@ router.post('/action/createThread', function () {
             }
             next(_context4.t0);
 
-          case 39:
+          case 44:
           case 'end':
             return _context4.stop();
         }
       }
-    }, _callee4, this, [[1, 35]]);
+    }, _callee4, this, [[1, 40]]);
   }));
 
   return function (_x11, _x12, _x13) {

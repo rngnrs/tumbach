@@ -94,7 +94,7 @@ export async function incrementUserCaptchaQuotaBy(userID, quota, boardName) {
     key = `${boardName}:${userID}`;
   }
   quota = Tools.option(quota, 'number', 1, { test: (q) => { return 0 !== q; } });
-  return await UserCaptchaQuotas.incrementBy(key, quota);
+  return await UserCaptchaQuotas.incrementBy(quota, key);
 }
 
 export async function useCaptcha(boardName, userID) {

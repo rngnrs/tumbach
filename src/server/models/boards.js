@@ -7,9 +7,18 @@ import * as Renderer from '../core/renderer';
 import * as IPC from '../helpers/ipc';
 import * as Tools from '../helpers/tools';
 import mongodbClient from '../storage/mongodb-client-factory';
+import config from '../helpers/config';
+
+import Key from '../storage/key';
+import redisClient from '../storage/redis-client-factory';
 
 let client = mongodbClient();
 let pageCounts = new Map();
+
+let ThreadQuotas = new Key(redisClient(), 'threadQuotas', {
+  parse: quota => +quota,
+  stringify: quota => quota.toString()
+});
 
 function addDataToThread(thread, board) {
   thread.bumpLimit = board.bumpLimit;
@@ -17,6 +26,72 @@ function addDataToThread(thread, board) {
   thread.bumpLimitReached = (thread.postCount >= board.bumpLimit);
   thread.postLimitReached = (thread.postCount >= board.postLimit);
   thread.postingEnabled = (board.postingEnabled && !thread.closed);
+}
+
+export async function getQuota(boardName) {
+  if (!Board.board(boardName)) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  let exists = await ThreadQuotas.exists(boardName);
+  if (!exists)
+    return false;
+  let quota = await ThreadQuotas.get(boardName);
+  return Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+}
+
+export async function setQuota(boardName, quota) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  let expireAt = board.threadTimeQuota;
+  quota = Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+  return await ThreadQuotas.setex(quota, expireAt, boardName);
+}
+
+export async function incrementQuotaBy(boardName, quota) {
+  let key;
+  if (boardName) {
+    if (!Board.board(boardName)) {
+      throw new Error(Tools.translate('Invalid board'));
+    }
+    key = boardName;
+  }
+  quota = Tools.option(quota, 'number', 1, { test: (q) => { return 0 !== q; } });
+  return await ThreadQuotas.incrementBy(quota, key);
+}
+
+export async function useQuota(boardName) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  if (board.threadQuota < 1) {
+    return true;
+  }
+  let quota = await ThreadQuotas.incrementBy(-1, boardName);
+  if (+quota < 0) {
+    return await ThreadQuotas.set(boardName, 0);
+  }
+  return Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+}
+
+export async function checkQuota(boardName) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  if (board.threadQuota > 0) {
+    let quota = await getQuota(boardName);
+    if (quota === false) {
+      await setQuota(boardName, board.threadQuota);
+      quota = await getQuota(boardName);
+    }
+    if(+quota <= 0)
+      return false;
+    await useQuota(boardName);
+  }
+  return true;
 }
 
 export function postSubject(post, maxLength) {

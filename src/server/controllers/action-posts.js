@@ -10,6 +10,7 @@ import * as IPC from '../helpers/ipc';
 import PostCreationTransaction from '../helpers/post-creation-transaction';
 import * as Tools from '../helpers/tools';
 import markup from '../markup';
+import * as BoardsModel from '../models/boards';
 import * as FilesModel from '../models/files';
 import * as PostsModel from '../models/posts';
 import * as ThreadsModel from '../models/threads';
@@ -173,6 +174,10 @@ router.post('/action/createThread', async function(req, res, next) {
       fields: fields,
       files: files
     });
+    let quota = await BoardsModel.checkQuota(boardName);
+    if(!quota) {
+      throw new Error(Tools.translate('E-00: Too many threads per time.'));
+    }
     transaction = new PostCreationTransaction(boardName);
     let thread = await ThreadsModel.createThread(req, fields, transaction);
     files = await Files.processFiles(boardName, files, transaction);

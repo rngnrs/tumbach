@@ -126,7 +126,7 @@ var incrementUserCaptchaQuotaBy = exports.incrementUserCaptchaQuotaBy = function
                 return 0 !== q;
               } });
             _context5.next = 8;
-            return UserCaptchaQuotas.incrementBy(key, quota);
+            return UserCaptchaQuotas.incrementBy(quota, key);
 
           case 8:
             return _context5.abrupt('return', _context5.sent);

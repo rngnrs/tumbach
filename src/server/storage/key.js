@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import CommonKey from './common-key';
 
 export default class Key extends CommonKey {

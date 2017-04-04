@@ -157,6 +157,8 @@ class Board {
     this.defineSetting('skippedGetOrder', 0);
     this.defineSetting('opModeration', false);
     this.defineSetting('captchaQuota', 0);
+    this.defineSetting('threadQuota', 3);
+    this.defineSetting('threadTimeQuota', 60 * 60);
     this.defineSetting('enabled', true);
     this.defineSetting('hidden', false);
     this.defineSetting('maxNameLength', 50);
