@@ -257,7 +257,7 @@ router.post('/action/markupText', function () {
 
 router.post('/action/createPost', function () {
   var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(req, res, next) {
-    var transaction, _ref6, fields, files, boardName, threadNumber, captchaEngine, thread, post, hash, path;
+    var transaction, _ref6, fields, files, boardName, threadNumber, captchaEngine, quota, thread, post, hash, path;
 
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
@@ -321,35 +321,49 @@ router.post('/action/createPost', function () {
 
           case 25:
             _context3.next = 27;
+            return UsersModel.checkPostQuota(boardName, req.hashpass || req.ip);
+
+          case 27:
+            quota = _context3.sent;
+
+            if (quota) {
+              _context3.next = 30;
+              break;
+            }
+
+            throw new Error(Tools.translate('E-00: Too many posts per time.'));
+
+          case 30:
+            _context3.next = 32;
             return ThreadsModel.getThread(boardName, threadNumber, {
               closed: 1,
               unbumpable: 1
             });
 
-          case 27:
+          case 32:
             thread = _context3.sent;
 
             if (!thread.closed) {
-              _context3.next = 30;
+              _context3.next = 35;
               break;
             }
 
             throw new Error(Tools.translate('Posting is disabled in this thread'));
 
-          case 30:
+          case 35:
             transaction = new _postCreationTransaction2.default(boardName);
-            _context3.next = 33;
+            _context3.next = 38;
             return Files.processFiles(boardName, files, transaction);
 
-          case 33:
+          case 38:
             files = _context3.sent;
-            _context3.next = 36;
+            _context3.next = 41;
             return PostsModel.createPost(req, fields, files, transaction, {
               unbumpable: thread.unbumpable,
               archived: thread.archived
             });
 
-          case 36:
+          case 41:
             post = _context3.sent;
 
             IPC.send('notifyAboutNewPosts', boardName + '/' + threadNumber);
@@ -364,11 +378,11 @@ router.post('/action/createPost', function () {
 
               res.redirect(303, path);
             }
-            _context3.next = 45;
+            _context3.next = 50;
             break;
 
-          case 41:
-            _context3.prev = 41;
+          case 46:
+            _context3.prev = 46;
             _context3.t0 = _context3['catch'](1);
 
             if (transaction) {
@@ -376,12 +390,12 @@ router.post('/action/createPost', function () {
             }
             next(_context3.t0);
 
-          case 45:
+          case 50:
           case 'end':
             return _context3.stop();
         }
       }
-    }, _callee3, this, [[1, 41]]);
+    }, _callee3, this, [[1, 46]]);
   }));
 
   return function (_x8, _x9, _x10) {

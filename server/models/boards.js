@@ -1131,10 +1131,6 @@ var _mongodbClientFactory = require('../storage/mongodb-client-factory');
 
 var _mongodbClientFactory2 = _interopRequireDefault(_mongodbClientFactory);
 
-var _config = require('../helpers/config');
-
-var _config2 = _interopRequireDefault(_config);
-
 var _key = require('../storage/key');
 
 var _key2 = _interopRequireDefault(_key);

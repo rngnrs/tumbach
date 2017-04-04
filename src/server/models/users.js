@@ -25,6 +25,10 @@ let UserCaptchaQuotas = new Hash(redisClient(), 'captchaQuotas', {
   parse: quota => +quota,
   stringify: quota => quota.toString()
 });
+let UserPostQuotas = new Key(redisClient(), 'postQuotas', {
+  parse: quota => +quota,
+  stringify: quota => quota.toString()
+});
 
 function transformIPBans(bans) {
   return _(bans).reduce((acc, ban, ip) => {
@@ -107,7 +111,7 @@ export async function useCaptcha(boardName, userID) {
   }
   let key = userID;
   quota = await UserCaptchaQuotas.getOne(userID);
-  quota = Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } })
+  quota = Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
   if (quota <= 0) {
     key = `${boardName}:${userID}`;
   }
@@ -116,6 +120,79 @@ export async function useCaptcha(boardName, userID) {
     return await UserCaptchaQuotas.setOne(key, 0);
   }
   return Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+}
+
+export async function getPostQuota(boardName, userID) {
+  if (!Board.board(boardName)) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  let exists1 = await UserPostQuotas.exists(userID),
+      exists2 = await UserPostQuotas.exists(`${boardName}:${userID}`);
+  if (!exists1 && !exists2)
+    return false;
+  let quota = await UserPostQuotas.get(exists1? userID : `${boardName}:${userID}`);
+  return Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+}
+
+export async function setPostQuota(boardName, userID, quota) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  let expireAt = board.postTimeQuota;
+  quota = Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+  return await UserPostQuotas.setex(quota, expireAt, `${boardName}:${userID}`);
+}
+
+export async function incrementPostQuotaBy(userID, boardName, quota) {
+  let key = userID;
+  if (boardName) {
+    if (!Board.board(boardName)) {
+      throw new Error(Tools.translate('Invalid board'));
+    }
+    key = `${boardName}:${userID}`;
+  }
+  quota = Tools.option(quota, 'number', 1, { test: (q) => { return 0 !== q; } });
+  return await UserPostQuotas.incrementBy(quota, key);
+}
+
+export async function usePostQuota(boardName, userID) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  if (board.postQuota < 1) {
+    return true;
+  }
+  let key = userID;
+  let quota = await UserPostQuotas.get(key);
+  quota = Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+  if (quota <= 0) {
+    key = `${boardName}:${userID}`;
+  }
+  quota = await UserPostQuotas.incrementBy(-1, key);
+  if (+quota < 0) {
+    return await UserPostQuotas.set(0, key);
+  }
+  return Tools.option(quota, 'number', 0, { test: (q) => { return q >= 0; } });
+}
+
+export async function checkPostQuota(boardName, userID) {
+  let board = Board.board(boardName);
+  if (!board) {
+    throw new Error(Tools.translate('Invalid board'));
+  }
+  if (board.postQuota > 0) {
+    let quota = await getPostQuota(boardName, userID);
+    if (quota === false) {
+      await setPostQuota(boardName, userID, board.postQuota);
+      quota = await getPostQuota(boardName, userID);
+    }
+    if(+quota <= 0)
+      return false;
+    await usePostQuota(boardName, userID);
+  }
+  return true;
 }
 
 export async function getUserIP(boardName, postNumber) {

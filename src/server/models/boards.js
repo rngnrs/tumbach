@@ -7,7 +7,6 @@ import * as Renderer from '../core/renderer';
 import * as IPC from '../helpers/ipc';
 import * as Tools from '../helpers/tools';
 import mongodbClient from '../storage/mongodb-client-factory';
-import config from '../helpers/config';
 
 import Key from '../storage/key';
 import redisClient from '../storage/redis-client-factory';

@@ -218,6 +218,8 @@ var Board = function () {
     this.defineSetting('captchaQuota', 0);
     this.defineSetting('threadQuota', 3);
     this.defineSetting('threadTimeQuota', 60 * 60);
+    this.defineSetting('postQuota', 2);
+    this.defineSetting('postTimeQuota', 2 * 60);
     this.defineSetting('enabled', true);
     this.defineSetting('hidden', false);
     this.defineSetting('maxNameLength', 50);
@@ -404,7 +406,7 @@ var Board = function () {
                 return _context.abrupt('return');
 
               case 15:
-                if (!('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount != 0)) {
+                if (!('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount !== 0)) {
                   _context.next = 17;
                   break;
                 }
@@ -561,7 +563,7 @@ var Board = function () {
                 }
                 if (t > 0) {
                   post.name = post.name.slice(0, t);
-                } else if (t == 0) delete post.name;
+                } else if (t === 0) delete post.name;
                 delete post.user.ip;
                 delete post.user.hashpass;
                 delete post.user.password;
@@ -598,7 +600,7 @@ var Board = function () {
   }, {
     key: 'stripcode',
     value: function stripcode(t) {
-      if (!t.length || typeof t != "string") return "";
+      if (!t.length || typeof t !== "string") return "";
       return "!" + (0, _tripcode2.default)(t);
     }
   }]);

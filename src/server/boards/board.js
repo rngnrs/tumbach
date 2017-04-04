@@ -159,6 +159,8 @@ class Board {
     this.defineSetting('captchaQuota', 0);
     this.defineSetting('threadQuota', 3);
     this.defineSetting('threadTimeQuota', 60 * 60);
+    this.defineSetting('postQuota', 2);
+    this.defineSetting('postTimeQuota', 2 * 60);
     this.defineSetting('enabled', true);
     this.defineSetting('hidden', false);
     this.defineSetting('maxNameLength', 50);
@@ -290,7 +292,7 @@ class Board {
     if ('markupText' === mode || 'editPost' === mode) {
       return;
     }
-    if ('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount != 0) {
+    if ('createThread' === mode && this.maxFileCount && files.length <= 0 && this.minFileCount !== 0) {
       throw new Error(Tools.translate('Attempt to create a thread without attaching a file'));
     }
     if ('deleteFile' === mode && (existingFileCount > 0)) {
@@ -345,7 +347,7 @@ class Board {
     }
     if (t > 0) {
       post.name = post.name.slice(0, t);
-    } else if (t == 0)
+    } else if (t === 0)
       delete post.name;
     delete post.user.ip;
     delete post.user.hashpass;
@@ -367,7 +369,7 @@ class Board {
   }
 
   stripcode(t) {
-    if(!t.length || typeof t != "string")
+    if(!t.length || typeof t !== "string")
       return "";
     return "!" + tripcode(t);
   }

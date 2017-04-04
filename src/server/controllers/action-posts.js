@@ -123,6 +123,10 @@ router.post('/action/createPost', async function(req, res, next) {
       fields: fields,
       files: files
     });
+    let quota = await UsersModel.checkPostQuota(boardName, req.hashpass || req.ip);
+    if(!quota) {
+      throw new Error(Tools.translate('E-00: Too many posts per time.'));
+    }
     let thread = await ThreadsModel.getThread(boardName, threadNumber, {
       closed: 1,
       unbumpable: 1
