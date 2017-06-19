@@ -21,7 +21,7 @@ export function thumbnailSuffixForMimeType(mimeType) {
 
 export async function createThumbnail(file, thumbPath, path) {
   await new Promise((resolve, reject) => {
-    sharp(`${path}`).png().resize(200, 200).max().toFile(thumbPath, (err) => {
+    sharp(path)/*.png()*/.resize(200, 200).max().toFile(thumbPath, (err) => {
       if (err) {
         return reject(err);
       }

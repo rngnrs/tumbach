@@ -9,20 +9,17 @@ var createThumbnail = exports.createThumbnail = function () {
   var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(file, thumbPath) {
     var _this = this;
 
-    var isGIF, suffix, info, thumbInfo, result, hash;
+    var info, thumbInfo, result, hash;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            isGIF = !1; //('image/gif' === file.mimeType);
+            _context2.next = 2;
+            return Files.getImageSize(file.path /* + suffix*/);
 
-            suffix = isGIF ? '[0]' : '';
-            _context2.next = 4;
-            return Files.getImageSize(file.path + suffix);
-
-          case 4:
+          case 2:
             info = _context2.sent;
-            _context2.next = 7;
+            _context2.next = 5;
             return new Promise(function () {
               var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resolve, reject) {
                 var stream;
@@ -30,9 +27,10 @@ var createThumbnail = exports.createThumbnail = function () {
                   while (1) {
                     switch (_context.prev = _context.next) {
                       case 0:
-                        stream = (0, _sharp2.default)(file.path + suffix);
+                        stream = (0, _sharp2.default)(file.path /* + suffix*/);
+                        //if (isGIF)
+                        //  stream = stream.png();
 
-                        if (isGIF) stream = stream.png();
                         stream.resize(200, 200).max().toFile(thumbPath, function (err) {
                           if (err) {
                             return reject(err);
@@ -40,7 +38,7 @@ var createThumbnail = exports.createThumbnail = function () {
                           resolve();
                         });
 
-                      case 3:
+                      case 2:
                       case 'end':
                         return _context.stop();
                     }
@@ -53,21 +51,21 @@ var createThumbnail = exports.createThumbnail = function () {
               };
             }());
 
-          case 7:
-            _context2.next = 9;
+          case 5:
+            _context2.next = 7;
             return Files.getImageSize(thumbPath);
 
-          case 9:
+          case 7:
             thumbInfo = _context2.sent;
 
             if (thumbInfo) {
-              _context2.next = 12;
+              _context2.next = 10;
               break;
             }
 
             throw new Error(Tools.translate('Failed to identify image file: $[1]', '', thumbPath));
 
-          case 12:
+          case 10:
             result = {
               dimensions: {
                 width: info.width,
@@ -80,22 +78,22 @@ var createThumbnail = exports.createThumbnail = function () {
             };
 
             if (!(0, _config2.default)('system.phash.enabled')) {
-              _context2.next = 18;
+              _context2.next = 16;
               break;
             }
 
-            _context2.next = 16;
+            _context2.next = 14;
             return (0, _phashImage2.default)(thumbPath, true);
 
-          case 16:
+          case 14:
             hash = _context2.sent;
 
             result.ihash = hash.toString();
 
-          case 18:
+          case 16:
             return _context2.abrupt('return', result);
 
-          case 19:
+          case 17:
           case 'end':
             return _context2.stop();
         }

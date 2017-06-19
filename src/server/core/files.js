@@ -410,13 +410,15 @@ export async function getImageSize(fileName) {
   });
 }
 
-export async function resizeImage(fileName, width, height, options) {
+export async function resizeImage(file, width, height, options) {
   return new Promise((resolve, reject) => {
-    sharp(fileName).resize(width, height, options).toFile(fileName, (err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
+    FSSync.readFile(file, (err, buffer) => {
+      sharp(buffer).resize(width, height, options).max().toFile(file, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
     });
   });
 }

@@ -1000,17 +1000,19 @@ var getImageSize = exports.getImageSize = function () {
 }();
 
 var resizeImage = exports.resizeImage = function () {
-  var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee23(fileName, width, height, options) {
+  var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee23(file, width, height, options) {
     return regeneratorRuntime.wrap(function _callee23$(_context23) {
       while (1) {
         switch (_context23.prev = _context23.next) {
           case 0:
             return _context23.abrupt('return', new Promise(function (resolve, reject) {
-              (0, _sharp2.default)(fileName).resize(width, height, options).toFile(fileName, function (err) {
-                if (err) {
-                  return reject(err);
-                }
-                resolve();
+              _fs4.default.readFile(file, function (err, buffer) {
+                (0, _sharp2.default)(buffer).resize(width, height, options).max().toFile(file, function (err) {
+                  if (err) {
+                    return reject(err);
+                  }
+                  resolve();
+                });
               });
             }));
 
