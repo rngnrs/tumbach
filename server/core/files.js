@@ -1005,6 +1005,7 @@ var resizeImage = exports.resizeImage = function () {
       while (1) {
         switch (_context23.prev = _context23.next) {
           case 0:
+            options = options || { progressive: true };
             return _context23.abrupt('return', new Promise(function (resolve, reject) {
               _fs4.default.readFile(file, function (err, buffer) {
                 (0, _sharp2.default)(buffer).resize(width, height, options).max().toFile(file, function (err) {
@@ -1016,7 +1017,7 @@ var resizeImage = exports.resizeImage = function () {
               });
             }));
 
-          case 1:
+          case 2:
           case 'end':
             return _context23.stop();
         }
