@@ -14,7 +14,7 @@ var createThumbnail = exports.createThumbnail = function () {
           case 0:
             _context.next = 2;
             return new Promise(function (resolve, reject) {
-              (0, _gm2.default)(path + '[0]').setFormat('png').resize(200, 200).quality(100).write(thumbPath, function (err) {
+              (0, _sharp2.default)('' + path).png().resize(200, 200).max().toFile(thumbPath, function (err) {
                 if (err) {
                   return reject(err);
                 }
@@ -58,9 +58,9 @@ exports.suffixMatchesMimeType = suffixMatchesMimeType;
 exports.defaultSuffixForMimeType = defaultSuffixForMimeType;
 exports.thumbnailSuffixForMimeType = thumbnailSuffixForMimeType;
 
-var _gm = require('gm');
+var _sharp = require('sharp');
 
-var _gm2 = _interopRequireDefault(_gm);
+var _sharp2 = _interopRequireDefault(_sharp);
 
 var _files = require('../core/files');
 

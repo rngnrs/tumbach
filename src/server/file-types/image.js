@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import gm from 'gm';
+import sharp from 'sharp';
 import phash from 'phash-image';
 
 import * as Files from '../core/files';
@@ -40,15 +40,14 @@ export function thumbnailSuffixForMimeType(mimeType) {
 }
 
 export async function createThumbnail(file, thumbPath) {
-  let isGIF = ('image/gif' === file.mimeType);
-  let suffix = isGIF ? '[0]' : '';
-  let info = await Files.getImageSize(file.path + suffix);
-  await new Promise((resolve, reject) => {
-    let stream = gm(file.path + suffix);
-    if (isGIF) {
-      stream = stream.setFormat('png');
-    }
-    stream.resize(200, 200).quality(100).write(thumbPath, (err) => {
+  //let isGIF = !1;//('image/gif' === file.mimeType);
+  //let suffix = isGIF ? '[0]' : '';
+  let info = await Files.getImageSize(file.path/* + suffix*/);
+  await new Promise(async (resolve, reject) => {
+    let stream = sharp(file.path/* + suffix*/);
+    //if (isGIF)
+    //  stream = stream.png();
+    stream.resize(200, 200).max().toFile(thumbPath, (err) => {
       if (err) {
         return reject(err);
       }

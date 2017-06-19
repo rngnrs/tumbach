@@ -4,7 +4,7 @@ import ChildProcess from 'child_process';
 import du from 'du';
 import FS from 'q-io/fs';
 import FSSync from 'fs';
-import gm from 'gm';
+import sharp from 'sharp';
 import HTTP from 'q-io/http';
 import Jdenticon from 'jdenticon';
 import merge from 'merge';
@@ -395,18 +395,24 @@ export function isImageType(mimeType) {
 
 export async function getImageSize(fileName) {
   return new Promise((resolve, reject) => {
-    gm(fileName).size((err, value) => {
-      if (err) {
-        return reject(err);
+    sharp(fileName).metadata().then(async ({width, height}) => {
+      if(width > 15000 || height > 15000) {
+        await FS.removeTree(fileName);
+        reject(new Error(`Image is too large!`));
       }
-      resolve(value);
+      resolve({
+        width: width,
+        height: height
+      });
+    }).catch((e) => {
+      return reject(e);
     });
   });
 }
 
 export async function resizeImage(fileName, width, height, options) {
   return new Promise((resolve, reject) => {
-    gm(fileName).resize(width, height, options).quality(100).write(fileName, (err) => {
+    sharp(fileName).resize(width, height, options).toFile(fileName, (err) => {
       if (err) {
         return reject(err);
       }

@@ -6,42 +6,62 @@ Object.defineProperty(exports, "__esModule", {
 exports.renderPostFileInfo = exports.createThumbnail = undefined;
 
 var createThumbnail = exports.createThumbnail = function () {
-  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(file, thumbPath) {
+  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(file, thumbPath) {
+    var _this = this;
+
     var isGIF, suffix, info, thumbInfo, result, hash;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            isGIF = 'image/gif' === file.mimeType;
+            isGIF = !1; //('image/gif' === file.mimeType);
+
             suffix = isGIF ? '[0]' : '';
-            _context.next = 4;
+            _context2.next = 4;
             return Files.getImageSize(file.path + suffix);
 
           case 4:
-            info = _context.sent;
-            _context.next = 7;
-            return new Promise(function (resolve, reject) {
-              var stream = (0, _gm2.default)(file.path + suffix);
-              if (isGIF) {
-                stream = stream.setFormat('png');
-              }
-              stream.resize(200, 200).quality(100).write(thumbPath, function (err) {
-                if (err) {
-                  return reject(err);
-                }
-                resolve();
-              });
-            });
+            info = _context2.sent;
+            _context2.next = 7;
+            return new Promise(function () {
+              var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resolve, reject) {
+                var stream;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        stream = (0, _sharp2.default)(file.path + suffix);
+
+                        if (isGIF) stream = stream.png();
+                        stream.resize(200, 200).max().toFile(thumbPath, function (err) {
+                          if (err) {
+                            return reject(err);
+                          }
+                          resolve();
+                        });
+
+                      case 3:
+                      case 'end':
+                        return _context.stop();
+                    }
+                  }
+                }, _callee, _this);
+              }));
+
+              return function (_x3, _x4) {
+                return _ref2.apply(this, arguments);
+              };
+            }());
 
           case 7:
-            _context.next = 9;
+            _context2.next = 9;
             return Files.getImageSize(thumbPath);
 
           case 9:
-            thumbInfo = _context.sent;
+            thumbInfo = _context2.sent;
 
             if (thumbInfo) {
-              _context.next = 12;
+              _context2.next = 12;
               break;
             }
 
@@ -60,27 +80,27 @@ var createThumbnail = exports.createThumbnail = function () {
             };
 
             if (!(0, _config2.default)('system.phash.enabled')) {
-              _context.next = 18;
+              _context2.next = 18;
               break;
             }
 
-            _context.next = 16;
+            _context2.next = 16;
             return (0, _phashImage2.default)(thumbPath, true);
 
           case 16:
-            hash = _context.sent;
+            hash = _context2.sent;
 
             result.ihash = hash.toString();
 
           case 18:
-            return _context.abrupt('return', result);
+            return _context2.abrupt('return', result);
 
           case 19:
           case 'end':
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee, this);
+    }, _callee2, this);
   }));
 
   return function createThumbnail(_x, _x2) {
@@ -89,26 +109,26 @@ var createThumbnail = exports.createThumbnail = function () {
 }();
 
 var renderPostFileInfo = exports.renderPostFileInfo = function () {
-  var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(fileInfo) {
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+  var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(fileInfo) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             if (fileInfo.dimensions) {
               fileInfo.sizeText += ', ' + fileInfo.dimensions.width + 'x' + fileInfo.dimensions.height;
             }
-            return _context2.abrupt('return', fileInfo);
+            return _context3.abrupt('return', fileInfo);
 
           case 2:
           case 'end':
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2, this);
+    }, _callee3, this);
   }));
 
-  return function renderPostFileInfo(_x3) {
-    return _ref2.apply(this, arguments);
+  return function renderPostFileInfo(_x5) {
+    return _ref3.apply(this, arguments);
   };
 }();
 
@@ -121,9 +141,9 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _gm = require('gm');
+var _sharp = require('sharp');
 
-var _gm2 = _interopRequireDefault(_gm);
+var _sharp2 = _interopRequireDefault(_sharp);
 
 var _phashImage = require('phash-image');
 

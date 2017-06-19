@@ -1,4 +1,4 @@
-import gm from 'gm';
+import sharp from 'sharp';
 
 import * as Files from '../core/files';
 import * as Tools from '../helpers/tools';
@@ -21,7 +21,7 @@ export function thumbnailSuffixForMimeType(mimeType) {
 
 export async function createThumbnail(file, thumbPath, path) {
   await new Promise((resolve, reject) => {
-    gm(`${path}[0]`).setFormat('png').resize(200, 200).quality(100).write(thumbPath, (err) => {
+    sharp(`${path}`).png().resize(200, 200).max().toFile(thumbPath, (err) => {
       if (err) {
         return reject(err);
       }

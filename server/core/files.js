@@ -937,45 +937,52 @@ var getMimeType = exports.getMimeType = function () {
 }();
 
 var getImageSize = exports.getImageSize = function () {
-  var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(fileName) {
-    return regeneratorRuntime.wrap(function _callee21$(_context21) {
-      while (1) {
-        switch (_context21.prev = _context21.next) {
-          case 0:
-            return _context21.abrupt('return', new Promise(function (resolve, reject) {
-              (0, _gm2.default)(fileName).size(function (err, value) {
-                if (err) {
-                  return reject(err);
-                }
-                resolve(value);
-              });
-            }));
+  var _ref22 = _asyncToGenerator(regeneratorRuntime.mark(function _callee22(fileName) {
+    var _this = this;
 
-          case 1:
-          case 'end':
-            return _context21.stop();
-        }
-      }
-    }, _callee21, this);
-  }));
-
-  return function getImageSize(_x39) {
-    return _ref22.apply(this, arguments);
-  };
-}();
-
-var resizeImage = exports.resizeImage = function () {
-  var _ref23 = _asyncToGenerator(regeneratorRuntime.mark(function _callee22(fileName, width, height, options) {
     return regeneratorRuntime.wrap(function _callee22$(_context22) {
       while (1) {
         switch (_context22.prev = _context22.next) {
           case 0:
             return _context22.abrupt('return', new Promise(function (resolve, reject) {
-              (0, _gm2.default)(fileName).resize(width, height, options).quality(100).write(fileName, function (err) {
-                if (err) {
-                  return reject(err);
-                }
-                resolve();
+              (0, _sharp2.default)(fileName).metadata().then(function () {
+                var _ref23 = _asyncToGenerator(regeneratorRuntime.mark(function _callee21(_ref24) {
+                  var width = _ref24.width,
+                      height = _ref24.height;
+                  return regeneratorRuntime.wrap(function _callee21$(_context21) {
+                    while (1) {
+                      switch (_context21.prev = _context21.next) {
+                        case 0:
+                          if (!(width > 15000 || height > 15000)) {
+                            _context21.next = 4;
+                            break;
+                          }
+
+                          _context21.next = 3;
+                          return _fs2.default.removeTree(fileName);
+
+                        case 3:
+                          reject(new Error('Image is too large!'));
+
+                        case 4:
+                          resolve({
+                            width: width,
+                            height: height
+                          });
+
+                        case 5:
+                        case 'end':
+                          return _context21.stop();
+                      }
+                    }
+                  }, _callee21, _this);
+                }));
+
+                return function (_x40) {
+                  return _ref23.apply(this, arguments);
+                };
+              }()).catch(function (e) {
+                return reject(e);
               });
             }));
 
@@ -987,8 +994,36 @@ var resizeImage = exports.resizeImage = function () {
     }, _callee22, this);
   }));
 
-  return function resizeImage(_x40, _x41, _x42, _x43) {
-    return _ref23.apply(this, arguments);
+  return function getImageSize(_x39) {
+    return _ref22.apply(this, arguments);
+  };
+}();
+
+var resizeImage = exports.resizeImage = function () {
+  var _ref25 = _asyncToGenerator(regeneratorRuntime.mark(function _callee23(fileName, width, height, options) {
+    return regeneratorRuntime.wrap(function _callee23$(_context23) {
+      while (1) {
+        switch (_context23.prev = _context23.next) {
+          case 0:
+            return _context23.abrupt('return', new Promise(function (resolve, reject) {
+              (0, _sharp2.default)(fileName).resize(width, height, options).toFile(fileName, function (err) {
+                if (err) {
+                  return reject(err);
+                }
+                resolve();
+              });
+            }));
+
+          case 1:
+          case 'end':
+            return _context23.stop();
+        }
+      }
+    }, _callee23, this);
+  }));
+
+  return function resizeImage(_x41, _x42, _x43, _x44) {
+    return _ref25.apply(this, arguments);
   };
 }();
 
@@ -1023,9 +1058,9 @@ var _fs3 = require('fs');
 
 var _fs4 = _interopRequireDefault(_fs3);
 
-var _gm = require('gm');
+var _sharp = require('sharp');
 
-var _gm2 = _interopRequireDefault(_gm);
+var _sharp2 = _interopRequireDefault(_sharp);
 
 var _http = require('q-io/http');
 
