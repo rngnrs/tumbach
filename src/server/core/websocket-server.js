@@ -322,8 +322,9 @@ export default class WebSocketServer {
       if (!s) {
         return;
       }
+      let data = key.split('/');
       s.forEach((conn) => {
-        conn.sendMessage('newPost');
+        conn.sendMessage('newPost', {boardName: data[0], threadNumber: data[1]});
       });
     });
   }
