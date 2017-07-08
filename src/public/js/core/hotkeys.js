@@ -315,19 +315,21 @@ export function shortcutSuffix(action, noSpace) {
 function rebind() {
   Mousetrap.reset();
   actionMap = {};
-  Mousetrap.bind(Storage.hotkeys().reduce((acc, hotkey) => {
-    let action = ACTIONS[hotkey.action];
-    let handler = action;
-    if (typeof action === 'object') {
-      handler = action.handler;
-    }
-    if (typeof handler !== 'function') {
+  if(Storage.hotkeys().length > 1) {
+    Mousetrap.bind(Storage.hotkeys().reduce((acc, hotkey) => {
+      let action = ACTIONS[hotkey.action];
+      let handler = action;
+      if (typeof action === 'object') {
+        handler = action.handler;
+      }
+      if (typeof handler !== 'function') {
+        return acc;
+      }
+      actionMap[hotkey.shortcut] = action;
+      acc[hotkey.shortcut] = handler;
       return acc;
-    }
-    actionMap[hotkey.shortcut] = action;
-    acc[hotkey.shortcut] = handler;
-    return acc;
-  }, {}), 'keyup');
+    }, {}), 'keyup');
+  }
 }
 
 Storage.hotkeys.subscribe(rebind);

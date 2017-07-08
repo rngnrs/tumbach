@@ -122,7 +122,7 @@ export const SYNCHRONIZABLE_DATA = {
   favoriteThreads: { set: true },
   ownPosts: { set: true },
   spells: { get: '' },
-  hotkeys: { get: {} },
+  hotkeys: { get: null },
   hiddenPosts: { get: {} },
   similarText: { get: {} },
   lastCodeLang: { get: '' },
@@ -168,7 +168,9 @@ export function localData({ includeSettings, includeCustom, includePassword } = 
     if (typeof def === 'undefined') {
       def = {};
     }
-    o[key] = Storage.getLocalObject(key, def);
+    if (def !== null) {
+      o[key] = Storage.getLocalObject(key, def);
+    }
   };
   _(SYNCHRONIZABLE_DATA).each((options, key) => {
     if (options.custom && !includeCustom) {

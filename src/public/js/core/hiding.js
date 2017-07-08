@@ -27,7 +27,7 @@ export function resetHiddenPostsCSS() {
   }
   let selectorsPosts = posts.map((post) => {
     let nameNumberSelector = `[data-board-name='${post.boardName}'][data-number='${post.number}']`;
-    let postSelector = `.post:not(.temporary-post):not(:hover)${nameNumberSelector}`;
+    let postSelector = `.post:not(.temporary-post)${nameNumberSelector}`;
     return `${postSelector} .post-body, ${postSelector} ~ .thread-info, ${postSelector} ~ .thread-posts`;
   }).join(',\n');
   let selectorsLinks = posts.map((post) => {

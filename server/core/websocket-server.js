@@ -457,8 +457,9 @@ var WebSocketServer = function () {
         if (!s) {
           return;
         }
+        var data = key.split('/');
         s.forEach(function (conn) {
-          conn.sendMessage('newPost');
+          conn.sendMessage('newPost', { boardName: data[0], threadNumber: data[1] });
         });
       });
     }

@@ -1010,7 +1010,10 @@ var delall = exports.delall = function () {
               return function (_x28) {
                 return _ref22.apply(this, arguments);
               };
-            }());
+            }()
+            // NOTE: What's this?!
+            //await PostsModel.removePostData(post.boardName, post.number, post.threadNumber);
+            );
 
           case 13:
             _context24.next = 15;
