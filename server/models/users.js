@@ -1584,32 +1584,41 @@ var updateBanOnMessage = function () {
         switch (_context33.prev = _context33.next) {
           case 0:
             _context33.prev = 0;
+
+            if (!(message.split(':')[0] !== 'userBans')) {
+              _context33.next = 3;
+              break;
+            }
+
+            return _context33.abrupt('return', false);
+
+          case 3:
             ip = Tools.correctAddress(message.split(':').slice(1, -1).join(':'));
 
             if (ip) {
-              _context33.next = 4;
+              _context33.next = 6;
               break;
             }
 
             throw new Error(Tools.translate('Invalid IP address'));
 
-          case 4:
+          case 6:
             boardName = message.split(':').pop();
 
             if (_board2.default.board(boardName)) {
-              _context33.next = 7;
+              _context33.next = 9;
               break;
             }
 
             throw new Error(Tools.translate('Invalid board'));
 
-          case 7:
-            _context33.next = 9;
+          case 9:
+            _context33.next = 11;
             return client.collection('bannedUser');
 
-          case 9:
+          case 11:
             BannedUser = _context33.sent;
-            _context33.next = 12;
+            _context33.next = 14;
             return BannedUser.findOneAndUpdate({ ip: ip }, {
               $pull: {
                 bans: { boardName: boardName }
@@ -1623,51 +1632,51 @@ var updateBanOnMessage = function () {
               returnOriginal: true
             });
 
-          case 12:
+          case 14:
             _ref41 = _context33.sent;
             bannedUser = _ref41.value;
 
             if (!(!bannedUser || bannedUser.bans.length !== 1)) {
-              _context33.next = 16;
+              _context33.next = 18;
               break;
             }
 
             throw new Error(Tools.translate('Internal error: no user ban found'));
 
-          case 16:
-            _context33.next = 18;
+          case 18:
+            _context33.next = 20;
             return BannedUser.deleteOne({
               ip: ip,
               bans: { $size: 0 }
             });
 
-          case 18:
+          case 20:
             postNumber = Tools.option(bannedUser.bans[0].postNumber, 'number', 0, { test: Tools.testPostNumber });
 
             if (!postNumber) {
-              _context33.next = 22;
+              _context33.next = 24;
               break;
             }
 
-            _context33.next = 22;
+            _context33.next = 24;
             return updatePostBanInfo(boardName, postNumber, false);
 
-          case 22:
-            _context33.next = 27;
+          case 24:
+            _context33.next = 29;
             break;
 
-          case 24:
-            _context33.prev = 24;
+          case 26:
+            _context33.prev = 26;
             _context33.t0 = _context33['catch'](0);
 
             _logger2.default.error(_context33.t0.stack || _context33.t0);
 
-          case 27:
+          case 29:
           case 'end':
             return _context33.stop();
         }
       }
-    }, _callee33, this, [[0, 24]]);
+    }, _callee33, this, [[0, 26]]);
   }));
 
   return function updateBanOnMessage(_x66) {

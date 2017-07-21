@@ -80,7 +80,7 @@ function setupDdos() {
 }
 
 function setupStatic() {
-  if (!(0, _config2.default)('server.enableStatic', false)) {
+  if (!(0, _config2.default)('server.enableStatic')) {
     return false;
   }
   if ('static' === BEFORE) {

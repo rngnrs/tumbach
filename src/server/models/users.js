@@ -634,6 +634,9 @@ export async function banUser(ip, newBans, subnet) {
 
 async function updateBanOnMessage(message) {
   try {
+    if (message.split(':')[0] !== 'userBans') {
+      return false;
+    }
     let ip = Tools.correctAddress(message.split(':').slice(1, -1).join(':'));
     if (!ip) {
       throw new Error(Tools.translate('Invalid IP address'));
