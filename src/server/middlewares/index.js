@@ -35,6 +35,9 @@ function setupDdos() {
 }
 
 function setupStatic() {
+  if (!config('server.enableStatic', false)) {
+    return false;
+  }
   if ('static' === BEFORE) {
     middlewares.push(log);
   }
