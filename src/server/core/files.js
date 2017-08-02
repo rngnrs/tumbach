@@ -411,10 +411,10 @@ export async function getImageSize(fileName) {
 }
 
 export async function resizeImage(file, width, height, options) {
-  options = options || {progressive: true};
+  options = options || {progressive: true, force: false};
   return new Promise((resolve, reject) => {
     FSSync.readFile(file, (err, buffer) => {
-      sharp(buffer).resize(width, height, options).max().toFile(file, (err) => {
+      sharp(buffer).png(options).resize(width, height).max().toFile(file, (err) => {
         if (err) {
           return reject(err);
         }

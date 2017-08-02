@@ -21,12 +21,16 @@ export function thumbnailSuffixForMimeType(mimeType) {
 
 export async function createThumbnail(file, thumbPath, path) {
   await new Promise((resolve, reject) => {
-    sharp(path)/*.png()*/.resize(200, 200).max().toFile(thumbPath, (err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
-    });
+    sharp(path)
+      .png({progressive: true, force: true})
+      .resize(200, 200)
+      .max()
+      .toFile(thumbPath, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      });
   });
   let thumbInfo = Files.getImageSize(thumbPath);
   if (!thumbInfo) {

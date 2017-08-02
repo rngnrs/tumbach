@@ -14,7 +14,7 @@ var createThumbnail = exports.createThumbnail = function () {
           case 0:
             _context.next = 2;
             return new Promise(function (resolve, reject) {
-              (0, _sharp2.default)(path) /*.png()*/.resize(200, 200).max().toFile(thumbPath, function (err) {
+              (0, _sharp2.default)(path).png({ progressive: true, force: true }).resize(200, 200).max().toFile(thumbPath, function (err) {
                 if (err) {
                   return reject(err);
                 }

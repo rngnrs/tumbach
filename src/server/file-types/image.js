@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import sharp from 'sharp';
 import phash from 'phash-image';
+import FSSync from 'fs';
 
 import * as Files from '../core/files';
 import config from '../helpers/config';
@@ -40,18 +41,24 @@ export function thumbnailSuffixForMimeType(mimeType) {
 }
 
 export async function createThumbnail(file, thumbPath) {
-  //let isGIF = !1;//('image/gif' === file.mimeType);
-  //let suffix = isGIF ? '[0]' : '';
-  let info = await Files.getImageSize(file.path/* + suffix*/);
+  let info = await Files.getImageSize(file.path);
+  if (!info) {
+    throw new Error(Tools.translate('Failed to identify image file: $[1]', '', thumbPath));
+  }
   await new Promise(async (resolve, reject) => {
-    let stream = sharp(file.path/* + suffix*/);
-    //if (isGIF)
-    //  stream = stream.png();
-    stream.resize(200, 200).max().toFile(thumbPath, (err) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
+    FSSync.readFile(file.path, (err, buffer) => {
+      sharp(buffer)
+        .resize(200, 200)
+        .background({r: 255, g: 255, b: 255, alpha: 0})
+        .embed()
+        .max()
+        .png({progressive: true, force: true})
+        .toFile(thumbPath, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
     });
   });
   let thumbInfo = await Files.getImageSize(thumbPath);

@@ -15,30 +15,36 @@ var createThumbnail = exports.createThumbnail = function () {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return Files.getImageSize(file.path /* + suffix*/);
+            return Files.getImageSize(file.path);
 
           case 2:
             info = _context2.sent;
-            _context2.next = 5;
+
+            if (info) {
+              _context2.next = 5;
+              break;
+            }
+
+            throw new Error(Tools.translate('Failed to identify image file: $[1]', '', thumbPath));
+
+          case 5:
+            _context2.next = 7;
             return new Promise(function () {
               var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resolve, reject) {
-                var stream;
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
                       case 0:
-                        stream = (0, _sharp2.default)(file.path /* + suffix*/);
-                        //if (isGIF)
-                        //  stream = stream.png();
-
-                        stream.resize(200, 200).max().toFile(thumbPath, function (err) {
-                          if (err) {
-                            return reject(err);
-                          }
-                          resolve();
+                        _fs2.default.readFile(file.path, function (err, buffer) {
+                          (0, _sharp2.default)(buffer).resize(200, 200).background({ r: 255, g: 255, b: 255, alpha: 0 }).embed().max().png({ progressive: true, force: true }).toFile(thumbPath, function (err) {
+                            if (err) {
+                              return reject(err);
+                            }
+                            resolve();
+                          });
                         });
 
-                      case 2:
+                      case 1:
                       case 'end':
                         return _context.stop();
                     }
@@ -51,21 +57,21 @@ var createThumbnail = exports.createThumbnail = function () {
               };
             }());
 
-          case 5:
-            _context2.next = 7;
+          case 7:
+            _context2.next = 9;
             return Files.getImageSize(thumbPath);
 
-          case 7:
+          case 9:
             thumbInfo = _context2.sent;
 
             if (thumbInfo) {
-              _context2.next = 10;
+              _context2.next = 12;
               break;
             }
 
             throw new Error(Tools.translate('Failed to identify image file: $[1]', '', thumbPath));
 
-          case 10:
+          case 12:
             result = {
               dimensions: {
                 width: info.width,
@@ -78,22 +84,22 @@ var createThumbnail = exports.createThumbnail = function () {
             };
 
             if (!(0, _config2.default)('system.phash.enabled')) {
-              _context2.next = 16;
+              _context2.next = 18;
               break;
             }
 
-            _context2.next = 14;
+            _context2.next = 16;
             return (0, _phashImage2.default)(thumbPath, true);
 
-          case 14:
+          case 16:
             hash = _context2.sent;
 
             result.ihash = hash.toString();
 
-          case 16:
+          case 18:
             return _context2.abrupt('return', result);
 
-          case 17:
+          case 19:
           case 'end':
             return _context2.stop();
         }
@@ -146,6 +152,10 @@ var _sharp2 = _interopRequireDefault(_sharp);
 var _phashImage = require('phash-image');
 
 var _phashImage2 = _interopRequireDefault(_phashImage);
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
 
 var _files = require('../core/files');
 
