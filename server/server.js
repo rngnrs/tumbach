@@ -216,316 +216,282 @@ function onReady() {
 
 function initializeMaster() {
   //NOTE: Overcoming Babel bug
-  _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
-    var _this = this;
-
-    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+  _asyncToGenerator(regeneratorRuntime.mark(function _callee6() {
+    var i, hasNewPosts;
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context6.prev = _context6.next) {
           case 0:
-            _context7.prev = 0;
-            return _context7.delegateYield(regeneratorRuntime.mark(function _callee6() {
-              var i, hasNewPosts;
-              return regeneratorRuntime.wrap(function _callee6$(_context6) {
+            _context6.prev = 0;
+            _context6.next = 3;
+            return _nodeCaptcha2.default.removeOldCaptchImages();
+
+          case 3:
+            _context6.next = 5;
+            return _nodeCaptchaNoscript2.default.removeOldCaptchImages();
+
+          case 5:
+            _context6.next = 7;
+            return (0, _mongodbClientFactory2.default)().createIndexes();
+
+          case 7:
+            _context6.next = 9;
+            return Renderer.compileTemplates();
+
+          case 9:
+            _context6.next = 11;
+            return Renderer.reloadTemplates();
+
+          case 11:
+            _context6.next = 13;
+            return Renderer.generateTemplatingJavaScriptFile();
+
+          case 13:
+            if (!(_program2.default.rerender || (0, _config2.default)('system.rerenderCacheOnStartup'))) {
+              _context6.next = 16;
+              break;
+            }
+
+            _context6.next = 16;
+            return Renderer.rerender();
+
+          case 16:
+            console.log(Tools.translate('Generating statistics…'));
+            _context6.next = 19;
+            return StatisticsModel.generateStatistics();
+
+          case 19:
+            _context6.next = 21;
+            return Renderer.generateCustomJavaScriptFile();
+
+          case 21:
+            _context6.next = 23;
+            return Renderer.generateCustomCSSFiles();
+
+          case 23:
+            console.log(Tools.translate('Spawning workers, please, wait…'));
+            _cluster2.default.on('exit', function (worker) {
+              _logger2.default.error(Tools.translate('[$[1]] Died, respawning…', '', worker.process.pid));
+              _cluster2.default.fork();
+            });
+            for (i = 0; i < (0, _config2.default)('system.workerCount'); ++i) {
+              _cluster2.default.fork();
+            }
+            _logger2.default.initialize('main');
+            IPC.on('ready', onReady);
+            IPC.on('fileName', generateFileName);
+            IPC.on('sendChatMessage', function (data) {
+              return IPC.send('sendChatMessage', data);
+            });
+            IPC.on('stop', function () {
+              return IPC.send('stop');
+            });
+            IPC.on('start', function () {
+              return IPC.send('start');
+            });
+            IPC.on('reloadBoards', _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
+              return regeneratorRuntime.wrap(function _callee4$(_context4) {
                 while (1) {
-                  switch (_context6.prev = _context6.next) {
+                  switch (_context4.prev = _context4.next) {
                     case 0:
-                      _context6.next = 2;
-                      return _nodeCaptcha2.default.removeOldCaptchImages();
+                      _board2.default.initialize();
+                      _context4.next = 3;
+                      return IPC.send('reloadBoards');
 
-                    case 2:
-                      _context6.next = 4;
-                      return _nodeCaptchaNoscript2.default.removeOldCaptchImages();
+                    case 3:
+                      _context4.next = 5;
+                      return IPC.enqueueTask('reloadBoards');
 
-                    case 4:
-                      _context6.next = 6;
-                      return (0, _mongodbClientFactory2.default)().createIndexes();
-
-                    case 6:
-                      _context6.next = 8;
-                      return Renderer.compileTemplates();
-
-                    case 8:
-                      _context6.next = 10;
-                      return Renderer.reloadTemplates();
-
-                    case 10:
-                      _context6.next = 12;
-                      return Renderer.generateTemplatingJavaScriptFile();
-
-                    case 12:
-                      if (!(_program2.default.rerender || (0, _config2.default)('system.rerenderCacheOnStartup'))) {
-                        _context6.next = 15;
-                        break;
-                      }
-
-                      _context6.next = 15;
-                      return Renderer.rerender();
-
-                    case 15:
-                      console.log(Tools.translate('Generating statistics…'));
-                      _context6.next = 18;
-                      return StatisticsModel.generateStatistics();
-
-                    case 18:
-                      _context6.next = 20;
-                      return Renderer.generateCustomJavaScriptFile();
-
-                    case 20:
-                      _context6.next = 22;
-                      return Renderer.generateCustomCSSFiles();
-
-                    case 22:
-                      console.log(Tools.translate('Spawning workers, please, wait…'));
-                      _cluster2.default.on('exit', function (worker) {
-                        _logger2.default.error(Tools.translate('[$[1]] Died, respawning…', '', worker.process.pid));
-                        _cluster2.default.fork();
-                      });
-                      for (i = 0; i < (0, _config2.default)('system.workerCount'); ++i) {
-                        _cluster2.default.fork();
-                      }
-                      _logger2.default.initialize('main');
-                      IPC.on('ready', onReady);
-                      IPC.on('fileName', generateFileName);
-                      IPC.on('sendChatMessage', function (data) {
-                        return IPC.send('sendChatMessage', data);
-                      });
-                      IPC.on('stop', function () {
-                        return IPC.send('stop');
-                      });
-                      IPC.on('start', function () {
-                        return IPC.send('start');
-                      });
-                      IPC.on('reloadBoards', _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-                        return regeneratorRuntime.wrap(function _callee4$(_context4) {
-                          while (1) {
-                            switch (_context4.prev = _context4.next) {
-                              case 0:
-                                _board2.default.initialize();
-                                _context4.next = 3;
-                                return IPC.send('reloadBoards');
-
-                              case 3:
-                                _context4.next = 5;
-                                return IPC.enqueueTask('reloadBoards');
-
-                              case 5:
-                              case 'end':
-                                return _context4.stop();
-                            }
-                          }
-                        }, _callee4, this);
-                      })));
-                      IPC.on('reloadTemplates', _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
-                        return regeneratorRuntime.wrap(function _callee5$(_context5) {
-                          while (1) {
-                            switch (_context5.prev = _context5.next) {
-                              case 0:
-                                _context5.next = 2;
-                                return Renderer.compileTemplates();
-
-                              case 2:
-                                _context5.next = 4;
-                                return Renderer.reloadTemplates();
-
-                              case 4:
-                                _context5.next = 6;
-                                return Renderer.generateTemplatingJavaScriptFile();
-
-                              case 6:
-                                _context5.next = 8;
-                                return IPC.send('reloadTemplates');
-
-                              case 8:
-                                _context5.next = 10;
-                                return IPC.enqueueTask('reloadTemplates');
-
-                              case 10:
-                              case 'end':
-                                return _context5.stop();
-                            }
-                          }
-                        }, _callee5, this);
-                      })));
-                      hasNewPosts = {};
-
-                      setInterval(function () {
-                        if ((0, _underscore2.default)(hasNewPosts).isEmpty()) {
-                          return;
-                        }
-                        IPC.send('notifyAboutNewPosts', hasNewPosts).catch(function (err) {
-                          _logger2.default.error(err.stack || err);
-                        });
-                        hasNewPosts = {};
-                      }, Tools.SECOND);
-                      IPC.on('notifyAboutNewPosts', function (key) {
-                        hasNewPosts[key] = 1;
-                      });
-
-                    case 36:
+                    case 5:
                     case 'end':
-                      return _context6.stop();
+                      return _context4.stop();
                   }
                 }
-              }, _callee6, _this);
-            })(), 't0', 2);
+              }, _callee4, this);
+            })));
+            IPC.on('reloadTemplates', _asyncToGenerator(regeneratorRuntime.mark(function _callee5() {
+              return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                while (1) {
+                  switch (_context5.prev = _context5.next) {
+                    case 0:
+                      _context5.next = 2;
+                      return Renderer.compileTemplates();
 
-          case 2:
-            _context7.next = 8;
+                    case 2:
+                      _context5.next = 4;
+                      return Renderer.reloadTemplates();
+
+                    case 4:
+                      _context5.next = 6;
+                      return Renderer.generateTemplatingJavaScriptFile();
+
+                    case 6:
+                      _context5.next = 8;
+                      return IPC.send('reloadTemplates');
+
+                    case 8:
+                      _context5.next = 10;
+                      return IPC.enqueueTask('reloadTemplates');
+
+                    case 10:
+                    case 'end':
+                      return _context5.stop();
+                  }
+                }
+              }, _callee5, this);
+            })));
+            hasNewPosts = {};
+
+            setInterval(function () {
+              if ((0, _underscore2.default)(hasNewPosts).isEmpty()) {
+                return;
+              }
+              IPC.send('notifyAboutNewPosts', hasNewPosts).catch(function (err) {
+                _logger2.default.error(err.stack || err);
+              });
+              hasNewPosts = {};
+            }, Tools.SECOND);
+            IPC.on('notifyAboutNewPosts', function (key) {
+              hasNewPosts[key] = 1;
+            });
+            _context6.next = 43;
             break;
 
-          case 4:
-            _context7.prev = 4;
-            _context7.t1 = _context7['catch'](0);
+          case 39:
+            _context6.prev = 39;
+            _context6.t0 = _context6['catch'](0);
 
-            _logger2.default.error(_context7.t1.stack || _context7.t1);
+            _logger2.default.error(_context6.t0.stack || _context6.t0);
             process.exit(1);
 
-          case 8:
+          case 43:
           case 'end':
-            return _context7.stop();
+            return _context6.stop();
         }
       }
-    }, _callee7, this, [[0, 4]]);
+    }, _callee6, this, [[0, 39]]);
   }))();
 }
 
 function initializeWorker() {
   //NOTE: Overcoming Babel bug
-  _asyncToGenerator(regeneratorRuntime.mark(function _callee10() {
-    var _this2 = this;
-
-    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+  _asyncToGenerator(regeneratorRuntime.mark(function _callee8() {
+    var sockets, server, ws;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
             console.log(Tools.translate('[$[1]] Initializing…', '', process.pid));
-            _context10.prev = 1;
-            return _context10.delegateYield(regeneratorRuntime.mark(function _callee9() {
-              var sockets, server, ws;
-              return regeneratorRuntime.wrap(function _callee9$(_context9) {
-                while (1) {
-                  switch (_context9.prev = _context9.next) {
-                    case 0:
-                      _context9.next = 2;
-                      return _geolocation2.default.initialize();
+            _context8.prev = 1;
+            _context8.next = 4;
+            return _geolocation2.default.initialize();
 
-                    case 2:
-                      _context9.next = 4;
-                      return BoardsModel.initialize();
+          case 4:
+            _context8.next = 6;
+            return BoardsModel.initialize();
 
-                    case 4:
-                      _context9.next = 6;
-                      return Renderer.reloadTemplates();
+          case 6:
+            _context8.next = 8;
+            return Renderer.reloadTemplates();
 
-                    case 6:
-                      sockets = new WeakSet();
-                      server = _http2.default.createServer(_controllers2.default);
-                      ws = new _websocketServer2.default(server);
+          case 8:
+            sockets = new WeakSet();
+            server = _http2.default.createServer(_controllers2.default);
+            ws = new _websocketServer2.default(server);
 
-                      server.listen((0, _config2.default)('server.port'), function () {
-                        console.log(Tools.translate('[$[1]] Listening on port $[2]', '', process.pid, (0, _config2.default)('server.port')));
-                        IPC.on('exit', function (status) {
-                          process.exit(status);
-                        });
-                        IPC.on('stop', function () {
-                          return new Promise(function (resolve, reject) {
-                            server.close(function () {
-                              sockets.forEach(function (socket) {
-                                sockets.delete(socket);
-                                socket.destroy();
-                              });
-                              OnlineCounter.clear();
-                              console.log(Tools.translate('[$[1]] Closed', '', process.pid));
-                              resolve();
-                            });
-                          });
-                        });
-                        IPC.on('start', function () {
-                          return new Promise(function (resolve, reject) {
-                            server.listen((0, _config2.default)('server.port'), function () {
-                              console.log(Tools.translate('[$[1]] Listening on port $[2]…', '', process.pid, (0, _config2.default)('server.port')));
-                              resolve();
-                            });
-                          });
-                        });
-                        IPC.on('sendChatMessage', function () {
-                          var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                              type = _ref8.type,
-                              message = _ref8.message,
-                              ips = _ref8.ips,
-                              hashpasses = _ref8.hashpasses;
+            server.listen((0, _config2.default)('server.port'), function () {
+              console.log(Tools.translate('[$[1]] Listening on port $[2]', '', process.pid, (0, _config2.default)('server.port')));
+              IPC.on('exit', function (status) {
+                process.exit(status);
+              });
+              IPC.on('stop', function () {
+                return new Promise(function (resolve, reject) {
+                  server.close(function () {
+                    sockets.forEach(function (socket) {
+                      sockets.delete(socket);
+                      socket.destroy();
+                    });
+                    OnlineCounter.clear();
+                    console.log(Tools.translate('[$[1]] Closed', '', process.pid));
+                    resolve();
+                  });
+                });
+              });
+              IPC.on('start', function () {
+                return new Promise(function (resolve, reject) {
+                  server.listen((0, _config2.default)('server.port'), function () {
+                    console.log(Tools.translate('[$[1]] Listening on port $[2]…', '', process.pid, (0, _config2.default)('server.port')));
+                    resolve();
+                  });
+                });
+              });
+              IPC.on('sendChatMessage', function () {
+                var _ref8 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                    type = _ref8.type,
+                    message = _ref8.message,
+                    ips = _ref8.ips,
+                    hashpasses = _ref8.hashpasses;
 
-                          ws.sendMessage(type, message, ips, hashpasses);
-                        });
-                        IPC.on('reloadBoards', function () {
-                          _board2.default.initialize();
-                        });
-                        IPC.on('reloadTemplates', _asyncToGenerator(regeneratorRuntime.mark(function _callee8() {
-                          return regeneratorRuntime.wrap(function _callee8$(_context8) {
-                            while (1) {
-                              switch (_context8.prev = _context8.next) {
-                                case 0:
-                                  _context8.next = 2;
-                                  return Renderer.reloadTemplates();
+                ws.sendMessage(type, message, ips, hashpasses);
+              });
+              IPC.on('reloadBoards', function () {
+                _board2.default.initialize();
+              });
+              IPC.on('reloadTemplates', _asyncToGenerator(regeneratorRuntime.mark(function _callee7() {
+                return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                  while (1) {
+                    switch (_context7.prev = _context7.next) {
+                      case 0:
+                        _context7.next = 2;
+                        return Renderer.reloadTemplates();
 
-                                case 2:
-                                  return _context8.abrupt('return', _context8.sent);
+                      case 2:
+                        return _context7.abrupt('return', _context7.sent);
 
-                                case 3:
-                                case 'end':
-                                  return _context8.stop();
-                              }
-                            }
-                          }, _callee8, this);
-                        })));
-                        IPC.on('notifyAboutNewPosts', function (keys) {
-                          ws.notifyAboutNewPosts(keys);
-                        });
-                        IPC.on('getConnectionIPs', function () {
-                          return OnlineCounter.unique();
-                        });
-                        IPC.send('ready').catch(function (err) {
-                          _logger2.default.error(err);
-                        });
-                      });
-                      server.on('connection', function (socket) {
-                        sockets.add(socket);
-                        socket.on('close', function () {
-                          sockets.delete(socket);
-                        });
-                      });
-
-                    case 11:
-                    case 'end':
-                      return _context9.stop();
+                      case 3:
+                      case 'end':
+                        return _context7.stop();
+                    }
                   }
-                }
-              }, _callee9, _this2);
-            })(), 't0', 3);
-
-          case 3:
-            _context10.next = 10;
+                }, _callee7, this);
+              })));
+              IPC.on('notifyAboutNewPosts', function (keys) {
+                ws.notifyAboutNewPosts(keys);
+              });
+              IPC.on('getConnectionIPs', function () {
+                return OnlineCounter.unique();
+              });
+              IPC.send('ready').catch(function (err) {
+                _logger2.default.error(err);
+              });
+            });
+            server.on('connection', function (socket) {
+              sockets.add(socket);
+              socket.on('close', function () {
+                sockets.delete(socket);
+              });
+            });
+            _context8.next = 20;
             break;
 
-          case 5:
-            _context10.prev = 5;
-            _context10.t1 = _context10['catch'](1);
+          case 15:
+            _context8.prev = 15;
+            _context8.t0 = _context8['catch'](1);
 
-            console.error(_context10.t1);
+            console.error(_context8.t0);
             try {
-              _logger2.default.error(_context10.t1.stack || _context10.t1);
+              _logger2.default.error(_context8.t0.stack || _context8.t0);
             } catch (err) {
               console.error(err);
             }
             process.exit(1);
 
-          case 10:
+          case 20:
           case 'end':
-            return _context10.stop();
+            return _context8.stop();
         }
       }
-    }, _callee10, this, [[1, 5]]);
+    }, _callee8, this, [[1, 15]]);
   }))();
 }
 
@@ -538,4 +504,8 @@ if (_cluster2.default.isMaster) {
 } else {
   initializeWorker();
 }
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+});
 //# sourceMappingURL=server.js.map

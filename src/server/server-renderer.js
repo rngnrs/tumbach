@@ -157,3 +157,7 @@ if (Cluster.isMaster) {
 } else {
   initializeWorker();
 }
+
+process.on('uncaughtException', function(err) {
+  console.log(err);
+});

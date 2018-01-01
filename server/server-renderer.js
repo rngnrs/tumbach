@@ -442,4 +442,8 @@ if (_cluster2.default.isMaster) {
 } else {
   initializeWorker();
 }
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+});
 //# sourceMappingURL=server-renderer.js.map
