@@ -2,4 +2,5 @@
 !geolocation.js
 !migrate-1-to-2.js
 !migrate-2-to-mongo.js
+!repair-mongo.js
 !.gitignore
