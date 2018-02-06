@@ -69,7 +69,7 @@ export async function setPage(href, { ajax, title, fromHistory } = {}) {
     }
     $('#content').replaceWith(content);
     window.document.title = title;
-    $(window.document.body).scrollTop(0);
+    window.scrollTo(0,0);
     PageProcessors.applyProcessors(content).catch(Widgets.handleError);
     if (Settings.showNewPosts()) {
       Threads.showNewPosts();
