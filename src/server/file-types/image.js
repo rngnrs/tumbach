@@ -21,8 +21,8 @@ function defineMimeTypeSuffixes(mimeType, extensions, thumbSuffix) {
 }
 
 defineMimeTypeSuffixes('image/gif', 'gif', 'png');
-defineMimeTypeSuffixes('image/jpeg', ['jpeg', 'jpg']);
-defineMimeTypeSuffixes('image/png', 'png');
+defineMimeTypeSuffixes('image/jpeg', ['jpeg', 'jpg'], 'jpg');
+defineMimeTypeSuffixes('image/png', 'png', 'png');
 
 export function match(mimeType) {
   return Files.isImageType(mimeType);
@@ -52,7 +52,7 @@ export async function createThumbnail(file, thumbPath) {
         .background({r: 255, g: 255, b: 255, alpha: 0})
         .embed()
         .max()
-        .png({progressive: true, force: true})
+        .toFormat(thumbnailSuffixForMimeType(file.mimeType))
         .toFile(thumbPath, (err) => {
           if (err) {
             return reject(err);

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.renderPostFileInfo = exports.createThumbnail = undefined;
 
 var createThumbnail = exports.createThumbnail = function () {
-  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(file, thumbPath) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(file, thumbPath) {
     var _this = this;
 
     var info, thumbInfo, result, hash;
@@ -30,13 +30,13 @@ var createThumbnail = exports.createThumbnail = function () {
           case 5:
             _context2.next = 7;
             return new Promise(function () {
-              var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee(resolve, reject) {
+              var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(resolve, reject) {
                 return regeneratorRuntime.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
                       case 0:
                         _fs2.default.readFile(file.path, function (err, buffer) {
-                          (0, _sharp2.default)(buffer).resize(200, 200).background({ r: 255, g: 255, b: 255, alpha: 0 }).embed().max().png({ progressive: true, force: true }).toFile(thumbPath, function (err) {
+                          (0, _sharp2.default)(buffer).resize(200, 200).background({ r: 255, g: 255, b: 255, alpha: 0 }).embed().max().toFormat(thumbnailSuffixForMimeType(file.mimeType)).toFile(thumbPath, function (err) {
                             if (err) {
                               return reject(err);
                             }
@@ -113,7 +113,7 @@ var createThumbnail = exports.createThumbnail = function () {
 }();
 
 var renderPostFileInfo = exports.renderPostFileInfo = function () {
-  var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(fileInfo) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(fileInfo) {
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -191,8 +191,8 @@ function defineMimeTypeSuffixes(mimeType, extensions, thumbSuffix) {
 }
 
 defineMimeTypeSuffixes('image/gif', 'gif', 'png');
-defineMimeTypeSuffixes('image/jpeg', ['jpeg', 'jpg']);
-defineMimeTypeSuffixes('image/png', 'png');
+defineMimeTypeSuffixes('image/jpeg', ['jpeg', 'jpg'], 'jpg');
+defineMimeTypeSuffixes('image/png', 'png', 'png');
 
 function match(mimeType) {
   return Files.isImageType(mimeType);
