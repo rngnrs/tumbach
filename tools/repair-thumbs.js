@@ -7,7 +7,9 @@ const Path = require('path');
 const FS = require('fs');
 
 const util = require('util');
-require('util.promisify').shim();
+if (typeof util.promisify === 'undefined') {
+  require('util.promisify').shim();
+}
 const promisify = util.promisify;
 
 const readFile = promisify(FS.readFile);
@@ -51,6 +53,9 @@ process.on('unhandledRejection', p => {
     }
   }
 
+  let count = await Post.count();
+  await repairDB(Post, 0, count);
+
   console.log('Done.');
   process.exit(0);
 })();
@@ -71,11 +76,13 @@ async function repairImage(path, thumb, db) {
     });
     if (dbEntry) {
       let thumbName = thumb.split('.')[0] + '.' + ext;
-      console.log(`${thumb}, which is owned by /${dbEntry.boardName}/${dbEntry.number}, is repairing now. Thumb name become ${thumbName}.`);
+      console.log(`${thumb}, which is owned by /${dbEntry.boardName}/${dbEntry.number}, is repairing now. Thumb name becomes ${thumbName}.`);
       let index = dbEntry.fileInfos.findIndex(o => o.thumb.name === thumb);
 
-      let $set = {};
-      $set["dbEntry.fileInfos[" + index + "].thumb.name"] = thumbName;
+      let $set = {
+        fileInfos: []
+      };
+      $set.fileInfos[index] = {"thumb.name": thumbName};
       try {
         await rename(Path.resolve(path, thumb), Path.resolve(path, thumbName));
 
@@ -89,4 +96,36 @@ async function repairImage(path, thumb, db) {
       console.log('no entry!', dbEntry);
     }
   }
+}
+
+async function repairDB(db, i, count) {
+  let limit = 100;
+  if (i >= count) {
+    return true;
+  }
+  if (!(i % 10000)) {
+    console.log(`Checking DB... ${i}/${count}`);
+  }
+  let posts = await db.find({}, {
+    limit,
+    skip: i
+  }).toArray();
+  for (let post of posts) {
+    if (post.dbEntry) {
+      let $set = {
+        fileInfos: []
+      };
+      let $unset = {dbEntry: ""};
+      console.log(`Repairing /${post.boardName}/${post.number} thumbnails...`);
+      let indexes = Object.keys(post.dbEntry);
+      for (let index in indexes) {
+        post.fileInfos[index].thumb.name = post.dbEntry[indexes[index]].thumb.name;
+        $set.fileInfos[index] = post.fileInfos[index];
+      }
+      await db.updateOne({
+        _id: post._id
+      }, {$set, $unset});
+    }
+  }
+  await repairDB(db, i + limit, count);
 }
